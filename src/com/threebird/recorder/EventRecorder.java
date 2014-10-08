@@ -1,4 +1,4 @@
-package com.threebird.observer;
+package com.threebird.recorder;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

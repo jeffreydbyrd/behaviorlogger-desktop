@@ -1,4 +1,4 @@
-package com.threebird.observer.models;
+package com.threebird.recorder.models;
 
 import java.util.HashMap;
 

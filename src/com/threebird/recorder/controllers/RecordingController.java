@@ -1,4 +1,4 @@
-package com.threebird.observer.controllers;
+package com.threebird.recorder.controllers;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import com.threebird.observer.models.Schema;
+import com.threebird.recorder.models.Schema;
 
 public class RecordingController
 {

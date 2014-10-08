@@ -1,4 +1,4 @@
-package com.threebird.observer.controllers;
+package com.threebird.recorder.controllers;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,8 +26,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import com.threebird.observer.EventRecorder;
-import com.threebird.observer.models.Schema;
+import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.Schema;
 
 /**
  * Controls the first view the user sees
