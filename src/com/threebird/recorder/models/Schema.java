@@ -2,6 +2,9 @@ package com.threebird.recorder.models;
 
 import java.util.HashMap;
 
+/**
+ * Represents a set of key-behavior mappings
+ */
 public class Schema
 {
   public String name;

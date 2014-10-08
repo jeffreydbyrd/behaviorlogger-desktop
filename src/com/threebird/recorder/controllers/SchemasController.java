@@ -30,7 +30,10 @@ import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.Schema;
 
 /**
- * Controls the first view the user sees
+ * Controls the first view the user sees. All these member variables with the @FXML
+ * annotation are physical objects I placed in Scene Builder and applied an
+ * 'id'. The 'id' must match the variable name. Methods with an @FXML annotation
+ * are triggered by events (again, specified in scene builder)
  */
 public class SchemasController
 {
@@ -50,10 +53,21 @@ public class SchemasController
 
   @FXML private Button startButton;
 
+  /**
+   * When JavaFX initializes a controller, it will look for an 'initialize()'
+   * method that's annotated with @FXML. If it finds one, it will call it as
+   * soon as the class is instantiated
+   */
   @FXML private void initialize()
   {
     initSchemas();
     initSchemaListView();
+  }
+
+  private void initSchemas()
+  {
+    rightSide.setVisible( false );
+    schemas = FXCollections.observableArrayList();
   }
 
   /**
@@ -73,15 +87,6 @@ public class SchemasController
     schemaList.getSelectionModel()
               .selectedItemProperty()
               .addListener( this::onSchemaSelect );
-  }
-
-  /**
-   * Initializes and popualtes 'schemas'.
-   */
-  private void initSchemas()
-  {
-    rightSide.setVisible( false );
-    schemas = FXCollections.observableArrayList();
   }
 
   /**
@@ -109,7 +114,8 @@ public class SchemasController
   }
 
   /**
-   * On SCHEMA-select: Update or hide right-hand side.
+   * On schema-select: if the new value is null, hide right-hand-side.
+   * Otherwise, populate right-hand-side with new schema's data
    */
   private void onSchemaSelect( ObservableValue< ? extends Schema > ov,
                                Schema oldV,
@@ -127,7 +133,7 @@ public class SchemasController
   }
 
   /**
-   * When user clicks on the SCHEMA name, allow for edit
+   * When user clicks on the schema name, allow for edit
    */
   @FXML private void onNameClicked( MouseEvent evt )
   {
@@ -139,7 +145,7 @@ public class SchemasController
 
   /**
    * When user hits enter while editing name field: save the new name to the
-   * SCHEMA and force 'schemaList' to redraw
+   * schema and force 'schemaList' to redraw
    */
   @FXML private void onNameFieldKeyPressed( KeyEvent evt )
   {
@@ -155,6 +161,11 @@ public class SchemasController
   private static String acceptableKeys =
       "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
 
+  /**
+   * Adds 2 adjacent text fields to mappingsBox. Attaches a KeyTyped
+   * EventHandler to the first field that prevents the user from typing more
+   * than 1 key
+   */
   private void addMappingBox( String key, String behavior )
   {
     TextField keyBox = new TextField( key );
@@ -175,22 +186,34 @@ public class SchemasController
 
   private static int defaultNumBoxes = 6;
 
+  /**
+   * Runs through the key-behavior pairs in schema and populates the mappingsBox
+   */
   private void populateMappingsBox( Schema schema )
   {
     mappingsBox.getChildren().clear();
 
     schema.mappings.forEach( ( ch, str ) -> addMappingBox( ch.toString(), str ) );
 
+    // add some extra boxes at the end
     for (int i = schema.mappings.size(); i < defaultNumBoxes; i++) {
       addMappingBox( "", "" );
     }
   }
 
+  /**
+   * When user clicks "+" under the key-behavior mappingsBox
+   */
   @FXML private void onPlusMappingClicked( ActionEvent evt )
   {
     addMappingBox( "", "" );
   }
 
+  /**
+   * When user clicks "save", run through the mappingBoxes and construct new
+   * key-behavior mappings. Update the underlying schema with newly added and
+   * removed keys
+   */
   @FXML private void onSaveClicked( ActionEvent evt )
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
@@ -224,6 +247,10 @@ public class SchemasController
     added.forEach( c -> schema.mappings.put( c, temp.get( c ) ) );
   }
 
+  /**
+   * There's no easy way (that I know of) to redraw the ListView. It will redraw
+   * if you set an item in the underlying ObservableList.
+   */
   private void redraw( Schema schema )
   {
     int i = schemaList.getSelectionModel().getSelectedIndex();
@@ -231,6 +258,10 @@ public class SchemasController
     schemaList.getSelectionModel().select( i );
   }
 
+  /**
+   * When user clicks "start", load up "recording.fxml" and switch scenes. The
+   * "recording" view is controlled by RecordingController.java
+   */
   @FXML private void onStartClicked( ActionEvent evt ) throws IOException
   {
     RecordingController.SCHEMA =

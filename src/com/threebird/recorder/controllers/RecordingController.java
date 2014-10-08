@@ -11,6 +11,10 @@ import javafx.scene.text.Text;
 
 import com.threebird.recorder.models.Schema;
 
+/**
+ * Controls the Recording view. It should explode if SCHEMA is not yet
+ * initialized
+ */
 public class RecordingController
 {
   public static Schema SCHEMA;
@@ -23,6 +27,10 @@ public class RecordingController
     assert SCHEMA != null;
   }
 
+  /**
+   * Attached to the root pane, onKeyTyped should fire no matter what is
+   * selected
+   */
   @FXML private void onKeyTyped( KeyEvent evt )
   {
     Character c = evt.getCharacter().charAt( 0 );
