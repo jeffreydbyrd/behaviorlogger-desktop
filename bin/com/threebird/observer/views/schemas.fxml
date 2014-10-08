@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="484.0" prefWidth="676.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.observer.controllers.SchemasController">
+	<children>
+		<Group>
+			<children>
+				<Button fx:id="plusSchemaButton" layoutX="32.0" layoutY="449.0" mnemonicParsing="false" onAction="#onPlusSchemaClicked" text="+" textAlignment="CENTER" />
+				<Button fx:id="minusSchemaButton" layoutX="2.0" layoutY="449.0" mnemonicParsing="false" onAction="#onMinusSchemaClicked" text="-" textAlignment="CENTER" />
+				<ListView fx:id="schemaList" prefHeight="448.0" prefWidth="317.0" style="-fx-border-width: 1px; -fx-border-color: black;" />
+			</children>
+		</Group>
+      <StackPane layoutX="329.0" layoutY="15.0">
+         <children>
+            <Text fx:id="emptyMessage" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14;" text="No schema selected. Click &quot;+&quot; to create schemas." wrappingWidth="145.94540405273438" />
+            <AnchorPane fx:id="rightSide" layoutX="329.0" layoutY="15.0" prefHeight="461.0" prefWidth="334.0">
+               <children>
+                  <StackPane prefHeight="46.0" prefWidth="272.0">
+                     <children>
+                        <Text fx:id="nameText" onMouseClicked="#onNameClicked" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24;" text="Text" wrappingWidth="259.29730224609375">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Text>
+                        <TextField fx:id="nameField" onKeyPressed="#onNameFieldKeyPressed" visible="false" />
+                     </children>
+                  </StackPane>
+                  <ScrollPane layoutX="6.0" layoutY="44.0" prefHeight="201.0" prefWidth="324.0">
+                     <content>
+                        <AnchorPane prefHeight="191.0" prefWidth="291.0">
+                           <children>
+                              <VBox fx:id="mappingsBox" layoutX="2.0" layoutY="24.0" prefHeight="74.0" prefWidth="301.0" spacing="2.0" />
+                              <Label layoutX="2.0" layoutY="6.0" text="Key" />
+                              <Label layoutX="138.0" layoutY="7.0" text="Behavior" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </ScrollPane>
+                  <Button fx:id="plusMappingButton" layoutX="8.0" layoutY="253.0" mnemonicParsing="false" onAction="#onPlusMappingClicked" text="+" textAlignment="CENTER" />
+                  <Button fx:id="saveButton" layoutX="53.0" layoutY="253.0" mnemonicParsing="false" onAction="#onSaveClicked" text="Save" />
+                  <Button fx:id="startButton" layoutX="276.0" layoutY="423.0" mnemonicParsing="false" onAction="#onStartClicked" text="Start" />
+               </children>
+            </AnchorPane>
+         </children>
+      </StackPane>
+	</children>
+</AnchorPane>

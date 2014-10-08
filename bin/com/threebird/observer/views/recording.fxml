@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyTyped="#onKeyTyped" prefHeight="484.0" prefWidth="676.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.observer.controllers.RecordingController">
+   <children>
+      <Button layoutX="17.0" layoutY="413.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="74.0" text="Pause" />
+      <ScrollPane layoutX="20.0" layoutY="22.0" prefHeight="385.0" prefWidth="385.0">
+         <content>
+            <VBox fx:id="keylogPane" prefHeight="48.0" prefWidth="351.0" />
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>
