@@ -2,8 +2,6 @@ package com.threebird.recorder.controllers;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,7 +20,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -47,7 +44,8 @@ public class SchemasController
   @FXML private Text nameText;
   @FXML private TextField nameField;
 
-  @FXML private VBox mappingsBox;
+  @FXML private VBox keyBox;
+  @FXML private VBox behaviorBox;
   @FXML private Button plusMappingButton;
   @FXML private Button saveButton;
 
@@ -162,26 +160,23 @@ public class SchemasController
       "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
 
   /**
-   * Adds 2 adjacent text fields to mappingsBox. Attaches a KeyTyped
-   * EventHandler to the first field that prevents the user from typing more
-   * than 1 key
+   * Adds 2 adjacent text fields to 'keyBox' and 'behaviorBox'. Attaches a
+   * KeyTyped EventHandler to the first field that prevents the user from typing
+   * more than 1 key
    */
   private void addMappingBox( String key, String behavior )
   {
-    TextField keyBox = new TextField( key );
-    keyBox.setOnKeyTyped( evt -> {
-      if (keyBox.getText().trim().length() > 0
+    TextField keyField = new TextField( key );
+    keyField.setOnKeyTyped( evt -> {
+      if (keyField.getText().trim().length() > 0
           || !acceptableKeys.contains( evt.getCharacter() ))
         evt.consume();
     } );
-    TextField behaviorBox = new TextField( behavior );
-    behaviorBox.setMinWidth( 265 );
+    TextField behaviorField = new TextField( behavior );
+    behaviorField.setMinWidth( 265 );
 
-    HBox slot = new HBox( 2 );
-    slot.getChildren().add( keyBox );
-    slot.getChildren().add( behaviorBox );
-
-    this.mappingsBox.getChildren().add( slot );
+    keyBox.getChildren().add( keyField );
+    behaviorBox.getChildren().add( behaviorField );
   }
 
   private static int defaultNumBoxes = 6;
@@ -191,11 +186,12 @@ public class SchemasController
    */
   private void populateMappingsBox( Schema schema )
   {
-    mappingsBox.getChildren().clear();
+    keyBox.getChildren().clear();
+    behaviorBox.getChildren().clear();
 
     schema.mappings.forEach( ( ch, str ) -> addMappingBox( ch.toString(), str ) );
 
-    // add some extra boxes at the end
+    // add some extra boxes at the end to match 'defaultNumBoxes'
     for (int i = schema.mappings.size(); i < defaultNumBoxes; i++) {
       addMappingBox( "", "" );
     }
@@ -210,41 +206,28 @@ public class SchemasController
   }
 
   /**
-   * When user clicks "save", run through the mappingBoxes and construct new
-   * key-behavior mappings. Update the underlying schema with newly added and
-   * removed keys
+   * When user clicks "save", run through 'keyBox' and 'behaviorBox' and
+   * construct new key-behavior mappings. Update the underlying schema with
+   * newly added and removed keys
    */
   @FXML private void onSaveClicked( ActionEvent evt )
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
-    HashMap< Character, String > temp = new HashMap< Character, String >();
+    HashMap< Character, String > mappings = new HashMap< Character, String >();
+    
+    ObservableList< Node > keyFields = keyBox.getChildrenUnmodifiable();
+    ObservableList< Node > behaviorFields =
+        behaviorBox.getChildrenUnmodifiable();
 
-    mappingsBox.getChildrenUnmodifiable().forEach( node -> {
-      HBox box = (HBox) node;
-      Iterator< Node > iter = box.getChildren().iterator();
-      String key = ((TextField) iter.next()).getText();
-      String behavior = ((TextField) iter.next()).getText();
-      if (!key.trim().isEmpty()) {
-        temp.put( key.charAt( 0 ), behavior );
+    for (int i = 0; i < keyFields.size(); i++) {
+      TextField kField = (TextField) keyFields.get( i );
+      TextField bField = (TextField) behaviorFields.get( i );
+      if (!kField.getText().trim().isEmpty()) {
+        mappings.put( kField.getText().charAt( 0 ), bField.getText() );
       }
-    } );
+    }
 
-    HashSet< Character > removed = new HashSet< Character >();
-    schema.mappings.keySet().forEach( c -> {
-      if (!temp.containsKey( c )) {
-        removed.add( c );
-      }
-    } );
-
-    HashSet< Character > added = new HashSet< Character >();
-    temp.keySet().forEach( c -> {
-      if (!schema.mappings.containsKey( c )) {
-        added.add( c );
-      }
-    } );
-
-    removed.forEach( c -> schema.mappings.remove( c ) );
-    added.forEach( c -> schema.mappings.put( c, temp.get( c ) ) );
+    schema.mappings = mappings;
   }
 
   /**
