@@ -2,6 +2,7 @@ package com.threebird.recorder.controllers;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,6 +22,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -44,8 +48,7 @@ public class SchemasController
   @FXML private Text nameText;
   @FXML private TextField nameField;
 
-  @FXML private VBox keyBox;
-  @FXML private VBox behaviorBox;
+  @FXML private VBox mappingsBox;
   @FXML private Button plusMappingButton;
   @FXML private Button saveButton;
 
@@ -60,12 +63,27 @@ public class SchemasController
   {
     initSchemas();
     initSchemaListView();
+
+    nameField.focusedProperty().addListener( ( obsrvbl, old, isFocused ) -> {
+      if (!isFocused) {
+        onSchemaNameChange();
+      }
+    } );
   }
 
   private void initSchemas()
   {
     rightSide.setVisible( false );
     schemas = FXCollections.observableArrayList();
+  }
+
+  private void onSchemaNameChange()
+  {
+    Schema schema = schemaList.getSelectionModel().getSelectedItem();
+    schema.name = nameField.getText().trim();
+    nameText.setText( schema.name );
+    nameField.setVisible( false );
+    redraw( schema );
   }
 
   /**
@@ -148,16 +166,13 @@ public class SchemasController
   @FXML private void onNameFieldKeyPressed( KeyEvent evt )
   {
     if (evt.getCode().equals( KeyCode.ENTER )) {
-      Schema schema = schemaList.getSelectionModel().getSelectedItem();
-      schema.name = nameField.getText().trim();
-      nameText.setText( schema.name );
-      nameField.setVisible( false );
-      redraw( schema );
+      onSchemaNameChange();
     }
   }
 
   private static String acceptableKeys =
       "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
+  private static final Insets insets = new Insets( .5, .5, .5, .5 );
 
   /**
    * Adds 2 adjacent text fields to 'keyBox' and 'behaviorBox'. Attaches a
@@ -167,16 +182,20 @@ public class SchemasController
   private void addMappingBox( String key, String behavior )
   {
     TextField keyField = new TextField( key );
+    keyField.setMaxWidth( 40 );
+    HBox.setHgrow( keyField, Priority.NEVER );
+    HBox.setMargin( keyField, insets );
     keyField.setOnKeyTyped( evt -> {
       if (keyField.getText().trim().length() > 0
           || !acceptableKeys.contains( evt.getCharacter() ))
         evt.consume();
     } );
-    TextField behaviorField = new TextField( behavior );
-    behaviorField.setMinWidth( 265 );
 
-    keyBox.getChildren().add( keyField );
-    behaviorBox.getChildren().add( behaviorField );
+    TextField behaviorField = new TextField( behavior );
+    HBox.setHgrow( behaviorField, Priority.ALWAYS );
+    HBox.setMargin( behaviorField, insets );
+
+    mappingsBox.getChildren().add( new HBox( keyField, behaviorField ) );
   }
 
   private static int defaultNumBoxes = 6;
@@ -186,8 +205,7 @@ public class SchemasController
    */
   private void populateMappingsBox( Schema schema )
   {
-    keyBox.getChildren().clear();
-    behaviorBox.getChildren().clear();
+    mappingsBox.getChildren().clear();
 
     schema.mappings.forEach( ( ch, str ) -> addMappingBox( ch.toString(), str ) );
 
@@ -214,16 +232,19 @@ public class SchemasController
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
     HashMap< Character, String > mappings = new HashMap< Character, String >();
-    
-    ObservableList< Node > keyFields = keyBox.getChildrenUnmodifiable();
-    ObservableList< Node > behaviorFields =
-        behaviorBox.getChildrenUnmodifiable();
 
-    for (int i = 0; i < keyFields.size(); i++) {
-      TextField kField = (TextField) keyFields.get( i );
-      TextField bField = (TextField) behaviorFields.get( i );
-      if (!kField.getText().trim().isEmpty()) {
-        mappings.put( kField.getText().charAt( 0 ), bField.getText() );
+    ObservableList< Node > nodes =
+        mappingsBox.getChildrenUnmodifiable();
+
+    for (Node hbox : nodes) {
+      Iterator< Node > it = ((HBox) hbox).getChildren().iterator();
+      TextField keyField = (TextField) it.next();
+      TextField behaviorField = (TextField) it.next();
+      String key = keyField.getText().trim();
+      String behavior = behaviorField.getText().trim();
+
+      if (!key.isEmpty() && !behavior.isEmpty()) {
+        mappings.put( key.charAt( 0 ), behavior );
       }
     }
 

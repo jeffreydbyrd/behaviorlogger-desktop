@@ -3,9 +3,10 @@ package com.threebird.recorder.controllers;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -19,12 +20,15 @@ public class RecordingController
 {
   public static Schema SCHEMA;
 
-  @FXML private AnchorPane root;
+  @FXML private Text nameText;
   @FXML private VBox keylogPane;
+  @FXML private Button playButton;
 
   @FXML private void initialize()
   {
     assert SCHEMA != null;
+
+    nameText.setText( SCHEMA.name );
   }
 
   /**
@@ -45,5 +49,10 @@ public class RecordingController
                         );
 
     keylogPane.getChildren().add( new Text( text ) );
+  }
+
+  @FXML private void onPlayPress( ActionEvent evt )
+  {
+    System.out.println( "play!" );
   }
 }
