@@ -268,14 +268,15 @@ public class SchemasController
    */
   @FXML private void onStartClicked( ActionEvent evt ) throws IOException
   {
-    RecordingController.SCHEMA =
-        schemaList.getSelectionModel().getSelectedItem();
-
-    Parent root =
-        FXMLLoader.load( EventRecorder.class.getResource( "./views/recording.fxml" ) );
-
+    FXMLLoader fxmlLoader =
+        new FXMLLoader( EventRecorder.class.getResource( "./views/recording.fxml" ) );
+    
+    Parent root = (Parent) fxmlLoader.load();
     Scene scene = new Scene( root );
-
+        
+    Schema schema = schemaList.getSelectionModel().getSelectedItem();
+    fxmlLoader.< RecordingController > getController().init( schema );
+    
     EventRecorder.STAGE.setTitle( "Recording" );
     EventRecorder.STAGE.setScene( scene );
   }
