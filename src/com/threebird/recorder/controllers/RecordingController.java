@@ -1,8 +1,5 @@
 package com.threebird.recorder.controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -27,7 +24,10 @@ public class RecordingController
   @FXML private Text nameText;
   @FXML private VBox keylogPane;
   @FXML private Button playButton;
+  @FXML private Text timeText;
 
+  private int counter = 0;
+  private boolean playing = false;
   private Timeline timer;
 
   public void init( Schema sch )
@@ -37,15 +37,15 @@ public class RecordingController
 
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
-    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), ( evt ) -> {
-      onTick();
-    } );
+    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
+    timer.play();
   }
 
-  private void onTick()
+  private void onTick( ActionEvent evt )
   {
-
+    counter++;
+    timeText.setText( counter + "" );
   }
 
   /**
@@ -65,11 +65,8 @@ public class RecordingController
       return;
     }
 
-    String time = new SimpleDateFormat( "kk:mm:ss" ).format( new Date() );
-    String text = String.format( "%s - (%c) %s",
-                                 time,
-                                 c,
-                                 schema.mappings.get( c )
+    String text = String.format( "%d - (%c) %s",
+                                 counter, c, schema.mappings.get( c )
                         );
 
     keylogPane.getChildren().add( new Text( text ) );
@@ -82,7 +79,14 @@ public class RecordingController
 
   private void togglePlayButton()
   {
-    System.out.println( "Play!" );
+    playing = !playing;
+    if (playing) {
+      playButton.setText( "Stop" );
+      timer.play();
+    } else {
+      playButton.setText( "Play" );
+      timer.pause();
+    }
   }
 
 }
