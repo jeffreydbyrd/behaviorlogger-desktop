@@ -21,19 +21,23 @@
          <children>
             <AnchorPane>
                <children>
-            				<ListView fx:id="schemaList" prefHeight="448.0" prefWidth="317.0" style="-fx-border-width: 1px; -fx-border-color: black;" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="0.0" />
-                  <Button fx:id="minusSchemaButton" layoutX="9.0" layoutY="453.0" mnemonicParsing="false" onAction="#onMinusSchemaClicked" text="-" textAlignment="CENTER" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="7.0" />
-                  <Button fx:id="plusSchemaButton" layoutX="39.0" layoutY="453.0" mnemonicParsing="false" onAction="#onPlusSchemaClicked" text="+" textAlignment="CENTER" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="36.0" />
+            				<ListView fx:id="schemaList" prefHeight="448.0" prefWidth="317.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0" />
+                  <HBox layoutX="7.0" layoutY="484.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+                     <children>
+                        <Button fx:id="minusSchemaButton" layoutX="9.0" layoutY="453.0" mnemonicParsing="false" onAction="#onMinusSchemaClicked" text="-" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="7.0" />
+                        <Button fx:id="plusSchemaButton" layoutX="39.0" layoutY="453.0" mnemonicParsing="false" onAction="#onPlusSchemaClicked" text="+" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="36.0" />
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
             <AnchorPane GridPane.columnIndex="1">
                <children>
                   <Text fx:id="emptyMessage" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14;" text="No schema selected. Click &quot;+&quot; to create schemas." wrappingWidth="145.94540405273438" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="240.0" />
-                  <AnchorPane fx:id="rightSide" layoutX="1.0" prefHeight="517.0" prefWidth="386.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane fx:id="rightSide" layoutX="1.0" prefHeight="517.0" prefWidth="386.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <StackPane prefHeight="46.0" prefWidth="272.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Text fx:id="nameText" onMouseClicked="#onNameClicked" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24;" text="Text" wrappingWidth="365.46624755859375" StackPane.alignment="CENTER_LEFT">
+                              <Text fx:id="nameText" onMouseClicked="#onNameClicked" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="365.46624755859375" StackPane.alignment="CENTER_LEFT">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
@@ -41,7 +45,7 @@
                               <TextField fx:id="nameField" onKeyPressed="#onNameFieldKeyPressed" visible="false" StackPane.alignment="CENTER_LEFT" />
                            </children>
                         </StackPane>
-                        <ScrollPane fitToWidth="true" layoutY="44.0" AnchorPane.bottomAnchor="239.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="44.0">
+                        <ScrollPane fitToWidth="true" layoutY="44.0" prefHeight="329.0" prefWidth="401.0" AnchorPane.bottomAnchor="137.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="44.0">
                            <content>
                               <AnchorPane>
                                  <children>
@@ -56,9 +60,28 @@
                               </AnchorPane>
                            </content>
                         </ScrollPane>
-                        <Button fx:id="plusMappingButton" layoutY="292.0" mnemonicParsing="false" onAction="#onPlusMappingClicked" text="+" textAlignment="CENTER" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="0.0" />
-                        <Button fx:id="saveButton" layoutY="292.0" mnemonicParsing="false" onAction="#onSaveClicked" text="Save" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="40.0" />
-                        <Button fx:id="startButton" layoutX="306.0" layoutY="482.0" mnemonicParsing="false" onAction="#onStartClicked" text="Start" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+                        <HBox layoutY="394.0" spacing="10.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="0.0">
+                           <children>
+                              <Button fx:id="plusMappingButton" layoutY="292.0" mnemonicParsing="false" onAction="#onPlusMappingClicked" text="+" textAlignment="CENTER" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="0.0" />
+                              <Button fx:id="saveButton" layoutY="292.0" mnemonicParsing="false" onAction="#onSaveClicked" text="Save" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="40.0" />
+                           </children>
+                        </HBox>
+                        <Label layoutX="9.0" layoutY="433.0" text="Session Duration" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="0.0" />
+                        <HBox layoutX="14.0" layoutY="383.0" spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0">
+                           <children>
+                              <TextField fx:id="hoursField" prefHeight="26.0" prefWidth="40.0" promptText="hh" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                              <TextField fx:id="minutesField" prefHeight="26.0" prefWidth="40.0" promptText="mm" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                              <TextField fx:id="secondsField" prefHeight="26.0" prefWidth="40.0" promptText="ss" />
+                              <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStartClicked" text="Start">
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Separator layoutX="15.0" layoutY="338.0" prefWidth="200.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" />
                      </children>
                   </AnchorPane>
                </children>

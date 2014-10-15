@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -20,32 +21,42 @@ import com.threebird.recorder.models.Schema;
 public class RecordingController
 {
   private Schema schema;
-
-  @FXML private Text nameText;
-  @FXML private VBox keylogPane;
-  @FXML private Button playButton;
-  @FXML private Text timeText;
-
+  private int duration;
   private int counter = 0;
   private boolean playing = false;
   private Timeline timer;
 
-  public void init( Schema sch )
+  @FXML private Text nameText;
+  @FXML private VBox keylogPane;
+  @FXML private Button playButton;
+  @FXML private Label timeLabel;
+
+  /**
+   * @param sch
+   *          - The Schema being used for recording
+   * @param duration
+   *          - the duration, in seconds, of the session
+   */
+  public void init( Schema sch, int duration )
   {
     this.schema = sch;
+    this.duration = duration;
     nameText.setText( schema.name );
 
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
-    timer.play();
   }
 
   private void onTick( ActionEvent evt )
   {
     counter++;
-    timeText.setText( counter + "" );
+    timeLabel.setText( counter + "" );
+
+    if (counter == duration) {
+      timeLabel.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:black;-fx-border-radius:2;" );
+    }
   }
 
   /**

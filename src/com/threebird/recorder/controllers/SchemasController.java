@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -52,7 +53,16 @@ public class SchemasController
   @FXML private Button plusMappingButton;
   @FXML private Button saveButton;
 
+  @FXML private TextField hoursField;
+  @FXML private TextField minutesField;
+  @FXML private TextField secondsField;
+
   @FXML private Button startButton;
+
+  private static int defaultNumBoxes = 10;
+  private static String digits = "0123456789";
+  private static String acceptableKeys =
+      "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
 
   /**
    * When JavaFX initializes a controller, it will look for an 'initialize()'
@@ -64,11 +74,16 @@ public class SchemasController
     initSchemas();
     initSchemaListView();
 
+    // When I lose focus on the name-field, go on and submit changes
     nameField.focusedProperty().addListener( ( obsrvbl, old, isFocused ) -> {
       if (!isFocused) {
         onSchemaNameChange();
       }
     } );
+
+    hoursField.setOnKeyTyped( createFieldLimiter( hoursField, digits, 2 ) );
+    minutesField.setOnKeyTyped( createFieldLimiter( minutesField, digits, 2 ) );
+    secondsField.setOnKeyTyped( createFieldLimiter( secondsField, digits, 2 ) );
   }
 
   private void initSchemas()
@@ -170,8 +185,6 @@ public class SchemasController
     }
   }
 
-  private static String acceptableKeys =
-      "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
   private static final Insets insets = new Insets( .5, .5, .5, .5 );
 
   /**
@@ -185,11 +198,7 @@ public class SchemasController
     keyField.setMaxWidth( 40 );
     HBox.setHgrow( keyField, Priority.NEVER );
     HBox.setMargin( keyField, insets );
-    keyField.setOnKeyTyped( evt -> {
-      if (keyField.getText().trim().length() > 0
-          || !acceptableKeys.contains( evt.getCharacter() ))
-        evt.consume();
-    } );
+    keyField.setOnKeyTyped( createFieldLimiter( keyField, acceptableKeys, 1 ) );
 
     TextField behaviorField = new TextField( behavior );
     HBox.setHgrow( behaviorField, Priority.ALWAYS );
@@ -197,8 +206,6 @@ public class SchemasController
 
     mappingsBox.getChildren().add( new HBox( keyField, behaviorField ) );
   }
-
-  private static int defaultNumBoxes = 6;
 
   /**
    * Runs through the key-behavior pairs in schema and populates the mappingsBox
@@ -262,21 +269,49 @@ public class SchemasController
     schemaList.getSelectionModel().select( i );
   }
 
+  private int strToInt( String s )
+  {
+    return Integer.valueOf( s.isEmpty() ? "0" : s );
+  }
+
   /**
-   * When user clicks "start", load up "recording.fxml" and switch scenes. The
-   * "recording" view is controlled by RecordingController.java
+   * Converts the contents of hoursField, minutesField, and secondsField into
+   * the equivalent number of seconds and
+   */
+  private int getDuration()
+  {
+    Integer hours = strToInt( hoursField.getText() );
+    Integer mins = strToInt( minutesField.getText() );
+    Integer secs = strToInt( secondsField.getText() );
+    return (hours * 60 * 60) + (mins * 60) + secs;
+  }
+
+  private EventHandler< ? super KeyEvent >
+    createFieldLimiter( TextField field, String acceptableKeys, int limit )
+  {
+    return evt -> {
+      if (field.getText().trim().length() == limit
+          || !acceptableKeys.contains( evt.getCharacter() ))
+        evt.consume();
+    };
+  }
+
+  /**
+   * When user clicks "start", load up "recording.fxml" and switch scenes. Set
+   * the schema and time limit for the recording. The "recording" view is
+   * controlled by RecordingController.java
    */
   @FXML private void onStartClicked( ActionEvent evt ) throws IOException
   {
     FXMLLoader fxmlLoader =
         new FXMLLoader( EventRecorder.class.getResource( "./views/recording.fxml" ) );
-    
+
     Parent root = (Parent) fxmlLoader.load();
     Scene scene = new Scene( root );
-        
+
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
-    fxmlLoader.< RecordingController > getController().init( schema );
-    
+    fxmlLoader.< RecordingController > getController().init( schema, getDuration() );
+
     EventRecorder.STAGE.setTitle( "Recording" );
     EventRecorder.STAGE.setScene( scene );
   }
