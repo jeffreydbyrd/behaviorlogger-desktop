@@ -59,6 +59,10 @@ public class RecordingController
     scrollPane.requestFocus();
   }
 
+  /**
+   * Every second, update the counter. When the counter reaches the duration,
+   * try to signal the user
+   */
   private void onTick( ActionEvent evt )
   {
     counter++;
@@ -69,16 +73,21 @@ public class RecordingController
     }
   }
 
+  /**
+   * Starts and stops recording, changes the playButton text appropriately.
+   */
   private void togglePlayButton()
   {
     playing = !playing;
     if (playing) {
-      playButton.setText( "Stop" );
       timer.play();
     } else {
-      playButton.setText( "Play" );
       timer.pause();
     }
+
+    playButton.setText( playing ? "Stop" : "Play" );
+    goBackButton.setVisible( !playing );
+    newSessionButton.setVisible( !playing );
   }
 
   /**
@@ -93,7 +102,7 @@ public class RecordingController
       togglePlayButton();
     }
 
-    if (!schema.mappings.containsKey( c )) {
+    if (!playing || !schema.mappings.containsKey( c )) {
       return;
     }
 
@@ -114,8 +123,10 @@ public class RecordingController
     EventRecorder.toSchemaView();
   }
 
-  @FXML private void onNewSessionPress( ActionEvent evt )
-  {}
+  @FXML private void onNewSessionPress( ActionEvent evt ) throws IOException
+  {
+    EventRecorder.toRecordingView( schema, duration );
+  }
 
   @FXML private void stopClickPropogation( MouseEvent evt )
   {

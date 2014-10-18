@@ -10,11 +10,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -303,16 +300,8 @@ public class SchemasController
    */
   @FXML private void onStartClicked( ActionEvent evt ) throws IOException
   {
-    FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( "./views/recording.fxml" ) );
-
-    Parent root = (Parent) fxmlLoader.load();
-    Scene scene = new Scene( root );
-
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
-    fxmlLoader.< RecordingController > getController().init( schema, getDuration() );
-
-    EventRecorder.STAGE.setTitle( "Recording" );
-    EventRecorder.STAGE.setScene( scene );
+    int duration = getDuration();
+    EventRecorder.toRecordingView( schema, duration );
   }
 }
