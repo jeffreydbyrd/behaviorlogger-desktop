@@ -1,5 +1,7 @@
 package com.threebird.recorder.controllers;
 
+import java.io.IOException;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -7,11 +9,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.Schema;
 
 /**
@@ -27,8 +32,11 @@ public class RecordingController
   private Timeline timer;
 
   @FXML private Text nameText;
+  @FXML private ScrollPane scrollPane;
   @FXML private VBox keylogPane;
   @FXML private Button playButton;
+  @FXML private Button goBackButton;
+  @FXML private Button newSessionButton;
   @FXML private Label timeLabel;
 
   /**
@@ -47,6 +55,8 @@ public class RecordingController
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
+
+    scrollPane.requestFocus();
   }
 
   private void onTick( ActionEvent evt )
@@ -59,6 +69,18 @@ public class RecordingController
     }
   }
 
+  private void togglePlayButton()
+  {
+    playing = !playing;
+    if (playing) {
+      playButton.setText( "Stop" );
+      timer.play();
+    } else {
+      playButton.setText( "Play" );
+      timer.pause();
+    }
+  }
+
   /**
    * Attached to the root pane, onKeyTyped should fire no matter what is
    * selected
@@ -67,9 +89,8 @@ public class RecordingController
   {
     Character c = evt.getCharacter().charAt( 0 );
 
-    if (new Character( ' ' ).equals( c )) {
+    if (new Character( ' ' ).equals( c ) && !playButton.isFocused()) {
       togglePlayButton();
-      return;
     }
 
     if (!schema.mappings.containsKey( c )) {
@@ -88,16 +109,16 @@ public class RecordingController
     togglePlayButton();
   }
 
-  private void togglePlayButton()
+  @FXML private void onGoBackPress( ActionEvent evt ) throws IOException
   {
-    playing = !playing;
-    if (playing) {
-      playButton.setText( "Stop" );
-      timer.play();
-    } else {
-      playButton.setText( "Play" );
-      timer.pause();
-    }
+    EventRecorder.toSchemaView();
   }
 
+  @FXML private void onNewSessionPress( ActionEvent evt )
+  {}
+
+  @FXML private void stopClickPropogation( MouseEvent evt )
+  {
+    evt.consume();
+  }
 }

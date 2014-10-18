@@ -1,5 +1,7 @@
 package com.threebird.recorder;
 
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,7 +30,11 @@ public class EventRecorder extends Application
   @Override public void start( Stage primaryStage ) throws Exception
   {
     STAGE = primaryStage;
+    toSchemaView();
+  }
 
+  public static void toSchemaView() throws IOException
+  {
     // load up the FXML file we generated with Scene Builder, "schemas.fxml".
     // This view is controlled by SchemasController.java
     Parent root =
@@ -40,7 +46,5 @@ public class EventRecorder extends Application
     STAGE.setTitle( "Scheme Select" );
     STAGE.setScene( scene );
     STAGE.show();
-
-    // Later we can swap out the scene with others.
   }
 }
