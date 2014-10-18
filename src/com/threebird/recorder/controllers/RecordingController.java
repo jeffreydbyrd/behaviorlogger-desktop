@@ -33,7 +33,7 @@ public class RecordingController
 
   @FXML private Text nameText;
   @FXML private ScrollPane scrollPane;
-  @FXML private VBox keylogPane;
+  @FXML private VBox keylogBox;
   @FXML private Button playButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
@@ -51,6 +51,12 @@ public class RecordingController
     this.duration = duration;
     nameText.setText( schema.name );
 
+    // Populate the key-behavior reference box
+    schema.mappings.forEach( ( key, behavior ) -> {
+      // Populate referenceTable
+    } );
+
+    // Setup the timer
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
@@ -110,7 +116,7 @@ public class RecordingController
                                  counter, c, schema.mappings.get( c )
                         );
 
-    keylogPane.getChildren().add( new Text( text ) );
+    keylogBox.getChildren().add( new Text( text ) );
   }
 
   @FXML private void onPlayPress( ActionEvent evt )
