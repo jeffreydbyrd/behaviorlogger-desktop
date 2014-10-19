@@ -5,24 +5,20 @@ import java.io.IOException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.threebird.recorder.EventRecorder;
-import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 
 /**
@@ -45,9 +41,11 @@ public class RecordingController
   @FXML private Button newSessionButton;
   @FXML private Label timeLabel;
 
-  @FXML private TableView< KeyBehaviorMapping > mappingsTable;
-  @FXML private TableColumn< KeyBehaviorMapping, String > keyColumn;
-  @FXML private TableColumn< KeyBehaviorMapping, String > behaviorColumn;
+  @FXML private VBox referenceBox;
+
+  // @FXML private TableView< KeyBehaviorMapping > mappingsTable;
+  // @FXML private TableColumn< KeyBehaviorMapping, String > keyColumn;
+  // @FXML private TableColumn< KeyBehaviorMapping, String > behaviorColumn;
 
   /**
    * @param sch
@@ -62,12 +60,21 @@ public class RecordingController
     nameText.setText( schema.name );
 
     // Populate the key-behavior reference box
-    ObservableList< KeyBehaviorMapping > mappings =
-        FXCollections.observableArrayList( schema.mappings );
+    schema.mappings.forEach( m -> {
+      Text keyText = new Text( m.key.toString() );
+      keyText.setWrappingWidth( 10 );
+      HBox.setHgrow( keyText, Priority.NEVER );
 
-    mappingsTable.setItems( mappings );
-    keyColumn.setCellValueFactory( cellData -> new SimpleStringProperty( cellData.getValue().key.toString() ) );
-    behaviorColumn.setCellValueFactory( data -> new SimpleStringProperty( data.getValue().behavior ) );
+      Text separator = new Text( " : " );
+      HBox.setHgrow( separator, Priority.NEVER );
+
+      Text behaviorText = new Text( m.behavior );
+      behaviorText.setWrappingWidth( 140 );
+      HBox.setHgrow( behaviorText, Priority.ALWAYS );
+
+      HBox hbox = new HBox( keyText, separator, behaviorText );
+      referenceBox.getChildren().add( hbox );
+    } );
 
     // Setup the timer
     timer = new Timeline();

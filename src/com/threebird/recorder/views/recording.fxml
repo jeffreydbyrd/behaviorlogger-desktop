@@ -31,15 +31,11 @@
             </Label>
          </children>
       </AnchorPane>
-      <ScrollPane fitToWidth="true" layoutX="487.0" layoutY="20.0" prefHeight="457.0" prefWidth="190.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ScrollPane fitToWidth="true" focusTraversable="false" layoutX="501.0" layoutY="126.0" prefHeight="200.0" prefWidth="190.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
-            <TableView fx:id="mappingsTable" focusTraversable="false">
-              <columns>
-                <TableColumn fx:id="keyColumn" prefWidth="36.27471923828125" resizable="false" text="Key" />
-                <TableColumn fx:id="behaviorColumn" prefWidth="150.72527694702148" resizable="false" text="Behavior" />
-              </columns>
-            </TableView>
-         </content></ScrollPane>
+            <VBox fx:id="referenceBox" spacing="5.0" style=": ;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         </content>
+      </ScrollPane>
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
