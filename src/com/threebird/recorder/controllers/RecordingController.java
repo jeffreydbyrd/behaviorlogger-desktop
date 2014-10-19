@@ -52,8 +52,8 @@ public class RecordingController
     nameText.setText( schema.name );
 
     // Populate the key-behavior reference box
-    schema.mappings.forEach( ( key, behavior ) -> {
-      // Populate referenceTable
+    schema.mappings.forEach( ( mapping ) -> {
+
     } );
 
     // Setup the timer
@@ -108,15 +108,16 @@ public class RecordingController
       togglePlayButton();
     }
 
-    if (!playing || !schema.mappings.containsKey( c )) {
+    if (!playing) {
       return;
     }
 
-    String text = String.format( "%d - (%c) %s",
-                                 counter, c, schema.mappings.get( c )
-                        );
-
-    keylogBox.getChildren().add( new Text( text ) );
+    // look at this elegant motherfucker
+    schema.getMapping( c ).ifPresent( ( mapping ) -> {
+      String behavior = mapping.behavior;
+      String text = String.format( "%d - (%c) %s", counter, c, behavior );
+      keylogBox.getChildren().add( new Text( text ) );
+    } );
   }
 
   @FXML private void onPlayPress( ActionEvent evt )

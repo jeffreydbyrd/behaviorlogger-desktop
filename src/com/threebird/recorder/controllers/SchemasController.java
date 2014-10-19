@@ -1,7 +1,6 @@
 package com.threebird.recorder.controllers;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import javafx.beans.value.ObservableValue;
@@ -26,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 
 /**
@@ -211,7 +211,9 @@ public class SchemasController
   {
     mappingsBox.getChildren().clear();
 
-    schema.mappings.forEach( ( ch, str ) -> addMappingBox( ch.toString(), str ) );
+    schema.mappings.forEach( ( mapping ) -> {
+      addMappingBox( mapping.key.toString(), mapping.behavior );
+    } );
 
     // add some extra boxes at the end to match 'defaultNumBoxes'
     for (int i = schema.mappings.size(); i < defaultNumBoxes; i++) {
@@ -235,7 +237,6 @@ public class SchemasController
   @FXML private void onSaveClicked( ActionEvent evt )
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
-    HashMap< Character, String > mappings = new HashMap< Character, String >();
 
     ObservableList< Node > nodes =
         mappingsBox.getChildrenUnmodifiable();
@@ -248,11 +249,9 @@ public class SchemasController
       String behavior = behaviorField.getText().trim();
 
       if (!key.isEmpty() && !behavior.isEmpty()) {
-        mappings.put( key.charAt( 0 ), behavior );
+        schema.mappings.add( new KeyBehaviorMapping( key, behavior ) );
       }
     }
-
-    schema.mappings = mappings;
   }
 
   /**
