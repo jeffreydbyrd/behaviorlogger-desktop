@@ -211,7 +211,7 @@ public class SchemasController
   {
     mappingsBox.getChildren().clear();
 
-    schema.mappings.forEach( ( mapping ) -> {
+    schema.mappings.forEach( ( key, mapping ) -> {
       addMappingBox( mapping.key.toString(), mapping.behavior );
     } );
 
@@ -231,8 +231,8 @@ public class SchemasController
 
   /**
    * When user clicks "save", run through 'keyBox' and 'behaviorBox' and
-   * construct new key-behavior mappings. Update the underlying schema with
-   * newly added and removed keys
+   * construct new key-behavior mappings. Update the underlying schema with new
+   * mappings
    */
   @FXML private void onSaveClicked( ActionEvent evt )
   {
@@ -249,7 +249,8 @@ public class SchemasController
       String behavior = behaviorField.getText().trim();
 
       if (!key.isEmpty() && !behavior.isEmpty()) {
-        schema.mappings.add( new KeyBehaviorMapping( key, behavior ) );
+        schema.mappings.put( key.charAt( 0 ),
+                             new KeyBehaviorMapping( key, behavior ) );
       }
     }
   }

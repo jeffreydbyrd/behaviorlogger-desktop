@@ -1,6 +1,6 @@
 package com.threebird.recorder.models;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -9,9 +9,9 @@ import java.util.Optional;
 public class Schema
 {
   public String name;
-  public ArrayList< KeyBehaviorMapping > mappings;
+  public HashMap< Character, KeyBehaviorMapping > mappings;
 
-  public Schema( String name, ArrayList< KeyBehaviorMapping > mappings )
+  public Schema( String name, HashMap< Character, KeyBehaviorMapping > mappings )
   {
     this.name = name;
     this.mappings = mappings;
@@ -19,7 +19,7 @@ public class Schema
 
   public Schema( String name )
   {
-    this( name, new ArrayList< KeyBehaviorMapping >() );
+    this( name, new HashMap< Character, KeyBehaviorMapping >() );
   }
 
   /**
@@ -29,11 +29,6 @@ public class Schema
    */
   public Optional< KeyBehaviorMapping > getMapping( Character key )
   {
-    for (KeyBehaviorMapping mapping : mappings) {
-      if (mapping.key.equals( key )) {
-        return Optional.of( mapping );
-      }
-    }
-    return Optional.empty();
+    return Optional.ofNullable( mappings.get( key ) );
   }
 }

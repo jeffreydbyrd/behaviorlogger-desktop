@@ -60,8 +60,8 @@ public class RecordingController
     nameText.setText( schema.name );
 
     // Populate the key-behavior reference box
-    schema.mappings.forEach( m -> {
-      Text keyText = new Text( m.key.toString() );
+    schema.mappings.forEach( ( key, m ) -> {
+      Text keyText = new Text( key.toString() );
       keyText.setWrappingWidth( 10 );
       HBox.setHgrow( keyText, Priority.NEVER );
 
