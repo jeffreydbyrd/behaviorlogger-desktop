@@ -5,18 +5,27 @@ import java.io.IOException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 
 /**
@@ -39,6 +48,10 @@ public class RecordingController
   @FXML private Button newSessionButton;
   @FXML private Label timeLabel;
 
+  @FXML private TableView< KeyBehaviorMapping > mappingsTable;
+  @FXML private TableColumn< KeyBehaviorMapping, String > keyColumn;
+  @FXML private TableColumn< KeyBehaviorMapping, String > behaviorColumn;
+
   /**
    * @param sch
    *          - The Schema being used for recording
@@ -52,9 +65,12 @@ public class RecordingController
     nameText.setText( schema.name );
 
     // Populate the key-behavior reference box
-    schema.mappings.forEach( ( mapping ) -> {
+    ObservableList< KeyBehaviorMapping > mappings =
+        FXCollections.observableArrayList( schema.mappings );
 
-    } );
+    mappingsTable.setItems( mappings );
+    keyColumn.setCellValueFactory( cellData -> new SimpleStringProperty( cellData.getValue().key.toString() ) );
+    behaviorColumn.setCellValueFactory( data -> new SimpleStringProperty( data.getValue().behavior ) );
 
     // Setup the timer
     timer = new Timeline();

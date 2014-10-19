@@ -237,7 +237,7 @@ public class SchemasController
   @FXML private void onSaveClicked( ActionEvent evt )
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
-
+    schema.mappings.clear();
     ObservableList< Node > nodes =
         mappingsBox.getChildrenUnmodifiable();
 

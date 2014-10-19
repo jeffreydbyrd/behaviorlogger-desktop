@@ -33,10 +33,10 @@
       </AnchorPane>
       <ScrollPane fitToWidth="true" layoutX="487.0" layoutY="20.0" prefHeight="457.0" prefWidth="190.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
-            <TableView>
+            <TableView fx:id="mappingsTable" focusTraversable="false">
               <columns>
-                <TableColumn prefWidth="36.27471923828125" resizable="false" text="Key" />
-                <TableColumn prefWidth="150.72527694702148" resizable="false" text="Behavior" />
+                <TableColumn fx:id="keyColumn" prefWidth="36.27471923828125" resizable="false" text="Key" />
+                <TableColumn fx:id="behaviorColumn" prefWidth="150.72527694702148" resizable="false" text="Behavior" />
               </columns>
             </TableView>
          </content></ScrollPane>
