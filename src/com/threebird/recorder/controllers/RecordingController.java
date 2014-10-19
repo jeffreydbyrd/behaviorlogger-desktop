@@ -79,6 +79,10 @@ public class RecordingController
     timer.getKeyFrames().add( kf );
 
     scrollPane.requestFocus();
+
+    // When keylogBox changes size, scroll to the bottom to show change
+    keylogBox.heightProperty()
+             .addListener( ( obv, oldV, newV ) -> scrollPane.setVvalue( 1.0 ) );
   }
 
   /**
