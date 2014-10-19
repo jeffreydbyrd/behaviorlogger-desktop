@@ -43,10 +43,6 @@ public class RecordingController
 
   @FXML private VBox referenceBox;
 
-  // @FXML private TableView< KeyBehaviorMapping > mappingsTable;
-  // @FXML private TableColumn< KeyBehaviorMapping, String > keyColumn;
-  // @FXML private TableColumn< KeyBehaviorMapping, String > behaviorColumn;
-
   /**
    * @param sch
    *          - The Schema being used for recording

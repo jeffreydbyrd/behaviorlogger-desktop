@@ -1,6 +1,7 @@
 package com.threebird.recorder.controllers;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javafx.beans.value.ObservableValue;
@@ -118,27 +119,41 @@ public class SchemasController
   }
 
   /**
-   * When user clicks "+" button: create SCHEMA, add to 'schemas' and select it
+   * There's no easy way (that I know of) to redraw the ListView. It will redraw
+   * if you set an item in the underlying ObservableList.
    */
-  @FXML private void onPlusSchemaClicked( ActionEvent evt )
+  private void redraw( Schema schema )
   {
-    schemas.add( new Schema( "New Schema" ) );
-    int i = schemas.size() - 1;
+    int i = schemaList.getSelectionModel().getSelectedIndex();
+    schemas.set( i, schema );
     schemaList.getSelectionModel().select( i );
-    schemaList.getFocusModel().focus( i );
+  }
+
+  private int strToInt( String s )
+  {
+    return Integer.valueOf( s.isEmpty() ? "0" : s );
   }
 
   /**
-   * When user clicks "-" button: remove selected SCHEMA from 'schemas'
+   * Converts the contents of hoursField, minutesField, and secondsField into
+   * the equivalent number of seconds and
    */
-  @FXML private void onMinusSchemaClicked( ActionEvent evt )
+  private int getDuration()
   {
-    if (schemas.isEmpty()) {
-      return;
-    }
+    Integer hours = strToInt( hoursField.getText() );
+    Integer mins = strToInt( minutesField.getText() );
+    Integer secs = strToInt( secondsField.getText() );
+    return (hours * 60 * 60) + (mins * 60) + secs;
+  }
 
-    int i = schemaList.getSelectionModel().getSelectedIndex();
-    schemas.remove( i );
+  private EventHandler< ? super KeyEvent >
+    createFieldLimiter( TextField field, String acceptableKeys, int limit )
+  {
+    return evt -> {
+      if (field.getText().trim().length() == limit
+          || !acceptableKeys.contains( evt.getCharacter() ))
+        evt.consume();
+    };
   }
 
   /**
@@ -157,28 +172,6 @@ public class SchemasController
     } else {
       rightSide.setVisible( false );
       emptyMessage.setVisible( true );
-    }
-  }
-
-  /**
-   * When user clicks on the schema name, allow for edit
-   */
-  @FXML private void onNameClicked( MouseEvent evt )
-  {
-    Schema schema = schemaList.getSelectionModel().getSelectedItem();
-    nameField.setVisible( true );
-    nameField.setText( schema.name );
-    nameField.requestFocus();
-  }
-
-  /**
-   * When user hits enter while editing name field: save the new name to the
-   * schema and force 'schemaList' to redraw
-   */
-  @FXML private void onNameFieldKeyPressed( KeyEvent evt )
-  {
-    if (evt.getCode().equals( KeyCode.ENTER )) {
-      onSchemaNameChange();
     }
   }
 
@@ -220,6 +213,52 @@ public class SchemasController
       addMappingBox( "", "" );
     }
   }
+  
+  /**
+   * When user clicks "+" button: create SCHEMA, add to 'schemas' and select it
+   */
+  @FXML private void onPlusSchemaClicked( ActionEvent evt )
+  {
+    schemas.add( new Schema( "New Schema" ) );
+    int i = schemas.size() - 1;
+    schemaList.getSelectionModel().select( i );
+    schemaList.getFocusModel().focus( i );
+  }
+
+  /**
+   * When user clicks "-" button: remove selected SCHEMA from 'schemas'
+   */
+  @FXML private void onMinusSchemaClicked( ActionEvent evt )
+  {
+    if (schemas.isEmpty()) {
+      return;
+    }
+
+    int i = schemaList.getSelectionModel().getSelectedIndex();
+    schemas.remove( i );
+  }
+
+  /**
+   * When user clicks on the schema name, allow for edit
+   */
+  @FXML private void onNameClicked( MouseEvent evt )
+  {
+    Schema schema = schemaList.getSelectionModel().getSelectedItem();
+    nameField.setVisible( true );
+    nameField.setText( schema.name );
+    nameField.requestFocus();
+  }
+
+  /**
+   * When user hits enter while editing name field: save the new name to the
+   * schema and force 'schemaList' to redraw
+   */
+  @FXML private void onNameFieldKeyPressed( KeyEvent evt )
+  {
+    if (evt.getCode().equals( KeyCode.ENTER )) {
+      onSchemaNameChange();
+    }
+  }
 
   /**
    * When user clicks "+" under the key-behavior mappingsBox
@@ -237,7 +276,8 @@ public class SchemasController
   @FXML private void onSaveClicked( ActionEvent evt )
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
-    schema.mappings.clear();
+    HashMap< Character, KeyBehaviorMapping > temp =
+        new HashMap< Character, KeyBehaviorMapping >();
     ObservableList< Node > nodes =
         mappingsBox.getChildrenUnmodifiable();
 
@@ -249,48 +289,12 @@ public class SchemasController
       String behavior = behaviorField.getText().trim();
 
       if (!key.isEmpty() && !behavior.isEmpty()) {
-        schema.mappings.put( key.charAt( 0 ),
-                             new KeyBehaviorMapping( key, behavior ) );
+        Character ch = key.charAt( 0 );
+        temp.put( ch, new KeyBehaviorMapping( key, behavior ) );
       }
     }
-  }
 
-  /**
-   * There's no easy way (that I know of) to redraw the ListView. It will redraw
-   * if you set an item in the underlying ObservableList.
-   */
-  private void redraw( Schema schema )
-  {
-    int i = schemaList.getSelectionModel().getSelectedIndex();
-    schemas.set( i, schema );
-    schemaList.getSelectionModel().select( i );
-  }
-
-  private int strToInt( String s )
-  {
-    return Integer.valueOf( s.isEmpty() ? "0" : s );
-  }
-
-  /**
-   * Converts the contents of hoursField, minutesField, and secondsField into
-   * the equivalent number of seconds and
-   */
-  private int getDuration()
-  {
-    Integer hours = strToInt( hoursField.getText() );
-    Integer mins = strToInt( minutesField.getText() );
-    Integer secs = strToInt( secondsField.getText() );
-    return (hours * 60 * 60) + (mins * 60) + secs;
-  }
-
-  private EventHandler< ? super KeyEvent >
-    createFieldLimiter( TextField field, String acceptableKeys, int limit )
-  {
-    return evt -> {
-      if (field.getText().trim().length() == limit
-          || !acceptableKeys.contains( evt.getCharacter() ))
-        evt.consume();
-    };
+    schema.mappings = temp;
   }
 
   /**
