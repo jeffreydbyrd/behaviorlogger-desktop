@@ -10,11 +10,22 @@
    <children>
       <AnchorPane layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ScrollPane fx:id="scrollPane" fitToWidth="true" focusTraversable="false" layoutY="50.0" onMouseClicked="#stopClickPropogation" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
-               <content>
-                  <VBox fx:id="keylogBox" />
-               </content>
-            </ScrollPane>
+            <GridPane layoutY="50.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="50.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="ALWAYS" prefWidth="242.39256286621094" />
+                  <ColumnConstraints hgrow="ALWAYS" prefWidth="240.60743713378906" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+               </rowConstraints>
+               <children>
+                  <ScrollPane fx:id="eventsScrollPane" fitToWidth="true" focusTraversable="false" layoutY="50.0" onMouseClicked="#stopClickPropogation" prefHeight="307.0" prefWidth="251.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="241.0" AnchorPane.topAnchor="50.0">
+                     <content>
+                        <VBox fx:id="keylogBox" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </GridPane>
             <Text layoutY="366.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0" />
             <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Schema Name" wrappingWidth="491.6888999938965" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             <HBox layoutY="431.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
@@ -31,7 +42,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <ScrollPane fitToWidth="true" focusTraversable="false" layoutX="501.0" layoutY="126.0" prefHeight="200.0" prefWidth="190.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ScrollPane fx:id="referenceScrollPane" fitToWidth="true" focusTraversable="false" layoutX="501.0" layoutY="126.0" prefHeight="200.0" prefWidth="190.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
             <VBox fx:id="referenceBox" spacing="5.0" style=": ;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </content>

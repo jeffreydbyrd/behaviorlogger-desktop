@@ -34,13 +34,14 @@ public class RecordingController
   private Timeline timer;
 
   @FXML private Text nameText;
-  @FXML private ScrollPane scrollPane;
+  @FXML private ScrollPane eventsScrollPane;
   @FXML private VBox keylogBox;
   @FXML private Button playButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
   @FXML private Label timeLabel;
 
+  @FXML private ScrollPane referenceScrollPane;
   @FXML private VBox referenceBox;
 
   /**
@@ -78,11 +79,11 @@ public class RecordingController
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
 
-    scrollPane.requestFocus();
+    referenceScrollPane.requestFocus();
 
     // When keylogBox changes size, scroll to the bottom to show change
     keylogBox.heightProperty()
-             .addListener( ( obv, oldV, newV ) -> scrollPane.setVvalue( 1.0 ) );
+             .addListener( ( obv, oldV, newV ) -> eventsScrollPane.setVvalue( 1.0 ) );
   }
 
   /**
