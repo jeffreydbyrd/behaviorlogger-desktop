@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -96,7 +97,7 @@ public class SchemasController
     schema.name = nameField.getText().trim();
     nameText.setText( schema.name );
     nameField.setVisible( false );
-    redraw( schema );
+    redrawListView( schema );
   }
 
   /**
@@ -122,7 +123,7 @@ public class SchemasController
    * There's no easy way (that I know of) to redraw the ListView. It will redraw
    * if you set an item in the underlying ObservableList.
    */
-  private void redraw( Schema schema )
+  private void redrawListView( Schema schema )
   {
     int i = schemaList.getSelectionModel().getSelectedIndex();
     schemas.set( i, schema );
@@ -178,7 +179,7 @@ public class SchemasController
   private static final Insets insets = new Insets( .5, .5, .5, .5 );
 
   /**
-   * Adds 2 adjacent text fields to 'keyBox' and 'behaviorBox'. Attaches a
+   * Adds 2 adjacent text fields and a checkbox to 'mappingsBox'. Attaches a
    * KeyTyped EventHandler to the first field that prevents the user from typing
    * more than 1 key
    */
@@ -194,7 +195,12 @@ public class SchemasController
     HBox.setHgrow( behaviorField, Priority.ALWAYS );
     HBox.setMargin( behaviorField, insets );
 
-    mappingsBox.getChildren().add( new HBox( keyField, behaviorField ) );
+    CheckBox checkbox = new CheckBox();
+    HBox.setHgrow( checkbox, Priority.NEVER );
+    HBox.setMargin( checkbox, new Insets( 3, 30, .5, 10 ) );
+
+    mappingsBox.getChildren()
+               .add( new HBox( keyField, behaviorField, checkbox ) );
   }
 
   /**
@@ -213,7 +219,7 @@ public class SchemasController
       addMappingBox( "", "" );
     }
   }
-  
+
   /**
    * When user clicks "+" button: create SCHEMA, add to 'schemas' and select it
    */
@@ -285,12 +291,15 @@ public class SchemasController
       Iterator< Node > it = ((HBox) hbox).getChildren().iterator();
       TextField keyField = (TextField) it.next();
       TextField behaviorField = (TextField) it.next();
+      CheckBox checkbox = (CheckBox) it.next();
+
       String key = keyField.getText().trim();
       String behavior = behaviorField.getText().trim();
+      boolean isDurational = checkbox.isSelected();
 
       if (!key.isEmpty() && !behavior.isEmpty()) {
         Character ch = key.charAt( 0 );
-        temp.put( ch, new KeyBehaviorMapping( key, behavior ) );
+        temp.put( ch, new KeyBehaviorMapping( key, behavior, isDurational ) );
       }
     }
 
