@@ -1,12 +1,15 @@
 package com.threebird.recorder.controllers;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -19,6 +22,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 
 /**
@@ -34,8 +38,13 @@ public class RecordingController
   private Timeline timer;
 
   @FXML private Text nameText;
+
   @FXML private ScrollPane eventsScrollPane;
   @FXML private VBox keylogBox;
+
+  @FXML private ScrollPane durationalScrollPane;
+  @FXML private VBox durationalBox;
+
   @FXML private Button playButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
@@ -117,6 +126,34 @@ public class RecordingController
     newSessionButton.setVisible( !playing );
   }
 
+  private HashMap< Character, Text > durBehaviors = new HashMap<>();
+
+  /**
+   * After a key is determined to have been mapped, we need to record the
+   * behavior. There are 3 possible actions: log a discrete behavior, start a
+   * durational behavior, or end a durational behavior.
+   */
+  private void logBehavior( KeyBehaviorMapping kbm )
+  {
+    Character k = kbm.key;
+    String behavior = kbm.behavior;
+    String str = String.format( "%d - (%c) %s", counter, k, behavior );
+    Text text = new Text( str );
+
+    if (kbm.isDurational) {
+      ObservableList< Node > texts = durationalBox.getChildren();
+      if (durBehaviors.containsKey( k )) {
+        texts.remove( durBehaviors.get( k ) );
+        durBehaviors.remove( k );
+      } else {
+        durBehaviors.put( k, text );
+        texts.add( text );
+      }
+    } else {
+      keylogBox.getChildren().add( text );
+    }
+  }
+
   /**
    * Attached to the root pane, onKeyTyped should fire no matter what is
    * selected
@@ -133,11 +170,8 @@ public class RecordingController
       return;
     }
 
-    // look at this elegant motherfucker
     schema.getMapping( c ).ifPresent( ( mapping ) -> {
-      String behavior = mapping.behavior;
-      String text = String.format( "%d - (%c) %s", counter, c, behavior );
-      keylogBox.getChildren().add( new Text( text ) );
+      logBehavior( mapping );
     } );
   }
 

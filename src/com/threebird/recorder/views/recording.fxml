@@ -24,6 +24,11 @@
                         <VBox fx:id="keylogBox" />
                      </content>
                   </ScrollPane>
+                  <ScrollPane fx:id="durationalScrollPane" fitToWidth="true" focusTraversable="false" onMouseClicked="#stopClickPropogation" GridPane.columnIndex="1">
+                     <content>
+                        <VBox fx:id="durationalBox" />
+                     </content>
+                  </ScrollPane>
                </children>
             </GridPane>
             <Text layoutY="366.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0" />
