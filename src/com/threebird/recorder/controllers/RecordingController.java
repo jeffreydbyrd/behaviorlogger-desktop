@@ -143,6 +143,29 @@ public class RecordingController
   }
 
   /**
+   * Builds a String for a duration behavior that will be logged in the left
+   * ScrollPane
+   */
+  private String durationString( KeyBehaviorMapping kbm, Integer startTime )
+  {
+    String format = "%d - %d : (%c) %s";
+    String str =
+        String.format( format, startTime, counter, kbm.key, kbm.behavior );
+    return str;
+  }
+
+  /**
+   * Builds a String for an eventful behavior that will be logged in the left
+   * ScrollPane
+   */
+  private String eventfulString( KeyBehaviorMapping kbm )
+  {
+    String str =
+        String.format( "%d : (%c) %s", counter, kbm.key, kbm.behavior );
+    return str;
+  }
+
+  /**
    * I'm simply creating this for the logDurational function so we can map a
    * Character to both a Textbox and a start-time and save them for when the
    * user stops a duration behavior.
@@ -173,18 +196,12 @@ public class RecordingController
 
     if (durations.containsKey( key )) {
       IntegerTextPair itp = durations.get( key );
-      String str =
-          String.format( "%d - %d : (%c) %s",
-                         itp.startTime,
-                         counter,
-                         kbm.key,
-                         kbm.behavior );
+      String str = durationString( kbm, itp.startTime );
       keylogBox.getChildren().add( new Text( str ) );
       texts.remove( itp.text );
       durations.remove( key );
     } else {
-      String str =
-          String.format( "%d : (%c) %s", counter, kbm.key, kbm.behavior );
+      String str = eventfulString( kbm );
       Text text = new Text( str );
       IntegerTextPair itp = new IntegerTextPair( counter, text );
       durations.put( key, itp );
@@ -198,7 +215,7 @@ public class RecordingController
    */
   private void logEventful( KeyBehaviorMapping kbm )
   {
-    String str = String.format( "%d : (%c) %s", counter, kbm.key, kbm.behavior );
+    String str = eventfulString( kbm );
     keylogBox.getChildren().add( new Text( str ) );
   }
 
