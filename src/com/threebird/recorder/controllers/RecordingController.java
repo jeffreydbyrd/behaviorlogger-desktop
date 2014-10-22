@@ -63,9 +63,37 @@ public class RecordingController
   {
     this.schema = sch;
     this.duration = duration;
+
     nameText.setText( schema.name );
 
-    // Populate the key-behavior reference box
+    populateKeyBehaviorReferenceBox();
+
+    initializeTimer();
+
+    referenceScrollPane.requestFocus();
+
+    // When keylogBox changes size, scroll to the bottom to show change
+    keylogBox.heightProperty()
+             .addListener( ( obv, oldV, newV ) -> eventsScrollPane.setVvalue( 1.0 ) );
+  }
+
+  /**
+   * Sets up the 'timer' field to call "onTick" every second.
+   */
+  private void initializeTimer()
+  {
+    timer = new Timeline();
+    timer.setCycleCount( Animation.INDEFINITE );
+    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
+    timer.getKeyFrames().add( kf );
+  }
+
+  /**
+   * Fills up the right-most ScrollPane with all the behaviors the researcher
+   * has mapped out. This serves as a reference during sessions
+   */
+  private void populateKeyBehaviorReferenceBox()
+  {
     schema.mappings.forEach( ( key, m ) -> {
       Text keyText = new Text( key.toString() );
       keyText.setWrappingWidth( 10 );
@@ -81,18 +109,6 @@ public class RecordingController
       HBox hbox = new HBox( keyText, separator, behaviorText );
       referenceBox.getChildren().add( hbox );
     } );
-
-    // Setup the timer
-    timer = new Timeline();
-    timer.setCycleCount( Animation.INDEFINITE );
-    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
-    timer.getKeyFrames().add( kf );
-
-    referenceScrollPane.requestFocus();
-
-    // When keylogBox changes size, scroll to the bottom to show change
-    keylogBox.heightProperty()
-             .addListener( ( obv, oldV, newV ) -> eventsScrollPane.setVvalue( 1.0 ) );
   }
 
   /**
@@ -126,32 +142,64 @@ public class RecordingController
     newSessionButton.setVisible( !playing );
   }
 
-  private HashMap< Character, Text > durBehaviors = new HashMap<>();
+  /**
+   * I'm simply creating this for the logDurational function so we can map a
+   * Character to both a Textbox and a start-time and save them for when the
+   * user stops a duration behavior.
+   */
+  private class IntegerTextPair
+  {
+    final Integer startTime;
+    final Text text;
+
+    public IntegerTextPair( Integer startTime, Text text )
+    {
+      this.startTime = startTime;
+      this.text = text;
+    }
+  }
+
+  private HashMap< Character, IntegerTextPair > durations = new HashMap<>();
 
   /**
-   * After a key is determined to have been mapped, we need to record the
-   * behavior. There are 3 possible actions: log a discrete behavior, start a
-   * durational behavior, or end a durational behavior.
+   * The user just pressed a key that represents a DurationBehavior. If this
+   * behavior has already started, stop it and log it to the left ScollPane.
+   * Otherwise start it and log it to the right ScrollPane
    */
-  private void logBehavior( KeyBehaviorMapping kbm )
+  private void logDurational( KeyBehaviorMapping kbm )
   {
-    Character k = kbm.key;
-    String behavior = kbm.behavior;
-    String str = String.format( "%d - (%c) %s", counter, k, behavior );
-    Text text = new Text( str );
+    Character key = kbm.key;
+    ObservableList< Node > texts = durationalBox.getChildren();
 
-    if (kbm.isDurational) {
-      ObservableList< Node > texts = durationalBox.getChildren();
-      if (durBehaviors.containsKey( k )) {
-        texts.remove( durBehaviors.get( k ) );
-        durBehaviors.remove( k );
-      } else {
-        durBehaviors.put( k, text );
-        texts.add( text );
-      }
+    if (durations.containsKey( key )) {
+      IntegerTextPair itp = durations.get( key );
+      String str =
+          String.format( "%d - %d : (%c) %s",
+                         itp.startTime,
+                         counter,
+                         kbm.key,
+                         kbm.behavior );
+      keylogBox.getChildren().add( new Text( str ) );
+      texts.remove( itp.text );
+      durations.remove( key );
     } else {
-      keylogBox.getChildren().add( text );
+      String str =
+          String.format( "%d : (%c) %s", counter, kbm.key, kbm.behavior );
+      Text text = new Text( str );
+      IntegerTextPair itp = new IntegerTextPair( counter, text );
+      durations.put( key, itp );
+      texts.add( text );
     }
+  }
+
+  /**
+   * The user just pressed a key that represents an event-based behavior. Simply
+   * log it to the left ScrollPane
+   */
+  private void logEventful( KeyBehaviorMapping kbm )
+  {
+    String str = String.format( "%d : (%c) %s", counter, kbm.key, kbm.behavior );
+    keylogBox.getChildren().add( new Text( str ) );
   }
 
   /**
@@ -171,7 +219,11 @@ public class RecordingController
     }
 
     schema.getMapping( c ).ifPresent( ( mapping ) -> {
-      logBehavior( mapping );
+      if (mapping.isDurational) {
+        logDurational( mapping );
+      } else {
+        logEventful( mapping );
+      }
     } );
   }
 
