@@ -45,10 +45,13 @@ public class RecordingController
   @FXML private ScrollPane durationalScrollPane;
   @FXML private VBox durationalBox;
 
+  @FXML private Text pausedText;
+  @FXML private Text recordingText;
+  @FXML private Label timeLabel;
+
   @FXML private Button playButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
-  @FXML private Label timeLabel;
 
   @FXML private ScrollPane referenceScrollPane;
   @FXML private VBox referenceBox;
@@ -140,6 +143,9 @@ public class RecordingController
     playButton.setText( playing ? "Stop" : "Play" );
     goBackButton.setVisible( !playing );
     newSessionButton.setVisible( !playing );
+
+    recordingText.setVisible( !recordingText.isVisible() );
+    pausedText.setVisible( !pausedText.isVisible() );
   }
 
   /**

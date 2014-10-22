@@ -10,6 +10,7 @@
    <children>
       <AnchorPane layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0">
          <children>
+            <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Schema Name" wrappingWidth="491.6888999938965" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             <GridPane layoutY="50.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="50.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="ALWAYS" prefWidth="242.39256286621094" />
@@ -31,8 +32,22 @@
                   </ScrollPane>
                </children>
             </GridPane>
-            <Text layoutY="366.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0" />
-            <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Schema Name" wrappingWidth="491.6888999938965" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <Text fx:id="recordingText" fill="#00ae11" layoutX="10.0" layoutY="376.0" strokeType="OUTSIDE" strokeWidth="0.0" text="recording" visible="false" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <Text fx:id="pausedText" fill="#bc0101" layoutX="20.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="paused" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <Text layoutY="366.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" />
+            <Label fx:id="timeLabel" alignment="CENTER_RIGHT" layoutX="399.0" layoutY="435.0" prefHeight="16.0" prefWidth="166.0" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" text="0" textAlignment="RIGHT" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+            </Label>
             <HBox layoutY="431.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
                   <Button fx:id="playButton" focusTraversable="false" layoutX="10.0" layoutY="433.0" mnemonicParsing="false" onAction="#onPlayPress" text="Play" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
@@ -40,11 +55,6 @@
                   <Button fx:id="newSessionButton" focusTraversable="false" layoutX="230.0" layoutY="453.0" mnemonicParsing="false" onAction="#onNewSessionPress" text="Start New Session" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="125.0" />
                </children>
             </HBox>
-            <Label fx:id="timeLabel" alignment="CENTER_RIGHT" layoutX="399.0" layoutY="435.0" prefHeight="16.0" prefWidth="166.0" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" text="0" textAlignment="RIGHT" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
-               <padding>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-               </padding>
-            </Label>
          </children>
       </AnchorPane>
       <ScrollPane fx:id="referenceScrollPane" fitToWidth="true" focusTraversable="false" layoutX="501.0" layoutY="126.0" prefHeight="200.0" prefWidth="190.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
