@@ -295,11 +295,11 @@ public class SchemasController
 
       String key = keyField.getText().trim();
       String behavior = behaviorField.getText().trim();
-      boolean isDurational = checkbox.isSelected();
+      boolean isContinuous = checkbox.isSelected();
 
       if (!key.isEmpty() && !behavior.isEmpty()) {
         Character ch = key.charAt( 0 );
-        temp.put( ch, new KeyBehaviorMapping( key, behavior, isDurational ) );
+        temp.put( ch, new KeyBehaviorMapping( key, behavior, isContinuous ) );
       }
     }
 

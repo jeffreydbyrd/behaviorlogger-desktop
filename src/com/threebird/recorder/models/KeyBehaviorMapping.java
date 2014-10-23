@@ -4,7 +4,7 @@ public class KeyBehaviorMapping
 {
   public final Character key;
   public final String behavior;
-  public final boolean isDurational;
+  public final boolean isContinuous;
 
   public KeyBehaviorMapping( Character key,
                              String behavior,
@@ -12,7 +12,7 @@ public class KeyBehaviorMapping
   {
     this.key = key;
     this.behavior = behavior;
-    this.isDurational = isDurational;
+    this.isContinuous = isDurational;
   }
 
   public KeyBehaviorMapping( String key, String behavior, boolean isDurational )
@@ -23,6 +23,6 @@ public class KeyBehaviorMapping
   @Override public String toString()
   {
     return "KeyBehaviorMapping [key=" + key + ", behavior=" + behavior
-        + ", isDurational=" + isDurational + "]";
+        + ", isContinuous=" + isContinuous + "]";
   }
 }

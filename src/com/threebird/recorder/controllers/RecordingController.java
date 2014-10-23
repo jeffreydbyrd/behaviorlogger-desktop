@@ -39,11 +39,10 @@ public class RecordingController
 
   @FXML private Text nameText;
 
-  @FXML private ScrollPane eventsScrollPane;
-  @FXML private VBox keylogBox;
+  @FXML private ScrollPane behaviorScrollPane;
+  @FXML private VBox behaviorBox;
 
-  @FXML private ScrollPane durationalScrollPane;
-  @FXML private VBox durationalBox;
+  @FXML private VBox continuousBox;
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
@@ -75,9 +74,9 @@ public class RecordingController
 
     referenceScrollPane.requestFocus();
 
-    // When keylogBox changes size, scroll to the bottom to show change
-    keylogBox.heightProperty()
-             .addListener( ( obv, oldV, newV ) -> eventsScrollPane.setVvalue( 1.0 ) );
+    // When behaviorBox changes size, scroll to the bottom to show change
+    behaviorBox.heightProperty()
+             .addListener( ( obv, oldV, newV ) -> behaviorScrollPane.setVvalue( 1.0 ) );
   }
 
   /**
@@ -152,7 +151,7 @@ public class RecordingController
    * Builds a String for a duration behavior that will be logged in the left
    * ScrollPane
    */
-  private String durationString( KeyBehaviorMapping kbm, Integer startTime )
+  private String continuousString( KeyBehaviorMapping kbm, Integer startTime )
   {
     String format = "%d - %d : (%c) %s";
     String str =
@@ -164,7 +163,7 @@ public class RecordingController
    * Builds a String for an eventful behavior that will be logged in the left
    * ScrollPane
    */
-  private String eventfulString( KeyBehaviorMapping kbm )
+  private String discreteString( KeyBehaviorMapping kbm )
   {
     String str =
         String.format( "%d : (%c) %s", counter, kbm.key, kbm.behavior );
@@ -172,9 +171,9 @@ public class RecordingController
   }
 
   /**
-   * I'm simply creating this for the logDurational function so we can map a
+   * I'm simply creating this for the logContinuous function so we can map a
    * Character to both a Textbox and a start-time and save them for when the
-   * user stops a duration behavior.
+   * user stops a continuous behavior.
    */
   private class IntegerTextPair
   {
@@ -188,41 +187,41 @@ public class RecordingController
     }
   }
 
-  private HashMap< Character, IntegerTextPair > durations = new HashMap<>();
+  private HashMap< Character, IntegerTextPair > intermediate = new HashMap<>();
 
   /**
    * The user just pressed a key that represents a DurationBehavior. If this
    * behavior has already started, stop it and log it to the left ScollPane.
    * Otherwise start it and log it to the right ScrollPane
    */
-  private void logDurational( KeyBehaviorMapping kbm )
+  private void logContinuous( KeyBehaviorMapping kbm )
   {
     Character key = kbm.key;
-    ObservableList< Node > texts = durationalBox.getChildren();
+    ObservableList< Node > texts = continuousBox.getChildren();
 
-    if (durations.containsKey( key )) {
-      IntegerTextPair itp = durations.get( key );
-      String str = durationString( kbm, itp.startTime );
-      keylogBox.getChildren().add( new Text( str ) );
+    if (intermediate.containsKey( key )) {
+      IntegerTextPair itp = intermediate.get( key );
+      String str = continuousString( kbm, itp.startTime );
+      behaviorBox.getChildren().add( new Text( str ) );
       texts.remove( itp.text );
-      durations.remove( key );
+      intermediate.remove( key );
     } else {
-      String str = eventfulString( kbm );
+      String str = discreteString( kbm );
       Text text = new Text( str );
       IntegerTextPair itp = new IntegerTextPair( counter, text );
-      durations.put( key, itp );
+      intermediate.put( key, itp );
       texts.add( text );
     }
   }
 
   /**
-   * The user just pressed a key that represents an event-based behavior. Simply
+   * The user just pressed a key that represents a discrete behavior. Simply
    * log it to the left ScrollPane
    */
-  private void logEventful( KeyBehaviorMapping kbm )
+  private void logDiscrete( KeyBehaviorMapping kbm )
   {
-    String str = eventfulString( kbm );
-    keylogBox.getChildren().add( new Text( str ) );
+    String str = discreteString( kbm );
+    behaviorBox.getChildren().add( new Text( str ) );
   }
 
   /**
@@ -242,10 +241,10 @@ public class RecordingController
     }
 
     schema.getMapping( c ).ifPresent( ( mapping ) -> {
-      if (mapping.isDurational) {
-        logDurational( mapping );
+      if (mapping.isContinuous) {
+        logContinuous( mapping );
       } else {
-        logEventful( mapping );
+        logDiscrete( mapping );
       }
     } );
   }
