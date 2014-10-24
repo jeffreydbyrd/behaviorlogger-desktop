@@ -69,7 +69,7 @@ public class EventRecorder extends Application
    *          - the duration, in seconds, of the session
    * @throws IOException
    */
-  public static void toRecordingView( Schema schema, int duration )
+  public static void toRecordingView( Schema schema )
       throws IOException
   {
     FXMLLoader fxmlLoader =
@@ -78,7 +78,7 @@ public class EventRecorder extends Application
     Parent root = (Parent) fxmlLoader.load();
     Scene scene = new Scene( root );
 
-    fxmlLoader.< RecordingController > getController().init( schema, duration );
+    fxmlLoader.< RecordingController > getController().init( schema );
 
     STAGE.setTitle( "Recording" );
     STAGE.setScene( scene );

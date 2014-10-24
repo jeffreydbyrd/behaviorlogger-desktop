@@ -22,12 +22,7 @@
             <AnchorPane>
                <children>
             				<ListView fx:id="schemaList" prefHeight="448.0" prefWidth="317.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0" />
-                  <HBox layoutX="7.0" layoutY="484.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
-                     <children>
-                        <Button fx:id="minusSchemaButton" layoutX="9.0" layoutY="453.0" mnemonicParsing="false" onAction="#onMinusSchemaClicked" text="-" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="7.0" />
-                        <Button fx:id="plusSchemaButton" layoutX="39.0" layoutY="453.0" mnemonicParsing="false" onAction="#onPlusSchemaClicked" text="+" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="36.0" />
-                     </children>
-                  </HBox>
+                  <Button fx:id="createSchemaButton" layoutX="10.0" layoutY="474.0" mnemonicParsing="false" onAction="#onCreateSchemaClicked" text="Create Schema" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" />
                </children>
             </AnchorPane>
             <AnchorPane GridPane.columnIndex="1">
@@ -61,12 +56,7 @@
                               </AnchorPane>
                            </content>
                         </ScrollPane>
-                        <HBox layoutY="394.0" spacing="10.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="0.0">
-                           <children>
-                              <Button fx:id="plusMappingButton" layoutY="292.0" mnemonicParsing="false" onAction="#onPlusMappingClicked" text="+" textAlignment="CENTER" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="0.0" />
-                              <Button fx:id="saveButton" layoutY="292.0" mnemonicParsing="false" onAction="#onSaveClicked" text="Save" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="40.0" />
-                           </children>
-                        </HBox>
+                        <Button fx:id="addRowButton" layoutY="394.0" mnemonicParsing="false" onAction="#onAddRowClicked" text="Add Row" textAlignment="CENTER" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" />
                         <Label layoutX="9.0" layoutY="433.0" text="Session Duration" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="0.0" />
                         <HBox layoutX="14.0" layoutY="383.0" spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0">
                            <children>
@@ -75,14 +65,11 @@
                               <TextField fx:id="minutesField" prefHeight="26.0" prefWidth="40.0" promptText="mm" />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
                               <TextField fx:id="secondsField" prefHeight="26.0" prefWidth="40.0" promptText="ss" />
-                              <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStartClicked" text="Start">
-                                 <HBox.margin>
-                                    <Insets left="20.0" />
-                                 </HBox.margin>
-                              </Button>
                            </children>
                         </HBox>
-                        <Separator layoutX="15.0" layoutY="338.0" prefWidth="200.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" />
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#onSaveClicked" text="Save" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="90.0" />
+                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStartClicked" text="Start" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+                        <Separator layoutX="15.0" layoutY="338.0" prefWidth="200.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" />
                      </children>
                   </AnchorPane>
                </children>

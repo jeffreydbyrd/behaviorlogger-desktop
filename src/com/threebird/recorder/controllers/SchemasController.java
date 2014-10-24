@@ -38,8 +38,7 @@ import com.threebird.recorder.models.Schema;
  */
 public class SchemasController
 {
-  @FXML private Button plusSchemaButton;
-  @FXML private Button minusSchemaButton;
+  @FXML private Button createSchemaButton;
   @FXML private ListView< Schema > schemaList;
   private ObservableList< Schema > schemas;
 
@@ -49,7 +48,7 @@ public class SchemasController
   @FXML private TextField nameField;
 
   @FXML private VBox mappingsBox;
-  @FXML private Button plusMappingButton;
+  @FXML private Button addRowButton;
   @FXML private Button saveButton;
 
   @FXML private TextField hoursField;
@@ -221,27 +220,14 @@ public class SchemasController
   }
 
   /**
-   * When user clicks "+" button: create SCHEMA, add to 'schemas' and select it
+   * When user clicks "Create Schema" button: create Schema, add to 'schemas' and select it
    */
-  @FXML private void onPlusSchemaClicked( ActionEvent evt )
+  @FXML private void onCreateSchemaClicked( ActionEvent evt )
   {
     schemas.add( new Schema( "New Schema" ) );
     int i = schemas.size() - 1;
     schemaList.getSelectionModel().select( i );
     schemaList.getFocusModel().focus( i );
-  }
-
-  /**
-   * When user clicks "-" button: remove selected SCHEMA from 'schemas'
-   */
-  @FXML private void onMinusSchemaClicked( ActionEvent evt )
-  {
-    if (schemas.isEmpty()) {
-      return;
-    }
-
-    int i = schemaList.getSelectionModel().getSelectedIndex();
-    schemas.remove( i );
   }
 
   /**
@@ -267,9 +253,9 @@ public class SchemasController
   }
 
   /**
-   * When user clicks "+" under the key-behavior mappingsBox
+   * When user clicks "Add Row" under the key-behavior mappingsBox
    */
-  @FXML private void onPlusMappingClicked( ActionEvent evt )
+  @FXML private void onAddRowClicked( ActionEvent evt )
   {
     addMappingBox( "", "" );
   }
@@ -304,6 +290,7 @@ public class SchemasController
     }
 
     schema.mappings = temp;
+    schema.duration = getDuration();
   }
 
   /**
@@ -314,7 +301,6 @@ public class SchemasController
   @FXML private void onStartClicked( ActionEvent evt ) throws IOException
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
-    int duration = getDuration();
-    EventRecorder.toRecordingView( schema, duration );
+    EventRecorder.toRecordingView( schema );
   }
 }

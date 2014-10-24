@@ -32,7 +32,6 @@ import com.threebird.recorder.models.Schema;
 public class RecordingController
 {
   private Schema schema;
-  private int duration;
   private int counter = 0;
   private boolean playing = false;
   private Timeline timer;
@@ -61,10 +60,9 @@ public class RecordingController
    * @param duration
    *          - the duration, in seconds, of the session
    */
-  public void init( Schema sch, int duration )
+  public void init( Schema sch )
   {
     this.schema = sch;
-    this.duration = duration;
 
     nameText.setText( schema.name );
 
@@ -122,7 +120,7 @@ public class RecordingController
     counter++;
     timeLabel.setText( counter + "" );
 
-    if (counter == duration) {
+    if (counter == schema.duration) {
       timeLabel.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:black;-fx-border-radius:2;" );
     }
   }
@@ -261,7 +259,7 @@ public class RecordingController
 
   @FXML private void onNewSessionPress( ActionEvent evt ) throws IOException
   {
-    EventRecorder.toRecordingView( schema, duration );
+    EventRecorder.toRecordingView( schema );
   }
 
   @FXML private void stopClickPropogation( MouseEvent evt )

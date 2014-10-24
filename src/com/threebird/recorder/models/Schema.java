@@ -10,16 +10,20 @@ public class Schema
 {
   public String name;
   public HashMap< Character, KeyBehaviorMapping > mappings;
+  public int duration;
 
-  public Schema( String name, HashMap< Character, KeyBehaviorMapping > mappings )
+  public Schema( String name,
+                 HashMap< Character, KeyBehaviorMapping > mappings,
+                 int duration )
   {
     this.name = name;
     this.mappings = mappings;
+    this.duration = duration;
   }
 
   public Schema( String name )
   {
-    this( name, new HashMap< Character, KeyBehaviorMapping >() );
+    this( name, new HashMap< Character, KeyBehaviorMapping >(), 0 );
   }
 
   /**
