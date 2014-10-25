@@ -51,9 +51,8 @@ public class EventRecorder extends Application
    * 
    * @param schema
    *          - the currently selected schema, or null if no schema is selected
-   * @throws IOException
    */
-  public static void toSchemaView() throws IOException
+  public static void toSchemaView()
   {
     STAGE.setTitle( "Scheme Select" );
     STAGE.setScene( schemaScene );
@@ -61,21 +60,42 @@ public class EventRecorder extends Application
   }
 
   /**
+   * Sets the stage to the CreateScema view.
+   */
+  public static void toCreateSchemaView()
+  {
+    FXMLLoader fxmlLoader =
+        new FXMLLoader( EventRecorder.class.getResource( "./views/create_schema.fxml" ) );
+
+    Parent root;
+    try {
+      root = (Parent) fxmlLoader.load();
+    } catch (IOException e) {
+      throw new RuntimeException( e );
+    }
+
+    Scene scene = new Scene( root );
+    STAGE.setTitle( "Create Schema" );
+    STAGE.setScene( scene );
+  }
+
+  /**
    * Sets the stage to the Recording view
    * 
    * @param schema
    *          - the currently selected Schema. This parameter must not be null
-   * @param duration
-   *          - the duration, in seconds, of the session
-   * @throws IOException
    */
   public static void toRecordingView( Schema schema )
-      throws IOException
   {
     FXMLLoader fxmlLoader =
         new FXMLLoader( EventRecorder.class.getResource( "./views/recording.fxml" ) );
 
-    Parent root = (Parent) fxmlLoader.load();
+    Parent root;
+    try {
+      root = (Parent) fxmlLoader.load();
+    } catch (IOException e) {
+      throw new RuntimeException( e );
+    }
     Scene scene = new Scene( root );
 
     fxmlLoader.< RecordingController > getController().init( schema );

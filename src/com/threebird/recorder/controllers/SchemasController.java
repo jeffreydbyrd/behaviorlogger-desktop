@@ -1,6 +1,5 @@
 package com.threebird.recorder.controllers;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -90,6 +89,11 @@ public class SchemasController
     schemas = FXCollections.observableArrayList();
   }
 
+  /**
+   * This is fired when the user is focused on the 'nameField' and she presses
+   * ENTER or she focuses on something else. It simply updates the selected
+   * Schema and redraws the list-view
+   */
   private void onSchemaNameChange()
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
@@ -220,14 +224,12 @@ public class SchemasController
   }
 
   /**
-   * When user clicks "Create Schema" button: create Schema, add to 'schemas' and select it
+   * When user clicks "Create Schema" button: create Schema, add to 'schemas'
+   * and select it
    */
   @FXML private void onCreateSchemaClicked( ActionEvent evt )
   {
-    schemas.add( new Schema( "New Schema" ) );
-    int i = schemas.size() - 1;
-    schemaList.getSelectionModel().select( i );
-    schemaList.getFocusModel().focus( i );
+    EventRecorder.toCreateSchemaView();
   }
 
   /**
@@ -298,7 +300,7 @@ public class SchemasController
    * the schema and time limit for the recording. The "recording" view is
    * controlled by RecordingController.java
    */
-  @FXML private void onStartClicked( ActionEvent evt ) throws IOException
+  @FXML private void onStartClicked( ActionEvent evt )
   {
     Schema schema = schemaList.getSelectionModel().getSelectedItem();
     EventRecorder.toRecordingView( schema );

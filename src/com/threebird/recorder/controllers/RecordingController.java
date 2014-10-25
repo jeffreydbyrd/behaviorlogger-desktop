@@ -1,6 +1,5 @@
 package com.threebird.recorder.controllers;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import javafx.animation.Animation;
@@ -252,12 +251,12 @@ public class RecordingController
     togglePlayButton();
   }
 
-  @FXML private void onGoBackPress( ActionEvent evt ) throws IOException
+  @FXML private void onGoBackPress( ActionEvent evt )
   {
     EventRecorder.toSchemaView();
   }
 
-  @FXML private void onNewSessionPress( ActionEvent evt ) throws IOException
+  @FXML private void onNewSessionPress( ActionEvent evt )
   {
     EventRecorder.toRecordingView( schema );
   }
