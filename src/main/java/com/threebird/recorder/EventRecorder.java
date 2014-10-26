@@ -43,7 +43,7 @@ public class EventRecorder extends Application
     // to it later
     schemaScene = new Scene( root );
 
-    toSchemaView();
+    toSchemasView();
   }
 
   /**
@@ -52,7 +52,7 @@ public class EventRecorder extends Application
    * @param schema
    *          - the currently selected schema, or null if no schema is selected
    */
-  public static void toSchemaView()
+  public static void toSchemasView()
   {
     STAGE.setTitle( "Scheme Select" );
     STAGE.setScene( schemaScene );

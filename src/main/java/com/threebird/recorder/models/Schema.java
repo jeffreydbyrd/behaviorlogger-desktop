@@ -8,6 +8,7 @@ import java.util.Optional;
  */
 public class Schema
 {
+  public Integer id;
   public String name;
   public HashMap< Character, KeyBehaviorMapping > mappings;
   public int duration;

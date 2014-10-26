@@ -253,7 +253,7 @@ public class RecordingController
 
   @FXML private void onGoBackPress( ActionEvent evt )
   {
-    EventRecorder.toSchemaView();
+    EventRecorder.toSchemasView();
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )
