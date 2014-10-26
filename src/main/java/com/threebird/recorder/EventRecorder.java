@@ -60,12 +60,12 @@ public class EventRecorder extends Application
   }
 
   /**
-   * Sets the stage to the CreateScema view.
+   * Sets the stage to the EditScema view.
    */
-  public static void toCreateSchemaView()
+  public static void toEditSchemaView()
   {
     FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( "./views/create_schema.fxml" ) );
+        new FXMLLoader( EventRecorder.class.getResource( "./views/edit_schema.fxml" ) );
 
     Parent root;
     try {

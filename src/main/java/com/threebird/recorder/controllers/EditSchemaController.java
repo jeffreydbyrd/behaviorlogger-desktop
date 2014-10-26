@@ -17,7 +17,7 @@ import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
 
-public class CreateSchemaController extends AbstractEditSchemaController
+public class EditSchemaController extends AbstractEditSchemaController
 {
   private Schema newSchema = new Schema( "New Schema" );
 
@@ -38,7 +38,7 @@ public class CreateSchemaController extends AbstractEditSchemaController
     EventRecorder.toSchemasView();
   }
 
-  @FXML void onCreateSchemaClicked( ActionEvent evt )
+  @FXML void onSaveSchemaClicked( ActionEvent evt )
   {
     HashMap< Character, KeyBehaviorMapping > temp =
         new HashMap< Character, KeyBehaviorMapping >();
