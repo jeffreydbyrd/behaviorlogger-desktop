@@ -1,6 +1,5 @@
 package com.threebird.recorder.controllers;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -18,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import com.google.common.base.Strings;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
@@ -25,12 +25,14 @@ import com.threebird.recorder.persistence.Schemas;
 
 public class EditSchemaController
 {
-  @FXML protected VBox mappingsBox;
-  @FXML protected Button addRowButton;
+  @FXML private TextField nameField;
 
-  @FXML protected TextField hoursField;
-  @FXML protected TextField minutesField;
-  @FXML protected TextField secondsField;
+  @FXML private VBox mappingsBox;
+  @FXML private Button addRowButton;
+
+  @FXML private TextField hoursField;
+  @FXML private TextField minutesField;
+  @FXML private TextField secondsField;
 
   protected static int defaultNumBoxes = 10;
   protected static String digits = "0123456789";
@@ -38,7 +40,7 @@ public class EditSchemaController
       "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
   private static final Insets insets = new Insets( .5, .5, .5, .5 );
 
-  private Schema newSchema = new Schema();
+  private Schema model = new Schema();
 
   @FXML private void initialize()
   {
@@ -168,13 +170,12 @@ public class EditSchemaController
       }
     }
 
-    newSchema.mappings = temp;
-    newSchema.duration = getDuration();
+    model.name = Strings.nullToEmpty( nameField.getText().trim() );
+    model.mappings = temp;
+    model.duration = getDuration();
 
-    try {
-      Schemas.save( newSchema );
-    } catch (SQLException e) {
-      throw new RuntimeException( e );
-    }
+    Schemas.save( model );
+
+    EventRecorder.toSchemasView();
   }
 }

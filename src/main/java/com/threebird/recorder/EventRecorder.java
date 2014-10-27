@@ -23,7 +23,6 @@ public class EventRecorder extends Application
    * accessible across the whole app
    */
   public static Stage STAGE;
-  public static Scene schemaScene;
 
   public static void main( String[] args )
   {
@@ -34,27 +33,27 @@ public class EventRecorder extends Application
   {
     STAGE = primaryStage;
 
-    // load up the FXML file we generated with Scene Builder, "schemas.fxml".
-    // This view is controlled by SchemasController.java
-    Parent root =
-        FXMLLoader.load( EventRecorder.class.getResource( "./views/schemas.fxml" ) );
-
-    // Initialize the Schema view and keep it around in memory so we can go back
-    // to it later
-    schemaScene = new Scene( root );
-
     toSchemasView();
   }
 
   /**
    * Sets the stage to the Schema view
-   * 
-   * @param schema
-   *          - the currently selected schema, or null if no schema is selected
    */
   public static void toSchemasView()
   {
     STAGE.setTitle( "Scheme Select" );
+
+    // load up the FXML file we generated with Scene Builder, "schemas.fxml".
+    // This view is controlled by SchemasController.java
+    Parent root;
+    try {
+      root =
+          FXMLLoader.load( EventRecorder.class.getResource( "./views/schemas.fxml" ) );
+    } catch (IOException e) {
+      throw new RuntimeException( e );
+    }
+
+    Scene schemaScene = new Scene( root );
     STAGE.setScene( schemaScene );
     STAGE.show();
   }

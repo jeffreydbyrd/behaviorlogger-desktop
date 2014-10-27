@@ -1,6 +1,5 @@
 package com.threebird.recorder.controllers;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import javafx.beans.value.ObservableValue;
@@ -34,7 +33,6 @@ public class SchemasController
 
   @FXML private AnchorPane rightSide;
   @FXML private Text emptyMessage;
-  @FXML private Text nameText;
 
   @FXML private VBox mappingsBox;
 
@@ -59,12 +57,7 @@ public class SchemasController
    */
   private void initSchemaListView()
   {
-    List< Schema > all;
-    try {
-      all = Schemas.all();
-    } catch (SQLException e) {
-      throw new RuntimeException( e );
-    }
+    List< Schema > all = Schemas.all();
 
     schemas = FXCollections.observableArrayList( all );
     schemaList.setItems( schemas );
@@ -118,7 +111,6 @@ public class SchemasController
                                Schema newV )
   {
     if (newV != null) {
-      nameText.setText( newV.name );
       rightSide.setVisible( true );
       emptyMessage.setVisible( false );
       populateMappingsTable( newV );

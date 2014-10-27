@@ -19,7 +19,7 @@
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                <children>
-                  <VBox AnchorPane.leftAnchor="0.0">
+                  <VBox AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
                      <children>
                         <Label text="Session Duration" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <HBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
@@ -44,7 +44,7 @@
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
                   <Button fx:id="addRowButton" mnemonicParsing="false" onAction="#onAddRowClicked" text="Add Row" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
-                  <ScrollPane fitToWidth="true" prefHeight="329.0" prefWidth="401.0" AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane fitToWidth="true" prefHeight="329.0" prefWidth="401.0" AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="35.0">
                      <content>
                         <AnchorPane>
                            <children>
@@ -60,6 +60,7 @@
                         </AnchorPane>
                      </content>
                   </ScrollPane>
+                  <TextField fx:id="nameField" layoutY="1.0" prefHeight="26.0" prefWidth="366.0" promptText="Schema Name" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </children>

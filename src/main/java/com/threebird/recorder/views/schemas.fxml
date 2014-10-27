@@ -35,11 +35,6 @@
                      <children>
                         <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Text fx:id="nameText" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="365.46624755859375" StackPane.alignment="CENTER_LEFT" VBox.vgrow="NEVER">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Text>
                               <ScrollPane fitToWidth="true" layoutY="16.0" prefHeight="246.0" prefWidth="411.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="ALWAYS">
                                  <content>
                                     <VBox fx:id="mappingsBox" layoutY="0.431640625" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
