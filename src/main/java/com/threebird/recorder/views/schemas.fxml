@@ -42,18 +42,26 @@
                               </Text>
                               <ScrollPane fitToWidth="true" layoutY="16.0" prefHeight="246.0" prefWidth="411.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="ALWAYS">
                                  <content>
-                                    <AnchorPane>
+                                    <VBox fx:id="mappingsBox" layoutY="0.431640625" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <Label alignment="CENTER" prefHeight="18.0" prefWidth="39.0" text="Key" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="NEVER">
-                                             <HBox.margin>
-                                                <Insets />
-                                             </HBox.margin>
-                                          </Label>
-                                          <Label alignment="CENTER" layoutX="39.0" prefHeight="18.0" prefWidth="283.0" text="Behavior" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="80.0" HBox.hgrow="ALWAYS" />
-                                          <Label alignment="CENTER" layoutX="49.0" layoutY="10.0" prefHeight="18.0" prefWidth="76.0" text="Continuous" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                          <VBox fx:id="mappingsBox" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                                          <HBox layoutY="-0.431640625" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                             <children>
+                                                <Label minWidth="45.0" text="(cont.)" />
+                                                <Label minWidth="15.0" text="m" />
+                                                <Label text=":" />
+                                                <Label text="behavior with a really long description one two three four five" wrapText="true" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="0.0" />
+                                             </children>
+                                          </HBox>
+                                          <HBox spacing="5.0">
+                                             <children>
+                                                <Label minWidth="45.0" text="(cont.)" />
+                                                <Label minWidth="15.0" text="e" />
+                                                <Label text=":" />
+                                                <Label text="small description" wrapText="true" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="0.0" />
+                                             </children>
+                                          </HBox>
                                        </children>
-                                    </AnchorPane>
+                                    </VBox>
                                  </content>
                               </ScrollPane>
                               <VBox layoutY="345.0">

@@ -1,19 +1,25 @@
 package com.threebird.recorder.controllers;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.persistence.Schemas;
 
 /**
  * Controls the first view the user sees. All these member variables with the @FXML
@@ -29,13 +35,14 @@ public class SchemasController
   @FXML private AnchorPane rightSide;
   @FXML private Text emptyMessage;
   @FXML private Text nameText;
-  @FXML private VBox mappingBox;
+
+  @FXML private VBox mappingsBox;
 
   @FXML private Button saveButton;
   @FXML private Button startButton;
 
   private ObservableList< Schema > schemas;
-  
+
   /**
    * When JavaFX initializes a controller, it will look for an 'initialize()'
    * method that's annotated with @FXML. If it finds one, it will call it as
@@ -43,14 +50,8 @@ public class SchemasController
    */
   @FXML private void initialize()
   {
-    initSchemas();
-    initSchemaListView();
-  }
-
-  private void initSchemas()
-  {
     rightSide.setVisible( false );
-    schemas = FXCollections.observableArrayList();
+    initSchemaListView();
   }
 
   /**
@@ -58,7 +59,16 @@ public class SchemasController
    */
   private void initSchemaListView()
   {
+    List< Schema > all;
+    try {
+      all = Schemas.all();
+    } catch (SQLException e) {
+      throw new RuntimeException( e );
+    }
+
+    schemas = FXCollections.observableArrayList( all );
     schemaList.setItems( schemas );
+
     schemaList.setCellFactory( ( ListView< Schema > ls ) -> new ListCell< Schema >() {
       @Override protected void updateItem( Schema s, boolean bln )
       {
@@ -73,6 +83,33 @@ public class SchemasController
   }
 
   /**
+   * Populates the 'mappingBox' with the currently selected Schema's
+   * key-behavior mappings
+   */
+  private void populateMappingsTable( Schema schema )
+  {
+    mappingsBox.getChildren().clear();
+
+    schema.mappings.values().forEach( mapping -> {
+      Label contLbl = new Label();
+      contLbl.setText( mapping.isContinuous ? "(cont.)" : "" );
+      contLbl.setMinWidth( 45 );
+
+      Label keyLbl = new Label( mapping.key.toString() );
+      keyLbl.setMinWidth( 15 );
+
+      Label separator = new Label( ":" );
+
+      Label behaviorLbl = new Label( mapping.behavior );
+      behaviorLbl.setWrapText( true );
+
+      HBox hbox = new HBox( contLbl, keyLbl, separator, behaviorLbl );
+      hbox.setSpacing( 5 );
+      mappingsBox.getChildren().add( hbox );
+    } );
+  }
+
+  /**
    * On schema-select: if the new value is null, hide right-hand-side.
    * Otherwise, populate right-hand-side with new schema's data
    */
@@ -84,6 +121,7 @@ public class SchemasController
       nameText.setText( newV.name );
       rightSide.setVisible( true );
       emptyMessage.setVisible( false );
+      populateMappingsTable( newV );
     } else {
       rightSide.setVisible( false );
       emptyMessage.setVisible( true );

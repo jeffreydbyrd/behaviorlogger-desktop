@@ -38,7 +38,7 @@ public class EditSchemaController
       "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
   private static final Insets insets = new Insets( .5, .5, .5, .5 );
 
-  private Schema newSchema = new Schema( "New Schema" );
+  private Schema newSchema = new Schema();
 
   @FXML private void initialize()
   {
@@ -94,6 +94,10 @@ public class EditSchemaController
    */
   protected void addMappingBox( String key, String behavior )
   {
+    CheckBox checkbox = new CheckBox();
+    HBox.setHgrow( checkbox, Priority.NEVER );
+    HBox.setMargin( checkbox, new Insets( 5, 5, 0, 10 ) );
+
     TextField keyField = new TextField( key );
     keyField.setMaxWidth( 40 );
     HBox.setHgrow( keyField, Priority.NEVER );
@@ -104,12 +108,8 @@ public class EditSchemaController
     HBox.setHgrow( behaviorField, Priority.ALWAYS );
     HBox.setMargin( behaviorField, insets );
 
-    CheckBox checkbox = new CheckBox();
-    HBox.setHgrow( checkbox, Priority.NEVER );
-    HBox.setMargin( checkbox, new Insets( 3, 30, .5, 10 ) );
-
     mappingsBox.getChildren()
-               .add( new HBox( keyField, behaviorField, checkbox ) );
+               .add( new HBox( checkbox, keyField, behaviorField ) );
   }
 
   /**
@@ -154,9 +154,9 @@ public class EditSchemaController
 
     for (Node hbox : nodes) {
       Iterator< Node > it = ((HBox) hbox).getChildren().iterator();
+      CheckBox checkbox = (CheckBox) it.next();
       TextField keyField = (TextField) it.next();
       TextField behaviorField = (TextField) it.next();
-      CheckBox checkbox = (CheckBox) it.next();
 
       String key = keyField.getText().trim();
       String behavior = behaviorField.getText().trim();

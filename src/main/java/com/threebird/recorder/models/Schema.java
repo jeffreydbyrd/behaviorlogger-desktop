@@ -3,6 +3,8 @@ package com.threebird.recorder.models;
 import java.util.HashMap;
 import java.util.Optional;
 
+import com.google.common.collect.Maps;
+
 /**
  * Represents a set of key-behavior mappings
  */
@@ -10,22 +12,8 @@ public class Schema
 {
   public Integer id;
   public String name;
-  public HashMap< Character, KeyBehaviorMapping > mappings;
-  public int duration;
-
-  public Schema( String name,
-                 HashMap< Character, KeyBehaviorMapping > mappings,
-                 int duration )
-  {
-    this.name = name;
-    this.mappings = mappings;
-    this.duration = duration;
-  }
-
-  public Schema( String name )
-  {
-    this( name, new HashMap< Character, KeyBehaviorMapping >(), 0 );
-  }
+  public HashMap< Character, KeyBehaviorMapping > mappings = Maps.newHashMap();
+  public int duration = 0;
 
   /**
    * Returns the KeyBehaviorMapping that corresponds to 'key', wrapped in an
@@ -35,5 +23,10 @@ public class Schema
   public Optional< KeyBehaviorMapping > getMapping( Character key )
   {
     return Optional.ofNullable( mappings.get( key ) );
+  }
+
+  public void addMapping( KeyBehaviorMapping mapping )
+  {
+    mappings.put( mapping.key, mapping );
   }
 }
