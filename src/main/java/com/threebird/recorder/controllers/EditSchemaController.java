@@ -40,18 +40,39 @@ public class EditSchemaController
       "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
   private static final Insets insets = new Insets( .5, .5, .5, .5 );
 
-  private Schema model = new Schema();
+  private Schema model;
 
-  @FXML private void initialize()
+  /**
+   * @param sch
+   *          - The Schema being edited. If null, a new schema is created
+   */
+  public void init( Schema sch )
   {
-    addRowButton.requestFocus();
+    model = sch == null ? new Schema() : sch;
+    nameField.setText( Strings.nullToEmpty( model.name ) );
 
-    for (int i = 0; i < 10; i++) {
-      addMappingBox( "", "" );
-    }
+    populateMappingsBox( model );
+
+    int hrs = model.duration / 60 / 60;
+    int minDivisor = model.duration % 60 % 60;
+    int mins = minDivisor / 60;
+    int secs = minDivisor % 60;
+
+    hoursField.setText( intToStr( hrs ) );
+    minutesField.setText( intToStr( mins ) );
+    secondsField.setText( intToStr( secs ) );
+
+    hoursField.setOnKeyTyped( createFieldLimiter( hoursField, acceptableKeys, 2 ) );
+    minutesField.setOnKeyTyped( createFieldLimiter( minutesField, acceptableKeys, 2 ) );
+    secondsField.setOnKeyTyped( createFieldLimiter( secondsField, acceptableKeys, 2 ) );
   }
 
-  protected static int strToInt( String s )
+  private static String intToStr( int i )
+  {
+    return i > 0 ? i + "" : "";
+  }
+
+  private static int strToInt( String s )
   {
     return Integer.valueOf( s.isEmpty() ? "0" : s );
   }
@@ -60,7 +81,7 @@ public class EditSchemaController
    * Converts the contents of hoursField, minutesField, and secondsField into
    * the equivalent number of seconds and
    */
-  protected int getDuration()
+  private int getDuration()
   {
     Integer hours = strToInt( hoursField.getText() );
     Integer mins = strToInt( minutesField.getText() );
@@ -79,7 +100,7 @@ public class EditSchemaController
    *         outside 'acceptableKeys' or if the length of 'field' is longer than
    *         'limit'
    */
-  protected EventHandler< ? super KeyEvent >
+  private EventHandler< ? super KeyEvent >
     createFieldLimiter( TextField field, String acceptableKeys, int limit )
   {
     return evt -> {
@@ -94,9 +115,12 @@ public class EditSchemaController
    * KeyTyped EventHandler to the first field that prevents the user from typing
    * more than 1 key
    */
-  protected void addMappingBox( String key, String behavior )
+  private void addMappingBox( boolean isContinuous,
+                              String key,
+                              String behavior )
   {
     CheckBox checkbox = new CheckBox();
+    checkbox.setSelected( isContinuous );
     HBox.setHgrow( checkbox, Priority.NEVER );
     HBox.setMargin( checkbox, new Insets( 5, 5, 0, 10 ) );
 
@@ -110,33 +134,32 @@ public class EditSchemaController
     HBox.setHgrow( behaviorField, Priority.ALWAYS );
     HBox.setMargin( behaviorField, insets );
 
-    mappingsBox.getChildren()
-               .add( new HBox( checkbox, keyField, behaviorField ) );
+    mappingsBox.getChildren().add( new HBox( checkbox, keyField, behaviorField ) );
   }
 
   /**
    * Runs through the key-behavior pairs in schema and populates the mappingsBox
    */
-  protected void populateMappingsBox( Schema schema )
+  private void populateMappingsBox( Schema schema )
   {
     mappingsBox.getChildren().clear();
 
     schema.mappings.forEach( ( key, mapping ) -> {
-      addMappingBox( mapping.key.toString(), mapping.behavior );
+      addMappingBox( mapping.isContinuous, mapping.key.toString(), mapping.behavior );
     } );
 
     // add some extra boxes at the end to match 'defaultNumBoxes'
     for (int i = schema.mappings.size(); i < defaultNumBoxes; i++) {
-      addMappingBox( "", "" );
+      addMappingBox( false, "", "" );
     }
   }
 
   /**
    * When user clicks "Add Row" under the key-behavior mappingsBox
    */
-  @FXML protected void onAddRowClicked( ActionEvent evt )
+  @FXML private void onAddRowClicked( ActionEvent evt )
   {
-    addMappingBox( "", "" );
+    addMappingBox( false, "", "" );
   }
 
   /**

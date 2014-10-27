@@ -2,6 +2,7 @@ package com.threebird.recorder;
 
 import java.io.IOException;
 
+import com.threebird.recorder.controllers.EditSchemaController;
 import com.threebird.recorder.controllers.RecordingController;
 import com.threebird.recorder.models.Schema;
 
@@ -61,7 +62,7 @@ public class EventRecorder extends Application
   /**
    * Sets the stage to the EditScema view.
    */
-  public static void toEditSchemaView()
+  public static void toEditSchemaView( Schema schema )
   {
     FXMLLoader fxmlLoader =
         new FXMLLoader( EventRecorder.class.getResource( "./views/edit_schema.fxml" ) );
@@ -72,6 +73,8 @@ public class EventRecorder extends Application
     } catch (IOException e) {
       throw new RuntimeException( e );
     }
+
+    fxmlLoader.< EditSchemaController > getController().init( schema );
 
     Scene scene = new Scene( root );
     STAGE.setTitle( "Create Schema" );

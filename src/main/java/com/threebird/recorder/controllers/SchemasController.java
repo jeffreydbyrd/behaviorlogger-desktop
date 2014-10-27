@@ -126,7 +126,13 @@ public class SchemasController
    */
   @FXML private void onCreateSchemaClicked( ActionEvent evt )
   {
-    EventRecorder.toEditSchemaView();
+    EventRecorder.toEditSchemaView( null );
+  }
+
+  @FXML private void onEditSchemaClicked( ActionEvent evt )
+  {
+    Schema schema = schemaList.getSelectionModel().getSelectedItem();
+    EventRecorder.toEditSchemaView( schema );
   }
 
   /**

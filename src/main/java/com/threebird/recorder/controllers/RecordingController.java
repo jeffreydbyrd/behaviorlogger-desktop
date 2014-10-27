@@ -56,8 +56,6 @@ public class RecordingController
   /**
    * @param sch
    *          - The Schema being used for recording
-   * @param duration
-   *          - the duration, in seconds, of the session
    */
   public void init( Schema sch )
   {
@@ -73,7 +71,7 @@ public class RecordingController
 
     // When behaviorBox changes size, scroll to the bottom to show change
     behaviorBox.heightProperty()
-             .addListener( ( obv, oldV, newV ) -> behaviorScrollPane.setVvalue( 1.0 ) );
+               .addListener( ( obv, oldV, newV ) -> behaviorScrollPane.setVvalue( 1.0 ) );
   }
 
   /**
@@ -212,8 +210,8 @@ public class RecordingController
   }
 
   /**
-   * The user just pressed a key that represents a discrete behavior. Simply
-   * log it to the left ScrollPane
+   * The user just pressed a key that represents a discrete behavior. Simply log
+   * it to the left ScrollPane
    */
   private void logDiscrete( KeyBehaviorMapping kbm )
   {
