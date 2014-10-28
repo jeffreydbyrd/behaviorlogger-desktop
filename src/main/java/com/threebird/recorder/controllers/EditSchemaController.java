@@ -134,7 +134,8 @@ public class EditSchemaController
     HBox.setHgrow( behaviorField, Priority.ALWAYS );
     HBox.setMargin( behaviorField, insets );
 
-    mappingsBox.getChildren().add( new HBox( checkbox, keyField, behaviorField ) );
+    HBox hbox = new HBox( checkbox, keyField, behaviorField );
+    mappingsBox.getChildren().add( hbox );
   }
 
   /**

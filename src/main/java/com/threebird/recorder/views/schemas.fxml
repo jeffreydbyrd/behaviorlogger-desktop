@@ -12,8 +12,8 @@
 	<children>
       <GridPane prefHeight="483.0" prefWidth="676.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="411.49330139160156" minWidth="247.47242736816406" prefWidth="386.16656494140625" />
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="521.5275726318359" minWidth="357.50669860839844" prefWidth="382.83343505859375" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="247.47242736816406" prefWidth="386.16656494140625" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="357.50669860839844" prefWidth="382.83343505859375" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

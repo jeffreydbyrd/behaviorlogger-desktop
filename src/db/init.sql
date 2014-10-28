@@ -5,12 +5,11 @@ CREATE TABLE IF NOT EXISTS schemas (
 );
 
 CREATE TABLE IF NOT EXISTS key_behaviors (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  schema_id INTEGER NOT NULL,
   key CHAR(1) NOT NULL,
   behavior TEXT NOT NULL,
   is_continuous INTEGER NOT NULL,
-  schema_id INTEGER NOT NULL,
 
   FOREIGN KEY (schema_id) REFERENCES schemas(id),
-  UNIQUE(id,key)
+  PRIMARY KEY(schema_id, key)
 );
