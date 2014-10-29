@@ -14,6 +14,9 @@ import com.google.common.collect.Sets.SetView;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 
+/**
+ * A set of static functions that interact with the Schemas table
+ */
 public class Schemas
 {
   /**
@@ -33,6 +36,10 @@ public class Schemas
     }
   }
 
+  /**
+   * Updates all the values of the given schema in the 'schemas' and
+   * 'key_behaviors' table
+   */
   private static void update( Schema schema ) throws SQLException
   {
     Connection conn = Persistence.getConnection();
@@ -64,6 +71,10 @@ public class Schemas
     conn.close();
   }
 
+  /**
+   * Creates the given schema in the 'schemas' table. Also adds all related
+   * behaviors to the key_behaviors table
+   */
   private static void create( Schema schema ) throws SQLException
   {
     Connection conn = Persistence.getConnection();
@@ -82,6 +93,9 @@ public class Schemas
     conn.close();
   }
 
+  /**
+   * Retrieves all Schemas
+   */
   public static List< Schema > all()
   {
     try {

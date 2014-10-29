@@ -6,7 +6,8 @@ import java.util.Optional;
 import com.google.common.collect.Maps;
 
 /**
- * Represents a set of key-behavior mappings
+ * Contains all session configurations, such as session duration and
+ * key-behavior mappings
  */
 public class Schema
 {

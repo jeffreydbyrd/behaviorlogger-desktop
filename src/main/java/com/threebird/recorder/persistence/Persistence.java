@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Some common SQLite connection stuff
+ */
 public class Persistence
 {
   private static String DATABASE = "jdbc:sqlite:recorder.db";

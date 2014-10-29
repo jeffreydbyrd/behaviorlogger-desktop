@@ -9,9 +9,15 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 
+/**
+ * A set of static functions that interact with they key_behaviors table
+ */
 public class KeyBehaviors
 {
 
+  /**
+   * For a given Schema, return all
+   */
   public static Set< KeyBehaviorMapping > getAllForSchema( Integer schemaId, Connection c ) throws SQLException
   {
     String sql = "SELECT * FROM key_behaviors WHERE schema_id = " + schemaId;

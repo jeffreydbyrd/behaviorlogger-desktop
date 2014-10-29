@@ -9,6 +9,10 @@ import javafx.scene.layout.Priority;
 import com.threebird.recorder.controllers.EditSchemaController;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 
+/**
+ * This is an HBox with 3 Nodes (CheckBox and two TextFields). We use it to
+ * represent a {@link KeyBehaviorMapping} in the {@link EditSchemaController}
+ */
 public class MappingBox extends HBox
 {
   public final CheckBox checkbox;
