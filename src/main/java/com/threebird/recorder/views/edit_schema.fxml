@@ -31,6 +31,7 @@
                               <TextField fx:id="secondsField" prefHeight="26.0" prefWidth="40.0" promptText="ss" />
                            </children>
                         </HBox>
+                        <Label text="(infinite if bank)" />
                      </children>
                   </VBox>
                   <HBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
@@ -39,6 +40,7 @@
                         <Button mnemonicParsing="false" onAction="#onSaveSchemaClicked" text="Save Schema" />
                      </children>
                   </HBox>
+                  <VBox fx:id="errorMsgBox" layoutX="52.0" layoutY="136.0" prefWidth="204.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">

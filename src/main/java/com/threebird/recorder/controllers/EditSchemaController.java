@@ -1,27 +1,28 @@
 package com.threebird.recorder.controllers;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.views.MappingBox;
 
 public class EditSchemaController
 {
@@ -34,11 +35,12 @@ public class EditSchemaController
   @FXML private TextField minutesField;
   @FXML private TextField secondsField;
 
+  @FXML private VBox errorMsgBox;
+
   protected static int defaultNumBoxes = 10;
   protected static String digits = "0123456789";
   protected static String acceptableKeys =
       "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
-  private static final Insets insets = new Insets( .5, .5, .5, .5 );
 
   private Schema model;
 
@@ -100,7 +102,7 @@ public class EditSchemaController
    *         outside 'acceptableKeys' or if the length of 'field' is longer than
    *         'limit'
    */
-  private EventHandler< ? super KeyEvent >
+  public static EventHandler< ? super KeyEvent >
     createFieldLimiter( TextField field, String acceptableKeys, int limit )
   {
     return evt -> {
@@ -119,23 +121,7 @@ public class EditSchemaController
                               String key,
                               String behavior )
   {
-    CheckBox checkbox = new CheckBox();
-    checkbox.setSelected( isContinuous );
-    HBox.setHgrow( checkbox, Priority.NEVER );
-    HBox.setMargin( checkbox, new Insets( 5, 5, 0, 10 ) );
-
-    TextField keyField = new TextField( key );
-    keyField.setMaxWidth( 40 );
-    HBox.setHgrow( keyField, Priority.NEVER );
-    HBox.setMargin( keyField, insets );
-    keyField.setOnKeyTyped( createFieldLimiter( keyField, acceptableKeys, 1 ) );
-
-    TextField behaviorField = new TextField( behavior );
-    HBox.setHgrow( behaviorField, Priority.ALWAYS );
-    HBox.setMargin( behaviorField, insets );
-
-    HBox hbox = new HBox( checkbox, keyField, behaviorField );
-    mappingsBox.getChildren().add( hbox );
+    mappingsBox.getChildren().add( new MappingBox( isContinuous, key, behavior ) );
   }
 
   /**
@@ -156,6 +142,62 @@ public class EditSchemaController
   }
 
   /**
+   * Runs through the scene and makes sure the nameField is filled in, and that
+   * there are no duplicate keys. Any validation errors will get highlighted
+   * red, and a message gets put in the 'errorMsgBox'
+   * 
+   * @return true if all inputs are valid, or false if a single input fails
+   */
+  private boolean validate()
+  {
+    boolean isValid = true;
+    errorMsgBox.getChildren().clear();
+
+    String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+
+    // Make some red error messages:
+    Text nameMsg = new Text( "You must enter a name." );
+    nameMsg.setFill( Color.RED );
+    Text keyMsg = new Text( "Each key must be unique." );
+    keyMsg.setFill( Color.RED );
+
+    // Validate name field
+    if (nameField.getText().trim().isEmpty()) {
+      isValid = false;
+      nameField.setStyle( cssRed );
+      errorMsgBox.getChildren().add( nameMsg );
+    } else {
+      nameField.setStyle( "" );
+    }
+
+    // Check for duplicate keys:
+    Map< String, List< TextField >> keyToField =
+        mappingsBox.getChildren().stream()
+                   .map( node -> ((MappingBox) node).keyField )
+                   .collect( Collectors.groupingBy( keyField -> keyField.getText() ) );
+
+    boolean foundDups = false;
+    for (Entry< String, List< TextField >> entry : keyToField.entrySet()) {
+      String k = entry.getKey();
+      List< TextField > keyFields = entry.getValue();
+
+      if (!k.isEmpty() && keyFields.size() > 1) {
+        isValid = false;
+        foundDups = true;
+        keyFields.forEach( field -> field.setStyle( cssRed ) );
+      } else {
+        keyFields.forEach( field -> field.setStyle( "" ) );
+      }
+    }
+
+    if (foundDups) {
+      errorMsgBox.getChildren().add( keyMsg );
+    }
+
+    return isValid;
+  }
+
+  /**
    * When user clicks "Add Row" under the key-behavior mappingsBox
    */
   @FXML private void onAddRowClicked( ActionEvent evt )
@@ -173,28 +215,24 @@ public class EditSchemaController
 
   @FXML void onSaveSchemaClicked( ActionEvent evt )
   {
-    HashMap< Character, KeyBehaviorMapping > temp =
-        new HashMap< Character, KeyBehaviorMapping >();
-    ObservableList< Node > nodes =
-        mappingsBox.getChildrenUnmodifiable();
-
-    for (Node hbox : nodes) {
-      Iterator< Node > it = ((HBox) hbox).getChildren().iterator();
-      CheckBox checkbox = (CheckBox) it.next();
-      TextField keyField = (TextField) it.next();
-      TextField behaviorField = (TextField) it.next();
-
-      String key = keyField.getText().trim();
-      String behavior = behaviorField.getText().trim();
-      boolean isContinuous = checkbox.isSelected();
-
-      if (!key.isEmpty() && !behavior.isEmpty()) {
-        Character ch = key.charAt( 0 );
-        temp.put( ch, new KeyBehaviorMapping( key, behavior, isContinuous ) );
-      }
+    if (!validate()) {
+      return;
     }
 
-    model.name = Strings.nullToEmpty( nameField.getText().trim() );
+    HashMap< Character, KeyBehaviorMapping > temp = Maps.newHashMap();
+
+    String name = nameField.getText().trim();
+    List< KeyBehaviorMapping > keyBehaviors =
+        mappingsBox.getChildren().stream()
+                   .map( node -> ((MappingBox) node).translate() )
+                   .filter( bhvr -> bhvr != null )
+                   .collect( Collectors.toList() );
+
+    for (KeyBehaviorMapping behavior : keyBehaviors) {
+      temp.put( behavior.key, behavior );
+    }
+
+    model.name = name;
     model.mappings = temp;
     model.duration = getDuration();
 
