@@ -20,12 +20,12 @@
                   <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
                </rowConstraints>
                <children>
-                  <ScrollPane fx:id="behaviorScrollPane" fitToWidth="true" focusTraversable="false" layoutY="50.0" onMouseClicked="#stopClickPropogation" prefHeight="307.0" prefWidth="251.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="241.0" AnchorPane.topAnchor="50.0">
+                  <ScrollPane fx:id="behaviorScrollPane" fitToWidth="true" focusTraversable="false" layoutY="50.0" prefHeight="307.0" prefWidth="251.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="241.0" AnchorPane.topAnchor="50.0">
                      <content>
                         <VBox fx:id="behaviorBox" />
                      </content>
                   </ScrollPane>
-                  <ScrollPane fitToWidth="true" focusTraversable="false" onMouseClicked="#stopClickPropogation" GridPane.columnIndex="1">
+                  <ScrollPane fitToWidth="true" focusTraversable="false" GridPane.columnIndex="1">
                      <content>
                         <VBox fx:id="continuousBox" />
                      </content>

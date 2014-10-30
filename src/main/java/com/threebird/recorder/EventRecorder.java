@@ -20,8 +20,8 @@ import javafx.stage.Stage;
 public class EventRecorder extends Application
 {
   /**
-   * We define a global, static variable for the Stage so that it's easily
-   * accessible across the whole app
+   * A static variable for the Stage so that it's easily accessible later when
+   * we want to switch scenes
    */
   public static Stage STAGE;
 
@@ -37,10 +37,22 @@ public class EventRecorder extends Application
     toSchemasView();
   }
 
-  private static < T > T loadScene( String filepath, String title )
+  /**
+   * Loads an FXML file into a new Scene and sets it in STAGE.
+   * 
+   * @param T
+   *          - the type of the Controller you want returned to you
+   * @param fxmlPath
+   *          - the path (relative to EventRecorder.java's location) to the FXML
+   *          resource from which we will derive this scene
+   * @param title
+   *          - the title of this new scene
+   * @return the Controller linked to from the FXML file
+   */
+  private static < T > T loadScene( String fxmlPath, String title )
   {
     FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( filepath ) );
+        new FXMLLoader( EventRecorder.class.getResource( fxmlPath ) );
 
     Parent root;
     try {
@@ -69,6 +81,10 @@ public class EventRecorder extends Application
 
   /**
    * Sets the stage to the EditScema view.
+   * 
+   * @param schema
+   *          - the currently selected schema if editing, or null if creating a
+   *          new schema
    */
   public static void toEditSchemaView( Schema schema )
   {

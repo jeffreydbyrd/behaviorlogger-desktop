@@ -15,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -26,6 +25,7 @@ import com.google.common.collect.Sets;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 
 /**
  * Controls the Recording view
@@ -101,6 +101,9 @@ public class RecordingController
     } );
   }
 
+  /**
+   * Adds another key-behavior entry to the referenceBox
+   */
   private void addReferenceBox( Character key, String behavior )
   {
     Text keyText = new Text( key.toString() );
@@ -199,9 +202,9 @@ public class RecordingController
   private HashMap< Character, IntegerTextPair > intermediate = new HashMap<>();
 
   /**
-   * The user just pressed a key that represents a DurationBehavior. If this
-   * behavior has already started, stop it and log it to the left ScollPane.
-   * Otherwise start it and log it to the right ScrollPane
+   * The user just pressed a key that represents a {@link ContinuousBehavior} F.
+   * If this behavior has already started, stop it and log it to the left
+   * ScollPane. Otherwise start it and log it to the right ScrollPane
    */
   private void logContinuous( KeyBehaviorMapping kbm )
   {
@@ -233,11 +236,18 @@ public class RecordingController
     behaviorBox.getChildren().add( new Text( str ) );
   }
 
+  /**
+   * @return true if 'c' is supposed to trigger one of he available shortcuts,
+   *         or false otherwise
+   */
   private boolean isShortcut( Character c )
   {
     return new Character( ' ' ).equals( c );
   }
 
+  /**
+   * Fires the appropriate action corresponding to the shortcut 'c' represents
+   */
   private void handleShortcut( Character c )
   {
     if (new Character( ' ' ).equals( c )) {
@@ -245,6 +255,9 @@ public class RecordingController
     }
   }
 
+  /**
+   * Logs a KeyMappingBehavior in GUI for the user to see
+   */
   private void logBehavior( KeyBehaviorMapping mapping )
   {
     if (mapping.isContinuous) {
@@ -254,6 +267,10 @@ public class RecordingController
     }
   }
 
+  /**
+   * The user just pressed a key that wasn't mapped to any behaviors. Log it to
+   * the left-scroll pane as though it were discrete and save it in 'uknowns'
+   */
   private void logUnknown( Character c )
   {
     String behavior = "[unknown]";
@@ -291,6 +308,7 @@ public class RecordingController
 
   }
 
+  /** Upon pressing the "Play" or "Stop" button */
   @FXML private void onPlayPress( ActionEvent evt )
   {
     togglePlayButton();
@@ -306,13 +324,8 @@ public class RecordingController
     EventRecorder.toRecordingView( schema );
   }
 
-  @FXML private void stopClickPropogation( MouseEvent evt )
-  {
-    evt.consume();
-  }
-
   @FXML private void onNewKeysPress( ActionEvent evt )
   {
-    
+
   }
 }
