@@ -37,35 +37,10 @@ public class EventRecorder extends Application
     toSchemasView();
   }
 
-  /**
-   * Sets the stage to the Schema view
-   */
-  public static void toSchemasView()
-  {
-    STAGE.setTitle( "Scheme Select" );
-
-    // load up the FXML file we generated with Scene Builder, "schemas.fxml".
-    // This view is controlled by SchemasController.java
-    Parent root;
-    try {
-      root =
-          FXMLLoader.load( EventRecorder.class.getResource( "./views/schemas.fxml" ) );
-    } catch (IOException e) {
-      throw new RuntimeException( e );
-    }
-
-    Scene schemaScene = new Scene( root );
-    STAGE.setScene( schemaScene );
-    STAGE.show();
-  }
-
-  /**
-   * Sets the stage to the EditScema view.
-   */
-  public static void toEditSchemaView( Schema schema )
+  private static < T > T loadScene( String filepath, String title )
   {
     FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( "./views/edit_schema.fxml" ) );
+        new FXMLLoader( EventRecorder.class.getResource( filepath ) );
 
     Parent root;
     try {
@@ -73,12 +48,33 @@ public class EventRecorder extends Application
     } catch (IOException e) {
       throw new RuntimeException( e );
     }
-
-    fxmlLoader.< EditSchemaController > getController().init( schema );
-
     Scene scene = new Scene( root );
-    STAGE.setTitle( "Create Schema" );
+
+    STAGE.setTitle( title );
     STAGE.setScene( scene );
+    STAGE.show();
+
+    return fxmlLoader.< T > getController();
+  }
+
+  /**
+   * load up the FXML file we generated with Scene Builder, "schemas.fxml". This
+   * view is controlled by SchemasController.java
+   */
+  public static void toSchemasView()
+  {
+    String filepath = "./views/schemas.fxml";
+    loadScene( filepath, "Schemas" );
+  }
+
+  /**
+   * Sets the stage to the EditScema view.
+   */
+  public static void toEditSchemaView( Schema schema )
+  {
+    String filepath = "./views/edit_schema.fxml";
+    EditSchemaController controller = loadScene( filepath, "Create Schema" );
+    controller.init( schema );
   }
 
   /**
@@ -89,21 +85,8 @@ public class EventRecorder extends Application
    */
   public static void toRecordingView( Schema schema )
   {
-    FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( "./views/recording.fxml" ) );
-
-    Parent root;
-    try {
-      root = (Parent) fxmlLoader.load();
-    } catch (IOException e) {
-      throw new RuntimeException( e );
-    }
-    Scene scene = new Scene( root );
-
-    fxmlLoader.< RecordingController > getController().init( schema );
-
-    STAGE.setTitle( "Recording" );
-    STAGE.setScene( scene );
-    STAGE.show();
+    String filepath = "./views/recording.fxml";
+    RecordingController controller = loadScene( filepath, "Recording" );
+    controller.init( schema );
   }
 }
