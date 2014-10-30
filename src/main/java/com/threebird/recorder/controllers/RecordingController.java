@@ -1,6 +1,8 @@
 package com.threebird.recorder.controllers;
 
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.Set;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -20,13 +22,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import com.google.common.collect.Sets;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 
 /**
- * Controls the Recording view. It should explode if SCHEMA is not yet
- * initialized
+ * Controls the Recording view
  */
 public class RecordingController
 {
@@ -34,6 +36,7 @@ public class RecordingController
   private int counter = 0;
   private boolean playing = false;
   private Timeline timer;
+  private Set< Character > unknowns = Sets.newHashSet();
 
   @FXML private Text nameText;
 
@@ -49,6 +52,7 @@ public class RecordingController
   @FXML private Button playButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
+  @FXML private Button newKeysButton;
 
   @FXML private ScrollPane referenceScrollPane;
   @FXML private VBox referenceBox;
@@ -70,8 +74,9 @@ public class RecordingController
     referenceScrollPane.requestFocus();
 
     // When behaviorBox changes size, scroll to the bottom to show change
-    behaviorBox.heightProperty()
-               .addListener( ( obv, oldV, newV ) -> behaviorScrollPane.setVvalue( 1.0 ) );
+    behaviorBox.heightProperty().addListener( ( obv, oldV, newV ) -> {
+      behaviorScrollPane.setVvalue( 1.0 );
+    } );
   }
 
   /**
@@ -92,20 +97,25 @@ public class RecordingController
   private void populateKeyBehaviorReferenceBox()
   {
     schema.mappings.forEach( ( key, m ) -> {
-      Text keyText = new Text( key.toString() );
-      keyText.setWrappingWidth( 10 );
-      HBox.setHgrow( keyText, Priority.NEVER );
-
-      Text separator = new Text( " : " );
-      HBox.setHgrow( separator, Priority.NEVER );
-
-      Text behaviorText = new Text( m.behavior );
-      behaviorText.setWrappingWidth( 140 );
-      HBox.setHgrow( behaviorText, Priority.ALWAYS );
-
-      HBox hbox = new HBox( keyText, separator, behaviorText );
-      referenceBox.getChildren().add( hbox );
+      addReferenceBox( key, m.behavior );
     } );
+  }
+
+  private void addReferenceBox( Character key, String behavior )
+  {
+    Text keyText = new Text( key.toString() );
+    keyText.setWrappingWidth( 10 );
+    HBox.setHgrow( keyText, Priority.NEVER );
+
+    Text separator = new Text( " : " );
+    HBox.setHgrow( separator, Priority.NEVER );
+
+    Text behaviorText = new Text( behavior );
+    behaviorText.setWrappingWidth( 140 );
+    HBox.setHgrow( behaviorText, Priority.ALWAYS );
+
+    HBox hbox = new HBox( keyText, separator, behaviorText );
+    referenceBox.getChildren().add( hbox );
   }
 
   /**
@@ -137,6 +147,10 @@ public class RecordingController
     playButton.setText( playing ? "Stop" : "Play" );
     goBackButton.setVisible( !playing );
     newSessionButton.setVisible( !playing );
+
+    if (!unknowns.isEmpty()) {
+      newKeysButton.setVisible( !playing );
+    }
 
     recordingText.setVisible( !recordingText.isVisible() );
     pausedText.setVisible( !pausedText.isVisible() );
@@ -219,29 +233,62 @@ public class RecordingController
     behaviorBox.getChildren().add( new Text( str ) );
   }
 
+  private boolean isShortcut( Character c )
+  {
+    return new Character( ' ' ).equals( c );
+  }
+
+  private void handleShortcut( Character c )
+  {
+    if (new Character( ' ' ).equals( c )) {
+      togglePlayButton();
+    }
+  }
+
+  private void logBehavior( KeyBehaviorMapping mapping )
+  {
+    if (mapping.isContinuous) {
+      logContinuous( mapping );
+    } else {
+      logDiscrete( mapping );
+    }
+  }
+
+  private void logUnknown( Character c )
+  {
+    String behavior = "[unknown]";
+    String str = discreteString( new KeyBehaviorMapping( c, behavior, false ) );
+    behaviorBox.getChildren().add( new Text( str ) );
+
+    if (unknowns.add( c )) {
+      addReferenceBox( c, behavior );
+    }
+  }
+
   /**
-   * Attached to the root pane, onKeyTyped should fire no matter what is
-   * selected
+   * Attached to the root pane, onKeyTyped should fire when the user types a
+   * key, no matter what is selected
    */
   @FXML private void onKeyTyped( KeyEvent evt )
   {
     Character c = evt.getCharacter().charAt( 0 );
 
-    if (new Character( ' ' ).equals( c ) && !playButton.isFocused()) {
-      togglePlayButton();
+    if (isShortcut( c )) {
+      handleShortcut( c );
+      return;
     }
 
     if (!playing) {
       return;
     }
 
-    schema.getMapping( c ).ifPresent( ( mapping ) -> {
-      if (mapping.isContinuous) {
-        logContinuous( mapping );
-      } else {
-        logDiscrete( mapping );
-      }
-    } );
+    Optional< KeyBehaviorMapping > optMapping = schema.getMapping( c );
+    if (optMapping.isPresent()) {
+      logBehavior( optMapping.get() );
+    } else {
+      logUnknown( c );
+    }
+
   }
 
   @FXML private void onPlayPress( ActionEvent evt )
@@ -262,5 +309,10 @@ public class RecordingController
   @FXML private void stopClickPropogation( MouseEvent evt )
   {
     evt.consume();
+  }
+
+  @FXML private void onNewKeysPress( ActionEvent evt )
+  {
+    
   }
 }
