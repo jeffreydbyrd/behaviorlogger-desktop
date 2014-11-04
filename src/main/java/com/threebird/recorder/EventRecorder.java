@@ -1,16 +1,18 @@
 package com.threebird.recorder;
 
 import java.io.IOException;
-
-import com.threebird.recorder.controllers.EditSchemaController;
-import com.threebird.recorder.controllers.RecordingController;
-import com.threebird.recorder.models.Schema;
+import java.util.Set;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import com.threebird.recorder.controllers.AddKeysController;
+import com.threebird.recorder.controllers.EditSchemaController;
+import com.threebird.recorder.controllers.RecordingController;
+import com.threebird.recorder.models.Schema;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The
@@ -104,5 +106,12 @@ public class EventRecorder extends Application
     String filepath = "./views/recording.fxml";
     RecordingController controller = loadScene( filepath, "Recording" );
     controller.init( schema );
+  }
+
+  public static void toAddKeysView( Scene recordingScene, Schema schema, Set< Character > unknowns )
+  {
+    String filepath = "./views/add_keys.fxml";
+    AddKeysController controller = loadScene( filepath, "Add Keys" );
+    controller.init( recordingScene, schema, unknowns );
   }
 }

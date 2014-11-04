@@ -52,7 +52,7 @@ public class RecordingController
   @FXML private Button playButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
-  @FXML private Button newKeysButton;
+  @FXML private Button addNewKeysButton;
 
   @FXML private ScrollPane referenceScrollPane;
   @FXML private VBox referenceBox;
@@ -152,7 +152,7 @@ public class RecordingController
     newSessionButton.setVisible( !playing );
 
     if (!unknowns.isEmpty()) {
-      newKeysButton.setVisible( !playing );
+      addNewKeysButton.setVisible( !playing );
     }
 
     recordingText.setVisible( !recordingText.isVisible() );
@@ -324,8 +324,8 @@ public class RecordingController
     EventRecorder.toRecordingView( schema );
   }
 
-  @FXML private void onNewKeysPress( ActionEvent evt )
+  @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-
+    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), schema, unknowns );
   }
 }
