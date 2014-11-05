@@ -214,7 +214,8 @@ public class EditSchemaController
   }
 
   /**
-   * 
+   * Run through the nameField and mappingsBox and update the 'model'. Then
+   * persist the new model
    */
   @FXML void onSaveSchemaClicked( ActionEvent evt )
   {

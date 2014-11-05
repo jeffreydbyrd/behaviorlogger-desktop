@@ -107,6 +107,10 @@ public class AddKeysController
     EventRecorder.STAGE.setScene( recordingScene );
   }
 
+  /**
+   * Runs through the mappingsBox and adds new KeyBehaviorMappings to 'schema'.
+   * Then saves 'schema'
+   */
   @FXML private void onSavePress( ActionEvent evt )
   {
     HashMap< Character, KeyBehaviorMapping > temp = Maps.newHashMap();
