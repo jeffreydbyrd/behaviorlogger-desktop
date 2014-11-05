@@ -4,12 +4,18 @@ import java.util.Set;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.Schema;
-import com.threebird.recorder.views.MappingBox;
 
 public class AddKeysController
 {
@@ -37,17 +43,26 @@ public class AddKeysController
     populateMappingsBox();
   }
 
-  /**
-   * Adds 2 adjacent text fields and a checkbox to 'mappingsBox'. Attaches a
-   * KeyTyped EventHandler to the first field that prevents the user from typing
-   * more than 1 key
-   */
-  private void addMappingBox( boolean isContinuous,
-                              String key,
-                              String behavior )
+  private static final Insets insets = new Insets( 2, 2, 2, 2 );
+
+  private void addMappingBox( String key, String behavior )
   {
-    MappingBox box = new MappingBox( isContinuous, key, behavior );
-    box.keyField.setDisable( true );
+    CheckBox checkbox = new CheckBox();
+    checkbox.setSelected( false );
+    HBox.setHgrow( checkbox, Priority.NEVER );
+    HBox.setMargin( checkbox, new Insets( 5, 5, 0, 10 ) );
+
+    Label keyText = new Label( key );
+    keyText.setMaxWidth( 40 );
+    keyText.setAlignment( Pos.CENTER );
+    keyText.setPadding( new Insets( 6, 4, 0, 0 ) );
+    HBox.setHgrow( keyText, Priority.NEVER );
+
+    TextField behaviorField = new TextField( behavior );
+    HBox.setHgrow( behaviorField, Priority.ALWAYS );
+    HBox.setMargin( behaviorField, insets );
+
+    HBox box = new HBox( checkbox, keyText, behaviorField );
     mappingsBox.getChildren().add( box );
   }
 
@@ -56,7 +71,7 @@ public class AddKeysController
     mappingsBox.getChildren().clear();
 
     for (Character c : unknowns) {
-      addMappingBox( false, c.toString(), "UNKNOWN" );
+      addMappingBox( c.toString(), "UNKNOWN" );
     }
   }
 
