@@ -51,24 +51,23 @@ public class AddKeysController
     populateMappingsBox();
   }
 
-  private static final Insets insets = new Insets( 2, 2, 2, 2 );
-
   private void addMappingBox( String key, String behavior )
   {
     CheckBox checkbox = new CheckBox();
     checkbox.setSelected( false );
     HBox.setHgrow( checkbox, Priority.NEVER );
-    HBox.setMargin( checkbox, new Insets( 5, 5, 0, 10 ) );
+    HBox.setMargin( checkbox, new Insets( 5, 0, 0, 10 ) );
 
     Label keyText = new Label( key );
     keyText.setMaxWidth( 40 );
+    keyText.setMinWidth( 40 );
     keyText.setAlignment( Pos.CENTER );
-    keyText.setPadding( new Insets( 6, 4, 0, 0 ) );
+    keyText.setPadding( new Insets( 6, 0, 0, 10 ) );
     HBox.setHgrow( keyText, Priority.NEVER );
 
     TextField behaviorField = new TextField( behavior );
     HBox.setHgrow( behaviorField, Priority.ALWAYS );
-    HBox.setMargin( behaviorField, insets );
+    HBox.setMargin( behaviorField, new Insets( 2, 2, 2, 10 ) );
 
     HBox box = new HBox( checkbox, keyText, behaviorField );
     mappingsBox.getChildren().add( box );
