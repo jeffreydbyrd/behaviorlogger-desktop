@@ -1,11 +1,16 @@
 package com.threebird.recorder.controllers;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -14,8 +19,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.persistence.Schemas;
 
 public class AddKeysController
 {
@@ -75,11 +83,46 @@ public class AddKeysController
     }
   }
 
+  private KeyBehaviorMapping toKeyBehaviorMapping( Node n )
+  {
+    HBox box = (HBox) n;
+    Iterator< Node > iter = box.getChildren().iterator();
+
+    CheckBox checkbox = (CheckBox) iter.next();
+    Label label = (Label) iter.next();
+    TextField textfield = (TextField) iter.next();
+
+    boolean isContinuous = checkbox.isSelected();
+    String key = label.getText();
+    String behavior = textfield.getText();
+
+    return new KeyBehaviorMapping( key, behavior, isContinuous );
+  }
+
   /**
    * Bring us back to the recording view
    */
   @FXML private void onCancelPress( ActionEvent evt )
   {
+    EventRecorder.STAGE.setScene( recordingScene );
+  }
+
+  @FXML private void onSavePress( ActionEvent evt )
+  {
+    HashMap< Character, KeyBehaviorMapping > temp = Maps.newHashMap();
+
+    List< KeyBehaviorMapping > keyBehaviors =
+        mappingsBox.getChildren().stream()
+                   .map( this::toKeyBehaviorMapping )
+                   .collect( Collectors.toList() );
+
+    for (KeyBehaviorMapping behavior : keyBehaviors) {
+      temp.put( behavior.key, behavior );
+    }
+
+    schema.mappings.putAll( temp );
+    Schemas.save( schema );
+
     EventRecorder.STAGE.setScene( recordingScene );
   }
 }

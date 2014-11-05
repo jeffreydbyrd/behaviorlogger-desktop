@@ -213,6 +213,9 @@ public class EditSchemaController
     EventRecorder.toSchemasView();
   }
 
+  /**
+   * 
+   */
   @FXML void onSaveSchemaClicked( ActionEvent evt )
   {
     if (!validate()) {
