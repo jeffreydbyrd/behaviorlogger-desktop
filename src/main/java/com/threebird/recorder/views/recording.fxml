@@ -44,7 +44,7 @@
                </font>
             </Text>
             <Text layoutY="366.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" />
-            <Label fx:id="timeLabel" alignment="CENTER_RIGHT" layoutX="399.0" layoutY="435.0" prefHeight="16.0" prefWidth="166.0" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" text="0" textAlignment="RIGHT" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
+            <Label fx:id="timeLabel" alignment="CENTER_RIGHT" layoutX="399.0" layoutY="435.0" prefHeight="16.0" prefWidth="166.0" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" text="0" textAlignment="RIGHT" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="9.0">
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>

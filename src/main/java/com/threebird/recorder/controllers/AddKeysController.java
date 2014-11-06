@@ -1,6 +1,5 @@
 package com.threebird.recorder.controllers;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +18,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
@@ -112,18 +110,15 @@ public class AddKeysController
    */
   @FXML private void onSavePress( ActionEvent evt )
   {
-    HashMap< Character, KeyBehaviorMapping > temp = Maps.newHashMap();
-
     List< KeyBehaviorMapping > keyBehaviors =
         mappingsBox.getChildren().stream()
                    .map( this::toKeyBehaviorMapping )
                    .collect( Collectors.toList() );
 
     for (KeyBehaviorMapping behavior : keyBehaviors) {
-      temp.put( behavior.key, behavior );
+      schema.mappings.put( behavior.key, behavior );
     }
 
-    schema.mappings.putAll( temp );
     Schemas.save( schema );
 
     EventRecorder.STAGE.setScene( recordingScene );
