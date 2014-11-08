@@ -8,9 +8,15 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -33,6 +39,9 @@ public class RecordingController
   private Recording recording;
 
   @FXML private Text nameText;
+
+  @FXML private VBox discreteBox;
+  @FXML private VBox continuousBox;
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
@@ -58,11 +67,32 @@ public class RecordingController
   private void initializeBehaviorBoxes()
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      if (kbm.isContinuous) {
+      Label keyLbl = new Label( kbm.key.toString() );
+      keyLbl.setAlignment( Pos.CENTER );
+      keyLbl.setMinWidth( 30 );
+      keyLbl.setMaxWidth( 30 );
+      HBox.setHgrow( keyLbl, Priority.NEVER );
 
-      } else {
+      Label behaviorLbl = new Label( kbm.behavior );
+      behaviorLbl.setWrapText( true );
+      HBox.setHgrow( behaviorLbl, Priority.ALWAYS );
+      behaviorLbl.setMaxWidth( Double.MAX_VALUE );
 
-      }
+      Label countLbl = new Label( "0" );
+      countLbl.setAlignment( Pos.CENTER );
+      countLbl.setMinWidth( 60 );
+      countLbl.setMaxWidth( 60 );
+      HBox.setHgrow( countLbl, Priority.NEVER );
+
+      Separator s1 = new Separator( Orientation.VERTICAL );
+      Separator s2 = new Separator( Orientation.VERTICAL );
+
+      HBox hbox = new HBox( keyLbl, s1, behaviorLbl, s2, countLbl );
+      hbox.setSpacing( 5 );
+
+      VBox target = kbm.isContinuous ? continuousBox : discreteBox;
+      target.getChildren().add( hbox );
+      target.getChildren().add( new Separator() );
     }
   }
 
