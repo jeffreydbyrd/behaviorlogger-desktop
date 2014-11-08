@@ -1,20 +1,29 @@
 package com.threebird.recorder.models.behaviors;
 
-public class ContinuousBehavior implements Behavior
+public class ContinuousBehavior extends Behavior
 {
-  final public String description;
   final public Integer start;
-  final public Integer end;
+  private Integer duration;
 
-  public ContinuousBehavior( String description, Integer start, Integer end )
+  public ContinuousBehavior( String key, String description, Integer start )
   {
-    this.description = description;
+    super( key, description );
     this.start = start;
-    this.end = end;
+    this.duration = 1;
   }
 
-  @Override public boolean isDurational()
+  @Override public boolean isContinuous()
   {
     return true;
+  }
+
+  public Integer getDuration()
+  {
+    return duration;
+  }
+
+  public void incDuration( Integer seconds )
+  {
+    duration += seconds;
   }
 }

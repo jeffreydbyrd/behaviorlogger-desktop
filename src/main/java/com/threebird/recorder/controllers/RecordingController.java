@@ -1,16 +1,13 @@
 package com.threebird.recorder.controllers;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
@@ -21,8 +18,8 @@ import javafx.util.Duration;
 import com.google.common.collect.Sets;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
-import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 
 /**
  * Controls the Recording view
@@ -34,6 +31,7 @@ public class RecordingController
   private boolean playing = false;
   private Timeline timer;
   private Set< Character > unknowns = Sets.newHashSet();
+  private Recording recording;
 
   @FXML private Text nameText;
 
@@ -57,7 +55,19 @@ public class RecordingController
   {
     this.schema = sch;
     nameText.setText( schema.name );
+    initializeBehaviorBoxes();
     initializeTimer();
+  }
+
+  private void initializeBehaviorBoxes()
+  {
+    for (KeyBehaviorMapping kbm : schema.mappings.values()) {
+      if (kbm.isContinuous) {
+        
+      } else {
+
+      }
+    }
   }
 
   /**
@@ -109,82 +119,11 @@ public class RecordingController
     pausedText.setVisible( !pausedText.isVisible() );
   }
 
-  /**
-   * Builds a String for a duration behavior that will be logged in the left
-   * ScrollPane
-   */
-  private String continuousString( KeyBehaviorMapping kbm, Integer startTime )
-  {
-    String format = "%d - %d : (%c) %s";
-    String str =
-        String.format( format, startTime, counter, kbm.key, kbm.behavior );
-    return str;
-  }
-
-  /**
-   * Builds a String for an eventful behavior that will be logged in the left
-   * ScrollPane
-   */
-  private String discreteString( KeyBehaviorMapping kbm )
-  {
-    String str =
-        String.format( "%d : (%c) %s", counter, kbm.key, kbm.behavior );
-    return str;
-  }
-
-  /**
-   * I'm simply creating this for the logContinuous function so we can map a
-   * Character to both a Textbox and a start-time and save them for when the
-   * user stops a continuous behavior.
-   */
-  private class IntegerTextPair
-  {
-    final Integer startTime;
-    final Text text;
-
-    public IntegerTextPair( Integer startTime, Text text )
-    {
-      this.startTime = startTime;
-      this.text = text;
-    }
-  }
-
-  private HashMap< Character, IntegerTextPair > intermediate = new HashMap<>();
-
-  /**
-   * The user just pressed a key that represents a {@link ContinuousBehavior} F.
-   * If this behavior has already started, stop it and log it to the left
-   * ScollPane. Otherwise start it and log it to the right ScrollPane
-   */
   private void logContinuous( KeyBehaviorMapping kbm )
-  {
-    Character key = kbm.key;
-    ObservableList< Node > texts = continuousBox.getChildren();
+  {}
 
-    if (intermediate.containsKey( key )) {
-      IntegerTextPair itp = intermediate.get( key );
-      String str = continuousString( kbm, itp.startTime );
-      discreteBox.getChildren().add( new Text( str ) );
-      texts.remove( itp.text );
-      intermediate.remove( key );
-    } else {
-      String str = discreteString( kbm );
-      Text text = new Text( str );
-      IntegerTextPair itp = new IntegerTextPair( counter, text );
-      intermediate.put( key, itp );
-      texts.add( text );
-    }
-  }
-
-  /**
-   * The user just pressed a key that represents a discrete behavior. Simply log
-   * it to the left ScrollPane
-   */
   private void logDiscrete( KeyBehaviorMapping kbm )
-  {
-    String str = discreteString( kbm );
-    discreteBox.getChildren().add( new Text( str ) );
-  }
+  {}
 
   /**
    * @return true if 'c' is supposed to trigger one of he available shortcuts,
@@ -217,15 +156,8 @@ public class RecordingController
     }
   }
 
-  /**
-   * The user just pressed a key that wasn't mapped to any behaviors. Log it to
-   * the left-scroll pane as though it were discrete and save it in 'uknowns'
-   */
   private void logUnknown( Character c )
   {
-    String behavior = "[unknown]";
-    String str = discreteString( new KeyBehaviorMapping( c, behavior, false ) );
-    discreteBox.getChildren().add( new Text( str ) );
     unknowns.add( c );
   }
 
