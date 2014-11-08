@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -34,9 +33,6 @@ public class RecordingController
   private Recording recording;
 
   @FXML private Text nameText;
-
-  @FXML private VBox discreteBox;
-  @FXML private VBox continuousBox;
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
@@ -63,7 +59,7 @@ public class RecordingController
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
       if (kbm.isContinuous) {
-        
+
       } else {
 
       }

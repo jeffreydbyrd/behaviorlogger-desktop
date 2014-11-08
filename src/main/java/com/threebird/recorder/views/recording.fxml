@@ -10,7 +10,7 @@
 <AnchorPane onKeyTyped="#onKeyTyped" prefHeight="570.0" prefWidth="681.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.RecordingController">
    <children>
       <Text fx:id="nameText" layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Schema Name" wrappingWidth="491.6888999938965" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <GridPane layoutX="10.0" layoutY="60.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+      <GridPane hgap="10.0" layoutX="10.0" layoutY="60.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
          <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" prefWidth="242.39256286621094" />
             <ColumnConstraints hgrow="ALWAYS" prefWidth="240.60743713378906" />
@@ -20,18 +20,28 @@
             <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
          </rowConstraints>
          <children>
-            <ScrollPane fitToWidth="true" focusTraversable="false" layoutY="50.0" prefHeight="307.0" prefWidth="251.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="241.0" AnchorPane.topAnchor="50.0" GridPane.rowIndex="1">
-               <content>
-                  <VBox fx:id="discreteBox" />
-               </content>
-            </ScrollPane>
-            <ScrollPane fitToWidth="true" focusTraversable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <content>
-                  <VBox fx:id="continuousBox" />
-               </content>
-            </ScrollPane>
-            <Label alignment="CENTER" prefHeight="16.0" prefWidth="298.0" text="Discrete" />
-            <Label alignment="CENTER" prefHeight="16.0" prefWidth="340.0" text="Continuous" GridPane.columnIndex="1" />
+            <TableView focusTraversable="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+              <columns>
+                <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="40.0" text="Key" />
+                <TableColumn prefWidth="209.0" text="Behavior" />
+                  <TableColumn maxWidth="71.0" minWidth="71.0" prefWidth="71.0" text="Count" />
+              </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+            <Label alignment="CENTER" prefHeight="16.0" prefWidth="344.0" text="Discrete" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
+            <Label alignment="CENTER" prefHeight="16.0" prefWidth="340.0" text="Continuous" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+            <TableView focusTraversable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+               <columns>
+                  <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="40.0" text="Key" />
+                  <TableColumn prefWidth="209.0" text="Behavior" />
+                  <TableColumn maxWidth="71.0" minWidth="71.0" prefWidth="71.0" text="Time" />
+               </columns>
+            </TableView>
          </children>
       </GridPane>
       <Text fx:id="recordingText" fill="#00ae11" layoutX="10.0" layoutY="387.40234375" strokeType="OUTSIDE" strokeWidth="0.0" text="recording" visible="false" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0">
@@ -39,7 +49,7 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <Text fx:id="pausedText" fill="#bc0101" layoutX="10.0" layoutY="387.40234375" strokeType="OUTSIDE" strokeWidth="0.0" text="paused" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0">
+      <Text fx:id="pausedText" fill="#bc0101" layoutX="10.0" layoutY="387.40234375" strokeType="OUTSIDE" strokeWidth="0.0" text="paused" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0">
          <font>
             <Font size="18.0" />
          </font>

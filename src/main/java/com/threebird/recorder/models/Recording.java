@@ -1,21 +1,48 @@
 package com.threebird.recorder.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 
 public class Recording
 {
-  private List< Behavior > behaviors;
+  private List< DiscreteBehavior > discrete;
+  private List< ContinuousBehavior > continuous;
 
   Recording()
   {
-    behaviors = Lists.newArrayList();
+    discrete = Lists.newArrayList();
+    continuous = Lists.newArrayList();
   }
 
-  public void log( Behavior b )
+  public void log( DiscreteBehavior db )
   {
-    behaviors.add( b );
+    discrete.add( db );
+  }
+
+  public void log( ContinuousBehavior cb )
+  {
+    continuous.add( cb );
+  }
+
+  public List< DiscreteBehavior > getDiscreteBehaviors()
+  {
+    return Lists.newArrayList( discrete );
+  }
+
+  public List< ContinuousBehavior > getContinuousBehaviors()
+  {
+    return Lists.newArrayList( continuous );
+  }
+
+  public List< Behavior > getAllBehaviors()
+  {
+    ArrayList< Behavior > result = Lists.newArrayList( discrete );
+    result.addAll( continuous );
+    return result;
   }
 }
