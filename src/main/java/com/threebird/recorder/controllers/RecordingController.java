@@ -13,10 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -40,9 +37,7 @@ public class RecordingController
 
   @FXML private Text nameText;
 
-  @FXML private ScrollPane behaviorScrollPane;
-  @FXML private VBox behaviorBox;
-
+  @FXML private VBox discreteBox;
   @FXML private VBox continuousBox;
 
   @FXML private Text pausedText;
@@ -54,9 +49,6 @@ public class RecordingController
   @FXML private Button newSessionButton;
   @FXML private Button addNewKeysButton;
 
-  @FXML private ScrollPane referenceScrollPane;
-  @FXML private VBox referenceBox;
-
   /**
    * @param sch
    *          - The Schema being used for recording
@@ -64,19 +56,8 @@ public class RecordingController
   public void init( Schema sch )
   {
     this.schema = sch;
-
     nameText.setText( schema.name );
-
-    populateKeyBehaviorReferenceBox();
-
     initializeTimer();
-
-    referenceScrollPane.requestFocus();
-
-    // When behaviorBox changes size, scroll to the bottom to show change
-    behaviorBox.heightProperty().addListener( ( obv, oldV, newV ) -> {
-      behaviorScrollPane.setVvalue( 1.0 );
-    } );
   }
 
   /**
@@ -88,37 +69,6 @@ public class RecordingController
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
-  }
-
-  /**
-   * Fills up the right-most ScrollPane with all the behaviors the researcher
-   * has mapped out. This serves as a reference during sessions
-   */
-  private void populateKeyBehaviorReferenceBox()
-  {
-    schema.mappings.forEach( ( key, m ) -> {
-      addReferenceBox( key, m.behavior );
-    } );
-  }
-
-  /**
-   * Adds another key-behavior entry to the referenceBox
-   */
-  private void addReferenceBox( Character key, String behavior )
-  {
-    Text keyText = new Text( key.toString() );
-    keyText.setWrappingWidth( 10 );
-    HBox.setHgrow( keyText, Priority.NEVER );
-
-    Text separator = new Text( " : " );
-    HBox.setHgrow( separator, Priority.NEVER );
-
-    Text behaviorText = new Text( behavior );
-    behaviorText.setWrappingWidth( 140 );
-    HBox.setHgrow( behaviorText, Priority.ALWAYS );
-
-    HBox hbox = new HBox( keyText, separator, behaviorText );
-    referenceBox.getChildren().add( hbox );
   }
 
   /**
@@ -214,7 +164,7 @@ public class RecordingController
     if (intermediate.containsKey( key )) {
       IntegerTextPair itp = intermediate.get( key );
       String str = continuousString( kbm, itp.startTime );
-      behaviorBox.getChildren().add( new Text( str ) );
+      discreteBox.getChildren().add( new Text( str ) );
       texts.remove( itp.text );
       intermediate.remove( key );
     } else {
@@ -233,7 +183,7 @@ public class RecordingController
   private void logDiscrete( KeyBehaviorMapping kbm )
   {
     String str = discreteString( kbm );
-    behaviorBox.getChildren().add( new Text( str ) );
+    discreteBox.getChildren().add( new Text( str ) );
   }
 
   /**
@@ -275,11 +225,8 @@ public class RecordingController
   {
     String behavior = "[unknown]";
     String str = discreteString( new KeyBehaviorMapping( c, behavior, false ) );
-    behaviorBox.getChildren().add( new Text( str ) );
-
-    if (unknowns.add( c )) {
-      addReferenceBox( c, behavior );
-    }
+    discreteBox.getChildren().add( new Text( str ) );
+    unknowns.add( c );
   }
 
   /**
