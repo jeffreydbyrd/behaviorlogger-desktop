@@ -1,5 +1,6 @@
 # Event Recorder
-This is a Java 8 project. To get up and running with Java 8 and Java FX:
+Here are some links to get up to speed:
 
-- [Environment Setup](https://trello.com/c/MDSEnFGh/88-setting-up-your-programming-environment) - Trello card giving steps to setting up the project, Java 8, Java FX, and Eclipse.
-- [scratch package](https://github.com/biffbyrd/event-recorder/tree/master/src/com/threebird/scratch) - where I put examples while learning these tools.
+- [Introduction](https://trello.com/c/uxYDV0NR/87-introduction) - general introduction to the project
+- [Environment Setup](https://trello.com/c/MDSEnFGh/88-setting-up-your-programming-environment) - steps for setting up the project, Java 8, Java FX, and Eclipse.
+- [SQLite Setup](https://trello.com/c/mKSE4q3z/106-sqlite-database) - how to set up a SQLite database (it's really easy)
