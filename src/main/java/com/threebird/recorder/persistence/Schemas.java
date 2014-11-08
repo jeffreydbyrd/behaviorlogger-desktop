@@ -1,9 +1,6 @@
 package com.threebird.recorder.persistence;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +10,9 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.persistence.util.SqlCallback;
+import com.threebird.recorder.persistence.util.SqlQueryData;
+import com.threebird.recorder.persistence.util.SqliteDao;
 
 /**
  * A set of static functions that interact with the Schemas table
@@ -25,14 +25,10 @@ public class Schemas
    */
   public static void save( Schema schema )
   {
-    try {
-      if (schema.id == null) {
-        create( schema );
-      } else {
-        update( schema );
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException( e );
+    if (schema.id == null) {
+      create( schema );
+    } else {
+      update( schema );
     }
   }
 
@@ -40,57 +36,47 @@ public class Schemas
    * Updates all the values of the given schema in the 'schemas' and
    * 'key_behaviors' table
    */
-  private static void update( Schema schema ) throws SQLException
+  private static void update( Schema schema )
   {
-    Connection conn = Persistence.getConnection();
+    String sql = "UPDATE schemas SET name = ?, duration = ? WHERE id = ?";
 
-    // Update the 'schemas' row
-    String updateSql = "UPDATE schemas SET name = ?, duration = ? WHERE id = ?";
-    PreparedStatement updateSmt = conn.prepareStatement( updateSql );
-    updateSmt.setString( 1, schema.name );
-    updateSmt.setInt( 2, schema.duration );
-    updateSmt.setInt( 3, schema.id );
-    updateSmt.executeUpdate();
-    updateSmt.close();
+    List< Object > params =
+        Lists.newArrayList( schema.name, schema.duration, schema.id );
 
-    // Figure out which mappings need to be deleted/created
-    Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.id, conn );
-    Set< KeyBehaviorMapping > newSet = Sets.newHashSet( schema.mappings.values() );
+    SqlCallback handle = ( ResultSet rs ) -> {
+      Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.id );
+      Set< KeyBehaviorMapping > newSet = Sets.newHashSet( schema.mappings.values() );
 
-    SetView< KeyBehaviorMapping > delete = Sets.difference( oldSet, newSet );
-    SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
+      SetView< KeyBehaviorMapping > delete = Sets.difference( oldSet, newSet );
+      SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
 
-    for (KeyBehaviorMapping mapping : delete) {
-      KeyBehaviors.delete( schema.id, mapping.key, conn );
-    }
+      for (KeyBehaviorMapping mapping : delete) {
+        KeyBehaviors.delete( schema.id, mapping.key );
+      }
 
-    for (KeyBehaviorMapping mapping : create) {
-      KeyBehaviors.create( schema.id, mapping, conn );
-    }
+      for (KeyBehaviorMapping mapping : create) {
+        KeyBehaviors.create( schema.id, mapping );
+      }
+    };
 
-    conn.close();
+    SqliteDao.update( SqlQueryData.create( sql, params, handle ) );
   }
 
   /**
    * Creates the given schema in the 'schemas' table. Also adds all related
    * behaviors to the key_behaviors table
    */
-  private static void create( Schema schema ) throws SQLException
+  private static void create( Schema schema )
   {
-    Connection conn = Persistence.getConnection();
+    String sql = "INSERT INTO schemas (name, duration) VALUES (?,?)";
+    List< Object > params = Lists.newArrayList( schema.name, schema.duration );
 
-    // Make new entry in `schemas`
-    String schemasSql = "INSERT INTO schemas (name, duration) VALUES (?,?)";
-    PreparedStatement schemasStmt = conn.prepareStatement( schemasSql );
-    schemasStmt.setString( 1, schema.name );
-    schemasStmt.setInt( 2, schema.duration );
-    schemasStmt.executeUpdate();
-    schema.id = schemasStmt.getGeneratedKeys().getInt( 1 );
-    schemasStmt.close();
+    SqlCallback callback = rs -> {
+      schema.id = rs.getInt( 1 );
+      KeyBehaviors.addAll( schema.id, schema.mappings.values() );
+    };
 
-    KeyBehaviors.addAll( schema.id, schema.mappings.values() );
-
-    conn.close();
+    SqliteDao.update( SqlQueryData.create( sql, params, callback ) );
   }
 
   /**
@@ -98,31 +84,25 @@ public class Schemas
    */
   public static List< Schema > all()
   {
-    try {
-      Connection conn = Persistence.getConnection();
-      PreparedStatement selectAll =
-          conn.prepareStatement( "SELECT * FROM schemas" );
-      ResultSet schemaSet = selectAll.executeQuery();
+    String sql = "SELECT * FROM schemas";
+    List< Schema > result = Lists.newArrayList();
 
-      List< Schema > result = Lists.newArrayList();
-
-      while (schemaSet.next()) {
+    SqlCallback callback = rs -> {
+      while (rs.next()) {
         Schema s = new Schema();
-        s.id = schemaSet.getInt( "id" );
-        s.name = schemaSet.getString( "name" );
-        s.duration = schemaSet.getInt( "duration" );
+        s.id = rs.getInt( "id" );
+        s.name = rs.getString( "name" );
+        s.duration = rs.getInt( "duration" );
 
-        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.id, conn );
+        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.id );
         s.mappings = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
 
         result.add( s );
       }
+    };
 
-      conn.close();
+    SqliteDao.query( SqlQueryData.create( sql, Lists.newArrayList(), callback ) );
 
-      return result;
-    } catch (SQLException e) {
-      throw new RuntimeException( e );
-    }
+    return result;
   }
 }
