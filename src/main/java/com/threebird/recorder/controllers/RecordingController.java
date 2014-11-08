@@ -1,5 +1,6 @@
 package com.threebird.recorder.controllers;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -8,23 +9,21 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.views.recording.BehaviorCountBox;
 
 /**
  * Controls the Recording view
@@ -42,6 +41,7 @@ public class RecordingController
 
   @FXML private VBox discreteBox;
   @FXML private VBox continuousBox;
+  private Map< Character, BehaviorCountBox > countBoxes = Maps.newHashMap();
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
@@ -67,32 +67,13 @@ public class RecordingController
   private void initializeBehaviorBoxes()
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      Label keyLbl = new Label( kbm.key.toString() );
-      keyLbl.setAlignment( Pos.CENTER );
-      keyLbl.setMinWidth( 30 );
-      keyLbl.setMaxWidth( 30 );
-      HBox.setHgrow( keyLbl, Priority.NEVER );
-
-      Label behaviorLbl = new Label( kbm.behavior );
-      behaviorLbl.setWrapText( true );
-      HBox.setHgrow( behaviorLbl, Priority.ALWAYS );
-      behaviorLbl.setMaxWidth( Double.MAX_VALUE );
-
-      Label countLbl = new Label( "0" );
-      countLbl.setAlignment( Pos.CENTER );
-      countLbl.setMinWidth( 60 );
-      countLbl.setMaxWidth( 60 );
-      HBox.setHgrow( countLbl, Priority.NEVER );
-
-      Separator s1 = new Separator( Orientation.VERTICAL );
-      Separator s2 = new Separator( Orientation.VERTICAL );
-
-      HBox hbox = new HBox( keyLbl, s1, behaviorLbl, s2, countLbl );
-      hbox.setSpacing( 5 );
+      BehaviorCountBox bcb = new BehaviorCountBox( kbm );
 
       VBox target = kbm.isContinuous ? continuousBox : discreteBox;
-      target.getChildren().add( hbox );
+      target.getChildren().add( bcb );
       target.getChildren().add( new Separator() );
+
+      countBoxes.put( kbm.key, bcb );
     }
   }
 
@@ -149,7 +130,9 @@ public class RecordingController
   {}
 
   private void logDiscrete( KeyBehaviorMapping kbm )
-  {}
+  {
+    countBoxes.get( kbm.key ).increment();
+  }
 
   /**
    * @return true if 'c' is supposed to trigger one of he available shortcuts,

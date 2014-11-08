@@ -90,7 +90,7 @@ public class EventRecorder extends Application
    */
   public static void toEditSchemaView( Schema schema )
   {
-    String filepath = "./views/edit_schema.fxml";
+    String filepath = "./views/edit_schema/edit_schema.fxml";
     EditSchemaController controller = loadScene( filepath, "Create Schema" );
     controller.init( schema );
   }
@@ -103,7 +103,7 @@ public class EventRecorder extends Application
    */
   public static void toRecordingView( Schema schema )
   {
-    String filepath = "./views/recording.fxml";
+    String filepath = "./views/recording/recording.fxml";
     RecordingController controller = loadScene( filepath, "Recording" );
     controller.init( schema );
   }
