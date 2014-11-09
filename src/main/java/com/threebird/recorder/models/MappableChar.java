@@ -5,6 +5,10 @@ import java.util.Optional;
 
 import javafx.scene.input.KeyCode;
 
+/**
+ * All the possible chars that a user is allowed to map to a behavior in a
+ * Schema
+ */
 public enum MappableChar
 {
   A('a', KeyCode.A),
@@ -33,6 +37,16 @@ public enum MappableChar
   X('x', KeyCode.X),
   Y('y', KeyCode.Y),
   Z('z', KeyCode.Z),
+  DIGIT0('0', KeyCode.DIGIT0),
+  DIGIT1('1', KeyCode.DIGIT1),
+  DIGIT2('2', KeyCode.DIGIT2),
+  DIGIT3('3', KeyCode.DIGIT3),
+  DIGIT4('4', KeyCode.DIGIT4),
+  DIGIT5('5', KeyCode.DIGIT5),
+  DIGIT6('6', KeyCode.DIGIT6),
+  DIGIT7('7', KeyCode.DIGIT7),
+  DIGIT8('8', KeyCode.DIGIT8),
+  DIGIT9('9', KeyCode.DIGIT9),
   BACK_QUOTE('`', KeyCode.BACK_QUOTE),
   MINUS('-', KeyCode.MINUS),
   EQUALS('=', KeyCode.EQUALS),
