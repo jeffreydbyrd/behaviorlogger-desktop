@@ -1,5 +1,10 @@
 package com.threebird.recorder.views.recording;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.Animation.Status;
+import javafx.util.Duration;
+
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 
@@ -9,6 +14,8 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
  */
 public class DiscreteCountBox extends BehaviorCountBox
 {
+  private Timeline timer;
+
   public DiscreteCountBox( KeyBehaviorMapping kbm )
   {
     super( kbm );
@@ -17,6 +24,23 @@ public class DiscreteCountBox extends BehaviorCountBox
   @Override public boolean toggle()
   {
     incrementCount();
+    this.setStyle( TOGGLED_STYLE );
+
+    DiscreteCountBox self = this;
+
+    if (timer != null && timer.getStatus() == Status.RUNNING) {
+      timer.stop();
+    }
+
+    timer = new Timeline();
+    timer.setCycleCount( 1 );
+    KeyFrame kf = new KeyFrame( Duration.millis( 100 ), evt -> {
+      self.setStyle( "" );
+      timer.stop();
+    } );
+    timer.getKeyFrames().add( kf );
+    timer.play();
+
     return true;
   }
 }
