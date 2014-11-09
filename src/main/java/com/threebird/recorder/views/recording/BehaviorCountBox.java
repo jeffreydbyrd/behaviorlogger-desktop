@@ -9,6 +9,10 @@ import javafx.scene.layout.Priority;
 
 import com.threebird.recorder.models.KeyBehaviorMapping;
 
+/**
+ * An HBox that displays a {@link KeyBehaviorMapping} and also keeps track of a
+ * counter for that behavior.
+ */
 public abstract class BehaviorCountBox extends HBox
 {
   protected Integer count = 0;
@@ -44,11 +48,20 @@ public abstract class BehaviorCountBox extends HBox
     this.setSpacing( 5 );
   }
 
+  /**
+   * Increments 'count' and sets it to the countLbl
+   */
   protected void incrementCount()
   {
     count += 1;
     countLbl.setText( count.toString() );
   }
 
+  /**
+   * Call this method when the user presses a key that maps to this behavior. If
+   * this is a {@link ContinuousCountBox}, it returns true if toggled on or
+   * false if toggled off. If this is a {@link DiscreteCountBox}, toggle() will
+   * always return true.
+   */
   public abstract boolean toggle();
 }

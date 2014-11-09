@@ -8,6 +8,10 @@ import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 
+/**
+ * Contains a list of {@link DiscreteBehavior} and a list of
+ * {@link ContinuousBehavior} and various helper methods.
+ */
 public class Recording
 {
   private List< DiscreteBehavior > discrete;

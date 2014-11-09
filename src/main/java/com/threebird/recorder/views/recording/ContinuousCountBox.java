@@ -6,7 +6,14 @@ import javafx.event.ActionEvent;
 import javafx.util.Duration;
 
 import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 
+/**
+ * A {@link BehaviorCountBox} used for keeping track of a
+ * {@link ContinuousBehavior}. Whenever you toggle the counter on, it records
+ * the time and begins counting up. When you toggle if off, it stops
+ * incrementing
+ */
 public class ContinuousCountBox extends BehaviorCountBox
 {
   private boolean toggled = false;
@@ -27,6 +34,9 @@ public class ContinuousCountBox extends BehaviorCountBox
     }
   }
 
+  /**
+   * Returns the time at which you last toggled on this counter
+   */
   public int getLastStart()
   {
     return start;

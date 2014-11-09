@@ -28,7 +28,7 @@ import com.threebird.recorder.views.recording.ContinuousCountBox;
 import com.threebird.recorder.views.recording.DiscreteCountBox;
 
 /**
- * Controls the Recording view
+ * Controls recording.fxml
  */
 public class RecordingController
 {
@@ -66,23 +66,22 @@ public class RecordingController
     initializeBehaviorCountBoxes();
   }
 
+  /**
+   * Populates 'discreteBox' and the 'continuousBox' with the selected Schema's
+   * mappings
+   */
   private void initializeBehaviorCountBoxes()
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      addCountBox( kbm );
+      BehaviorCountBox bcb =
+          kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
+      VBox target = kbm.isContinuous ? continuousBox : discreteBox;
+
+      target.getChildren().add( bcb );
+      target.getChildren().add( new Separator() );
+
+      countBoxes.put( kbm.key, bcb );
     }
-  }
-
-  private void addCountBox( KeyBehaviorMapping kbm )
-  {
-    BehaviorCountBox bcb =
-        kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
-    VBox target = kbm.isContinuous ? continuousBox : discreteBox;
-
-    target.getChildren().add( bcb );
-    target.getChildren().add( new Separator() );
-
-    countBoxes.put( kbm.key, bcb );
   }
 
   /**
@@ -173,11 +172,22 @@ public class RecordingController
     }
   }
 
+  /**
+   * The user just pressed a key that isn't mapped. Add it to the 'unknowns'
+   * map, the 'countBoxes' map, and display it on the screen
+   */
   private void initUnknown( Character c )
   {
     KeyBehaviorMapping kbm = new KeyBehaviorMapping( c, "[unknown]", false );
     unknowns.put( c, kbm );
-    addCountBox( kbm );
+    BehaviorCountBox bcb =
+        kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
+    VBox target = kbm.isContinuous ? continuousBox : discreteBox;
+
+    target.getChildren().add( bcb );
+    target.getChildren().add( new Separator() );
+
+    countBoxes.put( kbm.key, bcb );
     countBoxes.get( c ).toggle();
   }
 
@@ -208,7 +218,6 @@ public class RecordingController
 
   }
 
-  /** Upon pressing the "Play" or "Stop" button */
   @FXML private void onPlayPress( ActionEvent evt )
   {
     togglePlayButton();

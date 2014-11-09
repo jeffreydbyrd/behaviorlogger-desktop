@@ -1,5 +1,8 @@
 package com.threebird.recorder.models;
 
+/**
+ * Maps a key to a behavior. We use this in configuring a {@link Schema}
+ */
 public class KeyBehaviorMapping
 {
   public final Character key;
@@ -8,11 +11,11 @@ public class KeyBehaviorMapping
 
   public KeyBehaviorMapping( Character key,
                              String behavior,
-                             boolean isDurational )
+                             boolean isContinuous )
   {
     this.key = key;
     this.behavior = behavior;
-    this.isContinuous = isDurational;
+    this.isContinuous = isContinuous;
   }
 
   public KeyBehaviorMapping( String key, String behavior, boolean isDurational )
