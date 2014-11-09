@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane onKeyTyped="#onKeyTyped" prefHeight="570.0" prefWidth="681.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.RecordingController">
+   <children>
+      <Text fx:id="nameText" layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Schema Name" wrappingWidth="491.6888999938965" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <font>
+            <Font size="18.0" />
+         </font></Text>
+      <GridPane hgap="20.0" layoutX="10.0" layoutY="60.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" prefWidth="242.39256286621094" />
+            <ColumnConstraints hgrow="ALWAYS" prefWidth="240.60743713378906" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+         </rowConstraints>
+         <children>
+            <Label alignment="CENTER" prefHeight="16.0" prefWidth="344.0" text="Discrete" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font></Label>
+            <Label alignment="CENTER" prefHeight="16.0" prefWidth="340.0" text="Continuous" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font></Label>
+            <VBox fx:id="discreteBox" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="1">
+               <children>
+                  <Separator prefWidth="200.0" />
+                  <HBox prefWidth="200.0" spacing="5.0">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="30.0" minWidth="30.0" text="Key" HBox.hgrow="NEVER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Separator orientation="VERTICAL" HBox.hgrow="NEVER" />
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Behavior" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Separator orientation="VERTICAL" HBox.hgrow="NEVER" />
+                        <Label alignment="CENTER" maxWidth="60.0" minWidth="60.0" text="Count" HBox.hgrow="NEVER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+               </children>
+            </VBox>
+            <VBox fx:id="continuousBox" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Separator prefWidth="200.0" />
+                  <HBox prefWidth="200.0" spacing="5.0">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="30.0" minWidth="30.0" text="Key" HBox.hgrow="NEVER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Separator orientation="VERTICAL" HBox.hgrow="NEVER" />
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Behavior" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Separator orientation="VERTICAL" HBox.hgrow="NEVER" />
+                        <Label alignment="CENTER" maxWidth="60.0" minWidth="60.0" text="Time" HBox.hgrow="NEVER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+      <Text fx:id="recordingText" fill="#00ae11" layoutX="10.0" layoutY="387.40234375" strokeType="OUTSIDE" strokeWidth="0.0" text="recording" visible="false" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
+      <Text fx:id="pausedText" fill="#bc0101" layoutX="10.0" layoutY="387.40234375" strokeType="OUTSIDE" strokeWidth="0.0" text="paused" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
+      <Label fx:id="timeLabel" alignment="CENTER_RIGHT" layoutX="326.6888999938965" layoutY="375.0" prefHeight="16.0" prefWidth="166.0" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" text="0" textAlignment="RIGHT" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
+         <padding>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </padding>
+      </Label>
+      <Text layoutX="10.0" layoutY="413.568359375" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" />
+      <HBox layoutX="10.0" layoutY="441.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+         <children>
+            <Button fx:id="playButton" focusTraversable="false" layoutX="10.0" layoutY="433.0" mnemonicParsing="false" onAction="#onPlayPress" text="Play" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+            <Button fx:id="goBackButton" focusTraversable="false" layoutX="20.0" layoutY="443.0" mnemonicParsing="false" onAction="#onGoBackPress" text="Go Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" />
+            <Button fx:id="newSessionButton" focusTraversable="false" layoutX="230.0" layoutY="453.0" mnemonicParsing="false" onAction="#onNewSessionPress" text="Start New Session" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="125.0" />
+            <Button fx:id="addNewKeysButton" focusTraversable="false" mnemonicParsing="false" onAction="#onAddNewKeysPress" text="Add Unknown Behaviors" visible="false" />
+         </children>
+      </HBox>
+      <Pane focusTraversable="true" layoutX="417.0" layoutY="341.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</AnchorPane>

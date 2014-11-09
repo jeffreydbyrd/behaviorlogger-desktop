@@ -22,8 +22,12 @@ import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
-import com.threebird.recorder.views.MappingBox;
+import com.threebird.recorder.views.edit_schema.MappingBox;
 
+/**
+ * Corresponds to edit_schema.fxml. The researcher uses this to create or edit a
+ * selected schema
+ */
 public class EditSchemaController
 {
   @FXML private TextField nameField;

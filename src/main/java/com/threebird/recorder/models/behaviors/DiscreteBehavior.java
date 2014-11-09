@@ -1,18 +1,17 @@
 package com.threebird.recorder.models.behaviors;
 
-public class DiscreteBehavior implements Behavior
+public class DiscreteBehavior extends Behavior
 {
-  public final String description;
   public final Integer time;
 
-  public DiscreteBehavior( String description, Integer time )
+  public DiscreteBehavior( Character key, String description, Integer time )
   {
-    this.description = description;
+    super( key, description );
     this.time = time;
   }
 
-  @Override public boolean isDurational()
+  @Override public boolean isContinuous()
   {
-    return true;
+    return false;
   }
 }

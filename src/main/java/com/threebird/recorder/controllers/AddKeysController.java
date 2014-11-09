@@ -23,6 +23,10 @@ import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
 
+/**
+ * Combines with add_keys.fxml. The researcher uses this view to add new keys
+ * after pressing unknown keys during a recording
+ */
 public class AddKeysController
 {
   private Scene recordingScene;
@@ -49,6 +53,9 @@ public class AddKeysController
     populateMappingsBox();
   }
 
+  /**
+   * Adds a new row (a checkbox, a label, and a text field) to the mappingsBox
+   */
   private void addMappingBox( String key, String behavior )
   {
     CheckBox checkbox = new CheckBox();
@@ -80,6 +87,9 @@ public class AddKeysController
     }
   }
 
+  /**
+   * Converts a row from the mappingsBox into a KeyBehaviorMapping
+   */
   private KeyBehaviorMapping toKeyBehaviorMapping( Node n )
   {
     HBox box = (HBox) n;

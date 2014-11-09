@@ -1,34 +1,34 @@
 package com.threebird.recorder.controllers;
 
 import java.util.HashMap;
-import java.util.Optional;
-import java.util.Set;
+import java.util.Map;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.views.recording.BehaviorCountBox;
+import com.threebird.recorder.views.recording.ContinuousCountBox;
+import com.threebird.recorder.views.recording.DiscreteCountBox;
 
 /**
- * Controls the Recording view
+ * Controls recording.fxml
  */
 public class RecordingController
 {
@@ -36,14 +36,14 @@ public class RecordingController
   private int counter = 0;
   private boolean playing = false;
   private Timeline timer;
-  private Set< Character > unknowns = Sets.newHashSet();
+  private HashMap< Character, KeyBehaviorMapping > unknowns = Maps.newHashMap();
+  private Recording recording = new Recording();
 
   @FXML private Text nameText;
 
-  @FXML private ScrollPane behaviorScrollPane;
-  @FXML private VBox behaviorBox;
-
+  @FXML private VBox discreteBox;
   @FXML private VBox continuousBox;
+  private Map< Character, BehaviorCountBox > countBoxes = Maps.newHashMap();
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
@@ -54,9 +54,6 @@ public class RecordingController
   @FXML private Button newSessionButton;
   @FXML private Button addNewKeysButton;
 
-  @FXML private ScrollPane referenceScrollPane;
-  @FXML private VBox referenceBox;
-
   /**
    * @param sch
    *          - The Schema being used for recording
@@ -64,19 +61,27 @@ public class RecordingController
   public void init( Schema sch )
   {
     this.schema = sch;
-
     nameText.setText( schema.name );
-
-    populateKeyBehaviorReferenceBox();
-
     initializeTimer();
+    initializeBehaviorCountBoxes();
+  }
 
-    referenceScrollPane.requestFocus();
+  /**
+   * Populates 'discreteBox' and the 'continuousBox' with the selected Schema's
+   * mappings
+   */
+  private void initializeBehaviorCountBoxes()
+  {
+    for (KeyBehaviorMapping kbm : schema.mappings.values()) {
+      BehaviorCountBox bcb =
+          kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
+      VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
-    // When behaviorBox changes size, scroll to the bottom to show change
-    behaviorBox.heightProperty().addListener( ( obv, oldV, newV ) -> {
-      behaviorScrollPane.setVvalue( 1.0 );
-    } );
+      target.getChildren().add( bcb );
+      target.getChildren().add( new Separator() );
+
+      countBoxes.put( kbm.key, bcb );
+    }
   }
 
   /**
@@ -88,37 +93,6 @@ public class RecordingController
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
-  }
-
-  /**
-   * Fills up the right-most ScrollPane with all the behaviors the researcher
-   * has mapped out. This serves as a reference during sessions
-   */
-  private void populateKeyBehaviorReferenceBox()
-  {
-    schema.mappings.forEach( ( key, m ) -> {
-      addReferenceBox( key, m.behavior );
-    } );
-  }
-
-  /**
-   * Adds another key-behavior entry to the referenceBox
-   */
-  private void addReferenceBox( Character key, String behavior )
-  {
-    Text keyText = new Text( key.toString() );
-    keyText.setWrappingWidth( 10 );
-    HBox.setHgrow( keyText, Priority.NEVER );
-
-    Text separator = new Text( " : " );
-    HBox.setHgrow( separator, Priority.NEVER );
-
-    Text behaviorText = new Text( behavior );
-    behaviorText.setWrappingWidth( 140 );
-    HBox.setHgrow( behaviorText, Priority.ALWAYS );
-
-    HBox hbox = new HBox( keyText, separator, behaviorText );
-    referenceBox.getChildren().add( hbox );
   }
 
   /**
@@ -160,83 +134,6 @@ public class RecordingController
   }
 
   /**
-   * Builds a String for a duration behavior that will be logged in the left
-   * ScrollPane
-   */
-  private String continuousString( KeyBehaviorMapping kbm, Integer startTime )
-  {
-    String format = "%d - %d : (%c) %s";
-    String str =
-        String.format( format, startTime, counter, kbm.key, kbm.behavior );
-    return str;
-  }
-
-  /**
-   * Builds a String for an eventful behavior that will be logged in the left
-   * ScrollPane
-   */
-  private String discreteString( KeyBehaviorMapping kbm )
-  {
-    String str =
-        String.format( "%d : (%c) %s", counter, kbm.key, kbm.behavior );
-    return str;
-  }
-
-  /**
-   * I'm simply creating this for the logContinuous function so we can map a
-   * Character to both a Textbox and a start-time and save them for when the
-   * user stops a continuous behavior.
-   */
-  private class IntegerTextPair
-  {
-    final Integer startTime;
-    final Text text;
-
-    public IntegerTextPair( Integer startTime, Text text )
-    {
-      this.startTime = startTime;
-      this.text = text;
-    }
-  }
-
-  private HashMap< Character, IntegerTextPair > intermediate = new HashMap<>();
-
-  /**
-   * The user just pressed a key that represents a {@link ContinuousBehavior} F.
-   * If this behavior has already started, stop it and log it to the left
-   * ScollPane. Otherwise start it and log it to the right ScrollPane
-   */
-  private void logContinuous( KeyBehaviorMapping kbm )
-  {
-    Character key = kbm.key;
-    ObservableList< Node > texts = continuousBox.getChildren();
-
-    if (intermediate.containsKey( key )) {
-      IntegerTextPair itp = intermediate.get( key );
-      String str = continuousString( kbm, itp.startTime );
-      behaviorBox.getChildren().add( new Text( str ) );
-      texts.remove( itp.text );
-      intermediate.remove( key );
-    } else {
-      String str = discreteString( kbm );
-      Text text = new Text( str );
-      IntegerTextPair itp = new IntegerTextPair( counter, text );
-      intermediate.put( key, itp );
-      texts.add( text );
-    }
-  }
-
-  /**
-   * The user just pressed a key that represents a discrete behavior. Simply log
-   * it to the left ScrollPane
-   */
-  private void logDiscrete( KeyBehaviorMapping kbm )
-  {
-    String str = discreteString( kbm );
-    behaviorBox.getChildren().add( new Text( str ) );
-  }
-
-  /**
    * @return true if 'c' is supposed to trigger one of he available shortcuts,
    *         or false otherwise
    */
@@ -260,26 +157,38 @@ public class RecordingController
    */
   private void logBehavior( KeyBehaviorMapping mapping )
   {
+    boolean toggled = countBoxes.get( mapping.key ).toggle();
+
     if (mapping.isContinuous) {
-      logContinuous( mapping );
+      if (!toggled) {
+        ContinuousCountBox ccb = (ContinuousCountBox) countBoxes.get( mapping.key );
+        int duration = counter - ccb.getLastStart();
+        if (duration > 0) {
+          recording.log( new ContinuousBehavior( mapping.key, mapping.behavior, ccb.getLastStart(), duration ) );
+        }
+      }
     } else {
-      logDiscrete( mapping );
+      recording.log( new DiscreteBehavior( mapping.key, mapping.behavior, counter ) );
     }
   }
 
   /**
-   * The user just pressed a key that wasn't mapped to any behaviors. Log it to
-   * the left-scroll pane as though it were discrete and save it in 'uknowns'
+   * The user just pressed a key that isn't mapped. Add it to the 'unknowns'
+   * map, the 'countBoxes' map, and display it on the screen
    */
-  private void logUnknown( Character c )
+  private void initUnknown( Character c )
   {
-    String behavior = "[unknown]";
-    String str = discreteString( new KeyBehaviorMapping( c, behavior, false ) );
-    behaviorBox.getChildren().add( new Text( str ) );
+    KeyBehaviorMapping kbm = new KeyBehaviorMapping( c, "[unknown]", false );
+    unknowns.put( c, kbm );
+    BehaviorCountBox bcb =
+        kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
+    VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
-    if (unknowns.add( c )) {
-      addReferenceBox( c, behavior );
-    }
+    target.getChildren().add( bcb );
+    target.getChildren().add( new Separator() );
+
+    countBoxes.put( kbm.key, bcb );
+    countBoxes.get( c ).toggle();
   }
 
   /**
@@ -299,16 +208,16 @@ public class RecordingController
       return;
     }
 
-    Optional< KeyBehaviorMapping > optMapping = schema.getMapping( c );
-    if (optMapping.isPresent()) {
-      logBehavior( optMapping.get() );
+    if (schema.mappings.containsKey( c )) {
+      logBehavior( schema.mappings.get( c ) );
+    } else if (unknowns.containsKey( c )) {
+      logBehavior( unknowns.get( c ) );
     } else {
-      logUnknown( c );
+      initUnknown( c );
     }
 
   }
 
-  /** Upon pressing the "Play" or "Stop" button */
   @FXML private void onPlayPress( ActionEvent evt )
   {
     togglePlayButton();
@@ -326,6 +235,6 @@ public class RecordingController
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), schema, unknowns );
+    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), schema, unknowns.keySet() );
   }
 }

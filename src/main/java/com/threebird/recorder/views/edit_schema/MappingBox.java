@@ -1,4 +1,4 @@
-package com.threebird.recorder.views;
+package com.threebird.recorder.views.edit_schema;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
@@ -25,6 +25,8 @@ public class MappingBox extends HBox
 
   public MappingBox( boolean isContinuous, String key, String behavior )
   {
+    super();
+    
     checkbox = new CheckBox();
     checkbox.setSelected( isContinuous );
     HBox.setHgrow( checkbox, Priority.NEVER );
