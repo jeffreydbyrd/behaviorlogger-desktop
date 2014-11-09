@@ -2,7 +2,6 @@ package com.threebird.recorder.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -157,10 +156,12 @@ public class RecordingController
    */
   private void logBehavior( KeyBehaviorMapping mapping )
   {
-    countBoxes.get( mapping.key ).toggle();
+    boolean toggled = countBoxes.get( mapping.key ).toggle();
 
     if (mapping.isContinuous) {
-
+      if (!toggled) {
+        ContinuousCountBox ccb = (ContinuousCountBox) countBoxes.get( mapping.key );
+      }
     } else {
       recording.log( new DiscreteBehavior( mapping.key, mapping.behavior, counter ) );
     }
@@ -191,9 +192,8 @@ public class RecordingController
       return;
     }
 
-    Optional< KeyBehaviorMapping > optMapping = schema.getMapping( c );
-    if (optMapping.isPresent()) {
-      logBehavior( optMapping.get() );
+    if (schema.mappings.containsKey( c )) {
+      logBehavior( schema.mappings.get( c ) );
     } else if (unknowns.containsKey( c )) {
       logBehavior( unknowns.get( c ) );
     } else {

@@ -44,5 +44,11 @@ public abstract class BehaviorCountBox extends HBox
     this.setSpacing( 5 );
   }
 
-  public abstract void toggle();
+  protected void incrementCount()
+  {
+    count += 1;
+    countLbl.setText( count.toString() );
+  }
+
+  public abstract boolean toggle();
 }

@@ -9,9 +9,9 @@ public class DiscreteCountBox extends BehaviorCountBox
     super( kbm );
   }
 
-  @Override public void toggle()
+  @Override public boolean toggle()
   {
-    count += 1;
-    countLbl.setText( count.toString() );
+    incrementCount();
+    return true;
   }
 }
