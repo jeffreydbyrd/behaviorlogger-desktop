@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -19,6 +20,7 @@ import javafx.util.Duration;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
@@ -137,17 +139,17 @@ public class RecordingController
    * @return true if 'c' is supposed to trigger one of he available shortcuts,
    *         or false otherwise
    */
-  private boolean isShortcut( Character c )
+  private boolean isShortcut( KeyCode c )
   {
-    return new Character( ' ' ).equals( c );
+    return KeyCode.SPACE.equals( c );
   }
 
   /**
    * Fires the appropriate action corresponding to the shortcut 'c' represents
    */
-  private void handleShortcut( Character c )
+  private void handleShortcut( KeyCode c )
   {
-    if (new Character( ' ' ).equals( c )) {
+    if (KeyCode.SPACE.equals( c )) {
       togglePlayButton();
     }
   }
@@ -176,9 +178,9 @@ public class RecordingController
    * The user just pressed a key that isn't mapped. Add it to the 'unknowns'
    * map, the 'countBoxes' map, and display it on the screen
    */
-  private void initUnknown( Character c )
+  private void initUnknown( Character c, boolean isContinuous )
   {
-    KeyBehaviorMapping kbm = new KeyBehaviorMapping( c, "[unknown]", false );
+    KeyBehaviorMapping kbm = new KeyBehaviorMapping( c, "[unknown]", isContinuous );
     unknowns.put( c, kbm );
     BehaviorCountBox bcb =
         kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
@@ -192,15 +194,15 @@ public class RecordingController
   }
 
   /**
-   * Attached to the root pane, onKeyTyped should fire when the user types a
+   * Attached to the root pane, onKeyPressed should fire when the user types a
    * key, no matter what is selected
    */
-  @FXML private void onKeyTyped( KeyEvent evt )
+  @FXML private void onKeyPressed( KeyEvent evt )
   {
-    Character c = evt.getCharacter().charAt( 0 );
+    KeyCode code = evt.getCode();
 
-    if (isShortcut( c )) {
-      handleShortcut( c );
+    if (isShortcut( code )) {
+      handleShortcut( code );
       return;
     }
 
@@ -208,14 +210,16 @@ public class RecordingController
       return;
     }
 
-    if (schema.mappings.containsKey( c )) {
-      logBehavior( schema.mappings.get( c ) );
-    } else if (unknowns.containsKey( c )) {
-      logBehavior( unknowns.get( c ) );
-    } else {
-      initUnknown( c );
-    }
-
+    MappableChar.getForKeyCode( code ).ifPresent( mc -> {
+      char c = mc.c;
+      if (schema.mappings.containsKey( c )) {
+        logBehavior( schema.mappings.get( c ) );
+      } else if (unknowns.containsKey( c )) {
+        logBehavior( unknowns.get( c ) );
+      } else {
+        initUnknown( c, evt.isControlDown() );
+      }
+    } );
   }
 
   @FXML private void onPlayPress( ActionEvent evt )

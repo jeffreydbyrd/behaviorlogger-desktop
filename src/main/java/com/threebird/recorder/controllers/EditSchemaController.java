@@ -42,9 +42,7 @@ public class EditSchemaController
   @FXML private VBox errorMsgBox;
 
   protected static int defaultNumBoxes = 10;
-  protected static String digits = "0123456789";
-  protected static String acceptableKeys =
-      "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
+  private static char[] digits = "0123456789".toCharArray();
 
   private Schema model;
 
@@ -68,9 +66,9 @@ public class EditSchemaController
     minutesField.setText( intToStr( mins ) );
     secondsField.setText( intToStr( secs ) );
 
-    hoursField.setOnKeyTyped( createFieldLimiter( hoursField, acceptableKeys, 2 ) );
-    minutesField.setOnKeyTyped( createFieldLimiter( minutesField, acceptableKeys, 2 ) );
-    secondsField.setOnKeyTyped( createFieldLimiter( secondsField, acceptableKeys, 2 ) );
+    hoursField.setOnKeyTyped( createFieldLimiter( hoursField, digits, 2 ) );
+    minutesField.setOnKeyTyped( createFieldLimiter( minutesField, digits, 2 ) );
+    secondsField.setOnKeyTyped( createFieldLimiter( secondsField, digits, 2 ) );
   }
 
   private static String intToStr( int i )
@@ -107,11 +105,11 @@ public class EditSchemaController
    *         'limit'
    */
   public static EventHandler< ? super KeyEvent >
-    createFieldLimiter( TextField field, String acceptableKeys, int limit )
+    createFieldLimiter( TextField field, char[] acceptableKeys, int limit )
   {
     return evt -> {
       if (field.getText().trim().length() == limit
-          || !acceptableKeys.contains( evt.getCharacter() ))
+          || !String.valueOf( acceptableKeys ).contains( evt.getCharacter() ))
         evt.consume();
     };
   }

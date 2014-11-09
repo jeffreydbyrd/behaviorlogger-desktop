@@ -20,13 +20,13 @@ public class MappingBox extends HBox
   public final TextField behaviorField;
 
   private static final Insets insets = new Insets( .5, .5, .5, .5 );
-  protected static String acceptableKeys =
-      "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./";
+  private static char[] acceptableKeys =
+      "abcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;',./".toCharArray();
 
   public MappingBox( boolean isContinuous, String key, String behavior )
   {
     super();
-    
+
     checkbox = new CheckBox();
     checkbox.setSelected( isContinuous );
     HBox.setHgrow( checkbox, Priority.NEVER );
