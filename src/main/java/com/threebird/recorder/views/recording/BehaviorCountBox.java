@@ -15,6 +15,8 @@ import com.threebird.recorder.models.KeyBehaviorMapping;
  */
 public abstract class BehaviorCountBox extends HBox
 {
+  protected static String TOGGLED_STYLE = "-fx-background-color:#7DFF86";
+  
   protected Integer count = 0;
   public final Label keyLabel;
   public final Label behaviorLbl;

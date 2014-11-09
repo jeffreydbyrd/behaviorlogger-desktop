@@ -17,7 +17,6 @@ import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 public class ContinuousCountBox extends BehaviorCountBox
 {
   private boolean toggled = false;
-
   private int start = 0;
 
   public ContinuousCountBox( KeyBehaviorMapping kbm, Timeline timer )
@@ -47,6 +46,9 @@ public class ContinuousCountBox extends BehaviorCountBox
     toggled = !toggled;
     if (toggled) {
       start = count;
+      this.setStyle( TOGGLED_STYLE );
+    } else {
+      this.setStyle( "" );
     }
 
     return toggled;
