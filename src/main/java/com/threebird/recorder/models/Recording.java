@@ -13,7 +13,7 @@ public class Recording
   private List< DiscreteBehavior > discrete;
   private List< ContinuousBehavior > continuous;
 
-  Recording()
+  public Recording()
   {
     discrete = Lists.newArrayList();
     continuous = Lists.newArrayList();

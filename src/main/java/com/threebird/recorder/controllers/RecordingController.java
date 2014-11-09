@@ -1,8 +1,8 @@
 package com.threebird.recorder.controllers;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -18,12 +18,14 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.views.recording.BehaviorCountBox;
+import com.threebird.recorder.views.recording.ContinuousCountBox;
+import com.threebird.recorder.views.recording.DiscreteCountBox;
 
 /**
  * Controls the Recording view
@@ -34,8 +36,8 @@ public class RecordingController
   private int counter = 0;
   private boolean playing = false;
   private Timeline timer;
-  private Set< Character > unknowns = Sets.newHashSet();
-  private Recording recording;
+  private HashMap< Character, KeyBehaviorMapping > unknowns = Maps.newHashMap();
+  private Recording recording = new Recording();
 
   @FXML private Text nameText;
 
@@ -60,21 +62,26 @@ public class RecordingController
   {
     this.schema = sch;
     nameText.setText( schema.name );
-    initializeBehaviorBoxes();
+    initializeBehaviorCountBoxes();
     initializeTimer();
   }
 
-  private void initializeBehaviorBoxes()
+  private void initializeBehaviorCountBoxes()
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      BehaviorCountBox bcb = new BehaviorCountBox( kbm );
-
-      VBox target = kbm.isContinuous ? continuousBox : discreteBox;
-      target.getChildren().add( bcb );
-      target.getChildren().add( new Separator() );
-
-      countBoxes.put( kbm.key, bcb );
+      addCountBox( kbm );
     }
+  }
+
+  private void addCountBox( KeyBehaviorMapping kbm )
+  {
+    BehaviorCountBox bcb = kbm.isContinuous ? new ContinuousCountBox( kbm ) : new DiscreteCountBox( kbm );
+    VBox target = kbm.isContinuous ? continuousBox : discreteBox;
+
+    target.getChildren().add( bcb );
+    target.getChildren().add( new Separator() );
+
+    countBoxes.put( kbm.key, bcb );
   }
 
   /**
@@ -126,14 +133,6 @@ public class RecordingController
     pausedText.setVisible( !pausedText.isVisible() );
   }
 
-  private void logContinuous( KeyBehaviorMapping kbm )
-  {}
-
-  private void logDiscrete( KeyBehaviorMapping kbm )
-  {
-    countBoxes.get( kbm.key ).increment();
-  }
-
   /**
    * @return true if 'c' is supposed to trigger one of he available shortcuts,
    *         or false otherwise
@@ -158,16 +157,21 @@ public class RecordingController
    */
   private void logBehavior( KeyBehaviorMapping mapping )
   {
+    countBoxes.get( mapping.key ).toggle();
+
     if (mapping.isContinuous) {
-      logContinuous( mapping );
+
     } else {
-      logDiscrete( mapping );
+      recording.log( new DiscreteBehavior( mapping.key, mapping.behavior, counter ) );
     }
   }
 
-  private void logUnknown( Character c )
+  private void initUnknown( Character c )
   {
-    unknowns.add( c );
+    KeyBehaviorMapping kbm = new KeyBehaviorMapping( c, "[unknown]", false );
+    unknowns.put( c, kbm );
+    addCountBox( kbm );
+    countBoxes.get( c ).toggle();
   }
 
   /**
@@ -190,8 +194,10 @@ public class RecordingController
     Optional< KeyBehaviorMapping > optMapping = schema.getMapping( c );
     if (optMapping.isPresent()) {
       logBehavior( optMapping.get() );
+    } else if (unknowns.containsKey( c )) {
+      logBehavior( unknowns.get( c ) );
     } else {
-      logUnknown( c );
+      initUnknown( c );
     }
 
   }
@@ -214,6 +220,6 @@ public class RecordingController
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), schema, unknowns );
+    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), schema, unknowns.keySet() );
   }
 }

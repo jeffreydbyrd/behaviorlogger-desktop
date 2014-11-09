@@ -5,7 +5,7 @@ public class ContinuousBehavior extends Behavior
   final public Integer start;
   private Integer duration;
 
-  public ContinuousBehavior( String key, String description, Integer start )
+  public ContinuousBehavior( Character key, String description, Integer start )
   {
     super( key, description );
     this.start = start;

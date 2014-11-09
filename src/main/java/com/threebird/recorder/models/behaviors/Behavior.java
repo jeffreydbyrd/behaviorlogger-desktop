@@ -2,10 +2,10 @@ package com.threebird.recorder.models.behaviors;
 
 public abstract class Behavior
 {
-  public final String key;
+  public final Character key;
   public final String description;
 
-  Behavior( String key, String description )
+  Behavior( Character key, String description )
   {
     this.key = key;
     this.description = description;

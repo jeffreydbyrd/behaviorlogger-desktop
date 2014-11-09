@@ -9,9 +9,9 @@ import javafx.scene.layout.Priority;
 
 import com.threebird.recorder.models.KeyBehaviorMapping;
 
-public class BehaviorCountBox extends HBox
+public abstract class BehaviorCountBox extends HBox
 {
-  private Integer count = 0;
+  protected Integer count = 0;
   public final Label keyLabel;
   public final Label behaviorLbl;
   public final Label countLbl;
@@ -44,9 +44,5 @@ public class BehaviorCountBox extends HBox
     this.setSpacing( 5 );
   }
 
-  public void increment()
-  {
-    count += 1;
-    countLbl.setText( count.toString() );
-  }
+  public abstract void toggle();
 }
