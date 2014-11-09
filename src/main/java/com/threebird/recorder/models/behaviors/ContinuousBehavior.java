@@ -5,11 +5,11 @@ public class ContinuousBehavior extends Behavior
   final public Integer start;
   private Integer duration;
 
-  public ContinuousBehavior( Character key, String description, Integer start )
+  public ContinuousBehavior( Character key, String description, Integer start, Integer duration )
   {
     super( key, description );
     this.start = start;
-    this.duration = 1;
+    this.duration = duration;
   }
 
   @Override public boolean isContinuous()
@@ -20,10 +20,5 @@ public class ContinuousBehavior extends Behavior
   public Integer getDuration()
   {
     return duration;
-  }
-
-  public void incDuration( Integer seconds )
-  {
-    duration += seconds;
   }
 }

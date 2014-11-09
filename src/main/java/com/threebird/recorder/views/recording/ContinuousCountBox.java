@@ -1,38 +1,42 @@
 package com.threebird.recorder.views.recording;
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.util.Duration;
 
 import com.threebird.recorder.models.KeyBehaviorMapping;
 
 public class ContinuousCountBox extends BehaviorCountBox
 {
-  private Timeline timer;
   private boolean toggled = false;
 
-  public ContinuousCountBox( KeyBehaviorMapping kbm )
+  private int start = 0;
+
+  public ContinuousCountBox( KeyBehaviorMapping kbm, Timeline timer )
   {
     super( kbm );
-    timer = new Timeline();
-    timer.setCycleCount( Animation.INDEFINITE );
-    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), evt -> incrementCount() );
+    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
   }
 
-  public int getLatestTime()
+  private void onTick( ActionEvent evt )
   {
-    return 0;
+    if (toggled) {
+      incrementCount();
+    }
+  }
+
+  public int getLastStart()
+  {
+    return start;
   }
 
   @Override public boolean toggle()
   {
     toggled = !toggled;
     if (toggled) {
-      timer.play();
-    } else {
-      timer.pause();
+      start = count;
     }
 
     return toggled;

@@ -21,6 +21,7 @@ import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.views.recording.BehaviorCountBox;
 import com.threebird.recorder.views.recording.ContinuousCountBox;
@@ -61,8 +62,8 @@ public class RecordingController
   {
     this.schema = sch;
     nameText.setText( schema.name );
-    initializeBehaviorCountBoxes();
     initializeTimer();
+    initializeBehaviorCountBoxes();
   }
 
   private void initializeBehaviorCountBoxes()
@@ -74,7 +75,8 @@ public class RecordingController
 
   private void addCountBox( KeyBehaviorMapping kbm )
   {
-    BehaviorCountBox bcb = kbm.isContinuous ? new ContinuousCountBox( kbm ) : new DiscreteCountBox( kbm );
+    BehaviorCountBox bcb =
+        kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
     VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
     target.getChildren().add( bcb );
@@ -161,6 +163,10 @@ public class RecordingController
     if (mapping.isContinuous) {
       if (!toggled) {
         ContinuousCountBox ccb = (ContinuousCountBox) countBoxes.get( mapping.key );
+        int duration = counter - ccb.getLastStart();
+        if (duration > 0) {
+          recording.log( new ContinuousBehavior( mapping.key, mapping.behavior, ccb.getLastStart(), duration ) );
+        }
       }
     } else {
       recording.log( new DiscreteBehavior( mapping.key, mapping.behavior, counter ) );
