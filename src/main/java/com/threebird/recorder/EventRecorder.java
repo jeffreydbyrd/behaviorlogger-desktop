@@ -1,7 +1,7 @@
 package com.threebird.recorder;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.Collection;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import com.threebird.recorder.controllers.AddKeysController;
 import com.threebird.recorder.controllers.EditSchemaController;
 import com.threebird.recorder.controllers.RecordingController;
-import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 
 /**
@@ -109,7 +109,7 @@ public class EventRecorder extends Application
     controller.init( schema );
   }
 
-  public static void toAddKeysView( Scene recordingScene, Schema schema, Set< MappableChar > unknowns )
+  public static void toAddKeysView( Scene recordingScene, Schema schema, Collection< KeyBehaviorMapping > unknowns )
   {
     String filepath = "./views/add_keys.fxml";
     AddKeysController controller = loadScene( filepath, "Add Keys" );

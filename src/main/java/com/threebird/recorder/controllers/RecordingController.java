@@ -238,6 +238,6 @@ public class RecordingController
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), schema, unknowns.keySet() );
+    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), schema, unknowns.values() );
   }
 }

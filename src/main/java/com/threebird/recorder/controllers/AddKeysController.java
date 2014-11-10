@@ -1,26 +1,22 @@
 package com.threebird.recorder.controllers;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Map;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
-import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
 
@@ -32,7 +28,8 @@ public class AddKeysController
 {
   private Scene recordingScene;
   private Schema schema;
-  private Set< MappableChar > unknowns;
+  private Collection< KeyBehaviorMapping > unknowns;
+  private Map< TextField, KeyBehaviorMapping > behaviorFields = Maps.newHashMap();
 
   @FXML private VBox mappingsBox;
 
@@ -43,9 +40,9 @@ public class AddKeysController
    * @param schema
    *          - the schema we are adding new keys to
    * @param unknowns
-   *          - the set of uknown keys
+   *          - the collection of unknown behavior mappings
    */
-  public void init( Scene recordingScene, Schema schema, Set< MappableChar > unknowns )
+  public void init( Scene recordingScene, Schema schema, Collection< KeyBehaviorMapping > unknowns )
   {
     this.recordingScene = recordingScene;
     this.schema = schema;
@@ -54,57 +51,34 @@ public class AddKeysController
     populateMappingsBox();
   }
 
-  /**
-   * Adds a new row (a checkbox, a label, and a text field) to the mappingsBox
-   */
-  private void addMappingBox( String key, String behavior )
-  {
-    CheckBox checkbox = new CheckBox();
-    checkbox.setSelected( false );
-    HBox.setHgrow( checkbox, Priority.NEVER );
-    HBox.setMargin( checkbox, new Insets( 5, 0, 0, 10 ) );
-
-    Label keyText = new Label( key );
-    keyText.setMaxWidth( 40 );
-    keyText.setMinWidth( 40 );
-    keyText.setAlignment( Pos.CENTER );
-    keyText.setPadding( new Insets( 6, 0, 0, 10 ) );
-    HBox.setHgrow( keyText, Priority.NEVER );
-
-    TextField behaviorField = new TextField( behavior );
-    HBox.setHgrow( behaviorField, Priority.ALWAYS );
-    HBox.setMargin( behaviorField, new Insets( 2, 2, 2, 10 ) );
-
-    HBox box = new HBox( checkbox, keyText, behaviorField );
-    mappingsBox.getChildren().add( box );
-  }
-
   private void populateMappingsBox()
   {
     mappingsBox.getChildren().clear();
 
-    for (MappableChar mc : unknowns) {
-      addMappingBox( String.valueOf( mc.c ), "UNKNOWN" );
+    for (KeyBehaviorMapping kbm : unknowns) {
+      Label contLabel = new Label( kbm.isContinuous ? "cont." : "" );
+      contLabel.setMinWidth( 35 );
+      contLabel.setMaxWidth( 35 );
+      HBox.setHgrow( contLabel, Priority.NEVER );
+      HBox.setMargin( contLabel, new Insets( 5, 0, 0, 10 ) );
+
+      Label keyText = new Label( kbm.key.toString() );
+      keyText.setMaxWidth( 40 );
+      keyText.setMinWidth( 40 );
+      keyText.setAlignment( Pos.CENTER );
+      keyText.setPadding( new Insets( 6, 0, 0, 10 ) );
+      HBox.setHgrow( keyText, Priority.NEVER );
+
+      TextField behaviorField = new TextField();
+      behaviorField.setPromptText( kbm.behavior );
+      HBox.setHgrow( behaviorField, Priority.ALWAYS );
+      HBox.setMargin( behaviorField, new Insets( 2, 2, 2, 10 ) );
+
+      HBox box = new HBox( contLabel, keyText, behaviorField );
+      mappingsBox.getChildren().add( box );
+
+      behaviorFields.put( behaviorField, kbm );
     }
-  }
-
-  /**
-   * Converts a row from the mappingsBox into a KeyBehaviorMapping
-   */
-  private KeyBehaviorMapping toKeyBehaviorMapping( Node n )
-  {
-    HBox box = (HBox) n;
-    Iterator< Node > iter = box.getChildren().iterator();
-
-    CheckBox checkbox = (CheckBox) iter.next();
-    Label label = (Label) iter.next();
-    TextField textfield = (TextField) iter.next();
-
-    boolean isContinuous = checkbox.isSelected();
-    MappableChar key = MappableChar.getForChar( label.getText().charAt( 0 ) ).get();
-    String behavior = textfield.getText();
-
-    return new KeyBehaviorMapping( key, behavior, isContinuous );
   }
 
   /**
@@ -121,14 +95,10 @@ public class AddKeysController
    */
   @FXML private void onSavePress( ActionEvent evt )
   {
-    List< KeyBehaviorMapping > keyBehaviors =
-        mappingsBox.getChildren().stream()
-                   .map( this::toKeyBehaviorMapping )
-                   .collect( Collectors.toList() );
-
-    for (KeyBehaviorMapping behavior : keyBehaviors) {
-      schema.mappings.put( behavior.key, behavior );
-    }
+    behaviorFields.forEach( ( field, kbm ) -> {
+      String behavior = field.getText().trim();
+      schema.mappings.put( kbm.key, new KeyBehaviorMapping( kbm.key, behavior, kbm.isContinuous ) );
+    } );
 
     Schemas.save( schema );
 
