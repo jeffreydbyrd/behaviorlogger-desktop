@@ -13,7 +13,7 @@ public class Schema
 {
   public Integer id;
   public String name;
-  public HashMap< Character, KeyBehaviorMapping > mappings = Maps.newHashMap();
+  public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
   public int duration = 0;
 
   /**

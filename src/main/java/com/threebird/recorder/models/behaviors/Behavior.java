@@ -1,14 +1,16 @@
 package com.threebird.recorder.models.behaviors;
 
+import com.threebird.recorder.models.MappableChar;
+
 /**
  * An actual behavior that a researcher observed during a recording session
  */
 public abstract class Behavior
 {
-  public final Character key;
+  public final MappableChar key;
   public final String description;
 
-  Behavior( Character key, String description )
+  Behavior( MappableChar key, String description )
   {
     this.key = key;
     this.description = description;

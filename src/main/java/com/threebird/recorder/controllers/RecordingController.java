@@ -38,14 +38,14 @@ public class RecordingController
   private int counter = 0;
   private boolean playing = false;
   private Timeline timer;
-  private HashMap< Character, KeyBehaviorMapping > unknowns = Maps.newHashMap();
+  private HashMap< MappableChar, KeyBehaviorMapping > unknowns = Maps.newHashMap();
   private Recording recording = new Recording();
 
   @FXML private Text nameText;
 
   @FXML private VBox discreteBox;
   @FXML private VBox continuousBox;
-  private Map< Character, BehaviorCountBox > countBoxes = Maps.newHashMap();
+  private Map< MappableChar, BehaviorCountBox > countBoxes = Maps.newHashMap();
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
@@ -178,10 +178,10 @@ public class RecordingController
    * The user just pressed a key that isn't mapped. Add it to the 'unknowns'
    * map, the 'countBoxes' map, and display it on the screen
    */
-  private void initUnknown( Character c, boolean isContinuous )
+  private void initUnknown( MappableChar mc, boolean isContinuous )
   {
-    KeyBehaviorMapping kbm = new KeyBehaviorMapping( c, "[unknown]", isContinuous );
-    unknowns.put( c, kbm );
+    KeyBehaviorMapping kbm = new KeyBehaviorMapping( mc, "[unknown]", isContinuous );
+    unknowns.put( mc, kbm );
     BehaviorCountBox bcb =
         kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
     VBox target = kbm.isContinuous ? continuousBox : discreteBox;
@@ -190,7 +190,7 @@ public class RecordingController
     target.getChildren().add( new Separator() );
 
     countBoxes.put( kbm.key, bcb );
-    countBoxes.get( c ).toggle();
+    countBoxes.get( mc ).toggle();
   }
 
   /**
@@ -211,13 +211,12 @@ public class RecordingController
     }
 
     MappableChar.getForKeyCode( code ).ifPresent( mc -> {
-      char c = mc.c;
-      if (schema.mappings.containsKey( c )) {
-        logBehavior( schema.mappings.get( c ) );
-      } else if (unknowns.containsKey( c )) {
-        logBehavior( unknowns.get( c ) );
+      if (schema.mappings.containsKey( mc )) {
+        logBehavior( schema.mappings.get( mc ) );
+      } else if (unknowns.containsKey( mc )) {
+        logBehavior( unknowns.get( mc ) );
       } else {
-        initUnknown( c, evt.isControlDown() );
+        initUnknown( mc, evt.isControlDown() );
       }
     } );
   }

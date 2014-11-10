@@ -1,10 +1,12 @@
 package com.threebird.recorder.models.behaviors;
 
+import com.threebird.recorder.models.MappableChar;
+
 public class DiscreteBehavior extends Behavior
 {
   public final Integer time;
 
-  public DiscreteBehavior( Character key, String description, Integer time )
+  public DiscreteBehavior( MappableChar key, String description, Integer time )
   {
     super( key, description );
     this.time = time;

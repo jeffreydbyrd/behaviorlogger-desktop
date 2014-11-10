@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.persistence.util.SqlCallback;
 import com.threebird.recorder.persistence.util.SqlQueryData;
 import com.threebird.recorder.persistence.util.SqliteDao;
@@ -25,12 +26,13 @@ public class KeyBehaviors
 
     Set< KeyBehaviorMapping > mappings = Sets.newHashSet();
 
-    SqlCallback callback = mappingSet -> {
-      while (mappingSet.next()) {
-        String key = mappingSet.getString( "key" );
-        String behavior = mappingSet.getString( "behavior" );
-        boolean isContinuous = mappingSet.getBoolean( "is_continuous" );
-        mappings.add( new KeyBehaviorMapping( key, behavior, isContinuous ) );
+    SqlCallback callback = rs -> {
+      while (rs.next()) {
+        String key = rs.getString( "key" );
+        MappableChar ch = MappableChar.getForChar( key.charAt(0) ).get();
+        String behavior = rs.getString( "behavior" );
+        boolean isContinuous = rs.getBoolean( "is_continuous" );
+        mappings.add( new KeyBehaviorMapping( ch, behavior, isContinuous ) );
       }
     };
 
@@ -66,7 +68,7 @@ public class KeyBehaviors
   /**
    * Deletes the KeyBehaviorMapping with a specific schema_id and key
    */
-  public static void delete( Integer schemaId, Character key )
+  public static void delete( Integer schemaId, MappableChar key )
   {
     String sql =
         "DELETE FROM key_behaviors WHERE schema_id = ? AND key = ?";

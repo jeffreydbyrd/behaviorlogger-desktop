@@ -5,11 +5,11 @@ package com.threebird.recorder.models;
  */
 public class KeyBehaviorMapping
 {
-  public final Character key;
+  public final MappableChar key;
   public final String behavior;
   public final boolean isContinuous;
 
-  public KeyBehaviorMapping( Character key,
+  public KeyBehaviorMapping( MappableChar key,
                              String behavior,
                              boolean isContinuous )
   {
@@ -18,9 +18,9 @@ public class KeyBehaviorMapping
     this.isContinuous = isContinuous;
   }
 
-  public KeyBehaviorMapping( String key, String behavior, boolean isDurational )
+  public KeyBehaviorMapping( String key, String behavior, boolean isContinuous )
   {
-    this( key.charAt( 0 ), behavior, isDurational );
+    this( MappableChar.getForChar( key.charAt( 0 ) ).get(), behavior, isContinuous );
   }
 
   @Override public String toString()

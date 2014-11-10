@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import com.threebird.recorder.controllers.AddKeysController;
 import com.threebird.recorder.controllers.EditSchemaController;
 import com.threebird.recorder.controllers.RecordingController;
+import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Schema;
 
 /**
@@ -108,7 +109,7 @@ public class EventRecorder extends Application
     controller.init( schema );
   }
 
-  public static void toAddKeysView( Scene recordingScene, Schema schema, Set< Character > unknowns )
+  public static void toAddKeysView( Scene recordingScene, Schema schema, Set< MappableChar > unknowns )
   {
     String filepath = "./views/add_keys.fxml";
     AddKeysController controller = loadScene( filepath, "Add Keys" );

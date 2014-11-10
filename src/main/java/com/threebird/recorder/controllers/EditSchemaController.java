@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.views.edit_schema.MappingBox;
@@ -225,7 +226,7 @@ public class EditSchemaController
       return;
     }
 
-    HashMap< Character, KeyBehaviorMapping > temp = Maps.newHashMap();
+    HashMap< MappableChar, KeyBehaviorMapping > temp = Maps.newHashMap();
 
     String name = nameField.getText().trim();
     List< KeyBehaviorMapping > keyBehaviors =

@@ -90,4 +90,8 @@ public enum MappableChar
     return Optional.ofNullable( chars.get( c ) );
   }
 
+  @Override public String toString()
+  {
+    return c + "";
+  }
 }

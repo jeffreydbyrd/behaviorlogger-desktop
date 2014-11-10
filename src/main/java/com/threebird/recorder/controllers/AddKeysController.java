@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
 
@@ -31,7 +32,7 @@ public class AddKeysController
 {
   private Scene recordingScene;
   private Schema schema;
-  private Set< Character > unknowns;
+  private Set< MappableChar > unknowns;
 
   @FXML private VBox mappingsBox;
 
@@ -44,7 +45,7 @@ public class AddKeysController
    * @param unknowns
    *          - the set of uknown keys
    */
-  public void init( Scene recordingScene, Schema schema, Set< Character > unknowns )
+  public void init( Scene recordingScene, Schema schema, Set< MappableChar > unknowns )
   {
     this.recordingScene = recordingScene;
     this.schema = schema;
@@ -82,8 +83,8 @@ public class AddKeysController
   {
     mappingsBox.getChildren().clear();
 
-    for (Character c : unknowns) {
-      addMappingBox( c.toString(), "UNKNOWN" );
+    for (MappableChar mc : unknowns) {
+      addMappingBox( String.valueOf( mc.c ), "UNKNOWN" );
     }
   }
 
@@ -100,7 +101,7 @@ public class AddKeysController
     TextField textfield = (TextField) iter.next();
 
     boolean isContinuous = checkbox.isSelected();
-    String key = label.getText();
+    MappableChar key = MappableChar.getForChar( label.getText().charAt( 0 ) ).get();
     String behavior = textfield.getText();
 
     return new KeyBehaviorMapping( key, behavior, isContinuous );
