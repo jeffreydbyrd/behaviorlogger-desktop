@@ -76,7 +76,7 @@ public class RecordingController
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
       BehaviorCountBox bcb =
-          kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
+          kbm.isContinuous ? new ContinuousCountBox( kbm ) : new DiscreteCountBox( kbm );
       VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
       target.getChildren().add( bcb );
@@ -183,7 +183,7 @@ public class RecordingController
     KeyBehaviorMapping kbm = new KeyBehaviorMapping( mc, "[unknown]", isContinuous );
     unknowns.put( mc, kbm );
     BehaviorCountBox bcb =
-        kbm.isContinuous ? new ContinuousCountBox( kbm, timer ) : new DiscreteCountBox( kbm );
+        kbm.isContinuous ? new ContinuousCountBox( kbm ) : new DiscreteCountBox( kbm );
     VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
     target.getChildren().add( bcb );
