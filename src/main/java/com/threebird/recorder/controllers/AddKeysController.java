@@ -52,6 +52,10 @@ public class AddKeysController
     populateMappingsBox();
   }
 
+  /**
+   * For each KeyBehaviorMapping, print out a checkbox, some labels, and a
+   * TextField. Wire these widgets to the model.
+   */
   private void populateMappingsBox()
   {
     mappingsBox.getChildren().clear();
@@ -106,8 +110,8 @@ public class AddKeysController
   }
 
   /**
-   * Runs through the mappingsBox and adds new KeyBehaviorMappings to 'schema'.
-   * Then saves 'schema'
+   * Runs through the 'behaviorFields' and adds new KeyBehaviorMappings to
+   * 'schema'. Then saves 'schema'
    */
   @FXML private void onSavePress( ActionEvent evt )
   {
