@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -56,11 +57,15 @@ public class AddKeysController
     mappingsBox.getChildren().clear();
 
     for (KeyBehaviorMapping kbm : unknowns) {
+      CheckBox selectBox = new CheckBox();
+      HBox.setHgrow( selectBox, Priority.NEVER );
+      HBox.setMargin( selectBox, new Insets( 5, 0, 0, 10 ) );
+
       Label contLabel = new Label( kbm.isContinuous ? "cont." : "" );
       contLabel.setMinWidth( 35 );
       contLabel.setMaxWidth( 35 );
       HBox.setHgrow( contLabel, Priority.NEVER );
-      HBox.setMargin( contLabel, new Insets( 5, 0, 0, 10 ) );
+      HBox.setMargin( contLabel, new Insets( 5, 0, 0, 5 ) );
 
       Label keyText = new Label( kbm.key.toString() );
       keyText.setMaxWidth( 40 );
@@ -74,10 +79,21 @@ public class AddKeysController
       HBox.setHgrow( behaviorField, Priority.ALWAYS );
       HBox.setMargin( behaviorField, new Insets( 2, 2, 2, 10 ) );
 
-      HBox box = new HBox( contLabel, keyText, behaviorField );
-      mappingsBox.getChildren().add( box );
+      selectBox.selectedProperty().addListener( ( observable,
+                                                  oldValue,
+                                                  newValue ) -> {
+        behaviorField.setDisable( !newValue );
+        if (newValue) {
+          behaviorFields.put( behaviorField, kbm );
+        } else {
+          behaviorFields.remove( behaviorField );
+        }
+      } );
 
-      behaviorFields.put( behaviorField, kbm );
+      selectBox.selectedProperty().setValue( true );
+
+      HBox box = new HBox( selectBox, contLabel, keyText, behaviorField );
+      mappingsBox.getChildren().add( box );
     }
   }
 
