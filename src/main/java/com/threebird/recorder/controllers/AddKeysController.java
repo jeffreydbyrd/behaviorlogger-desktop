@@ -28,6 +28,7 @@ import com.threebird.recorder.persistence.Schemas;
 public class AddKeysController
 {
   private Scene recordingScene;
+  private RecordingController recordingController;
   private Schema schema;
   private Collection< KeyBehaviorMapping > unknowns;
   private Map< TextField, KeyBehaviorMapping > behaviorFields = Maps.newHashMap();
@@ -43,9 +44,13 @@ public class AddKeysController
    * @param unknowns
    *          - the collection of unknown behavior mappings
    */
-  public void init( Scene recordingScene, Schema schema, Collection< KeyBehaviorMapping > unknowns )
+  public void init( Scene recordingScene,
+                    RecordingController controller,
+                    Schema schema,
+                    Collection< KeyBehaviorMapping > unknowns )
   {
     this.recordingScene = recordingScene;
+    this.recordingController = controller;
     this.schema = schema;
     this.unknowns = unknowns;
 
@@ -121,7 +126,7 @@ public class AddKeysController
     } );
 
     Schemas.save( schema );
-
+    recordingController.update();
     EventRecorder.STAGE.setScene( recordingScene );
   }
 }

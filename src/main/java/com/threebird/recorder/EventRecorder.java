@@ -109,10 +109,13 @@ public class EventRecorder extends Application
     controller.init( schema );
   }
 
-  public static void toAddKeysView( Scene recordingScene, Schema schema, Collection< KeyBehaviorMapping > unknowns )
+  public static void toAddKeysView( Scene recordingScene,
+                                    RecordingController recordingController,
+                                    Schema schema,
+                                    Collection< KeyBehaviorMapping > unknowns )
   {
     String filepath = "./views/add_keys.fxml";
     AddKeysController controller = loadScene( filepath, "Add Keys" );
-    controller.init( recordingScene, schema, unknowns );
+    controller.init( recordingScene, recordingController, schema, unknowns );
   }
 }

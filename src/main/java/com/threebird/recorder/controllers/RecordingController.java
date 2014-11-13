@@ -1,13 +1,16 @@
 package com.threebird.recorder.controllers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -18,6 +21,8 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
@@ -66,6 +71,35 @@ public class RecordingController
     nameText.setText( schema.name );
     initializeTimer();
     initializeBehaviorCountBoxes();
+  }
+
+  public void update()
+  {
+    Set< MappableChar > mappedChars = schema.mappings.keySet();
+    Set< MappableChar > unknownChars = unknowns.keySet();
+    SetView< MappableChar > ignoredChars = Sets.difference( unknownChars, mappedChars );
+    SetView< MappableChar > newChars = Sets.intersection( mappedChars, unknownChars );
+
+    // Well this shit is ugly, but it gets the job done
+    for (MappableChar ignored : ignoredChars) {
+      BehaviorCountBox countBox = countBoxes.get( ignored );
+      List< Node > target =
+          discreteBox.getChildren().contains( countBox ) ? discreteBox.getChildren() : continuousBox.getChildren();
+
+      int i = target.indexOf( countBox );
+      target.remove( i + 1 );
+      target.remove( i );
+
+      countBoxes.remove( ignored );
+    }
+
+    for (MappableChar newChar : newChars) {
+      String behavior = schema.mappings.get( newChar ).behavior;
+      countBoxes.get( newChar ).behaviorLbl.setText( behavior );
+    }
+
+    unknowns.clear();
+    addNewKeysButton.setVisible( false );
   }
 
   /**
@@ -238,6 +272,6 @@ public class RecordingController
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), schema, unknowns.values() );
+    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
   }
 }
