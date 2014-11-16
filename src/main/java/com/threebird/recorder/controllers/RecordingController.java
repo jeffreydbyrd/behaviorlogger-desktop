@@ -12,10 +12,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -30,6 +30,7 @@ import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.views.TimeBox;
 import com.threebird.recorder.views.recording.BehaviorCountBox;
 import com.threebird.recorder.views.recording.ContinuousCountBox;
 import com.threebird.recorder.views.recording.DiscreteCountBox;
@@ -54,7 +55,8 @@ public class RecordingController
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
-  @FXML private Label timeLabel;
+  @FXML private Pane timeBoxSlot;
+  private TimeBox timeBox;
 
   @FXML private Button playButton;
   @FXML private Button goBackButton;
@@ -125,6 +127,9 @@ public class RecordingController
    */
   private void initializeTimer()
   {
+    timeBox = new TimeBox( 0 );
+    timeBoxSlot.getChildren().clear();
+    timeBoxSlot.getChildren().add( timeBox );
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
@@ -138,10 +143,10 @@ public class RecordingController
   private void onTick( ActionEvent evt )
   {
     counter++;
-    timeLabel.setText( counter + "" );
+    timeBox.setTime( counter );
 
     if (counter == schema.duration) {
-      timeLabel.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:black;-fx-border-radius:2;" );
+      timeBoxSlot.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:red;-fx-border-radius:2;" );
     }
   }
 

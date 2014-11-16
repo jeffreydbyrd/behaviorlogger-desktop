@@ -62,15 +62,7 @@
                               <VBox layoutY="345.0">
                                  <children>
                                     <Label text="Session Duration" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER" />
-                                    <HBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
-                                       <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="00" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="00" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="00" />
-                                       </children>
-                                    </HBox>
+                                    <Pane fx:id="timeBoxSlot" />
                                  </children>
                               </VBox>
                            </children>

@@ -13,12 +13,14 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.views.TimeBox;
 
 /**
  * Controls the first view the user sees. All these member variables with the @FXML
@@ -36,6 +38,9 @@ public class SchemasController
 
   @FXML private VBox mappingsBox;
 
+  @FXML private Pane timeBoxSlot;
+  private TimeBox timeBox;
+
   @FXML private Button saveButton;
   @FXML private Button startButton;
 
@@ -50,6 +55,8 @@ public class SchemasController
   {
     rightSide.setVisible( false );
     initSchemaListView();
+    timeBox = new TimeBox( 0 );
+    timeBoxSlot.getChildren().add( timeBox );
   }
 
   /**
@@ -114,6 +121,7 @@ public class SchemasController
       rightSide.setVisible( true );
       emptyMessage.setVisible( false );
       populateMappingsTable( newV );
+      timeBox.setTime( newV.duration );
     } else {
       rightSide.setVisible( false );
       emptyMessage.setVisible( true );
