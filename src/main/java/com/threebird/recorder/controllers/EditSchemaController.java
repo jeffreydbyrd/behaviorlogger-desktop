@@ -35,6 +35,7 @@ public class EditSchemaController
 
   @FXML private VBox mappingsBox;
   @FXML private Button addRowButton;
+  @FXML private Button deleteSchemaButton;
 
   @FXML private TextField hoursField;
   @FXML private TextField minutesField;
@@ -53,6 +54,7 @@ public class EditSchemaController
    */
   public void init( Schema sch )
   {
+    deleteSchemaButton.setVisible( sch != null );
     model = sch == null ? new Schema() : sch;
     nameField.setText( Strings.nullToEmpty( model.name ) );
 
@@ -246,5 +248,10 @@ public class EditSchemaController
     Schemas.save( model );
 
     EventRecorder.toSchemasView();
+  }
+
+  @FXML void onDeleteSchemaClicked( ActionEvent evt )
+  {
+
   }
 }
