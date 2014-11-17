@@ -9,5 +9,7 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface SqlCallback
 {
+  public SqlCallback NOOP = rs -> {};
+
   void handle( ResultSet input ) throws SQLException;
 }

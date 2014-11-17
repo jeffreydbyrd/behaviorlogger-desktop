@@ -252,6 +252,7 @@ public class EditSchemaController
 
   @FXML void onDeleteSchemaClicked( ActionEvent evt )
   {
-
+    Schemas.delete( this.model );
+    EventRecorder.toSchemasView();
   }
 }

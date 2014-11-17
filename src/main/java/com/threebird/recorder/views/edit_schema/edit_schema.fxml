@@ -64,7 +64,7 @@
                      </content>
                   </ScrollPane>
                   <TextField fx:id="nameField" layoutY="1.0" prefHeight="26.0" prefWidth="366.0" promptText="Schema Name" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" />
-                  <Button fx:id="deleteSchemaButton" mnemonicParsing="false" style="-fx-background-color: linear-gradient(#ff4400, #be1d00); -fx-background-radius: 5; -fx-text-fill: white;" text="Delete Schema" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" />
+                  <Button fx:id="deleteSchemaButton" mnemonicParsing="false" onAction="#onDeleteSchemaClicked" style="-fx-background-color: linear-gradient(#ff4400, #be1d00); -fx-background-radius: 5; -fx-text-fill: white;" text="Delete Schema" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" />
                </children>
             </AnchorPane>
          </children>

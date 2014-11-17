@@ -80,6 +80,20 @@ public class Schemas
   }
 
   /**
+   * Deletes the given Schema and all of its KeyBehaviorMappings
+   */
+  public static void delete( Schema schema )
+  {
+    for (KeyBehaviorMapping kbm : schema.mappings.values()) {
+      KeyBehaviors.delete( schema.id, kbm.key );
+    }
+
+    String sql = "DELETE FROM schemas WHERE id = ?";
+    List< Object > params = Lists.newArrayList( schema.id );
+    SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
+  }
+
+  /**
    * Retrieves all Schemas
    */
   public static List< Schema > all()
