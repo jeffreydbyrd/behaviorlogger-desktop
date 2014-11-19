@@ -163,8 +163,10 @@ public class EditSchemaController
     // Make some red error messages:
     Text nameMsg = new Text( "You must enter a name." );
     nameMsg.setFill( Color.RED );
-    Text keyMsg = new Text( "Each key must be unique." );
+    Text keyMsg = new Text( "You must have at least one key mapped" );
     keyMsg.setFill( Color.RED );
+    Text duplicateMsg = new Text( "Each key must be unique." );
+    duplicateMsg.setFill( Color.RED );
 
     // Validate name field
     if (nameField.getText().trim().isEmpty()) {
@@ -175,19 +177,25 @@ public class EditSchemaController
       nameField.setStyle( "" );
     }
 
-    // Check for duplicate keys:
+    // Collect all the key-fields into an easier collection
     Map< String, List< TextField >> keyToField =
         mappingsBox.getChildren().stream()
                    .map( node -> ((MappingBox) node).keyField )
+                   .filter( textField -> !textField.getText().isEmpty() )
                    .collect( Collectors.groupingBy( keyField -> keyField.getText() ) );
 
+    // make sure at least one field was non-empty
+    if (keyToField.isEmpty()) {
+      errorMsgBox.getChildren().add( keyMsg );
+      return false;
+    }
+
+    // check for duplicates
     boolean foundDups = false;
     for (Entry< String, List< TextField >> entry : keyToField.entrySet()) {
-      String k = entry.getKey();
       List< TextField > keyFields = entry.getValue();
 
-      if (!k.isEmpty() && keyFields.size() > 1) {
-        isValid = false;
+      if (keyFields.size() > 1) {
         foundDups = true;
         keyFields.forEach( field -> field.setStyle( cssRed ) );
       } else {
@@ -196,7 +204,8 @@ public class EditSchemaController
     }
 
     if (foundDups) {
-      errorMsgBox.getChildren().add( keyMsg );
+      isValid = false;
+      errorMsgBox.getChildren().add( duplicateMsg );
     }
 
     return isValid;
@@ -250,17 +259,23 @@ public class EditSchemaController
     EventRecorder.toSchemasView();
   }
 
+  /**
+   * When the user clicks delete, display a confirmation box and only delete
+   * Schema if they click "yes"
+   */
   @FXML void onDeleteSchemaClicked( ActionEvent actionEvent )
   {
-    String msg = "Are you sure you want to delete this schema?";
-    String leftBtn = "Cancel";
-    String rightBtn = "Delete";
+    String msg = "Are you sure you want to delete this schema?\nYou can't undo this action.";
 
-    EventHandler< ActionEvent > onRight = evt -> {
+    EventHandler< ActionEvent > onDeleteClicked = evt -> {
       Schemas.delete( this.model );
       EventRecorder.toSchemasView();
     };
 
-    EventRecorder.requireConfirmation( msg, leftBtn, rightBtn, e -> {}, onRight );
+    EventRecorder.dialogBox( msg,
+                             "Cancel",
+                             "Delete",
+                             e -> {},
+                             onDeleteClicked );
   }
 }

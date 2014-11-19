@@ -82,11 +82,11 @@ public class EventRecorder extends Application
     return fxmlLoader.< T > getController();
   }
 
-  public static void requireConfirmation( String msg,
-                                          String leftBtn,
-                                          String rightBtn,
-                                          EventHandler< ActionEvent > onLeft,
-                                          EventHandler< ActionEvent > onRight )
+  public static void dialogBox( String msg,
+                                String leftBtn,
+                                String rightBtn,
+                                EventHandler< ActionEvent > onLeftClicked,
+                                EventHandler< ActionEvent > onRightClicked )
   {
     Stage dialogStage = new Stage();
     dialogStage.initModality( Modality.WINDOW_MODAL );
@@ -98,13 +98,13 @@ public class EventRecorder extends Application
     Button left = new Button( leftBtn );
     left.setOnAction( evt -> {
       dialogStage.close();
-      onLeft.handle( evt );
+      onLeftClicked.handle( evt );
     } );
 
     Button right = new Button( rightBtn );
     right.setOnAction( evt -> {
       dialogStage.close();
-      onRight.handle( evt );
+      onRightClicked.handle( evt );
     } );
 
     HBox hBox = new HBox();
