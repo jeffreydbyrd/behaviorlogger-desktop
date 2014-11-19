@@ -4,10 +4,20 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import com.threebird.recorder.controllers.AddKeysController;
 import com.threebird.recorder.controllers.EditSchemaController;
@@ -70,6 +80,45 @@ public class EventRecorder extends Application
     STAGE.show();
 
     return fxmlLoader.< T > getController();
+  }
+
+  public static void requireConfirmation( String msg,
+                                          String leftBtn,
+                                          String rightBtn,
+                                          EventHandler< ActionEvent > onLeft,
+                                          EventHandler< ActionEvent > onRight )
+  {
+    Stage dialogStage = new Stage();
+    dialogStage.initModality( Modality.WINDOW_MODAL );
+    dialogStage.initStyle( StageStyle.UTILITY );
+    dialogStage.initOwner( EventRecorder.STAGE );
+    Label question = new Label( msg );
+    question.setAlignment( Pos.BASELINE_CENTER );
+
+    Button left = new Button( leftBtn );
+    left.setOnAction( evt -> {
+      dialogStage.close();
+      onLeft.handle( evt );
+    } );
+
+    Button right = new Button( rightBtn );
+    right.setOnAction( evt -> {
+      dialogStage.close();
+      onRight.handle( evt );
+    } );
+
+    HBox hBox = new HBox();
+    hBox.setAlignment( Pos.BASELINE_RIGHT );
+    hBox.setSpacing( 20.0 );
+    hBox.getChildren().addAll( left, right );
+
+    VBox vBox = new VBox();
+    vBox.setSpacing( 20.0 );
+    vBox.getChildren().addAll( question, hBox );
+    vBox.setPadding( new Insets( 10 ) );
+
+    dialogStage.setScene( new Scene( vBox ) );
+    dialogStage.show();
   }
 
   /**

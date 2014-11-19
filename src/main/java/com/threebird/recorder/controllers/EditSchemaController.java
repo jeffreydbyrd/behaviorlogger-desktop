@@ -60,8 +60,8 @@ public class EditSchemaController
 
     populateMappingsBox( model );
 
-    int hrs = model.duration / 60 / 60;
-    int minDivisor = model.duration % 60 % 60;
+    int hrs = model.duration / (60 * 60);
+    int minDivisor = model.duration % (60 * 60);
     int mins = minDivisor / 60;
     int secs = minDivisor % 60;
 
@@ -250,9 +250,17 @@ public class EditSchemaController
     EventRecorder.toSchemasView();
   }
 
-  @FXML void onDeleteSchemaClicked( ActionEvent evt )
+  @FXML void onDeleteSchemaClicked( ActionEvent actionEvent )
   {
-    Schemas.delete( this.model );
-    EventRecorder.toSchemasView();
+    String msg = "Are you sure you want to delete this schema?";
+    String leftBtn = "Cancel";
+    String rightBtn = "Delete";
+
+    EventHandler< ActionEvent > onRight = evt -> {
+      Schemas.delete( this.model );
+      EventRecorder.toSchemasView();
+    };
+
+    EventRecorder.requireConfirmation( msg, leftBtn, rightBtn, e -> {}, onRight );
   }
 }
