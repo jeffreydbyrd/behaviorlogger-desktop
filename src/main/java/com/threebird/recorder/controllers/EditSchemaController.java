@@ -10,7 +10,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -37,6 +39,11 @@ public class EditSchemaController
   @FXML private Button addRowButton;
   @FXML private Button deleteSchemaButton;
 
+  @FXML private RadioButton infiniteRadioBtn;
+  @FXML private RadioButton timedRadioBtn;
+
+  @FXML private VBox durationBox;
+
   @FXML private TextField hoursField;
   @FXML private TextField minutesField;
   @FXML private TextField secondsField;
@@ -60,6 +67,21 @@ public class EditSchemaController
 
     populateMappingsBox( model );
 
+    // Setup duration radio buttons:
+    ToggleGroup group = new ToggleGroup();
+    infiniteRadioBtn.setToggleGroup( group );
+    timedRadioBtn.setToggleGroup( group );
+    timedRadioBtn.selectedProperty().addListener( ( observable,
+                                                    oldValue,
+                                                    selected ) -> {
+      durationBox.setDisable( !selected );
+    } );
+
+    infiniteRadioBtn.setSelected( sch.duration == 0 );
+    timedRadioBtn.setSelected( sch.duration != 0 );
+    durationBox.setDisable( sch.duration == 0 );
+
+    // Setup duration text-fields
     int hrs = model.duration / (60 * 60);
     int minDivisor = model.duration % (60 * 60);
     int mins = minDivisor / 60;
@@ -86,10 +108,14 @@ public class EditSchemaController
 
   /**
    * Converts the contents of hoursField, minutesField, and secondsField into
-   * the equivalent number of seconds and
+   * the equivalent number of seconds.
    */
   private int getDuration()
   {
+    if (infiniteRadioBtn.isSelected()) {
+      return 0;
+    }
+
     Integer hours = strToInt( hoursField.getText() );
     Integer mins = strToInt( minutesField.getText() );
     Integer secs = strToInt( secondsField.getText() );

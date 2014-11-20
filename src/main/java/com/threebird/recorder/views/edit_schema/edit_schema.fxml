@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
@@ -7,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="732.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.EditSchemaController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="527.0" prefWidth="942.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.EditSchemaController">
    <children>
       <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -20,19 +21,31 @@
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                <children>
-                  <VBox AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
+                  <VBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
                      <children>
                         <Label text="Session Duration" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                        <HBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
+                        <RadioButton fx:id="infiniteRadioBtn" mnemonicParsing="false" text="infinite" />
+                        <RadioButton fx:id="timedRadioBtn" mnemonicParsing="false" text="timed" />
+                        <VBox fx:id="durationBox" spacing="10.0">
                            <children>
-                              <TextField fx:id="hoursField" prefHeight="26.0" prefWidth="40.0" promptText="hh" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
-                              <TextField fx:id="minutesField" prefHeight="26.0" prefWidth="40.0" promptText="mm" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
-                              <TextField fx:id="secondsField" prefHeight="26.0" prefWidth="40.0" promptText="ss" />
+                              <HBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                 <children>
+                                    <TextField fx:id="hoursField" prefHeight="26.0" prefWidth="40.0" promptText="hh" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                                    <TextField fx:id="minutesField" prefHeight="26.0" prefWidth="40.0" promptText="mm" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                                    <TextField fx:id="secondsField" prefHeight="26.0" prefWidth="40.0" promptText="ss" />
+                                 </children>
+                              </HBox>
+                              <Label text="When timer finishes:" />
+                              <CheckBox mnemonicParsing="false" text="Color the time-box" />
+                              <CheckBox mnemonicParsing="false" text="Pause the recording" />
+                              <CheckBox mnemonicParsing="false" text="Beep" />
                            </children>
-                        </HBox>
-                        <Label text="(infinite if bank)" />
+                           <padding>
+                              <Insets left="30.0" />
+                           </padding>
+                        </VBox>
                      </children>
                   </VBox>
                   <HBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
