@@ -266,6 +266,13 @@ public class RecordingController
     togglePlayButton();
   }
 
+  /**
+   * If unknown behaviors exist, prompt the user to edit them. If user declines,
+   * run 'toScene'. If user accepts, go to add-keys view
+   * 
+   * @param toScene
+   *          - a void function that should change scenes
+   */
   private void checkUnknownsAndChangeScene( Runnable toScene )
   {
     if (!unknowns.isEmpty()) {
