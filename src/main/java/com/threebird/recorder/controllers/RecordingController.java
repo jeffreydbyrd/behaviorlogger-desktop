@@ -9,6 +9,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -265,14 +266,39 @@ public class RecordingController
     togglePlayButton();
   }
 
+  /**
+   * If unknown behaviors exist, prompt the user to edit them. If user declines,
+   * run 'toScene'. If user accepts, go to add-keys view
+   * 
+   * @param toScene
+   *          - a void function that should change scenes
+   */
+  private void checkUnknownsAndChangeScene( Runnable toScene )
+  {
+    if (!unknowns.isEmpty()) {
+      String msg = "You have recorded unknown behaviors. Would you like to edit them?";
+      String leftOption = "Discard Unknowns";
+      String rightOption = "Edit Unknowns";
+
+      EventHandler< ActionEvent > onDiscardClick = e -> toScene.run();
+
+      EventHandler< ActionEvent > onEditClick = e ->
+          EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
+
+      EventRecorder.dialogBox( msg, leftOption, rightOption, onDiscardClick, onEditClick );
+    } else {
+      toScene.run();
+    }
+  }
+
   @FXML private void onGoBackPress( ActionEvent evt )
   {
-    EventRecorder.toSchemasView();
+    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toSchemasView() );
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )
   {
-    EventRecorder.toRecordingView( schema );
+    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toRecordingView( schema ) );
   }
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )

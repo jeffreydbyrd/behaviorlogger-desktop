@@ -76,6 +76,6 @@ public class KeyBehaviors
     List< Object > params =
         Lists.newArrayList( schemaId, key.toString() );
 
-    SqliteDao.update( SqlQueryData.create( sql, params, rs -> {} ) );
+    SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
   }
 }

@@ -10,7 +10,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -35,6 +37,12 @@ public class EditSchemaController
 
   @FXML private VBox mappingsBox;
   @FXML private Button addRowButton;
+  @FXML private Button deleteSchemaButton;
+
+  @FXML private RadioButton infiniteRadioBtn;
+  @FXML private RadioButton timedRadioBtn;
+
+  @FXML private VBox durationBox;
 
   @FXML private TextField hoursField;
   @FXML private TextField minutesField;
@@ -53,13 +61,29 @@ public class EditSchemaController
    */
   public void init( Schema sch )
   {
+    deleteSchemaButton.setVisible( sch != null );
     model = sch == null ? new Schema() : sch;
     nameField.setText( Strings.nullToEmpty( model.name ) );
 
     populateMappingsBox( model );
 
-    int hrs = model.duration / 60 / 60;
-    int minDivisor = model.duration % 60 % 60;
+    // Setup duration radio buttons:
+    ToggleGroup group = new ToggleGroup();
+    infiniteRadioBtn.setToggleGroup( group );
+    timedRadioBtn.setToggleGroup( group );
+    timedRadioBtn.selectedProperty().addListener( ( observable,
+                                                    oldValue,
+                                                    selected ) -> {
+      durationBox.setDisable( !selected );
+    } );
+
+    infiniteRadioBtn.setSelected( sch.duration == 0 );
+    timedRadioBtn.setSelected( sch.duration != 0 );
+    durationBox.setDisable( sch.duration == 0 );
+
+    // Setup duration text-fields
+    int hrs = model.duration / (60 * 60);
+    int minDivisor = model.duration % (60 * 60);
     int mins = minDivisor / 60;
     int secs = minDivisor % 60;
 
@@ -84,10 +108,14 @@ public class EditSchemaController
 
   /**
    * Converts the contents of hoursField, minutesField, and secondsField into
-   * the equivalent number of seconds and
+   * the equivalent number of seconds.
    */
   private int getDuration()
   {
+    if (infiniteRadioBtn.isSelected()) {
+      return 0;
+    }
+
     Integer hours = strToInt( hoursField.getText() );
     Integer mins = strToInt( minutesField.getText() );
     Integer secs = strToInt( secondsField.getText() );
@@ -161,8 +189,10 @@ public class EditSchemaController
     // Make some red error messages:
     Text nameMsg = new Text( "You must enter a name." );
     nameMsg.setFill( Color.RED );
-    Text keyMsg = new Text( "Each key must be unique." );
+    Text keyMsg = new Text( "You must have at least one key mapped" );
     keyMsg.setFill( Color.RED );
+    Text duplicateMsg = new Text( "Each key must be unique." );
+    duplicateMsg.setFill( Color.RED );
 
     // Validate name field
     if (nameField.getText().trim().isEmpty()) {
@@ -173,19 +203,25 @@ public class EditSchemaController
       nameField.setStyle( "" );
     }
 
-    // Check for duplicate keys:
+    // Collect all the key-fields into an easier collection
     Map< String, List< TextField >> keyToField =
         mappingsBox.getChildren().stream()
                    .map( node -> ((MappingBox) node).keyField )
+                   .filter( textField -> !textField.getText().isEmpty() )
                    .collect( Collectors.groupingBy( keyField -> keyField.getText() ) );
 
+    // make sure at least one field was non-empty
+    if (keyToField.isEmpty()) {
+      errorMsgBox.getChildren().add( keyMsg );
+      return false;
+    }
+
+    // check for duplicates
     boolean foundDups = false;
     for (Entry< String, List< TextField >> entry : keyToField.entrySet()) {
-      String k = entry.getKey();
       List< TextField > keyFields = entry.getValue();
 
-      if (!k.isEmpty() && keyFields.size() > 1) {
-        isValid = false;
+      if (keyFields.size() > 1) {
         foundDups = true;
         keyFields.forEach( field -> field.setStyle( cssRed ) );
       } else {
@@ -194,7 +230,8 @@ public class EditSchemaController
     }
 
     if (foundDups) {
-      errorMsgBox.getChildren().add( keyMsg );
+      isValid = false;
+      errorMsgBox.getChildren().add( duplicateMsg );
     }
 
     return isValid;
@@ -246,5 +283,25 @@ public class EditSchemaController
     Schemas.save( model );
 
     EventRecorder.toSchemasView();
+  }
+
+  /**
+   * When the user clicks delete, display a confirmation box and only delete
+   * Schema if they click "yes"
+   */
+  @FXML void onDeleteSchemaClicked( ActionEvent actionEvent )
+  {
+    String msg = "Are you sure you want to delete this schema?\nYou can't undo this action.";
+
+    EventHandler< ActionEvent > onDeleteClicked = evt -> {
+      Schemas.delete( this.model );
+      EventRecorder.toSchemasView();
+    };
+
+    EventRecorder.dialogBox( msg,
+                             "Cancel",
+                             "Delete",
+                             e -> {},
+                             onDeleteClicked );
   }
 }
