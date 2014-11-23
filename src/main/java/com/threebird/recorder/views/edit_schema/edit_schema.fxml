@@ -38,9 +38,9 @@
                                  </children>
                               </HBox>
                               <Label text="When timer finishes:" />
-                              <CheckBox fx:id="colorCheckBox" mnemonicParsing="false" text="Color the time-box" />
-                              <CheckBox fx:id="pauseCheckBox" mnemonicParsing="false" text="Pause the recording" />
-                              <CheckBox fx:id="beepCheckBox" mnemonicParsing="false" text="Beep" />
+                              <CheckBox fx:id="colorCheckBox" mnemonicParsing="false" text="Color in the timer" />
+                              <CheckBox fx:id="pauseCheckBox" mnemonicParsing="false" text="Pause the session" />
+                              <CheckBox fx:id="beepCheckBox" mnemonicParsing="false" text="Emit beep" />
                            </children>
                            <padding>
                               <Insets left="30.0" />
