@@ -77,9 +77,9 @@ public class EditSchemaController
       durationBox.setDisable( !selected );
     } );
 
-    infiniteRadioBtn.setSelected( sch.duration == 0 );
-    timedRadioBtn.setSelected( sch.duration != 0 );
-    durationBox.setDisable( sch.duration == 0 );
+    infiniteRadioBtn.setSelected( model.duration == 0 );
+    timedRadioBtn.setSelected( model.duration != 0 );
+    durationBox.setDisable( model.duration == 0 );
 
     // Setup duration text-fields
     int hrs = model.duration / (60 * 60);

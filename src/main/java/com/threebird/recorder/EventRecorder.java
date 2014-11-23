@@ -82,6 +82,21 @@ public class EventRecorder extends Application
     return fxmlLoader.< T > getController();
   }
 
+  /**
+   * Display a simple dialog-box that displays a message and allows the user to
+   * click two buttons
+   * 
+   * @param msg
+   *          - the main message to display
+   * @param leftBtn
+   *          - the text displayed on the left-button
+   * @param rightBtn
+   *          - the text displayed on the right-button
+   * @param onLeftClicked
+   *          - what happens when user clicks left-button
+   * @param onRightClicked
+   *          - what happens when user clicks right-button
+   */
   public static void dialogBox( String msg,
                                 String leftBtn,
                                 String rightBtn,
