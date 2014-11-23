@@ -8,6 +8,7 @@ import java.util.Set;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -43,7 +44,8 @@ public class RecordingController
 {
   private Schema schema;
   private int counter = 0;
-  private boolean playing = false;
+  private SimpleBooleanProperty playingProperty = new SimpleBooleanProperty( false );
+  // private boolean playing = false;
   private Timeline timer;
   private HashMap< MappableChar, KeyBehaviorMapping > unknowns = Maps.newHashMap();
   private Recording recording = new Recording();
@@ -74,6 +76,8 @@ public class RecordingController
     nameText.setText( schema.name );
     initializeTimer();
     initializeBehaviorCountBoxes();
+
+    playingProperty.addListener( ( obs, oldV, playing ) -> togglePlayButton( playing ) );
   }
 
   public void update()
@@ -135,6 +139,7 @@ public class RecordingController
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
+
   }
 
   /**
@@ -154,9 +159,8 @@ public class RecordingController
   /**
    * Starts and stops recording, changes the playButton text appropriately.
    */
-  private void togglePlayButton()
+  private void togglePlayButton( boolean playing )
   {
-    playing = !playing;
     if (playing) {
       timer.play();
     } else {
@@ -166,13 +170,12 @@ public class RecordingController
     playButton.setText( playing ? "Stop" : "Play" );
     goBackButton.setVisible( !playing );
     newSessionButton.setVisible( !playing );
+    recordingText.setVisible( !recordingText.isVisible() );
+    pausedText.setVisible( !pausedText.isVisible() );
 
     if (!unknowns.isEmpty()) {
       addNewKeysButton.setVisible( !playing );
     }
-
-    recordingText.setVisible( !recordingText.isVisible() );
-    pausedText.setVisible( !pausedText.isVisible() );
   }
 
   /**
@@ -190,7 +193,7 @@ public class RecordingController
   private void handleShortcut( KeyCode c )
   {
     if (KeyCode.SPACE.equals( c )) {
-      togglePlayButton();
+      playingProperty.set( !playingProperty.get() );
     }
   }
 
@@ -246,7 +249,7 @@ public class RecordingController
       return;
     }
 
-    if (!playing) {
+    if (!playingProperty.get()) {
       return;
     }
 
@@ -263,7 +266,7 @@ public class RecordingController
 
   @FXML private void onPlayPress( ActionEvent evt )
   {
-    togglePlayButton();
+    playingProperty.set( !playingProperty.get() );
   }
 
   /**
