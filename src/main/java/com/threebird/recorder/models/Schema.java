@@ -15,6 +15,9 @@ public class Schema
   public String name;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
   public int duration = 0;
+  public boolean pause = false;
+  public boolean color = false;
+  public boolean sound = false;
 
   /**
    * Returns the KeyBehaviorMapping that corresponds to 'key', wrapped in an

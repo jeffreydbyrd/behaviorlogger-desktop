@@ -1,7 +1,10 @@
 CREATE TABLE IF NOT EXISTS schemas (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
-  duration INTEGER NOT NULL
+  duration INTEGER NOT NULL,
+  pause_on_end INTEGER NOT NULL,
+  color_on_end INTEGER NOT NULL,
+  sound_on_end INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS key_behaviors (

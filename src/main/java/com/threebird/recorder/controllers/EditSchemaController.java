@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -47,6 +48,10 @@ public class EditSchemaController
   @FXML private TextField hoursField;
   @FXML private TextField minutesField;
   @FXML private TextField secondsField;
+
+  @FXML private CheckBox colorCheckBox;
+  @FXML private CheckBox pauseCheckBox;
+  @FXML private CheckBox beepCheckBox;
 
   @FXML private VBox errorMsgBox;
 
@@ -94,6 +99,10 @@ public class EditSchemaController
     hoursField.setOnKeyTyped( createFieldLimiter( hoursField, digits, 2 ) );
     minutesField.setOnKeyTyped( createFieldLimiter( minutesField, digits, 2 ) );
     secondsField.setOnKeyTyped( createFieldLimiter( secondsField, digits, 2 ) );
+
+    colorCheckBox.setSelected( model.color );
+    pauseCheckBox.setSelected( model.pause );
+    beepCheckBox.setSelected( model.sound );
   }
 
   private static String intToStr( int i )
@@ -108,7 +117,7 @@ public class EditSchemaController
 
   /**
    * Converts the contents of hoursField, minutesField, and secondsField into
-   * the equivalent number of seconds.
+   * the equivalent number of seconds. If "infinite" is true, then returns 0
    */
   private int getDuration()
   {
@@ -279,6 +288,9 @@ public class EditSchemaController
     model.name = name;
     model.mappings = temp;
     model.duration = getDuration();
+    model.color = colorCheckBox.isSelected();
+    model.pause = pauseCheckBox.isSelected();
+    model.sound = beepCheckBox.isSelected();
 
     Schemas.save( model );
 

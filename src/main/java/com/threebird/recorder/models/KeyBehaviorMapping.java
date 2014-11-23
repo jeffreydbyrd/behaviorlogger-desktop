@@ -1,5 +1,6 @@
 package com.threebird.recorder.models;
 
+
 /**
  * Maps a key to a behavior. We use this in configuring a {@link Schema}
  */

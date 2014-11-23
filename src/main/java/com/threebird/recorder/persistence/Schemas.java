@@ -38,10 +38,17 @@ public class Schemas
    */
   private static void update( Schema schema )
   {
-    String sql = "UPDATE schemas SET name = ?, duration = ? WHERE id = ?";
+    String sql =
+        "UPDATE schemas SET "
+            + "name = ?,"
+            + "duration = ?,"
+            + "pause_on_end = ?,"
+            + "color_on_end = ?,"
+            + "sound_on_end = ? "
+            + "WHERE id = ?";
 
     List< Object > params =
-        Lists.newArrayList( schema.name, schema.duration, schema.id );
+        Lists.newArrayList( schema.name, schema.duration, schema.pause, schema.color, schema.sound, schema.id );
 
     SqlCallback handle = ( ResultSet rs ) -> {
       Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.id );
@@ -68,8 +75,9 @@ public class Schemas
    */
   private static void create( Schema schema )
   {
-    String sql = "INSERT INTO schemas (name, duration) VALUES (?,?)";
-    List< Object > params = Lists.newArrayList( schema.name, schema.duration );
+    String sql = "INSERT INTO schemas (name, duration, pause_on_end, color_on_end, sound_on_end) VALUES (?,?,?,?,?)";
+    List< Object > params =
+        Lists.newArrayList( schema.name, schema.duration, schema.pause, schema.color, schema.sound );
 
     SqlCallback callback = rs -> {
       schema.id = rs.getInt( 1 );
@@ -107,6 +115,9 @@ public class Schemas
         s.id = rs.getInt( "id" );
         s.name = rs.getString( "name" );
         s.duration = rs.getInt( "duration" );
+        s.color = rs.getBoolean( "color_on_end" );
+        s.pause = rs.getBoolean( "pause_on_end" );
+        s.sound = rs.getBoolean( "sound_on_end" );
 
         Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.id );
         s.mappings = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );

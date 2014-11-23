@@ -8,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="527.0" prefWidth="942.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.EditSchemaController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="841.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.EditSchemaController">
    <children>
       <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -38,9 +38,9 @@
                                  </children>
                               </HBox>
                               <Label text="When timer finishes:" />
-                              <CheckBox mnemonicParsing="false" text="Color the time-box" />
-                              <CheckBox mnemonicParsing="false" text="Pause the recording" />
-                              <CheckBox mnemonicParsing="false" text="Beep" />
+                              <CheckBox fx:id="colorCheckBox" mnemonicParsing="false" text="Color the time-box" />
+                              <CheckBox fx:id="pauseCheckBox" mnemonicParsing="false" text="Pause the recording" />
+                              <CheckBox fx:id="beepCheckBox" mnemonicParsing="false" text="Beep" />
                            </children>
                            <padding>
                               <Insets left="30.0" />

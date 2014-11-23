@@ -141,7 +141,6 @@ public class RecordingController
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
     timer.getKeyFrames().add( kf );
-
   }
 
   /**
@@ -154,7 +153,20 @@ public class RecordingController
     timeBox.setTime( counter );
 
     if (counter == schema.duration) {
-      timeBoxSlot.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:red;-fx-border-radius:2;" );
+      if (schema.color) {
+        timeBoxSlot.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:red;-fx-border-radius:2;" );
+      }
+
+      if (schema.pause) {
+        playingProperty.set( false );
+      }
+
+      if (schema.sound) {
+        // not sure what to do here
+        // System.out.println( "\007" );
+        // System.out.println( "\u0007" );
+        // java.awt.Toolkit.getDefaultToolkit().beep();
+      }
     }
   }
 
@@ -180,6 +192,11 @@ public class RecordingController
     }
   }
 
+  private void togglePlayingProperty()
+  {
+    playingProperty.set( !playingProperty.get() );
+  }
+
   /**
    * @return true if 'c' is supposed to trigger one of he available shortcuts,
    *         or false otherwise
@@ -195,7 +212,7 @@ public class RecordingController
   private void handleShortcut( KeyCode c )
   {
     if (KeyCode.SPACE.equals( c )) {
-      playingProperty.set( !playingProperty.get() );
+      togglePlayingProperty();
     }
   }
 
@@ -270,7 +287,7 @@ public class RecordingController
 
   @FXML private void onPlayPress( ActionEvent evt )
   {
-    playingProperty.set( !playingProperty.get() );
+    togglePlayingProperty();
   }
 
   /**

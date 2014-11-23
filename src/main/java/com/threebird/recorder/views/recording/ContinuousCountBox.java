@@ -30,10 +30,12 @@ public class ContinuousCountBox extends BehaviorCountBox
     timer.getKeyFrames().add( kf );
 
     playingProperty.addListener( ( obs, oldV, playing ) -> {
-      if (playing) {
-        timer.play();
-      } else {
-        timer.pause();
+      if (toggled) {
+        if (playing) {
+          timer.play();
+        } else {
+          timer.pause();
+        }
       }
     } );
   }
