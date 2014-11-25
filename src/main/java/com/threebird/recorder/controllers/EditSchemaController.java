@@ -41,6 +41,9 @@ public class EditSchemaController
   @FXML private Button addRowButton;
   @FXML private Button deleteSchemaButton;
 
+  @FXML private TextField directoryField;
+  @FXML private Button browseButton;
+
   @FXML private RadioButton infiniteRadioBtn;
   @FXML private RadioButton timedRadioBtn;
 
@@ -74,7 +77,20 @@ public class EditSchemaController
 
     populateMappingsBox( model );
 
-    // Setup duration radio buttons:
+    setupSessionDirectory();
+
+    setupDurationRadioButtons();
+
+    setupDurationTextFields();
+  }
+
+  private void setupSessionDirectory()
+  {
+    directoryField.setText( model.sessionDirectory );
+  }
+
+  private void setupDurationRadioButtons()
+  {
     ToggleGroup group = new ToggleGroup();
     infiniteRadioBtn.setToggleGroup( group );
     timedRadioBtn.setToggleGroup( group );
@@ -87,8 +103,10 @@ public class EditSchemaController
     infiniteRadioBtn.setSelected( model.duration == 0 );
     timedRadioBtn.setSelected( model.duration != 0 );
     durationBox.setDisable( model.duration == 0 );
+  }
 
-    // Setup duration text-fields
+  private void setupDurationTextFields()
+  {
     int hrs = model.duration / (60 * 60);
     int minDivisor = model.duration % (60 * 60);
     int mins = minDivisor / 60;
@@ -200,6 +218,8 @@ public class EditSchemaController
     // Make some red error messages:
     Text nameMsg = new Text( "You must enter a name." );
     nameMsg.setFill( Color.RED );
+    Text dirMsg = new Text( "You must enter a session directory" );
+    dirMsg.setFill( Color.RED );
     Text keyMsg = new Text( "You must have at least one key mapped" );
     keyMsg.setFill( Color.RED );
     Text duplicateMsg = new Text( "Each key must be unique." );
@@ -212,6 +232,15 @@ public class EditSchemaController
       errorMsgBox.getChildren().add( nameMsg );
     } else {
       nameField.setStyle( "" );
+    }
+
+    // Validate Directory field
+    if (directoryField.getText().trim().isEmpty()) {
+      isValid = false;
+      directoryField.setStyle( cssRed );
+      errorMsgBox.getChildren().add( dirMsg );
+    } else {
+      directoryField.setStyle( "" );
     }
 
     // Collect all the key-fields into an easier collection
@@ -276,7 +305,6 @@ public class EditSchemaController
 
     HashMap< MappableChar, KeyBehaviorMapping > temp = Maps.newHashMap();
 
-    String name = nameField.getText().trim();
     List< KeyBehaviorMapping > keyBehaviors =
         mappingsBox.getChildren().stream()
                    .map( node -> ((MappingBox) node).translate() )
@@ -287,8 +315,9 @@ public class EditSchemaController
       temp.put( behavior.key, behavior );
     }
 
-    model.name = name;
+    model.name = nameField.getText().trim();
     model.mappings = temp;
+    model.sessionDirectory = directoryField.getText().trim();
     model.duration = getDuration();
     model.color = colorCheckBox.isSelected();
     model.pause = pauseCheckBox.isSelected();

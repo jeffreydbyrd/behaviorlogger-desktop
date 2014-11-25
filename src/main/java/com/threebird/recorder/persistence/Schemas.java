@@ -42,13 +42,19 @@ public class Schemas
         "UPDATE schemas SET "
             + "name = ?,"
             + "duration = ?,"
+            + "session_directory = ?,"
             + "pause_on_end = ?,"
             + "color_on_end = ?,"
             + "sound_on_end = ? "
             + "WHERE id = ?";
 
-    List< Object > params =
-        Lists.newArrayList( schema.name, schema.duration, schema.pause, schema.color, schema.sound, schema.id );
+    List< Object > params = Lists.newArrayList( schema.name,
+                                                schema.duration,
+                                                schema.sessionDirectory,
+                                                schema.pause,
+                                                schema.color,
+                                                schema.sound,
+                                                schema.id );
 
     SqlCallback handle = ( ResultSet rs ) -> {
       Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.id );
@@ -75,9 +81,16 @@ public class Schemas
    */
   private static void create( Schema schema )
   {
-    String sql = "INSERT INTO schemas (name, duration, pause_on_end, color_on_end, sound_on_end) VALUES (?,?,?,?,?)";
-    List< Object > params =
-        Lists.newArrayList( schema.name, schema.duration, schema.pause, schema.color, schema.sound );
+    String sql =
+        "INSERT INTO schemas "
+            + "(name, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
+            + "VALUES (?,?,?,?,?,?)";
+    List< Object > params = Lists.newArrayList( schema.name,
+                                                schema.duration,
+                                                schema.sessionDirectory,
+                                                schema.pause,
+                                                schema.color,
+                                                schema.sound );
 
     SqlCallback callback = rs -> {
       schema.id = rs.getInt( 1 );
@@ -114,6 +127,7 @@ public class Schemas
         Schema s = new Schema();
         s.id = rs.getInt( "id" );
         s.name = rs.getString( "name" );
+        s.sessionDirectory = rs.getString( "session_directory" );
         s.duration = rs.getInt( "duration" );
         s.color = rs.getBoolean( "color_on_end" );
         s.pause = rs.getBoolean( "pause_on_end" );
