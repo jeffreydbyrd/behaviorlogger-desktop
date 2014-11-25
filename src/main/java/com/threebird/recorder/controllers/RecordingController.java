@@ -162,10 +162,7 @@ public class RecordingController
       }
 
       if (schema.sound) {
-        // not sure what to do here
-        // System.out.println( "\007" );
-        // System.out.println( "\u0007" );
-        // java.awt.Toolkit.getDefaultToolkit().beep();
+        java.awt.Toolkit.getDefaultToolkit().beep();
       }
     }
   }
