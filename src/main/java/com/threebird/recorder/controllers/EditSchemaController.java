@@ -18,6 +18,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -59,6 +60,7 @@ public class EditSchemaController
   private static char[] digits = "0123456789".toCharArray();
 
   private Schema model;
+  private DirectoryChooser dirChooser = new DirectoryChooser();
 
   /**
    * @param sch
