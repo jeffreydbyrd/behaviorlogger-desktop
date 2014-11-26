@@ -1,5 +1,6 @@
 package com.threebird.recorder.persistence;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class Schemas
 
     List< Object > params = Lists.newArrayList( schema.name,
                                                 schema.duration,
-                                                schema.sessionDirectory,
+                                                schema.sessionDirectory.getPath(),
                                                 schema.pause,
                                                 schema.color,
                                                 schema.sound,
@@ -87,7 +88,7 @@ public class Schemas
             + "VALUES (?,?,?,?,?,?)";
     List< Object > params = Lists.newArrayList( schema.name,
                                                 schema.duration,
-                                                schema.sessionDirectory,
+                                                schema.sessionDirectory.getPath(),
                                                 schema.pause,
                                                 schema.color,
                                                 schema.sound );
@@ -127,7 +128,7 @@ public class Schemas
         Schema s = new Schema();
         s.id = rs.getInt( "id" );
         s.name = rs.getString( "name" );
-        s.sessionDirectory = rs.getString( "session_directory" );
+        s.sessionDirectory = new File( rs.getString( "session_directory" ) );
         s.duration = rs.getInt( "duration" );
         s.color = rs.getBoolean( "color_on_end" );
         s.pause = rs.getBoolean( "pause_on_end" );

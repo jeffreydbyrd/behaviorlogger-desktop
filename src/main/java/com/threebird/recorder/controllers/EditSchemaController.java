@@ -1,5 +1,6 @@
 package com.threebird.recorder.controllers;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,6 @@ public class EditSchemaController
   private static char[] digits = "0123456789".toCharArray();
 
   private Schema model;
-  private DirectoryChooser dirChooser = new DirectoryChooser();
 
   /**
    * @param sch
@@ -86,7 +86,7 @@ public class EditSchemaController
 
   private void setupSessionDirectory()
   {
-    directoryField.setText( model.sessionDirectory );
+    directoryField.setText( model.sessionDirectory.getPath() );
   }
 
   private void setupDurationRadioButtons()
@@ -149,6 +149,11 @@ public class EditSchemaController
     Integer mins = strToInt( minutesField.getText() );
     Integer secs = strToInt( secondsField.getText() );
     return (hours * 60 * 60) + (mins * 60) + secs;
+  }
+
+  private File getDirectory()
+  {
+    return new File( directoryField.getText().trim() );
   }
 
   /**
@@ -218,9 +223,9 @@ public class EditSchemaController
     // Make some red error messages:
     Text nameMsg = new Text( "You must enter a name." );
     nameMsg.setFill( Color.RED );
-    Text dirMsg = new Text( "You must enter a session directory" );
+    Text dirMsg = new Text( "That folder does not exist." );
     dirMsg.setFill( Color.RED );
-    Text keyMsg = new Text( "You must have at least one key mapped" );
+    Text keyMsg = new Text( "You must have at least one key mapped." );
     keyMsg.setFill( Color.RED );
     Text duplicateMsg = new Text( "Each key must be unique." );
     duplicateMsg.setFill( Color.RED );
@@ -235,7 +240,7 @@ public class EditSchemaController
     }
 
     // Validate Directory field
-    if (directoryField.getText().trim().isEmpty()) {
+    if (!getDirectory().exists()) {
       isValid = false;
       directoryField.setStyle( cssRed );
       errorMsgBox.getChildren().add( dirMsg );
@@ -285,6 +290,22 @@ public class EditSchemaController
     addMappingBox( false, "", "" );
   }
 
+  @FXML void onBrowseButtonPressed( ActionEvent evt )
+  {
+    File f = getDirectory();
+    if (!f.exists()) {
+      f = new File( System.getProperty( "user.home" ) );
+    }
+
+    DirectoryChooser dirChooser = new DirectoryChooser();
+    dirChooser.setInitialDirectory( f );
+    File newFile = dirChooser.showDialog( EventRecorder.STAGE );
+
+    if (newFile != null) {
+      directoryField.setText( newFile.getPath() );
+    }
+  }
+
   /**
    * Simply bring the user back to the Schemas view with
    */
@@ -317,7 +338,7 @@ public class EditSchemaController
 
     model.name = nameField.getText().trim();
     model.mappings = temp;
-    model.sessionDirectory = directoryField.getText().trim();
+    model.sessionDirectory = getDirectory();
     model.duration = getDuration();
     model.color = colorCheckBox.isSelected();
     model.pause = pauseCheckBox.isSelected();

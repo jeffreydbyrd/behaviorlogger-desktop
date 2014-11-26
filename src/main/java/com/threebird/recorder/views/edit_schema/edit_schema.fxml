@@ -27,7 +27,7 @@
                         <HBox spacing="5.0">
                            <children>
                               <TextField fx:id="directoryField" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="browseButton" mnemonicParsing="false" text="Browse" HBox.hgrow="NEVER" />
+                              <Button fx:id="browseButton" mnemonicParsing="false" onAction="#onBrowseButtonPressed" text="Browse" HBox.hgrow="NEVER" />
                            </children>
                         </HBox>
                      </children>
