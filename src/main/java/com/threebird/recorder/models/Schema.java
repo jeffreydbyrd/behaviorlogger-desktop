@@ -14,6 +14,7 @@ public class Schema
 {
   public Integer id;
   public String name;
+  public String project;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
   public File sessionDirectory = new File( System.getProperty( "user.home" ) );
   public int duration = 0;

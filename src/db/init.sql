@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS schemas (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
+  project TEXT NOT NULL,
   session_directory TEXT NOT NULL,
   duration INTEGER NOT NULL,
   pause_on_end INTEGER NOT NULL,

@@ -21,7 +21,7 @@
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                <children>
-                  <VBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+                  <VBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                      <children>
                         <Label text="Save session data to:" />
                         <HBox spacing="5.0">
@@ -32,7 +32,7 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="100.0">
+                  <VBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="110.0">
                      <children>
                         <Label text="Session Duration" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <RadioButton fx:id="infiniteRadioBtn" mnemonicParsing="false" text="infinite" />
@@ -66,6 +66,7 @@
                      </children>
                   </HBox>
                   <VBox fx:id="errorMsgBox" layoutX="52.0" layoutY="136.0" prefWidth="204.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <TextField fx:id="projectField" layoutX="4.0" layoutY="7.0" promptText="Project (optional)" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">

@@ -37,6 +37,7 @@ import com.threebird.recorder.views.edit_schema.MappingBox;
 public class EditSchemaController
 {
   @FXML private TextField nameField;
+  @FXML private TextField projectField;
 
   @FXML private VBox mappingsBox;
   @FXML private Button addRowButton;
@@ -73,20 +74,13 @@ public class EditSchemaController
   {
     deleteSchemaButton.setVisible( sch != null );
     model = sch == null ? new Schema() : sch;
+
     nameField.setText( Strings.nullToEmpty( model.name ) );
-
     populateMappingsBox( model );
-
-    setupSessionDirectory();
-
-    setupDurationRadioButtons();
-
-    setupDurationTextFields();
-  }
-
-  private void setupSessionDirectory()
-  {
+    projectField.setText( Strings.nullToEmpty( model.project ) );
     directoryField.setText( model.sessionDirectory.getPath() );
+    setupDurationRadioButtons();
+    setupDurationTextFields();
   }
 
   private void setupDurationRadioButtons()
@@ -337,6 +331,7 @@ public class EditSchemaController
     }
 
     model.name = nameField.getText().trim();
+    model.project = projectField.getText().trim();
     model.mappings = temp;
     model.sessionDirectory = getDirectory();
     model.duration = getDuration();
