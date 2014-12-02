@@ -41,7 +41,7 @@ public class Schemas
   {
     String sql =
         "UPDATE schemas SET "
-            + "name = ?,"
+            + "client = ?,"
             + "project = ?,"
             + "duration = ?,"
             + "session_directory = ?,"
@@ -50,7 +50,7 @@ public class Schemas
             + "sound_on_end = ? "
             + "WHERE id = ?";
 
-    List< Object > params = Lists.newArrayList( schema.name,
+    List< Object > params = Lists.newArrayList( schema.client,
                                                 schema.project,
                                                 schema.duration,
                                                 schema.sessionDirectory.getPath(),
@@ -86,9 +86,9 @@ public class Schemas
   {
     String sql =
         "INSERT INTO schemas "
-            + "(name, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
+            + "(client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
             + "VALUES (?,?,?,?,?,?,?)";
-    List< Object > params = Lists.newArrayList( schema.name,
+    List< Object > params = Lists.newArrayList( schema.client,
                                                 schema.project,
                                                 schema.duration,
                                                 schema.sessionDirectory.getPath(),
@@ -130,7 +130,7 @@ public class Schemas
       while (rs.next()) {
         Schema s = new Schema();
         s.id = rs.getInt( "id" );
-        s.name = rs.getString( "name" );
+        s.client = rs.getString( "client" );
         s.project = rs.getString( "project" );
         s.sessionDirectory = new File( rs.getString( "session_directory" ) );
         s.duration = rs.getInt( "duration" );

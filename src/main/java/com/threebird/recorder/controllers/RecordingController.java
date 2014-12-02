@@ -73,7 +73,7 @@ public class RecordingController
   public void init( Schema sch )
   {
     this.schema = sch;
-    nameText.setText( schema.name );
+    nameText.setText( schema.client );
     initializeTimer();
     initializeBehaviorCountBoxes();
 

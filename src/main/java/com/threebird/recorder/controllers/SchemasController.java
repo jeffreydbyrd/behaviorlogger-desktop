@@ -2,6 +2,7 @@ package com.threebird.recorder.controllers;
 
 import java.util.List;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,8 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -30,8 +31,10 @@ import com.threebird.recorder.views.TimeBox;
  */
 public class SchemasController
 {
+  @FXML private TableView< Schema > schemaTable;
+  @FXML private TableColumn< Schema, String > clientCol;
+  @FXML private TableColumn< Schema, String > projectCol;
   @FXML private Button createSchemaButton;
-  @FXML private ListView< Schema > schemaList;
 
   @FXML private AnchorPane rightSide;
   @FXML private Text emptyMessage;
@@ -55,6 +58,10 @@ public class SchemasController
   {
     rightSide.setVisible( false );
     initSchemaListView();
+
+    clientCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().client ) );
+    projectCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().project ) );
+
     timeBox = new TimeBox( 0 );
     timeBoxSlot.getChildren().add( timeBox );
   }
@@ -65,21 +72,13 @@ public class SchemasController
   private void initSchemaListView()
   {
     List< Schema > all = Schemas.all();
-
     schemas = FXCollections.observableArrayList( all );
-    schemaList.setItems( schemas );
 
-    schemaList.setCellFactory( ( ListView< Schema > ls ) -> new ListCell< Schema >() {
-      @Override protected void updateItem( Schema s, boolean bln )
-      {
-        super.updateItem( s, bln );
-        setText( s != null ? s.name : "" );
-      }
-    } );
+    schemaTable.setItems( schemas );
 
-    schemaList.getSelectionModel()
-              .selectedItemProperty()
-              .addListener( this::onSchemaSelect );
+    schemaTable.getSelectionModel()
+               .selectedItemProperty()
+               .addListener( this::onSchemaSelect );
   }
 
   /**
@@ -139,7 +138,7 @@ public class SchemasController
 
   @FXML private void onEditSchemaClicked( ActionEvent evt )
   {
-    Schema schema = schemaList.getSelectionModel().getSelectedItem();
+    Schema schema = schemaTable.getSelectionModel().getSelectedItem();
     EventRecorder.toEditSchemaView( schema );
   }
 
@@ -150,7 +149,7 @@ public class SchemasController
    */
   @FXML private void onStartClicked( ActionEvent evt )
   {
-    Schema schema = schemaList.getSelectionModel().getSelectedItem();
+    Schema schema = schemaTable.getSelectionModel().getSelectedItem();
     EventRecorder.toRecordingView( schema );
   }
 }

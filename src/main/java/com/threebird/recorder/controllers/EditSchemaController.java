@@ -36,7 +36,7 @@ import com.threebird.recorder.views.edit_schema.MappingBox;
  */
 public class EditSchemaController
 {
-  @FXML private TextField nameField;
+  @FXML private TextField clientField;
   @FXML private TextField projectField;
 
   @FXML private VBox mappingsBox;
@@ -75,7 +75,7 @@ public class EditSchemaController
     deleteSchemaButton.setVisible( sch != null );
     model = sch == null ? new Schema() : sch;
 
-    nameField.setText( Strings.nullToEmpty( model.name ) );
+    clientField.setText( Strings.nullToEmpty( model.client ) );
     populateMappingsBox( model );
     projectField.setText( Strings.nullToEmpty( model.project ) );
     directoryField.setText( model.sessionDirectory.getPath() );
@@ -225,12 +225,12 @@ public class EditSchemaController
     duplicateMsg.setFill( Color.RED );
 
     // Validate name field
-    if (nameField.getText().trim().isEmpty()) {
+    if (clientField.getText().trim().isEmpty()) {
       isValid = false;
-      nameField.setStyle( cssRed );
+      clientField.setStyle( cssRed );
       errorMsgBox.getChildren().add( nameMsg );
     } else {
-      nameField.setStyle( "" );
+      clientField.setStyle( "" );
     }
 
     // Validate Directory field
@@ -330,7 +330,7 @@ public class EditSchemaController
       temp.put( behavior.key, behavior );
     }
 
-    model.name = nameField.getText().trim();
+    model.client = clientField.getText().trim();
     model.project = projectField.getText().trim();
     model.mappings = temp;
     model.sessionDirectory = getDirectory();

@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 public class Schema
 {
   public Integer id;
-  public String name;
+  public String client;
   public String project;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
   public File sessionDirectory = new File( System.getProperty( "user.home" ) );

@@ -21,7 +21,15 @@
          <children>
             <AnchorPane>
                <children>
-            				<ListView fx:id="schemaList" prefHeight="448.0" prefWidth="317.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <TableView fx:id="schemaTable" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="clientCol" prefWidth="96.0" text="Client" />
+                      <TableColumn fx:id="projectCol" minWidth="0.0" prefWidth="178.0" text="Project" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
                   <Button fx:id="createSchemaButton" layoutX="10.0" layoutY="474.0" mnemonicParsing="false" onAction="#onCreateSchemaClicked" text="Create Schema" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
                </children>
                <padding>
