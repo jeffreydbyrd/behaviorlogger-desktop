@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -43,6 +44,11 @@ public class SchemasController
 
   @FXML private Pane timeBoxSlot;
   private TimeBox timeBox;
+
+  @FXML private TextField observerField;
+  @FXML private TextField therapistField;
+  @FXML private TextField conditionField;
+  @FXML private TextField sessionNumField;
 
   @FXML private Button saveButton;
   @FXML private Button startButton;
