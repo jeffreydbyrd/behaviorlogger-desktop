@@ -22,6 +22,7 @@ import javafx.stage.StageStyle;
 import com.threebird.recorder.controllers.AddKeysController;
 import com.threebird.recorder.controllers.EditSchemaController;
 import com.threebird.recorder.controllers.RecordingController;
+import com.threebird.recorder.controllers.SchemasController;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 
@@ -47,7 +48,7 @@ public class EventRecorder extends Application
   {
     STAGE = primaryStage;
 
-    toSchemasView();
+    toSchemasView( null );
   }
 
   /**
@@ -140,10 +141,11 @@ public class EventRecorder extends Application
    * load up the FXML file we generated with Scene Builder, "schemas.fxml". This
    * view is controlled by SchemasController.java
    */
-  public static void toSchemasView()
+  public static void toSchemasView( Schema selected )
   {
     String filepath = "./views/schemas.fxml";
-    loadScene( filepath, "Schemas" );
+    SchemasController controller = loadScene( filepath, "Schemas" );
+    controller.init( selected );
   }
 
   /**

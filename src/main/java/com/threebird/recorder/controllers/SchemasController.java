@@ -49,27 +49,26 @@ public class SchemasController
 
   private ObservableList< Schema > schemas;
 
-  /**
-   * When JavaFX initializes a controller, it will look for an 'initialize()'
-   * method that's annotated with @FXML. If it finds one, it will call it as
-   * soon as the class is instantiated
-   */
-  @FXML private void initialize()
+  public void init( Schema selected )
   {
     rightSide.setVisible( false );
-    initSchemaListView();
+    initSchemaListView( selected );
 
     clientCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().client ) );
     projectCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().project ) );
 
     timeBox = new TimeBox( 0 );
     timeBoxSlot.getChildren().add( timeBox );
+
+    if (selected != null && selected.id != null) {
+      schemaTable.getSelectionModel().select( selected );
+    }
   }
 
   /**
    * Initializes 'schemaList' and binds it to 'schemas'
    */
-  private void initSchemaListView()
+  private void initSchemaListView( Schema selected )
   {
     List< Schema > all = Schemas.all();
     schemas = FXCollections.observableArrayList( all );

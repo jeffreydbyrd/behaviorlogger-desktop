@@ -81,6 +81,8 @@ public class EditSchemaController
     directoryField.setText( model.sessionDirectory.getPath() );
     setupDurationRadioButtons();
     setupDurationTextFields();
+
+    clientField.requestFocus();
   }
 
   private void setupDurationRadioButtons()
@@ -301,11 +303,11 @@ public class EditSchemaController
   }
 
   /**
-   * Simply bring the user back to the Schemas view with
+   * Simply bring the user back to the Schemas view without saving
    */
   @FXML void onCancelClicked( ActionEvent evt )
   {
-    EventRecorder.toSchemasView();
+    EventRecorder.toSchemasView( model );
   }
 
   /**
@@ -341,7 +343,7 @@ public class EditSchemaController
 
     Schemas.save( model );
 
-    EventRecorder.toSchemasView();
+    EventRecorder.toSchemasView( model );
   }
 
   /**
@@ -354,7 +356,7 @@ public class EditSchemaController
 
     EventHandler< ActionEvent > onDeleteClicked = evt -> {
       Schemas.delete( this.model );
-      EventRecorder.toSchemasView();
+      EventRecorder.toSchemasView( null );
     };
 
     EventRecorder.dialogBox( msg,

@@ -314,7 +314,7 @@ public class RecordingController
 
   @FXML private void onGoBackPress( ActionEvent evt )
   {
-    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toSchemasView() );
+    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toSchemasView( schema ) );
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )
