@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.SessionDetails;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.views.TimeBox;
 
@@ -48,7 +49,7 @@ public class SchemasController
   @FXML private TextField observerField;
   @FXML private TextField therapistField;
   @FXML private TextField conditionField;
-  @FXML private TextField sessionNumField;
+  @FXML private TextField sessionField;
 
   @FXML private Button saveButton;
   @FXML private Button startButton;
@@ -155,6 +156,13 @@ public class SchemasController
   @FXML private void onStartClicked( ActionEvent evt )
   {
     Schema schema = schemaTable.getSelectionModel().getSelectedItem();
-    EventRecorder.toRecordingView( schema );
+
+    SessionDetails details = new SessionDetails();
+    details.observer = observerField.getText().trim();
+    details.therapist = therapistField.getText().trim();
+    details.condition = conditionField.getText().trim();
+    details.sessionNum = Integer.valueOf( sessionField.getText() );
+    
+    EventRecorder.toRecordingView( schema, details );
   }
 }
