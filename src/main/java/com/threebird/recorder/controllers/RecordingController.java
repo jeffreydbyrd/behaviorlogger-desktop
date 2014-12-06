@@ -30,6 +30,7 @@ import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.SessionDetails;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.views.TimeBox;
@@ -43,9 +44,9 @@ import com.threebird.recorder.views.recording.DiscreteCountBox;
 public class RecordingController
 {
   private Schema schema;
+  private SessionDetails details;
   private int counter = 0;
   private SimpleBooleanProperty playingProperty = new SimpleBooleanProperty( false );
-  // private boolean playing = false;
   private Timeline timer;
   private HashMap< MappableChar, KeyBehaviorMapping > unknowns = Maps.newHashMap();
   private Recording recording = new Recording();
@@ -69,10 +70,14 @@ public class RecordingController
   /**
    * @param sch
    *          - The Schema being used for recording
+   * @param details
+   *          - The session details being used for recording
    */
-  public void init( Schema sch )
+  public void init( Schema sch, SessionDetails details )
   {
     this.schema = sch;
+    this.details = details;
+
     nameText.setText( schema.client );
     initializeTimer();
     initializeBehaviorCountBoxes();
@@ -319,7 +324,8 @@ public class RecordingController
 
   @FXML private void onNewSessionPress( ActionEvent evt )
   {
-    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toRecordingView( schema ) );
+    details.sessionNum += 1;
+    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toRecordingView( schema, details ) );
   }
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )

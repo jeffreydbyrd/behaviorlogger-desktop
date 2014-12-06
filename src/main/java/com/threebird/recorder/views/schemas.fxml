@@ -38,12 +38,12 @@
             </AnchorPane>
             <AnchorPane GridPane.columnIndex="1">
                <children>
-                  <Text fx:id="emptyMessage" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14;" text="No schema selected. Click &quot;Create Schema&quot; to create one." wrappingWidth="301.0501403808594" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="240.0" />
+                  <Text fx:id="emptyMessage" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14;" text="No schema selected. Click &quot;Create Schema&quot; to create one." visible="false" wrappingWidth="301.0501403808594" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="240.0" />
                   <AnchorPane fx:id="rightSide" layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <ScrollPane fitToWidth="true" layoutY="16.0" prefHeight="246.0" prefWidth="411.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="ALWAYS">
+                              <ScrollPane fitToWidth="true" layoutY="16.0" prefHeight="200.0" prefWidth="411.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="ALWAYS">
                                  <content>
                                     <VBox fx:id="mappingsBox" layoutY="0.431640625" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
@@ -67,11 +67,74 @@
                                     </VBox>
                                  </content>
                               </ScrollPane>
-                              <VBox layoutY="345.0">
+                              <HBox>
                                  <children>
-                                    <Label text="Session Duration" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER" />
+                                    <Label text="Session Duration:  " AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin></Label>
                                     <Pane fx:id="timeBoxSlot" />
                                  </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Separator prefWidth="200.0">
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </Separator>
+                              <Label text="Session Details:">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Label>
+                              <VBox spacing="5.0" VBox.vgrow="NEVER">
+                                 <children>
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Observer:" HBox.hgrow="NEVER">
+                                             <padding>
+                                                <Insets top="5.0" />
+                                             </padding>
+                                          </Label>
+                                          <TextField fx:id="observerField" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Therapist:" HBox.hgrow="NEVER">
+                                             <padding>
+                                                <Insets top="5.0" />
+                                             </padding>
+                                          </Label>
+                                          <TextField fx:id="therapistField" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Condition:" HBox.hgrow="NEVER">
+                                             <padding>
+                                                <Insets top="5.0" />
+                                             </padding>
+                                          </Label>
+                                          <TextField fx:id="conditionField" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Session #" HBox.hgrow="NEVER">
+                                             <padding>
+                                                <Insets top="5.0" />
+                                             </padding>
+                                          </Label>
+                                          <TextField fx:id="sessionField" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
                               </VBox>
                            </children>
                         </VBox>
