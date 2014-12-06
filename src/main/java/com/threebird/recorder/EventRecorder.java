@@ -25,7 +25,6 @@ import com.threebird.recorder.controllers.RecordingController;
 import com.threebird.recorder.controllers.SchemasController;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
-import com.threebird.recorder.models.SessionDetails;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The
@@ -168,14 +167,12 @@ public class EventRecorder extends Application
    * 
    * @param schema
    *          - the currently selected Schema. This parameter must not be null
-   * @param details
-   *          - the current session's details. Must not be null.
    */
-  public static void toRecordingView( Schema schema, SessionDetails details )
+  public static void toRecordingView( Schema schema )
   {
     String filepath = "./views/recording/recording.fxml";
     RecordingController controller = loadScene( filepath, "Recording" );
-    controller.init( schema, details );
+    controller.init( schema );
   }
 
   public static void toAddKeysView( Scene recordingScene,

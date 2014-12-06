@@ -15,7 +15,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -28,6 +27,7 @@ import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.edit_schema.MappingBox;
 
 /**
@@ -112,9 +112,9 @@ public class EditSchemaController
     minutesField.setText( intToStr( mins ) );
     secondsField.setText( intToStr( secs ) );
 
-    hoursField.setOnKeyTyped( createFieldLimiter( hoursField, digits, 2 ) );
-    minutesField.setOnKeyTyped( createFieldLimiter( minutesField, digits, 2 ) );
-    secondsField.setOnKeyTyped( createFieldLimiter( secondsField, digits, 2 ) );
+    hoursField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( hoursField, digits, 2 ) );
+    minutesField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( minutesField, digits, 2 ) );
+    secondsField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( secondsField, digits, 2 ) );
 
     colorCheckBox.setSelected( model.color );
     pauseCheckBox.setSelected( model.pause );
@@ -150,27 +150,6 @@ public class EditSchemaController
   private File getDirectory()
   {
     return new File( directoryField.getText().trim() );
-  }
-
-  /**
-   * @param field
-   *          - the input-field that this EventHandler reads
-   * @param acceptableKeys
-   *          - a list of characters that the user is allowed to input
-   * @param limit
-   *          - the max length of the field
-   * @return an EventHandler that consumes a KeyEvent if the typed Char is
-   *         outside 'acceptableKeys' or if the length of 'field' is longer than
-   *         'limit'
-   */
-  public static EventHandler< ? super KeyEvent >
-    createFieldLimiter( TextField field, char[] acceptableKeys, int limit )
-  {
-    return evt -> {
-      if (field.getText().trim().length() == limit
-          || !String.valueOf( acceptableKeys ).contains( evt.getCharacter() ))
-        evt.consume();
-    };
   }
 
   /**

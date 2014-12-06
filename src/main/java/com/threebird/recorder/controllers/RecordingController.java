@@ -30,7 +30,6 @@ import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
-import com.threebird.recorder.models.SessionDetails;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.views.TimeBox;
@@ -44,7 +43,6 @@ import com.threebird.recorder.views.recording.DiscreteCountBox;
 public class RecordingController
 {
   private Schema schema;
-  private SessionDetails details;
   private int counter = 0;
   private SimpleBooleanProperty playingProperty = new SimpleBooleanProperty( false );
   private Timeline timer;
@@ -70,13 +68,10 @@ public class RecordingController
   /**
    * @param sch
    *          - The Schema being used for recording
-   * @param details
-   *          - The session details being used for recording
    */
-  public void init( Schema sch, SessionDetails details )
+  public void init( Schema sch )
   {
     this.schema = sch;
-    this.details = details;
 
     nameText.setText( schema.client );
     initializeTimer();
@@ -319,13 +314,18 @@ public class RecordingController
 
   @FXML private void onGoBackPress( ActionEvent evt )
   {
+    if (SchemasController.SESSION_DETAILS.sessionNum != null && timer.getCurrentTime().greaterThan( Duration.ZERO )) {
+      SchemasController.SESSION_DETAILS.sessionNum += 1;
+    }
     checkUnknownsAndChangeScene( ( ) -> EventRecorder.toSchemasView( schema ) );
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )
   {
-    details.sessionNum += 1;
-    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toRecordingView( schema, details ) );
+    if (SchemasController.SESSION_DETAILS.sessionNum != null) {
+      SchemasController.SESSION_DETAILS.sessionNum += 1;
+    }
+    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toRecordingView( schema ) );
   }
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )

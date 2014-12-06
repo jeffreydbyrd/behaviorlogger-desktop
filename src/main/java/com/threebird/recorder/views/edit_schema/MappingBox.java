@@ -8,6 +8,7 @@ import javafx.scene.layout.Priority;
 
 import com.threebird.recorder.controllers.EditSchemaController;
 import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
  * This is an HBox with 3 Nodes (CheckBox and two TextFields). We use it to
@@ -36,7 +37,7 @@ public class MappingBox extends HBox
     keyField.setMaxWidth( 40 );
     HBox.setHgrow( keyField, Priority.NEVER );
     HBox.setMargin( keyField, insets );
-    keyField.setOnKeyTyped( EditSchemaController.createFieldLimiter( keyField, acceptableKeys, 1 ) );
+    keyField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( keyField, acceptableKeys, 1 ) );
 
     behaviorField = new TextField( behavior );
     HBox.setHgrow( behaviorField, Priority.ALWAYS );

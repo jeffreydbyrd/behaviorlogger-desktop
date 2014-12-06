@@ -7,12 +7,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -23,6 +25,7 @@ import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.models.SessionDetails;
 import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.TimeBox;
 
 /**
@@ -33,6 +36,8 @@ import com.threebird.recorder.views.TimeBox;
  */
 public class SchemasController
 {
+  public static SessionDetails SESSION_DETAILS = new SessionDetails();
+
   @FXML private TableView< Schema > schemaTable;
   @FXML private TableColumn< Schema, String > clientCol;
   @FXML private TableColumn< Schema, String > projectCol;
@@ -70,6 +75,8 @@ public class SchemasController
     if (selected != null && selected.id != null) {
       schemaTable.getSelectionModel().select( selected );
     }
+
+    initSessionDetails();
   }
 
   /**
@@ -111,6 +118,31 @@ public class SchemasController
       HBox hbox = new HBox( contLbl, keyLbl, separator, behaviorLbl );
       hbox.setSpacing( 5 );
       mappingsBox.getChildren().add( hbox );
+    } );
+  }
+
+  private void initSessionDetails()
+  {
+    observerField.setText( SESSION_DETAILS.observer );
+    therapistField.setText( SESSION_DETAILS.therapist );
+    conditionField.setText( SESSION_DETAILS.condition );
+    sessionField.setText( SESSION_DETAILS.sessionNum == null ? "" : SESSION_DETAILS.sessionNum.toString() );
+
+    observerField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.observer = newV.trim() );
+    therapistField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.therapist = newV.trim() );
+    conditionField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.condition = newV.trim() );
+
+    // Put in some idiot-proof logic for the session # (limit to just digits,
+    // prevent exceeding max_value)
+    EventHandler< ? super KeyEvent > limiter =
+        EventRecorderUtil.createFieldLimiter( sessionField, "0123456789".toCharArray(), 9 );
+    sessionField.setOnKeyTyped( limiter );
+    sessionField.textProperty().addListener( ( o, old, newV ) -> {
+      if (newV.isEmpty()) {
+        SESSION_DETAILS.sessionNum = null;
+      } else {
+        SESSION_DETAILS.sessionNum = Integer.valueOf( newV.trim() );
+      }
     } );
   }
 
@@ -156,13 +188,6 @@ public class SchemasController
   @FXML private void onStartClicked( ActionEvent evt )
   {
     Schema schema = schemaTable.getSelectionModel().getSelectedItem();
-
-    SessionDetails details = new SessionDetails();
-    details.observer = observerField.getText().trim();
-    details.therapist = therapistField.getText().trim();
-    details.condition = conditionField.getText().trim();
-    details.sessionNum = Integer.valueOf( sessionField.getText() );
-    
-    EventRecorder.toRecordingView( schema, details );
+    EventRecorder.toRecordingView( schema );
   }
 }
