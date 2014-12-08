@@ -14,9 +14,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -49,7 +51,9 @@ public class RecordingController
   private HashMap< MappableChar, KeyBehaviorMapping > unknowns = Maps.newHashMap();
   private Recording recording = new Recording();
 
-  @FXML private Text nameText;
+  @FXML private Label clientLabel;
+  @FXML private Label projectLabel;
+  @FXML private HBox sessionDetailsBox;
 
   @FXML private VBox discreteBox;
   @FXML private VBox continuousBox;
@@ -73,7 +77,29 @@ public class RecordingController
   {
     this.schema = sch;
 
-    nameText.setText( schema.client );
+    clientLabel.setText( this.schema.client );
+    projectLabel.setText( this.schema.project );
+
+    if (SchemasController.SESSION_DETAILS.observer != null) {
+      String obsrvr = "Observer: " + SchemasController.SESSION_DETAILS.observer;
+      sessionDetailsBox.getChildren().add( new Label( obsrvr ) );
+    }
+
+    if (SchemasController.SESSION_DETAILS.therapist != null) {
+      String therapist = "Therapist: " + SchemasController.SESSION_DETAILS.therapist;
+      sessionDetailsBox.getChildren().add( new Label( therapist ) );
+    }
+
+    if (SchemasController.SESSION_DETAILS.condition != null) {
+      String condition = "Condition: " + SchemasController.SESSION_DETAILS.condition;
+      sessionDetailsBox.getChildren().add( new Label( condition ) );
+    }
+
+    if (SchemasController.SESSION_DETAILS.sessionNum != null) {
+      String session = "Session: " + SchemasController.SESSION_DETAILS.sessionNum;
+      sessionDetailsBox.getChildren().add( new Label( session ) );
+    }
+
     initializeTimer();
     initializeBehaviorCountBoxes();
 

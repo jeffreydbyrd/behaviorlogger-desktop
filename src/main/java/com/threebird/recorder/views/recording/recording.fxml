@@ -7,13 +7,52 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane onKeyPressed="#onKeyPressed" prefHeight="570.0" prefWidth="681.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.RecordingController">
+<VBox spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.RecordingController">
    <children>
-      <Text fx:id="nameText" layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Schema Name" wrappingWidth="491.6888999938965" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <font>
-            <Font size="18.0" />
-         </font></Text>
-      <GridPane hgap="20.0" layoutX="10.0" layoutY="60.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+      <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox fillHeight="false" layoutX="10.0" layoutY="10.0" spacing="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <HBox spacing="5.0">
+                     <children>
+                        <Label text="Client:">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="clientLabel" text="client name">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets top="2.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox spacing="5.0">
+                     <children>
+                        <Label text="Project:">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="projectLabel" text="project name">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets top="2.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <HBox fx:id="sessionDetailsBox" fillHeight="false" spacing="25.0" />
+         </children>
+      </VBox>
+      <GridPane hgap="20.0" layoutX="10.0" layoutY="60.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" VBox.vgrow="ALWAYS">
          <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" prefWidth="242.39256286621094" />
             <ColumnConstraints hgrow="ALWAYS" prefWidth="240.60743713378906" />
@@ -26,11 +65,13 @@
             <Label alignment="CENTER" prefHeight="16.0" prefWidth="344.0" text="Discrete" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
-               </font></Label>
+               </font>
+            </Label>
             <Label alignment="CENTER" prefHeight="16.0" prefWidth="340.0" text="Continuous" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
-               </font></Label>
+               </font>
+            </Label>
             <VBox fx:id="discreteBox" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="1">
                <children>
                   <Separator prefWidth="200.0" />
@@ -87,36 +128,48 @@
             </VBox>
          </children>
       </GridPane>
-      <Text fx:id="recordingText" fill="#00ae11" layoutX="10.0" layoutY="387.40234375" strokeType="OUTSIDE" strokeWidth="0.0" text="recording" visible="false" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Text>
-      <Text fx:id="pausedText" fill="#bc0101" layoutX="10.0" layoutY="387.40234375" strokeType="OUTSIDE" strokeWidth="0.0" text="paused" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Text>
-      <StackPane fx:id="timeBoxSlot" layoutX="571.0" layoutY="472.0" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
+      <AnchorPane layoutX="10.0" layoutY="463.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Label alignment="TOP_LEFT" text="00 : 00 : 00" />
+            <Text fx:id="recordingText" fill="#00ae11" strokeType="OUTSIDE" strokeWidth="0.0" text="recording" visible="false" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <Text fx:id="pausedText" fill="#bc0101" layoutY="5.0" strokeType="OUTSIDE" strokeWidth="0.0" text="paused" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <StackPane fx:id="timeBoxSlot" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <Label alignment="TOP_LEFT" text="00 : 00 : 00" />
+               </children>
+               <padding>
+                  <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
+               </padding>
+            </StackPane>
+            <Text layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" />
+            <HBox layoutY="71.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+               <children>
+                  <Button fx:id="playButton" focusTraversable="false" layoutX="10.0" layoutY="433.0" mnemonicParsing="false" onAction="#onPlayPress" text="Play" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+                  <Button fx:id="goBackButton" focusTraversable="false" layoutX="20.0" layoutY="443.0" mnemonicParsing="false" onAction="#onGoBackPress" text="Go Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" />
+                  <Button fx:id="newSessionButton" focusTraversable="false" layoutX="230.0" layoutY="453.0" mnemonicParsing="false" onAction="#onNewSessionPress" text="Start New Session" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="125.0" />
+                  <Button fx:id="addNewKeysButton" focusTraversable="false" mnemonicParsing="false" onAction="#onAddNewKeysPress" text="Edit Unknown Behaviors" visible="false" />
+               </children>
+            </HBox>
+            <StackPane fx:id="timeBoxSlot" layoutX="576.0" layoutY="5.0" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <Label alignment="TOP_LEFT" text="00 : 00 : 00" />
+               </children>
+               <padding>
+                  <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
+               </padding>
+            </StackPane>
+            <Pane focusTraversable="true" layoutX="661.0" layoutY="97.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
-         <padding>
-            <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
-         </padding>
-      </StackPane>
-      <Text layoutX="10.0" layoutY="413.568359375" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" />
-      <HBox layoutX="10.0" layoutY="441.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
-         <children>
-            <Button fx:id="playButton" focusTraversable="false" layoutX="10.0" layoutY="433.0" mnemonicParsing="false" onAction="#onPlayPress" text="Play" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
-            <Button fx:id="goBackButton" focusTraversable="false" layoutX="20.0" layoutY="443.0" mnemonicParsing="false" onAction="#onGoBackPress" text="Go Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" />
-            <Button fx:id="newSessionButton" focusTraversable="false" layoutX="230.0" layoutY="453.0" mnemonicParsing="false" onAction="#onNewSessionPress" text="Start New Session" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="125.0" />
-            <Button fx:id="addNewKeysButton" focusTraversable="false" mnemonicParsing="false" onAction="#onAddNewKeysPress" text="Edit Unknown Behaviors" visible="false" />
-         </children>
-      </HBox>
-      <Pane focusTraversable="true" layoutX="417.0" layoutY="341.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      </AnchorPane>
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
-</AnchorPane>
+</VBox>
