@@ -34,6 +34,7 @@ import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.TimeBox;
 import com.threebird.recorder.views.recording.BehaviorCountBox;
 import com.threebird.recorder.views.recording.ContinuousCountBox;
@@ -332,7 +333,7 @@ public class RecordingController
       EventHandler< ActionEvent > onEditClick = e ->
           EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
 
-      EventRecorder.dialogBox( msg, leftOption, rightOption, onDiscardClick, onEditClick );
+      EventRecorderUtil.dialogBox( msg, leftOption, rightOption, onDiscardClick, onEditClick );
     } else {
       toScene.run();
     }

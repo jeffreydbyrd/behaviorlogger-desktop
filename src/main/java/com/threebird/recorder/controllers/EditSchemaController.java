@@ -338,10 +338,10 @@ public class EditSchemaController
       EventRecorder.toSchemasView( null );
     };
 
-    EventRecorder.dialogBox( msg,
-                             "Cancel",
-                             "Delete",
-                             e -> {},
-                             onDeleteClicked );
+    EventRecorderUtil.dialogBox( msg,
+                                 "Cancel",
+                                 "Delete",
+                                 e -> {},
+                                 onDeleteClicked );
   }
 }

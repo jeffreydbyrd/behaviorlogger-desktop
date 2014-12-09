@@ -4,20 +4,14 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import com.threebird.recorder.controllers.AddKeysController;
 import com.threebird.recorder.controllers.EditSchemaController;
@@ -47,7 +41,6 @@ public class EventRecorder extends Application
   @Override public void start( Stage primaryStage ) throws Exception
   {
     STAGE = primaryStage;
-
     toSchemasView( null );
   }
 
@@ -76,6 +69,10 @@ public class EventRecorder extends Application
     }
     Scene scene = new Scene( root );
 
+    MenuBar menuBar = createMainMenuBar();
+
+    ((Pane) scene.getRoot()).getChildren().add( menuBar );
+
     STAGE.setTitle( title );
     STAGE.setScene( scene );
     STAGE.show();
@@ -83,58 +80,22 @@ public class EventRecorder extends Application
     return fxmlLoader.< T > getController();
   }
 
-  /**
-   * Display a simple dialog-box that displays a message and allows the user to
-   * click two buttons
-   * 
-   * @param msg
-   *          - the main message to display
-   * @param leftBtn
-   *          - the text displayed on the left-button
-   * @param rightBtn
-   *          - the text displayed on the right-button
-   * @param onLeftClicked
-   *          - what happens when user clicks left-button
-   * @param onRightClicked
-   *          - what happens when user clicks right-button
-   */
-  public static void dialogBox( String msg,
-                                String leftBtn,
-                                String rightBtn,
-                                EventHandler< ActionEvent > onLeftClicked,
-                                EventHandler< ActionEvent > onRightClicked )
+  private static MenuBar createMainMenuBar()
   {
-    Stage dialogStage = new Stage();
-    dialogStage.initModality( Modality.WINDOW_MODAL );
-    dialogStage.initStyle( StageStyle.UTILITY );
-    dialogStage.initOwner( EventRecorder.STAGE );
-    Label question = new Label( msg );
-    question.setAlignment( Pos.BASELINE_CENTER );
+    MenuBar menuBar = new MenuBar();
+    menuBar.setUseSystemMenuBar( true );
 
-    Button left = new Button( leftBtn );
-    left.setOnAction( evt -> {
-      dialogStage.close();
-      onLeftClicked.handle( evt );
+    Menu mainMenu = new Menu( "Event Recorder" );
+    menuBar.getMenus().addAll( mainMenu );
+
+    MenuItem prefs = new MenuItem( "Preferences" );
+    mainMenu.getItems().add( prefs );
+
+    prefs.setOnAction( ( evt ) -> {
+      
     } );
 
-    Button right = new Button( rightBtn );
-    right.setOnAction( evt -> {
-      dialogStage.close();
-      onRightClicked.handle( evt );
-    } );
-
-    HBox hBox = new HBox();
-    hBox.setAlignment( Pos.BASELINE_RIGHT );
-    hBox.setSpacing( 20.0 );
-    hBox.getChildren().addAll( left, right );
-
-    VBox vBox = new VBox();
-    vBox.setSpacing( 20.0 );
-    vBox.getChildren().addAll( question, hBox );
-    vBox.setPadding( new Insets( 10 ) );
-
-    dialogStage.setScene( new Scene( vBox ) );
-    dialogStage.show();
+    return menuBar;
   }
 
   /**
