@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.PreferencesController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="122.0" />
+    <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="448.0" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints maxHeight="196.0" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+    <RowConstraints vgrow="NEVER" />
+      <RowConstraints maxHeight="370.0" minHeight="27.0" prefHeight="240.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="370.0" minHeight="10.0" prefHeight="83.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <Label text="Defaults" GridPane.halignment="CENTER" />
+      <Label text="Save Location:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+      <Label text="Session Duration:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+      <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+         <children>
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" text="Browse" HBox.hgrow="NEVER" />
+         </children>
+      </HBox>
+      <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <RadioButton fx:id="infiniteRadioBtn" mnemonicParsing="false" text="infinite" />
+            <RadioButton fx:id="timedRadioBtn" mnemonicParsing="false" text="timed" />
+            <VBox fx:id="durationBox" spacing="10.0">
+               <children>
+                  <HBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
+                     <children>
+                        <TextField fx:id="hoursField" prefHeight="26.0" prefWidth="40.0" promptText="hh" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                        <TextField fx:id="minutesField" prefHeight="26.0" prefWidth="40.0" promptText="mm" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                        <TextField fx:id="secondsField" prefHeight="26.0" prefWidth="40.0" promptText="ss" />
+                     </children>
+                  </HBox>
+                  <Label text="When timer finishes:" />
+                  <CheckBox fx:id="colorCheckBox" mnemonicParsing="false" text="Color in the timer" />
+                  <CheckBox fx:id="pauseCheckBox" mnemonicParsing="false" text="Pause the session" />
+                  <CheckBox fx:id="beepCheckBox" mnemonicParsing="false" text="Emit beep" />
+               </children>
+               <padding>
+                  <Insets left="30.0" />
+               </padding>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</GridPane>

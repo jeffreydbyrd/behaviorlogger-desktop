@@ -11,6 +11,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import com.threebird.recorder.controllers.AddKeysController;
@@ -56,7 +57,8 @@ public class EventRecorder extends Application
    *          - the title of this new scene
    * @return the Controller linked to from the FXML file
    */
-  private static < T > T loadScene( String fxmlPath, String title )
+  private static < T > T loadScene( String fxmlPath,
+                                    String title )
   {
     FXMLLoader fxmlLoader =
         new FXMLLoader( EventRecorder.class.getResource( fxmlPath ) );
@@ -69,10 +71,6 @@ public class EventRecorder extends Application
     }
     Scene scene = new Scene( root );
 
-    MenuBar menuBar = createMainMenuBar();
-
-    ((Pane) scene.getRoot()).getChildren().add( menuBar );
-
     STAGE.setTitle( title );
     STAGE.setScene( scene );
     STAGE.show();
@@ -80,7 +78,12 @@ public class EventRecorder extends Application
     return fxmlLoader.< T > getController();
   }
 
-  private static MenuBar createMainMenuBar()
+  /**
+   * Creates a "System MenuBar" and adds it to the Scene. Apparently, if it's a
+   * "System MenuBar", the Stage will pick it up and use it for other Scenes.
+   * How fucked up is that?
+   */
+  private static void createMainMenuBar()
   {
     MenuBar menuBar = new MenuBar();
     menuBar.setUseSystemMenuBar( true );
@@ -92,10 +95,10 @@ public class EventRecorder extends Application
     mainMenu.getItems().add( prefs );
 
     prefs.setOnAction( ( evt ) -> {
-      
+      showPreferences();
     } );
 
-    return menuBar;
+    ((Pane) STAGE.getScene().getRoot()).getChildren().add( menuBar );
   }
 
   /**
@@ -107,6 +110,8 @@ public class EventRecorder extends Application
     String filepath = "./views/schemas.fxml";
     SchemasController controller = loadScene( filepath, "Schemas" );
     controller.init( selected );
+
+    createMainMenuBar();
   }
 
   /**
@@ -144,5 +149,28 @@ public class EventRecorder extends Application
     String filepath = "./views/add_keys.fxml";
     AddKeysController controller = loadScene( filepath, "Add Keys" );
     controller.init( recordingScene, recordingController, schema, unknowns );
+  }
+
+  /**
+   * Shows the preferences page in a modal window
+   */
+  public static void showPreferences()
+  {
+    Stage stage = new Stage();
+    stage.initModality( Modality.APPLICATION_MODAL );
+    FXMLLoader fxmlLoader =
+        new FXMLLoader( EventRecorder.class.getResource( "./views/preferences.fxml" ) );
+
+    Parent root;
+    try {
+      root = (Parent) fxmlLoader.load();
+    } catch (IOException e) {
+      throw new RuntimeException( e );
+    }
+    Scene scene = new Scene( root );
+
+    stage.setTitle( "Preferences" );
+    stage.setScene( scene );
+    stage.show();
   }
 }
