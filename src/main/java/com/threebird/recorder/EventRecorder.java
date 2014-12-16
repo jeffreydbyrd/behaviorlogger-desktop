@@ -2,6 +2,7 @@ package com.threebird.recorder;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -33,7 +34,7 @@ public class EventRecorder extends Application
    * we want to switch scenes
    */
   public static Stage STAGE;
-
+  
   public static void main( String[] args )
   {
     launch( args );
