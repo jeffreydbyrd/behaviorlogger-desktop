@@ -68,6 +68,7 @@
             <Label fx:id="exampleLbl" text="example-filename.xls" />
             <Separator prefWidth="200.0" />
             <VBox fx:id="componentsBox" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Separator prefWidth="200.0" />
          </children>
       </VBox>
    </children>

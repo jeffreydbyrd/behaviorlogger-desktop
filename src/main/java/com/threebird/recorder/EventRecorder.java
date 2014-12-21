@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import com.threebird.recorder.controllers.AddKeysController;
 import com.threebird.recorder.controllers.EditSchemaController;
+import com.threebird.recorder.controllers.PreferencesController;
 import com.threebird.recorder.controllers.RecordingController;
 import com.threebird.recorder.controllers.SchemasController;
 import com.threebird.recorder.models.KeyBehaviorMapping;
@@ -33,7 +34,7 @@ public class EventRecorder extends Application
    * we want to switch scenes
    */
   public static Stage STAGE;
-  
+
   public static void main( String[] args )
   {
     launch( args );
@@ -80,8 +81,8 @@ public class EventRecorder extends Application
 
   /**
    * Creates a "System MenuBar" and adds it to the Scene. Apparently, if it's a
-   * "System MenuBar", the Stage will pick it up and use it for other Scenes.
-   * How fucked up is that?
+   * "System MenuBar", the Stage will pick it up and use it globally for all
+   * other Scenes that we insert into this Stage. How fucked up is that?
    */
   private static void createMainMenuBar()
   {
@@ -168,6 +169,8 @@ public class EventRecorder extends Application
       throw new RuntimeException( e );
     }
     Scene scene = new Scene( root );
+
+    fxmlLoader.< PreferencesController > getController().init( scene );
 
     stage.setTitle( "Preferences" );
     stage.setScene( scene );

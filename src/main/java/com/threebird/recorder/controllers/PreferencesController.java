@@ -3,7 +3,9 @@ package com.threebird.recorder.controllers;
 import java.util.ArrayList;
 
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
@@ -16,9 +18,11 @@ import com.threebird.recorder.views.preferences.FilenameComponent;
 public class PreferencesController
 {
   @FXML private VBox componentsBox;
+  private Scene scene;
 
-  @FXML private void initialize()
+  public void init( Scene scene )
   {
+    this.scene = scene;
     initComponentsBox();
   }
 
@@ -29,11 +33,13 @@ public class PreferencesController
                             "Observer", "Therapist",
                             "Condition", "Session Number" );
 
-    for (String component : components) {
-      FilenameComponent node = new FilenameComponent( component );
+    for (int i = 0; i < components.size(); i++) {
+      String component = components.get( i );
+      FilenameComponent node = new FilenameComponent( i + 1, component );
       componentsBox.getChildren().add( node );
 
       node.setOnDragDetected( evt -> {
+        scene.setCursor( Cursor.CLOSED_HAND );
         addPreview( componentsBox, node );
         node.setDraggingStyle();
         node.startFullDrag();
@@ -48,9 +54,12 @@ public class PreferencesController
     }
 
     componentsBox.setOnMouseDragReleased( evt -> {
+      scene.setCursor( Cursor.DEFAULT );
       removePreview( componentsBox );
-      for (Node node : componentsBox.getChildren()) {
-        ((FilenameComponent) node).setNormalStyle();
+      for (int i = 0; i < components.size(); i++) {
+        FilenameComponent comp = (FilenameComponent) componentsBox.getChildren().get( i );
+        comp.setNormalStyle();
+        comp.setIndex( i + 1 );
       }
     } );
   }
