@@ -15,9 +15,6 @@ public class FilenameComponent extends Pane
   private CheckBox checkbox;
   private Label label;
 
-  private static final String DRAGGING = "-fx-text-fill:gray;-fx-background-color:gray;";
-  private static final String NORMAL = "";
-
   public FilenameComponent( int i, String name )
   {
     this.index = new Label( i + "." );
@@ -31,22 +28,6 @@ public class FilenameComponent extends Pane
     this.root.setSpacing( 5 );
     this.getChildren().add( root );
 
-  }
-
-  public void setDraggingStyle()
-  {
-    index.setVisible( false );
-    checkbox.setVisible( false );
-    label.setVisible( false );
-    this.setStyle( DRAGGING );
-  }
-
-  public void setNormalStyle()
-  {
-    index.setVisible( true );
-    checkbox.setVisible( true );
-    label.setVisible( true );
-    this.setStyle( NORMAL );
   }
 
   public void setIndex( int i )

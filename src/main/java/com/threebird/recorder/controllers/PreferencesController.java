@@ -41,7 +41,7 @@ public class PreferencesController
       node.setOnDragDetected( evt -> {
         scene.setCursor( Cursor.CLOSED_HAND );
         addPreview( componentsBox, node );
-        node.setDraggingStyle();
+        node.setVisible( false );
         node.startFullDrag();
       } );
 
@@ -51,6 +51,9 @@ public class PreferencesController
         rotateNodes( componentsBox, indexOfDraggingNode, indexOfDropTarget );
         evt.consume();
       } );
+
+      node.setOnMouseEntered( evt -> node.setStyle( "-fx-background-color:#e0e0e0;" ) );
+      node.setOnMouseExited( evt -> node.setStyle( "" ) );
     }
 
     componentsBox.setOnMouseDragReleased( evt -> {
@@ -58,7 +61,7 @@ public class PreferencesController
       removePreview( componentsBox );
       for (int i = 0; i < components.size(); i++) {
         FilenameComponent comp = (FilenameComponent) componentsBox.getChildren().get( i );
-        comp.setNormalStyle();
+        comp.setVisible( true );
         comp.setIndex( i + 1 );
       }
     } );
