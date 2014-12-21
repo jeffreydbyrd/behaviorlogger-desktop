@@ -54,6 +54,7 @@ public class PreferencesController
 
       node.setOnMouseEntered( evt -> node.setStyle( "-fx-background-color:#e0e0e0;" ) );
       node.setOnMouseExited( evt -> node.setStyle( "" ) );
+      node.setCursor( Cursor.OPEN_HAND );
     }
 
     componentsBox.setOnMouseDragReleased( evt -> {

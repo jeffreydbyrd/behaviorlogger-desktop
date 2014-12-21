@@ -19,10 +19,10 @@ public class FilenameComponent extends Pane
   {
     this.index = new Label( i + "." );
     this.checkbox = new CheckBox();
+    checkbox.setCursor( Cursor.DEFAULT );
     this.label = new Label( name );
     HBox.setHgrow( label, Priority.ALWAYS );
     label.setFont( Font.font( 14 ) );
-    label.setCursor( Cursor.OPEN_HAND );
 
     this.root = new HBox( index, checkbox, label );
     this.root.setSpacing( 5 );
