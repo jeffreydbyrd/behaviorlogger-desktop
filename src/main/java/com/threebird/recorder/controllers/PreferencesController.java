@@ -1,45 +1,47 @@
 package com.threebird.recorder.controllers;
 
-import java.util.ArrayList;
+import java.io.File;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
-import com.google.common.collect.Lists;
-import com.threebird.recorder.views.preferences.FilenameComponent;
+import com.threebird.recorder.models.FilenameComponent;
+import com.threebird.recorder.views.preferences.FilenameComponentView;
 
 /**
  * Corresponds to preferences.fxml
  */
 public class PreferencesController
 {
+  @FXML private TextField directoryField;
+  @FXML private Button browseButton;
   @FXML private VBox componentsBox;
-  private Scene scene;
+  private Stage stage;
 
-  public void init( Scene scene )
+  public void init( Stage stage )
   {
-    this.scene = scene;
+    this.stage = stage;
     initComponentsBox();
   }
 
   private void initComponentsBox()
   {
-    final ArrayList< String > components =
-        Lists.newArrayList( "Client", "Project",
-                            "Observer", "Therapist",
-                            "Condition", "Session Number" );
+    FilenameComponent[] components = FilenameComponent.values();
 
-    for (int i = 0; i < components.size(); i++) {
-      String component = components.get( i );
-      FilenameComponent node = new FilenameComponent( i + 1, component );
+    for (int i = 0; i < components.length; i++) {
+      FilenameComponentView node = components[i].view;
       componentsBox.getChildren().add( node );
 
       node.setOnDragDetected( evt -> {
-        scene.setCursor( Cursor.CLOSED_HAND );
+        stage.getScene().setCursor( Cursor.CLOSED_HAND );
         addPreview( componentsBox, node );
         node.setVisible( false );
         node.startFullDrag();
@@ -58,10 +60,10 @@ public class PreferencesController
     }
 
     componentsBox.setOnMouseDragReleased( evt -> {
-      scene.setCursor( Cursor.DEFAULT );
+      stage.getScene().setCursor( Cursor.DEFAULT );
       removePreview( componentsBox );
-      for (int i = 0; i < components.size(); i++) {
-        FilenameComponent comp = (FilenameComponent) componentsBox.getChildren().get( i );
+      for (int i = 0; i < components.length; i++) {
+        FilenameComponentView comp = (FilenameComponentView) componentsBox.getChildren().get( i );
         comp.setVisible( true );
         comp.setIndex( i + 1 );
       }
@@ -96,4 +98,26 @@ public class PreferencesController
       vbox.getChildren().add( indexOfDropTarget, node );
     }
   }
+
+  private File getDirectory()
+  {
+    return new File( directoryField.getText().trim() );
+  }
+
+  @FXML void onBrowseButtonPressed( ActionEvent evt )
+  {
+    File f = getDirectory();
+    if (!f.exists()) {
+      f = new File( System.getProperty( "user.home" ) );
+    }
+
+    DirectoryChooser dirChooser = new DirectoryChooser();
+    dirChooser.setInitialDirectory( f );
+    File newFile = dirChooser.showDialog( null );
+
+    if (newFile != null) {
+      directoryField.setText( newFile.getPath() );
+    }
+  }
+
 }

@@ -8,14 +8,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 
-public class FilenameComponent extends Pane
+public class FilenameComponentView extends Pane
 {
   private HBox root;
   private Label index;
   private CheckBox checkbox;
   private Label label;
 
-  public FilenameComponent( int i, String name )
+  public FilenameComponentView( int i, String name )
   {
     this.index = new Label( i + "." );
     this.checkbox = new CheckBox();
@@ -33,5 +33,15 @@ public class FilenameComponent extends Pane
   public void setIndex( int i )
   {
     this.index.setText( i + "." );
+  }
+
+  public String getName()
+  {
+    return label.getText();
+  }
+
+  public boolean isSelected()
+  {
+    return checkbox.isSelected();
   }
 }

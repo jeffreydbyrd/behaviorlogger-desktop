@@ -170,10 +170,10 @@ public class EventRecorder extends Application
     }
     Scene scene = new Scene( root );
 
-    fxmlLoader.< PreferencesController > getController().init( scene );
-
     stage.setTitle( "Preferences" );
     stage.setScene( scene );
     stage.show();
+
+    fxmlLoader.< PreferencesController > getController().init( stage );
   }
 }

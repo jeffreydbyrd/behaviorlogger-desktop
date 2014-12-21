@@ -22,8 +22,8 @@
       <Label text="Session Duration:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP" />
       <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
          <children>
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" text="Browse" HBox.hgrow="NEVER" />
+            <TextField fx:id="directoryField" GridPane.columnIndex="1" GridPane.rowIndex="1" HBox.hgrow="ALWAYS" />
+            <Button fx:id="browseButton" mnemonicParsing="false" onAction="#onBrowseButtonPressed" text="Browse" HBox.hgrow="NEVER" />
          </children>
       </HBox>
       <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
