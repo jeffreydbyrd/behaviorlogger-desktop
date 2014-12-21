@@ -4,23 +4,18 @@ import java.util.ArrayList;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 import com.google.common.collect.Lists;
+import com.threebird.recorder.views.preferences.FilenameComponent;
 
 /**
  * Corresponds to preferences.fxml
  */
 public class PreferencesController
 {
-  @FXML private Node root;
   @FXML private VBox componentsBox;
-
-  private static final String DRAGGING = "-fx-text-fill:gray;-fx-background-color:gray;";
-  private static final String NORMAL = "";
 
   @FXML private void initialize()
   {
@@ -35,14 +30,12 @@ public class PreferencesController
                             "Condition", "Session Number" );
 
     for (String component : components) {
-      Label node = new Label( component );
-      node.setMinWidth( 200 );
-      node.setFont( Font.font( 16 ) );
+      FilenameComponent node = new FilenameComponent( component );
       componentsBox.getChildren().add( node );
 
       node.setOnDragDetected( evt -> {
         addPreview( componentsBox, node );
-        node.setStyle( DRAGGING );
+        node.setDraggingStyle();
         node.startFullDrag();
       } );
 
@@ -56,13 +49,15 @@ public class PreferencesController
 
     componentsBox.setOnMouseDragReleased( evt -> {
       removePreview( componentsBox );
-      componentsBox.getChildren().forEach( node -> node.setStyle( NORMAL ) );
+      for (Node node : componentsBox.getChildren()) {
+        ((FilenameComponent) node).setNormalStyle();
+      }
     } );
   }
 
-  private void addPreview( final VBox vbox, final Label label )
+  private void addPreview( final VBox vbox, final Node node )
   {
-    ImageView imageView = new ImageView( label.snapshot( null, null ) );
+    ImageView imageView = new ImageView( node.snapshot( null, null ) );
     imageView.setManaged( false );
     imageView.setMouseTransparent( true );
     vbox.getChildren().add( imageView );
