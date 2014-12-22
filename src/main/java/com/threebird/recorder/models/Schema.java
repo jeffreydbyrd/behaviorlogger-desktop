@@ -16,7 +16,7 @@ public class Schema
   public String client;
   public String project;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
-  public File sessionDirectory = new File( System.getProperty( "user.home" ) );
+  public File sessionDirectory;
   public int duration = 0;
   public boolean pause = false;
   public boolean color = false;

@@ -152,13 +152,17 @@ public class EventRecorder extends Application
     controller.init( recordingScene, recordingController, schema, unknowns );
   }
 
+  private static Stage prefsStage = new Stage();
+
   /**
    * Shows the preferences page in a modal window
    */
   public static void showPreferences()
   {
-    Stage stage = new Stage();
-    stage.initModality( Modality.APPLICATION_MODAL );
+    if (prefsStage == null) {
+      prefsStage.initModality( Modality.APPLICATION_MODAL );
+    }
+
     FXMLLoader fxmlLoader =
         new FXMLLoader( EventRecorder.class.getResource( "./views/preferences.fxml" ) );
 
@@ -170,10 +174,10 @@ public class EventRecorder extends Application
     }
     Scene scene = new Scene( root );
 
-    stage.setTitle( "Preferences" );
-    stage.setScene( scene );
-    stage.show();
+    prefsStage.setTitle( "Preferences" );
+    prefsStage.setScene( scene );
+    prefsStage.show();
 
-    fxmlLoader.< PreferencesController > getController().init( stage );
+    fxmlLoader.< PreferencesController > getController().init( prefsStage );
   }
 }

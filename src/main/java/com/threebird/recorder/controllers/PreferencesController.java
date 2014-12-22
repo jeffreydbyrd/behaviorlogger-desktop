@@ -2,6 +2,7 @@ package com.threebird.recorder.controllers;
 
 import java.io.File;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -14,6 +15,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import com.threebird.recorder.models.FilenameComponent;
+import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.views.preferences.FilenameComponentView;
 
 /**
@@ -24,11 +26,18 @@ public class PreferencesController
   @FXML private TextField directoryField;
   @FXML private Button browseButton;
   @FXML private VBox componentsBox;
+  @FXML private Button saveBtn;
+  @FXML private Button cancelBtn;
+
   private Stage stage;
 
   public void init( Stage stage )
   {
     this.stage = stage;
+
+    SimpleStringProperty dirProp = PreferencesManager.sessionDirectoryProperty();
+    directoryField.setText( dirProp.get() );
+
     initComponentsBox();
   }
 
@@ -104,6 +113,18 @@ public class PreferencesController
     return new File( directoryField.getText().trim() );
   }
 
+  private void validate()
+  {
+    String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+
+    // Validate Directory field
+    if (!getDirectory().exists()) {
+      directoryField.setStyle( cssRed );
+    } else {
+      directoryField.setStyle( "" );
+    }
+  }
+
   @FXML void onBrowseButtonPressed( ActionEvent evt )
   {
     File f = getDirectory();
@@ -118,6 +139,18 @@ public class PreferencesController
     if (newFile != null) {
       directoryField.setText( newFile.getPath() );
     }
+  }
+
+  @FXML private void onSavePressed( ActionEvent evt )
+  {
+    validate();
+    PreferencesManager.saveSessionDirectory( directoryField.getText().trim() );
+    stage.close();
+  }
+
+  @FXML private void onCancelPressed( ActionEvent evt )
+  {
+    stage.close();
   }
 
 }

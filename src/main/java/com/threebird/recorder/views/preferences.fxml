@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="502.0" prefWidth="608.0" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.PreferencesController">
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="608.0" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.PreferencesController">
   <columnConstraints>
     <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="122.0" />
     <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="448.0" />
@@ -56,8 +56,8 @@
          <children>
             <HBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <children>
-                  <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" />
-                  <Button fx:id="saveBtn" mnemonicParsing="false" text="Save" />
+                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelPressed" text="Cancel" />
+                  <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSavePressed" text="Save" />
                </children>
             </HBox>
          </children>

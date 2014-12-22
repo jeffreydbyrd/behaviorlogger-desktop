@@ -26,6 +26,7 @@ import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.edit_schema.MappingBox;
@@ -78,7 +79,14 @@ public class EditSchemaController
     clientField.setText( Strings.nullToEmpty( model.client ) );
     populateMappingsBox( model );
     projectField.setText( Strings.nullToEmpty( model.project ) );
-    directoryField.setText( model.sessionDirectory.getPath() );
+
+    String dir =
+        model.sessionDirectory == null
+            ? PreferencesManager.getSessionDirectory()
+            : model.sessionDirectory.getPath();
+            
+    directoryField.setText( dir );
+
     setupDurationRadioButtons();
     setupDurationTextFields();
 

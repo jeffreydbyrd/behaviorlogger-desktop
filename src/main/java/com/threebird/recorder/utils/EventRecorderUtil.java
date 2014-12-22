@@ -44,6 +44,8 @@ public class EventRecorderUtil
     };
   }
 
+  private static Stage dialogStage;
+
   /**
    * Display a simple dialog-box that displays a message and allows the user to
    * click two buttons
@@ -65,10 +67,13 @@ public class EventRecorderUtil
                                 EventHandler< ActionEvent > onLeftClicked,
                                 EventHandler< ActionEvent > onRightClicked )
   {
-    Stage dialogStage = new Stage();
-    dialogStage.initModality( Modality.WINDOW_MODAL );
-    dialogStage.initStyle( StageStyle.UTILITY );
-    dialogStage.initOwner( EventRecorder.STAGE );
+    if (dialogStage == null) {
+      dialogStage = new Stage();
+      dialogStage.initModality( Modality.WINDOW_MODAL );
+      dialogStage.initStyle( StageStyle.UTILITY );
+      dialogStage.initOwner( EventRecorder.STAGE );
+    }
+
     Label question = new Label( msg );
     question.setAlignment( Pos.BASELINE_CENTER );
 
