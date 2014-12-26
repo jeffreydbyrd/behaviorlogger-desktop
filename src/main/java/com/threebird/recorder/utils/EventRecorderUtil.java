@@ -103,4 +103,33 @@ public class EventRecorderUtil
     dialogStage.show();
   }
 
+  public static int strToInt( String s )
+  {
+    return Integer.valueOf( s.isEmpty() ? "0" : s );
+  }
+
+  public static String intToStr( int i )
+  {
+    return i > 0 ? i + "" : "";
+  }
+
+  /**
+   * Converts the contents of hoursField, minutesField, and secondsField into
+   * the equivalent number of seconds. If "isInfinite" is true, then returns 0
+   */
+  public static int getDuration( boolean isInfinite,
+                                 TextField hoursField,
+                                 TextField minutesField,
+                                 TextField secondsField )
+  {
+    if (isInfinite) {
+      return 0;
+    }
+
+    Integer hours = strToInt( hoursField.getText() );
+    Integer mins = strToInt( minutesField.getText() );
+    Integer secs = strToInt( secondsField.getText() );
+    return (hours * 60 * 60) + (mins * 60) + secs;
+  }
+
 }

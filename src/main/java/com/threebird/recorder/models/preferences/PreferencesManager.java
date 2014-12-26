@@ -2,6 +2,8 @@ package com.threebird.recorder.models.preferences;
 
 import java.io.File;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import com.google.common.base.Preconditions;
@@ -10,6 +12,10 @@ import com.threebird.recorder.persistence.Preferences;
 public class PreferencesManager
 {
   private static SimpleStringProperty sessionDirectoryProperty;
+  private static SimpleIntegerProperty durationProperty;
+  private static SimpleBooleanProperty colorOnEndProperty;
+  private static SimpleBooleanProperty pauseOnEndProperty;
+  private static SimpleBooleanProperty soundOnEndProperty;
 
   public static SimpleStringProperty sessionDirectoryProperty()
   {
@@ -23,6 +29,38 @@ public class PreferencesManager
     return sessionDirectoryProperty;
   }
 
+  public static SimpleIntegerProperty durationProperty()
+  {
+    if (durationProperty == null) {
+      durationProperty = new SimpleIntegerProperty( Preferences.getDuration() );
+    }
+    return durationProperty;
+  }
+
+  public static SimpleBooleanProperty colorOnEndProperty()
+  {
+    if (colorOnEndProperty == null) {
+      colorOnEndProperty = new SimpleBooleanProperty( Preferences.getColorOnEnd() );
+    }
+    return colorOnEndProperty;
+  }
+
+  public static SimpleBooleanProperty pauseOnEndProperty()
+  {
+    if (pauseOnEndProperty == null) {
+      pauseOnEndProperty = new SimpleBooleanProperty( Preferences.getPauseOnEnd() );
+    }
+    return pauseOnEndProperty;
+  }
+
+  public static SimpleBooleanProperty soundOnEndProperty()
+  {
+    if (soundOnEndProperty == null) {
+      soundOnEndProperty = new SimpleBooleanProperty( Preferences.getSoundOnEnd() );
+    }
+    return soundOnEndProperty;
+  }
+
   public static void saveSessionDirectory( String dir )
   {
     Preconditions.checkNotNull( dir );
@@ -32,5 +70,46 @@ public class PreferencesManager
   public static String getSessionDirectory()
   {
     return sessionDirectoryProperty().get();
+  }
+
+  public static void saveDuration( Integer duration )
+  {
+    Preconditions.checkNotNull( duration );
+    durationProperty().set( duration );
+  }
+
+  public static Integer getDuration()
+  {
+    return durationProperty().get();
+  }
+
+  public static void saveColorOnEnd( boolean colorOnEnd )
+  {
+    colorOnEndProperty().set( colorOnEnd );
+  }
+
+  public static boolean getColorOnEnd()
+  {
+    return colorOnEndProperty().get();
+  }
+  
+  public static void savePauseOnEnd( boolean pauseOnEnd )
+  {
+    pauseOnEndProperty().set( pauseOnEnd );
+  }
+
+  public static boolean getPauseOnEnd()
+  {
+    return pauseOnEndProperty().get();
+  }
+  
+  public static void saveSoundOnEnd( boolean soundOnEnd )
+  {
+    soundOnEndProperty().set( soundOnEnd );
+  }
+
+  public static boolean getSoundOnEnd()
+  {
+    return soundOnEndProperty().get();
   }
 }

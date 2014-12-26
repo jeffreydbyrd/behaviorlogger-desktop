@@ -84,7 +84,7 @@ public class EditSchemaController
         model.sessionDirectory == null
             ? PreferencesManager.getSessionDirectory()
             : model.sessionDirectory.getPath();
-            
+
     directoryField.setText( dir );
 
     setupDurationRadioButtons();
@@ -116,9 +116,9 @@ public class EditSchemaController
     int mins = minDivisor / 60;
     int secs = minDivisor % 60;
 
-    hoursField.setText( intToStr( hrs ) );
-    minutesField.setText( intToStr( mins ) );
-    secondsField.setText( intToStr( secs ) );
+    hoursField.setText( EventRecorderUtil.intToStr( hrs ) );
+    minutesField.setText( EventRecorderUtil.intToStr( mins ) );
+    secondsField.setText( EventRecorderUtil.intToStr( secs ) );
 
     hoursField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( hoursField, digits, 2 ) );
     minutesField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( minutesField, digits, 2 ) );
@@ -127,32 +127,6 @@ public class EditSchemaController
     colorCheckBox.setSelected( model.color );
     pauseCheckBox.setSelected( model.pause );
     beepCheckBox.setSelected( model.sound );
-  }
-
-  private static String intToStr( int i )
-  {
-    return i > 0 ? i + "" : "";
-  }
-
-  private static int strToInt( String s )
-  {
-    return Integer.valueOf( s.isEmpty() ? "0" : s );
-  }
-
-  /**
-   * Converts the contents of hoursField, minutesField, and secondsField into
-   * the equivalent number of seconds. If "infinite" is true, then returns 0
-   */
-  private int getDuration()
-  {
-    if (infiniteRadioBtn.isSelected()) {
-      return 0;
-    }
-
-    Integer hours = strToInt( hoursField.getText() );
-    Integer mins = strToInt( minutesField.getText() );
-    Integer secs = strToInt( secondsField.getText() );
-    return (hours * 60 * 60) + (mins * 60) + secs;
   }
 
   private File getDirectory()
@@ -323,7 +297,8 @@ public class EditSchemaController
     model.project = projectField.getText().trim();
     model.mappings = temp;
     model.sessionDirectory = getDirectory();
-    model.duration = getDuration();
+    model.duration =
+        EventRecorderUtil.getDuration( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
     model.color = colorCheckBox.isSelected();
     model.pause = pauseCheckBox.isSelected();
     model.sound = beepCheckBox.isSelected();
