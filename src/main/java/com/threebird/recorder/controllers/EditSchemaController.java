@@ -104,15 +104,19 @@ public class EditSchemaController
       durationBox.setDisable( !selected );
     } );
 
-    infiniteRadioBtn.setSelected( model.duration == 0 );
-    timedRadioBtn.setSelected( model.duration != 0 );
-    durationBox.setDisable( model.duration == 0 );
+    int duration = model.duration == null ? PreferencesManager.getDuration() : model.duration;
+
+    infiniteRadioBtn.setSelected( duration == 0 );
+    timedRadioBtn.setSelected( duration != 0 );
+    durationBox.setDisable( duration == 0 );
   }
 
   private void setupDurationTextFields()
   {
-    int hrs = model.duration / (60 * 60);
-    int minDivisor = model.duration % (60 * 60);
+    int duration = model.duration == null ? PreferencesManager.getDuration() : model.duration;
+
+    int hrs = duration / (60 * 60);
+    int minDivisor = duration % (60 * 60);
     int mins = minDivisor / 60;
     int secs = minDivisor % 60;
 
@@ -124,9 +128,13 @@ public class EditSchemaController
     minutesField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( minutesField, digits, 2 ) );
     secondsField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( secondsField, digits, 2 ) );
 
-    colorCheckBox.setSelected( model.color );
-    pauseCheckBox.setSelected( model.pause );
-    beepCheckBox.setSelected( model.sound );
+    boolean color = model.color == null ? PreferencesManager.getColorOnEnd() : model.color;
+    boolean pause = model.pause == null ? PreferencesManager.getPauseOnEnd() : model.pause;
+    boolean sound = model.sound == null ? PreferencesManager.getSoundOnEnd() : model.sound;
+
+    colorCheckBox.setSelected( color );
+    pauseCheckBox.setSelected( pause );
+    beepCheckBox.setSelected( sound );
   }
 
   private File getDirectory()

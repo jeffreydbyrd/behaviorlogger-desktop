@@ -17,10 +17,10 @@ public class Schema
   public String project;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
   public File sessionDirectory;
-  public int duration = 0;
-  public boolean pause = false;
-  public boolean color = false;
-  public boolean sound = false;
+  public Integer duration;
+  public Boolean pause;
+  public Boolean color;
+  public Boolean sound;
 
   /**
    * Returns the KeyBehaviorMapping that corresponds to 'key', wrapped in an
