@@ -25,6 +25,9 @@ public class PreferencesManager
         dir = System.getProperty( "user.home" );
       }
       sessionDirectoryProperty = new SimpleStringProperty( dir );
+      sessionDirectoryProperty.addListener( ( obsrvr, oldV, newV ) -> {
+        Preferences.saveSessionDirectory( newV );
+      } );
     }
     return sessionDirectoryProperty;
   }
@@ -33,6 +36,9 @@ public class PreferencesManager
   {
     if (durationProperty == null) {
       durationProperty = new SimpleIntegerProperty( Preferences.getDuration() );
+      durationProperty.addListener( ( obsrvr, oldV, newV ) -> {
+        Preferences.saveDuration( newV.intValue() );
+      } );
     }
     return durationProperty;
   }
@@ -41,6 +47,9 @@ public class PreferencesManager
   {
     if (colorOnEndProperty == null) {
       colorOnEndProperty = new SimpleBooleanProperty( Preferences.getColorOnEnd() );
+      colorOnEndProperty.addListener( ( obsvr, oldV, newV ) -> {
+        Preferences.saveColorOnEnd( newV );
+      } );
     }
     return colorOnEndProperty;
   }
@@ -49,6 +58,9 @@ public class PreferencesManager
   {
     if (pauseOnEndProperty == null) {
       pauseOnEndProperty = new SimpleBooleanProperty( Preferences.getPauseOnEnd() );
+      pauseOnEndProperty.addListener( ( obsrvr, old, newV ) -> {
+        Preferences.savePauseOnEnd( newV );
+      } );
     }
     return pauseOnEndProperty;
   }
@@ -57,6 +69,9 @@ public class PreferencesManager
   {
     if (soundOnEndProperty == null) {
       soundOnEndProperty = new SimpleBooleanProperty( Preferences.getSoundOnEnd() );
+      pauseOnEndProperty.addListener( ( obsrvr, old, newV ) -> {
+        Preferences.saveSoundOnEnd( newV );
+      } );
     }
     return soundOnEndProperty;
   }
@@ -92,7 +107,7 @@ public class PreferencesManager
   {
     return colorOnEndProperty().get();
   }
-  
+
   public static void savePauseOnEnd( boolean pauseOnEnd )
   {
     pauseOnEndProperty().set( pauseOnEnd );
@@ -102,7 +117,7 @@ public class PreferencesManager
   {
     return pauseOnEndProperty().get();
   }
-  
+
   public static void saveSoundOnEnd( boolean soundOnEnd )
   {
     soundOnEndProperty().set( soundOnEnd );
