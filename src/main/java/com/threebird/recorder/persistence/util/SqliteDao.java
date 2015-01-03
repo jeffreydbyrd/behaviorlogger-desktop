@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public class SqliteDao
 {
-  private static String DATABASE = "jdbc:sqlite:recorder.db";
+  private static String DATABASE = "jdbc:sqlite:resources/recorder.db";
 
   private static Connection conn;
 
@@ -61,19 +61,19 @@ public class SqliteDao
    * Makes a PreparedStatement, executes it with 'executeStatement', and handles
    * the returned ResultSet
    */
-  private static void execute( SqlQueryData sqc,
+  private static void execute( SqlQueryData sqd,
                                ExecuteStatement executeStatement )
   {
     try {
       boolean topLevel = open();
-      PreparedStatement stmt = conn.prepareStatement( sqc.getSql() );
+      PreparedStatement stmt = conn.prepareStatement( sqd.getSql() );
 
       int i = 1;
-      for (Object o : sqc.getSqlParams()) {
+      for (Object o : sqd.getSqlParams()) {
         stmt.setObject( i++, o );
       }
 
-      sqc.handle( executeStatement.execute( stmt ) );
+      sqd.handle( executeStatement.execute( stmt ) );
       stmt.close();
 
       if (topLevel) {
