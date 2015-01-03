@@ -20,6 +20,7 @@ import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
  * Combines with add_keys.fxml. The researcher uses this view to add new keys
@@ -35,6 +36,16 @@ public class AddKeysController
 
   @FXML private VBox mappingsBox;
 
+  public static void toAddKeysView( Scene recordingScene,
+                                    RecordingController recordingController,
+                                    Schema schema,
+                                    Collection< KeyBehaviorMapping > unknowns )
+  {
+    String filepath = "./views/add_keys.fxml";
+    AddKeysController controller = EventRecorderUtil.loadScene( filepath, "Add Keys" );
+    controller.init( recordingScene, recordingController, schema, unknowns );
+  }
+
   /**
    * @param recordingScene
    *          - a reference back to the recording scene so we can go back to it
@@ -44,10 +55,10 @@ public class AddKeysController
    * @param unknowns
    *          - the collection of unknown behavior mappings
    */
-  public void init( Scene recordingScene,
-                    RecordingController controller,
-                    Schema schema,
-                    Collection< KeyBehaviorMapping > unknowns )
+  private void init( Scene recordingScene,
+                     RecordingController controller,
+                     Schema schema,
+                     Collection< KeyBehaviorMapping > unknowns )
   {
     this.recordingScene = recordingScene;
     this.recordingController = controller;

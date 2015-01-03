@@ -1,12 +1,16 @@
 package com.threebird.recorder.controllers;
 
 import java.io.File;
+import java.io.IOException;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -15,8 +19,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -46,12 +52,38 @@ public class PreferencesController
 
   @FXML private Button saveBtn;
   @FXML private Button cancelBtn;
-  private Stage stage;
 
-  public void init( Stage stage )
+  private static Stage stage = new Stage();
+
+  /**
+   * Shows the preferences page in a modal window
+   */
+  public static void showPreferences()
   {
-    this.stage = stage;
+    if (stage == null) {
+      stage.initModality( Modality.APPLICATION_MODAL );
+    }
 
+    FXMLLoader fxmlLoader =
+        new FXMLLoader( EventRecorder.class.getResource( "./views/preferences.fxml" ) );
+
+    Parent root;
+    try {
+      root = (Parent) fxmlLoader.load();
+    } catch (IOException e) {
+      throw new RuntimeException( e );
+    }
+    Scene scene = new Scene( root );
+
+    stage.setTitle( "Preferences" );
+    stage.setScene( scene );
+    stage.show();
+
+    fxmlLoader.< PreferencesController > getController().init();
+  }
+
+  private void init()
+  {
     SimpleStringProperty dirProp = PreferencesManager.sessionDirectoryProperty();
     directoryField.setText( dirProp.get() );
 

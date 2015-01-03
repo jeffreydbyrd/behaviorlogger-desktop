@@ -71,10 +71,23 @@ public class RecordingController
   @FXML private Button addNewKeysButton;
 
   /**
+   * Sets the stage to the Recording view
+   * 
+   * @param schema
+   *          - the currently selected Schema. This parameter must not be null
+   */
+  public static void toRecordingView( Schema schema )
+  {
+    String filepath = "./views/recording/recording.fxml";
+    RecordingController controller = EventRecorderUtil.loadScene( filepath, "Recording" );
+    controller.init( schema );
+  }
+
+  /**
    * @param sch
    *          - The Schema being used for recording
    */
-  public void init( Schema sch )
+  private void init( Schema sch )
   {
     this.schema = sch;
 
@@ -331,7 +344,7 @@ public class RecordingController
       EventHandler< ActionEvent > onDiscardClick = e -> toScene.run();
 
       EventHandler< ActionEvent > onEditClick = e ->
-          EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
+          AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
 
       EventRecorderUtil.dialogBox( msg, leftOption, rightOption, onDiscardClick, onEditClick );
     } else {
@@ -344,7 +357,7 @@ public class RecordingController
     if (SchemasController.SESSION_DETAILS.sessionNum != null && timer.getCurrentTime().greaterThan( Duration.ZERO )) {
       SchemasController.SESSION_DETAILS.sessionNum += 1;
     }
-    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toSchemasView( schema ) );
+    checkUnknownsAndChangeScene( ( ) -> SchemasController.toSchemasView( schema ) );
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )
@@ -352,11 +365,11 @@ public class RecordingController
     if (SchemasController.SESSION_DETAILS.sessionNum != null) {
       SchemasController.SESSION_DETAILS.sessionNum += 1;
     }
-    checkUnknownsAndChangeScene( ( ) -> EventRecorder.toRecordingView( schema ) );
+    checkUnknownsAndChangeScene( ( ) -> RecordingController.toRecordingView( schema ) );
   }
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-    EventRecorder.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
+    AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
   }
 }

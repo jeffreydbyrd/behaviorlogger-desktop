@@ -21,7 +21,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.models.SessionDetails;
 import com.threebird.recorder.persistence.Schemas;
@@ -61,6 +60,17 @@ public class SchemasController
 
   private ObservableList< Schema > schemas;
 
+  /**
+   * load up the FXML file we generated with Scene Builder, "schemas.fxml". This
+   * view is controlled by SchemasController.java
+   */
+  public static void toSchemasView( Schema selected )
+  {
+    String filepath = "./views/schemas.fxml";
+    SchemasController controller = EventRecorderUtil.loadScene( filepath, "Schemas" );
+    controller.init( selected );
+  }
+  
   public void init( Schema selected )
   {
     rightSide.setVisible( false );
@@ -171,13 +181,13 @@ public class SchemasController
    */
   @FXML private void onCreateSchemaClicked( ActionEvent evt )
   {
-    EventRecorder.toEditSchemaView( null );
+    EditSchemaController.toEditSchemaView( null );
   }
 
   @FXML private void onEditSchemaClicked( ActionEvent evt )
   {
     Schema schema = schemaTable.getSelectionModel().getSelectedItem();
-    EventRecorder.toEditSchemaView( schema );
+    EditSchemaController.toEditSchemaView( schema );
   }
 
   /**
@@ -188,6 +198,6 @@ public class SchemasController
   @FXML private void onStartClicked( ActionEvent evt )
   {
     Schema schema = schemaTable.getSelectionModel().getSelectedItem();
-    EventRecorder.toRecordingView( schema );
+    RecordingController.toRecordingView( schema );
   }
 }

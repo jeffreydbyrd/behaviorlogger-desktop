@@ -1,11 +1,15 @@
 package com.threebird.recorder.utils;
 
+import java.io.IOException;
+
 import com.threebird.recorder.EventRecorder;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,6 +23,39 @@ import javafx.stage.StageStyle;
 
 public class EventRecorderUtil
 {
+  /**
+   * Loads an FXML file into a new Scene and sets it in STAGE.
+   * 
+   * @param T
+   *          - the type of the Controller you want returned to you
+   * @param fxmlPath
+   *          - the path (relative to EventRecorder.java's location) to the FXML
+   *          resource from which we will derive this scene
+   * @param title
+   *          - the title of this new scene
+   * @return the Controller linked to from the FXML file
+   */
+  public static < T > T loadScene( String fxmlPath,
+                                   String title )
+  {
+    FXMLLoader fxmlLoader =
+        new FXMLLoader( EventRecorder.class.getResource( fxmlPath ) );
+
+    Parent root;
+    try {
+      root = (Parent) fxmlLoader.load();
+    } catch (IOException e) {
+      throw new RuntimeException( e );
+    }
+    Scene scene = new Scene( root );
+
+    EventRecorder.STAGE.setTitle( title );
+    EventRecorder.STAGE.setScene( scene );
+    EventRecorder.STAGE.show();
+
+    return fxmlLoader.< T > getController();
+  }
+
   /**
    * Creates an EventHandler that will prevent a field's text from containing
    * any characters not in "acceptableKeys" and from exceeding the character

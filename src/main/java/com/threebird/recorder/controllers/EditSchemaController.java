@@ -68,10 +68,24 @@ public class EditSchemaController
   private Schema model;
 
   /**
+   * Sets the stage to the EditScema view.
+   * 
+   * @param schema
+   *          - the currently selected schema if editing, or null if creating a
+   *          new schema
+   */
+  public static void toEditSchemaView( Schema schema )
+  {
+    String filepath = "./views/edit_schema/edit_schema.fxml";
+    EditSchemaController controller = EventRecorderUtil.loadScene( filepath, "Create Schema" );
+    controller.init( schema );
+  }
+
+  /**
    * @param sch
    *          - The Schema being edited. If null, a new schema is created
    */
-  public void init( Schema sch )
+  private void init( Schema sch )
   {
     deleteSchemaButton.setVisible( sch != null );
     model = sch == null ? new Schema() : sch;
@@ -276,7 +290,7 @@ public class EditSchemaController
    */
   @FXML void onCancelClicked( ActionEvent evt )
   {
-    EventRecorder.toSchemasView( model );
+    SchemasController.toSchemasView( model );
   }
 
   /**
@@ -313,7 +327,7 @@ public class EditSchemaController
 
     Schemas.save( model );
 
-    EventRecorder.toSchemasView( model );
+    SchemasController.toSchemasView( model );
   }
 
   /**
@@ -326,7 +340,7 @@ public class EditSchemaController
 
     EventHandler< ActionEvent > onDeleteClicked = evt -> {
       Schemas.delete( this.model );
-      EventRecorder.toSchemasView( null );
+      SchemasController.toSchemasView( null );
     };
 
     EventRecorderUtil.dialogBox( msg,
