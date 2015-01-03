@@ -1,7 +1,5 @@
 package com.threebird.recorder.models.preferences;
 
-import java.io.File;
-
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,11 +18,7 @@ public class PreferencesManager
   public static SimpleStringProperty sessionDirectoryProperty()
   {
     if (sessionDirectoryProperty == null) {
-      String dir = Preferences.getSessionDirectory();
-      if (dir == null || !new File( dir ).exists()) {
-        dir = System.getProperty( "user.home" );
-      }
-      sessionDirectoryProperty = new SimpleStringProperty( dir );
+      sessionDirectoryProperty = new SimpleStringProperty( Preferences.getSessionDirectory() );
       sessionDirectoryProperty.addListener( ( obsrvr, oldV, newV ) -> {
         Preferences.saveSessionDirectory( newV );
       } );
