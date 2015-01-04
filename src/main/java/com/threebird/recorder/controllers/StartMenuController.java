@@ -19,7 +19,7 @@ import javafx.scene.text.Text;
 
 import com.threebird.recorder.models.Schema;
 import com.threebird.recorder.models.SchemasManager;
-import com.threebird.recorder.models.SessionDetails;
+import com.threebird.recorder.models.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.TimeBox;
 
@@ -31,8 +31,6 @@ import com.threebird.recorder.views.TimeBox;
  */
 public class StartMenuController
 {
-  public static SessionDetails SESSION_DETAILS = new SessionDetails();
-
   @FXML private TableView< Schema > schemaTable;
   @FXML private TableColumn< Schema, String > clientCol;
   @FXML private TableColumn< Schema, String > projectCol;
@@ -119,14 +117,14 @@ public class StartMenuController
 
   private void initSessionDetails()
   {
-    observerField.setText( SESSION_DETAILS.observer );
-    therapistField.setText( SESSION_DETAILS.therapist );
-    conditionField.setText( SESSION_DETAILS.condition );
-    sessionField.setText( SESSION_DETAILS.sessionNum == null ? "" : SESSION_DETAILS.sessionNum.toString() );
+    observerField.setText( SessionManager.getObserver() );
+    therapistField.setText( SessionManager.getTherapist() );
+    conditionField.setText( SessionManager.getCondition() );
+    sessionField.setText( SessionManager.getSessionNumber().toString() );
 
-    observerField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.observer = newV.trim() );
-    therapistField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.therapist = newV.trim() );
-    conditionField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.condition = newV.trim() );
+    observerField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setObserver( newV.trim() ) );
+    therapistField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setTherapist( newV.trim() ) );
+    conditionField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setCondition( newV.trim() ) );
 
     // Put in some idiot-proof logic for the session # (limit to just digits,
     // prevent exceeding max_value)
@@ -135,9 +133,9 @@ public class StartMenuController
     sessionField.setOnKeyTyped( limiter );
     sessionField.textProperty().addListener( ( o, old, newV ) -> {
       if (newV.isEmpty()) {
-        SESSION_DETAILS.sessionNum = null;
+        SessionManager.setSessionNumber( 0 );
       } else {
-        SESSION_DETAILS.sessionNum = Integer.valueOf( newV.trim() );
+        SessionManager.setSessionNumber( Integer.valueOf( newV.trim() ) );
       }
     } );
   }
