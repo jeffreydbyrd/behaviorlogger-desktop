@@ -160,10 +160,6 @@ public class StartMenuController
     }
   }
 
-  /**
-   * When user clicks "Create Schema" button: create Schema, add to 'schemas'
-   * and select it
-   */
   @FXML private void onCreateSchemaClicked( ActionEvent evt )
   {
     EditSchemaController.toEditSchemaView( null );
@@ -174,14 +170,8 @@ public class StartMenuController
     EditSchemaController.toEditSchemaView( SchemasManager.getSelected() );
   }
 
-  /**
-   * When user clicks "start", load up "recording.fxml" and switch scenes. Set
-   * the schema and time limit for the recording. The "recording" view is
-   * controlled by RecordingController.java
-   */
   @FXML private void onStartClicked( ActionEvent evt )
   {
-    Schema schema = schemaTable.getSelectionModel().getSelectedItem();
-    RecordingController.toRecordingView( schema );
+    RecordingController.toRecordingView();
   }
 }

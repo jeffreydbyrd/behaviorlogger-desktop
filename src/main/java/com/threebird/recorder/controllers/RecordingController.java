@@ -32,6 +32,7 @@ import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.SchemasManager;
 import com.threebird.recorder.models.SessionManager;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
@@ -73,24 +74,17 @@ public class RecordingController
 
   /**
    * Sets the stage to the Recording view
-   * 
-   * @param schema
-   *          - the currently selected Schema. This parameter must not be null
    */
-  public static void toRecordingView( Schema schema )
+  public static void toRecordingView()
   {
     String filepath = "./views/recording/recording.fxml";
     RecordingController controller = EventRecorderUtil.loadScene( filepath, "Recording" );
-    controller.init( schema );
+    controller.init();
   }
 
-  /**
-   * @param sch
-   *          - The Schema being used for recording
-   */
-  private void init( Schema sch )
+  private void init()
   {
-    this.schema = sch;
+    this.schema = SchemasManager.getSelected();
 
     clientLabel.setText( this.schema.client );
     projectLabel.setText( this.schema.project );
@@ -368,7 +362,7 @@ public class RecordingController
     if (sessionNum != null) {
       SessionManager.setSessionNumber( sessionNum + 1 );
     }
-    checkUnknownsAndChangeScene( ( ) -> RecordingController.toRecordingView( schema ) );
+    checkUnknownsAndChangeScene( ( ) -> RecordingController.toRecordingView() );
   }
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
