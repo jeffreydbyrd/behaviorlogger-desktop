@@ -173,8 +173,7 @@ public class StartMenuController
 
   @FXML private void onEditSchemaClicked( ActionEvent evt )
   {
-    Schema schema = schemaTable.getSelectionModel().getSelectedItem();
-    EditSchemaController.toEditSchemaView( schema );
+    EditSchemaController.toEditSchemaView( SchemasManager.getSelected() );
   }
 
   /**
