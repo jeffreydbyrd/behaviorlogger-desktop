@@ -357,7 +357,7 @@ public class RecordingController
     if (StartMenuController.SESSION_DETAILS.sessionNum != null && timer.getCurrentTime().greaterThan( Duration.ZERO )) {
       StartMenuController.SESSION_DETAILS.sessionNum += 1;
     }
-    checkUnknownsAndChangeScene( ( ) -> StartMenuController.toStartMenuView( schema ) );
+    checkUnknownsAndChangeScene( ( ) -> StartMenuController.toStartMenuView() );
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )

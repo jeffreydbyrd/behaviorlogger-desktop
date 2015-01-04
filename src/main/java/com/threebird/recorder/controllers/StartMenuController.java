@@ -1,11 +1,7 @@
 package com.threebird.recorder.controllers;
 
-import java.util.List;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,8 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.SchemasManager;
 import com.threebird.recorder.models.SessionDetails;
-import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.TimeBox;
 
@@ -58,50 +54,40 @@ public class StartMenuController
   @FXML private Button saveButton;
   @FXML private Button startButton;
 
-  private ObservableList< Schema > schemas;
-
   /**
    * load up the FXML file we generated with Scene Builder, "schemas.fxml". This
    * view is controlled by SchemasController.java
    */
-  public static void toStartMenuView( Schema selected )
+  public static void toStartMenuView()
   {
     String filepath = "./views/startMenu.fxml";
     StartMenuController controller = EventRecorderUtil.loadScene( filepath, "Start Menu" );
-    controller.init( selected );
+    controller.init();
   }
-  
-  private void init( Schema selected )
+
+  private void init()
   {
-    rightSide.setVisible( false );
-    initSchemaListView( selected );
-
-    clientCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().client ) );
-    projectCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().project ) );
-
     timeBox = new TimeBox( 0 );
     timeBoxSlot.getChildren().add( timeBox );
 
-    if (selected != null && selected.id != null) {
-      schemaTable.getSelectionModel().select( selected );
-    }
-
+    rightSide.setVisible( false );
+    initSchemaListView();
     initSessionDetails();
   }
 
   /**
    * Initializes 'schemaList' and binds it to 'schemas'
    */
-  private void initSchemaListView( Schema selected )
+  private void initSchemaListView()
   {
-    List< Schema > all = Schemas.all();
-    schemas = FXCollections.observableArrayList( all );
+    clientCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().client ) );
+    projectCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().project ) );
 
-    schemaTable.setItems( schemas );
-
+    schemaTable.setItems( SchemasManager.schemas() );
     schemaTable.getSelectionModel()
                .selectedItemProperty()
                .addListener( this::onSchemaSelect );
+    schemaTable.getSelectionModel().select( SchemasManager.getSelected() );
   }
 
   /**
@@ -164,6 +150,7 @@ public class StartMenuController
                                Schema oldV,
                                Schema newV )
   {
+    SchemasManager.setSelected( newV );
     if (newV != null) {
       rightSide.setVisible( true );
       emptyMessage.setVisible( false );
