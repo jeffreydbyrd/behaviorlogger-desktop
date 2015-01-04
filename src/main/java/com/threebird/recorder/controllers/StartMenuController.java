@@ -33,7 +33,7 @@ import com.threebird.recorder.views.TimeBox;
  * 'id'. The 'id' must match the variable name. Methods with an @FXML annotation
  * are triggered by events (again, specified in scene builder)
  */
-public class SchemasController
+public class StartMenuController
 {
   public static SessionDetails SESSION_DETAILS = new SessionDetails();
 
@@ -66,12 +66,12 @@ public class SchemasController
    */
   public static void toSchemasView( Schema selected )
   {
-    String filepath = "./views/schemas.fxml";
-    SchemasController controller = EventRecorderUtil.loadScene( filepath, "Schemas" );
+    String filepath = "./views/startMenu.fxml";
+    StartMenuController controller = EventRecorderUtil.loadScene( filepath, "Schemas" );
     controller.init( selected );
   }
   
-  public void init( Schema selected )
+  private void init( Schema selected )
   {
     rightSide.setVisible( false );
     initSchemaListView( selected );

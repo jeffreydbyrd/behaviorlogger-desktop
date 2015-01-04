@@ -8,7 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import com.threebird.recorder.controllers.PreferencesController;
-import com.threebird.recorder.controllers.SchemasController;
+import com.threebird.recorder.controllers.StartMenuController;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The
@@ -31,7 +31,7 @@ public class EventRecorder extends Application
   @Override public void start( Stage primaryStage ) throws Exception
   {
     STAGE = primaryStage;
-    SchemasController.toSchemasView( null );
+    StartMenuController.toSchemasView( null );
     createMainMenuBar();
   }
 

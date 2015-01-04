@@ -94,23 +94,23 @@ public class RecordingController
     clientLabel.setText( this.schema.client );
     projectLabel.setText( this.schema.project );
 
-    if (SchemasController.SESSION_DETAILS.observer != null) {
-      String obsrvr = "Observer: " + SchemasController.SESSION_DETAILS.observer;
+    if (StartMenuController.SESSION_DETAILS.observer != null) {
+      String obsrvr = "Observer: " + StartMenuController.SESSION_DETAILS.observer;
       sessionDetailsBox.getChildren().add( new Label( obsrvr ) );
     }
 
-    if (SchemasController.SESSION_DETAILS.therapist != null) {
-      String therapist = "Therapist: " + SchemasController.SESSION_DETAILS.therapist;
+    if (StartMenuController.SESSION_DETAILS.therapist != null) {
+      String therapist = "Therapist: " + StartMenuController.SESSION_DETAILS.therapist;
       sessionDetailsBox.getChildren().add( new Label( therapist ) );
     }
 
-    if (SchemasController.SESSION_DETAILS.condition != null) {
-      String condition = "Condition: " + SchemasController.SESSION_DETAILS.condition;
+    if (StartMenuController.SESSION_DETAILS.condition != null) {
+      String condition = "Condition: " + StartMenuController.SESSION_DETAILS.condition;
       sessionDetailsBox.getChildren().add( new Label( condition ) );
     }
 
-    if (SchemasController.SESSION_DETAILS.sessionNum != null) {
-      String session = "Session: " + SchemasController.SESSION_DETAILS.sessionNum;
+    if (StartMenuController.SESSION_DETAILS.sessionNum != null) {
+      String session = "Session: " + StartMenuController.SESSION_DETAILS.sessionNum;
       sessionDetailsBox.getChildren().add( new Label( session ) );
     }
 
@@ -354,16 +354,16 @@ public class RecordingController
 
   @FXML private void onGoBackPress( ActionEvent evt )
   {
-    if (SchemasController.SESSION_DETAILS.sessionNum != null && timer.getCurrentTime().greaterThan( Duration.ZERO )) {
-      SchemasController.SESSION_DETAILS.sessionNum += 1;
+    if (StartMenuController.SESSION_DETAILS.sessionNum != null && timer.getCurrentTime().greaterThan( Duration.ZERO )) {
+      StartMenuController.SESSION_DETAILS.sessionNum += 1;
     }
-    checkUnknownsAndChangeScene( ( ) -> SchemasController.toSchemasView( schema ) );
+    checkUnknownsAndChangeScene( ( ) -> StartMenuController.toSchemasView( schema ) );
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )
   {
-    if (SchemasController.SESSION_DETAILS.sessionNum != null) {
-      SchemasController.SESSION_DETAILS.sessionNum += 1;
+    if (StartMenuController.SESSION_DETAILS.sessionNum != null) {
+      StartMenuController.SESSION_DETAILS.sessionNum += 1;
     }
     checkUnknownsAndChangeScene( ( ) -> RecordingController.toRecordingView( schema ) );
   }
