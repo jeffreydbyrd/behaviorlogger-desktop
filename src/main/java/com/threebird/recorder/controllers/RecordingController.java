@@ -32,6 +32,7 @@ import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Recording;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.SessionManager;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -94,23 +95,23 @@ public class RecordingController
     clientLabel.setText( this.schema.client );
     projectLabel.setText( this.schema.project );
 
-    if (StartMenuController.SESSION_DETAILS.observer != null) {
-      String obsrvr = "Observer: " + StartMenuController.SESSION_DETAILS.observer;
+    if (SessionManager.getObserver() != null) {
+      String obsrvr = "Observer: " + SessionManager.getObserver();
       sessionDetailsBox.getChildren().add( new Label( obsrvr ) );
     }
 
-    if (StartMenuController.SESSION_DETAILS.therapist != null) {
-      String therapist = "Therapist: " + StartMenuController.SESSION_DETAILS.therapist;
+    if (SessionManager.getTherapist() != null) {
+      String therapist = "Therapist: " + SessionManager.getTherapist();
       sessionDetailsBox.getChildren().add( new Label( therapist ) );
     }
 
-    if (StartMenuController.SESSION_DETAILS.condition != null) {
-      String condition = "Condition: " + StartMenuController.SESSION_DETAILS.condition;
+    if (SessionManager.getCondition() != null) {
+      String condition = "Condition: " + SessionManager.getCondition();
       sessionDetailsBox.getChildren().add( new Label( condition ) );
     }
 
-    if (StartMenuController.SESSION_DETAILS.sessionNum != null) {
-      String session = "Session: " + StartMenuController.SESSION_DETAILS.sessionNum;
+    if (SessionManager.getSessionNumber() != null) {
+      String session = "Session: " + SessionManager.getSessionNumber();
       sessionDetailsBox.getChildren().add( new Label( session ) );
     }
 
@@ -354,16 +355,18 @@ public class RecordingController
 
   @FXML private void onGoBackPress( ActionEvent evt )
   {
-    if (StartMenuController.SESSION_DETAILS.sessionNum != null && timer.getCurrentTime().greaterThan( Duration.ZERO )) {
-      StartMenuController.SESSION_DETAILS.sessionNum += 1;
+    Integer sessionNum = SessionManager.getSessionNumber();
+    if (sessionNum != null && timer.getCurrentTime().greaterThan( Duration.ZERO )) {
+      SessionManager.setSessionNumber( sessionNum + 1 );
     }
-    checkUnknownsAndChangeScene( ( ) -> StartMenuController.toStartMenuView( schema ) );
+    checkUnknownsAndChangeScene( ( ) -> StartMenuController.toStartMenuView() );
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )
   {
-    if (StartMenuController.SESSION_DETAILS.sessionNum != null) {
-      StartMenuController.SESSION_DETAILS.sessionNum += 1;
+    Integer sessionNum = SessionManager.getSessionNumber();
+    if (sessionNum != null) {
+      SessionManager.setSessionNumber( sessionNum + 1 );
     }
     checkUnknownsAndChangeScene( ( ) -> RecordingController.toRecordingView( schema ) );
   }

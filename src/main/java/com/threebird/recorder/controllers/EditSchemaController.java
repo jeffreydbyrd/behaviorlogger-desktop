@@ -26,6 +26,7 @@ import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.SchemasManager;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -74,21 +75,21 @@ public class EditSchemaController
    *          - the currently selected schema if editing, or null if creating a
    *          new schema
    */
-  public static void toEditSchemaView( Schema schema )
+  public static void toEditSchemaView( Schema selected )
   {
     String filepath = "./views/edit_schema/edit_schema.fxml";
     EditSchemaController controller = EventRecorderUtil.loadScene( filepath, "Create Schema" );
-    controller.init( schema );
+    controller.init( selected );
   }
 
   /**
    * @param sch
    *          - The Schema being edited. If null, a new schema is created
    */
-  private void init( Schema sch )
+  private void init( Schema selected )
   {
-    deleteSchemaButton.setVisible( sch != null );
-    model = sch == null ? new Schema() : sch;
+    deleteSchemaButton.setVisible( selected != null );
+    model = selected == null ? new Schema() : selected;
 
     clientField.setText( Strings.nullToEmpty( model.client ) );
     populateMappingsBox( model );
@@ -290,7 +291,7 @@ public class EditSchemaController
    */
   @FXML void onCancelClicked( ActionEvent evt )
   {
-    StartMenuController.toStartMenuView( model );
+    StartMenuController.toStartMenuView();
   }
 
   /**
@@ -325,9 +326,13 @@ public class EditSchemaController
     model.pause = pauseCheckBox.isSelected();
     model.sound = beepCheckBox.isSelected();
 
-    Schemas.save( model );
+    if (model.id == null) {
+      SchemasManager.schemas().add( model );
+    } else {
+      Schemas.save( model );
+    }
 
-    StartMenuController.toStartMenuView( model );
+    StartMenuController.toStartMenuView();
   }
 
   /**
@@ -339,8 +344,8 @@ public class EditSchemaController
     String msg = "Are you sure you want to delete this schema?\nYou can't undo this action.";
 
     EventHandler< ActionEvent > onDeleteClicked = evt -> {
-      Schemas.delete( this.model );
-      StartMenuController.toStartMenuView( null );
+      SchemasManager.schemas().remove( model );
+      StartMenuController.toStartMenuView();
     };
 
     EventRecorderUtil.dialogBox( msg,

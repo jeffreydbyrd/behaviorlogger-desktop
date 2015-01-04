@@ -1,11 +1,7 @@
 package com.threebird.recorder.controllers;
 
-import java.util.List;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,8 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import com.threebird.recorder.models.Schema;
-import com.threebird.recorder.models.SessionDetails;
-import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.models.SchemasManager;
+import com.threebird.recorder.models.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.TimeBox;
 
@@ -35,8 +31,6 @@ import com.threebird.recorder.views.TimeBox;
  */
 public class StartMenuController
 {
-  public static SessionDetails SESSION_DETAILS = new SessionDetails();
-
   @FXML private TableView< Schema > schemaTable;
   @FXML private TableColumn< Schema, String > clientCol;
   @FXML private TableColumn< Schema, String > projectCol;
@@ -58,50 +52,40 @@ public class StartMenuController
   @FXML private Button saveButton;
   @FXML private Button startButton;
 
-  private ObservableList< Schema > schemas;
-
   /**
    * load up the FXML file we generated with Scene Builder, "schemas.fxml". This
    * view is controlled by SchemasController.java
    */
-  public static void toStartMenuView( Schema selected )
+  public static void toStartMenuView()
   {
     String filepath = "./views/startMenu.fxml";
     StartMenuController controller = EventRecorderUtil.loadScene( filepath, "Start Menu" );
-    controller.init( selected );
+    controller.init();
   }
-  
-  private void init( Schema selected )
+
+  private void init()
   {
-    rightSide.setVisible( false );
-    initSchemaListView( selected );
-
-    clientCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().client ) );
-    projectCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().project ) );
-
     timeBox = new TimeBox( 0 );
     timeBoxSlot.getChildren().add( timeBox );
 
-    if (selected != null && selected.id != null) {
-      schemaTable.getSelectionModel().select( selected );
-    }
-
+    rightSide.setVisible( false );
+    initSchemaListView();
     initSessionDetails();
   }
 
   /**
    * Initializes 'schemaList' and binds it to 'schemas'
    */
-  private void initSchemaListView( Schema selected )
+  private void initSchemaListView()
   {
-    List< Schema > all = Schemas.all();
-    schemas = FXCollections.observableArrayList( all );
+    clientCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().client ) );
+    projectCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().project ) );
 
-    schemaTable.setItems( schemas );
-
+    schemaTable.setItems( SchemasManager.schemas() );
     schemaTable.getSelectionModel()
                .selectedItemProperty()
                .addListener( this::onSchemaSelect );
+    schemaTable.getSelectionModel().select( SchemasManager.getSelected() );
   }
 
   /**
@@ -133,14 +117,14 @@ public class StartMenuController
 
   private void initSessionDetails()
   {
-    observerField.setText( SESSION_DETAILS.observer );
-    therapistField.setText( SESSION_DETAILS.therapist );
-    conditionField.setText( SESSION_DETAILS.condition );
-    sessionField.setText( SESSION_DETAILS.sessionNum == null ? "" : SESSION_DETAILS.sessionNum.toString() );
+    observerField.setText( SessionManager.getObserver() );
+    therapistField.setText( SessionManager.getTherapist() );
+    conditionField.setText( SessionManager.getCondition() );
+    sessionField.setText( SessionManager.getSessionNumber().toString() );
 
-    observerField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.observer = newV.trim() );
-    therapistField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.therapist = newV.trim() );
-    conditionField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SESSION_DETAILS.condition = newV.trim() );
+    observerField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setObserver( newV.trim() ) );
+    therapistField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setTherapist( newV.trim() ) );
+    conditionField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setCondition( newV.trim() ) );
 
     // Put in some idiot-proof logic for the session # (limit to just digits,
     // prevent exceeding max_value)
@@ -149,9 +133,9 @@ public class StartMenuController
     sessionField.setOnKeyTyped( limiter );
     sessionField.textProperty().addListener( ( o, old, newV ) -> {
       if (newV.isEmpty()) {
-        SESSION_DETAILS.sessionNum = null;
+        SessionManager.setSessionNumber( 0 );
       } else {
-        SESSION_DETAILS.sessionNum = Integer.valueOf( newV.trim() );
+        SessionManager.setSessionNumber( Integer.valueOf( newV.trim() ) );
       }
     } );
   }
@@ -164,6 +148,7 @@ public class StartMenuController
                                Schema oldV,
                                Schema newV )
   {
+    SchemasManager.setSelected( newV );
     if (newV != null) {
       rightSide.setVisible( true );
       emptyMessage.setVisible( false );
@@ -186,8 +171,7 @@ public class StartMenuController
 
   @FXML private void onEditSchemaClicked( ActionEvent evt )
   {
-    Schema schema = schemaTable.getSelectionModel().getSelectedItem();
-    EditSchemaController.toEditSchemaView( schema );
+    EditSchemaController.toEditSchemaView( SchemasManager.getSelected() );
   }
 
   /**
