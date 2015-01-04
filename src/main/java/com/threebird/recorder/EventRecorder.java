@@ -31,7 +31,7 @@ public class EventRecorder extends Application
   @Override public void start( Stage primaryStage ) throws Exception
   {
     STAGE = primaryStage;
-    StartMenuController.toSchemasView( null );
+    StartMenuController.toStartMenuView( null );
     createMainMenuBar();
   }
 

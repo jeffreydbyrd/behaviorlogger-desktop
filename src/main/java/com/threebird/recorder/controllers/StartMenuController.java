@@ -64,10 +64,10 @@ public class StartMenuController
    * load up the FXML file we generated with Scene Builder, "schemas.fxml". This
    * view is controlled by SchemasController.java
    */
-  public static void toSchemasView( Schema selected )
+  public static void toStartMenuView( Schema selected )
   {
     String filepath = "./views/startMenu.fxml";
-    StartMenuController controller = EventRecorderUtil.loadScene( filepath, "Schemas" );
+    StartMenuController controller = EventRecorderUtil.loadScene( filepath, "Start Menu" );
     controller.init( selected );
   }
   

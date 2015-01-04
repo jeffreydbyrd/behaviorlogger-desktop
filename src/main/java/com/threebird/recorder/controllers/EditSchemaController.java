@@ -290,7 +290,7 @@ public class EditSchemaController
    */
   @FXML void onCancelClicked( ActionEvent evt )
   {
-    StartMenuController.toSchemasView( model );
+    StartMenuController.toStartMenuView( model );
   }
 
   /**
@@ -327,7 +327,7 @@ public class EditSchemaController
 
     Schemas.save( model );
 
-    StartMenuController.toSchemasView( model );
+    StartMenuController.toStartMenuView( model );
   }
 
   /**
@@ -340,7 +340,7 @@ public class EditSchemaController
 
     EventHandler< ActionEvent > onDeleteClicked = evt -> {
       Schemas.delete( this.model );
-      StartMenuController.toSchemasView( null );
+      StartMenuController.toStartMenuView( null );
     };
 
     EventRecorderUtil.dialogBox( msg,
