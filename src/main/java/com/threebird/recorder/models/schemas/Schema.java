@@ -1,10 +1,11 @@
-package com.threebird.recorder.models;
+package com.threebird.recorder.models.schemas;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Optional;
 
 import com.google.common.collect.Maps;
+import com.threebird.recorder.models.MappableChar;
 
 /**
  * Contains all session configurations, such as session duration and

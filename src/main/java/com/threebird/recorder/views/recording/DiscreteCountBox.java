@@ -5,8 +5,8 @@ import javafx.animation.Timeline;
 import javafx.animation.Animation.Status;
 import javafx.util.Duration;
 
-import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 
 /**
  * A {@link BehaviorCountBox} that counts {@link DiscreteBehavior}s. When

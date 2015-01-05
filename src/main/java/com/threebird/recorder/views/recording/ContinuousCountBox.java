@@ -6,8 +6,8 @@ import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.util.Duration;
 
-import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 
 /**
  * A {@link BehaviorCountBox} used for keeping track of a

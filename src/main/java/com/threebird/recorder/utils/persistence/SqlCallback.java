@@ -1,4 +1,4 @@
-package com.threebird.recorder.persistence.util;
+package com.threebird.recorder.utils.persistence;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

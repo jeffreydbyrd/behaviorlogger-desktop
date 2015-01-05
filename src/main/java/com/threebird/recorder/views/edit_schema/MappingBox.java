@@ -7,7 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
 import com.threebird.recorder.controllers.EditSchemaController;
-import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**

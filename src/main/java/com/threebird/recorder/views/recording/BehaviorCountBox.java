@@ -7,7 +7,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-import com.threebird.recorder.models.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 
 /**
  * An HBox that displays a {@link KeyBehaviorMapping} and also keeps track of a

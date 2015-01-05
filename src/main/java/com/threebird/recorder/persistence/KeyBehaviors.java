@@ -5,11 +5,11 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.threebird.recorder.models.KeyBehaviorMapping;
 import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.persistence.util.SqlCallback;
-import com.threebird.recorder.persistence.util.SqlQueryData;
-import com.threebird.recorder.persistence.util.SqliteDao;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.utils.persistence.SqlCallback;
+import com.threebird.recorder.utils.persistence.SqlQueryData;
+import com.threebird.recorder.utils.persistence.SqliteDao;
 
 /**
  * A set of static functions that interact with they key_behaviors table

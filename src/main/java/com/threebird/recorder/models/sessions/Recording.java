@@ -1,4 +1,4 @@
-package com.threebird.recorder.models;
+package com.threebird.recorder.models.sessions;
 
 import java.util.ArrayList;
 import java.util.List;

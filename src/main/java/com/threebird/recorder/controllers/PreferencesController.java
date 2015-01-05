@@ -23,7 +23,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import com.threebird.recorder.EventRecorder;
-import com.threebird.recorder.models.FilenameComponent;
+import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.preferences.FilenameComponentView;

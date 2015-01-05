@@ -9,11 +9,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
-import com.threebird.recorder.models.KeyBehaviorMapping;
-import com.threebird.recorder.models.Schema;
-import com.threebird.recorder.persistence.util.SqlCallback;
-import com.threebird.recorder.persistence.util.SqlQueryData;
-import com.threebird.recorder.persistence.util.SqliteDao;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.utils.persistence.SqlCallback;
+import com.threebird.recorder.utils.persistence.SqlQueryData;
+import com.threebird.recorder.utils.persistence.SqliteDao;
 
 /**
  * A set of static functions that interact with the Schemas table

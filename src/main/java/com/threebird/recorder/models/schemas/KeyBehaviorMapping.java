@@ -1,4 +1,6 @@
-package com.threebird.recorder.models;
+package com.threebird.recorder.models.schemas;
+
+import com.threebird.recorder.models.MappableChar;
 
 
 /**

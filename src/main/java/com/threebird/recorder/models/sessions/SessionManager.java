@@ -1,4 +1,4 @@
-package com.threebird.recorder.models;
+package com.threebird.recorder.models.sessions;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;

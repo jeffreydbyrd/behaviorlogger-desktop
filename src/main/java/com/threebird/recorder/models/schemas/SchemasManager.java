@@ -1,4 +1,4 @@
-package com.threebird.recorder.models;
+package com.threebird.recorder.models.schemas;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;

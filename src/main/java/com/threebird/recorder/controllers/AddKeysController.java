@@ -17,8 +17,8 @@ import javafx.scene.layout.VBox;
 
 import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
-import com.threebird.recorder.models.KeyBehaviorMapping;
-import com.threebird.recorder.models.Schema;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.EventRecorderUtil;
 

@@ -1,4 +1,4 @@
-package com.threebird.recorder.models;
+package com.threebird.recorder.models.preferences;
 
 import com.threebird.recorder.views.preferences.FilenameComponentView;
 

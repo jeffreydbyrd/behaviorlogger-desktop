@@ -17,9 +17,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import com.threebird.recorder.models.Schema;
-import com.threebird.recorder.models.SchemasManager;
-import com.threebird.recorder.models.SessionManager;
+import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.TimeBox;
 
