@@ -15,7 +15,7 @@ public class PreferencesManager
   private static SimpleBooleanProperty pauseOnEndProperty;
   private static SimpleBooleanProperty soundOnEndProperty;
 
-  public static SimpleStringProperty sessionDirectoryProperty()
+  public static synchronized SimpleStringProperty sessionDirectoryProperty()
   {
     if (sessionDirectoryProperty == null) {
       sessionDirectoryProperty = new SimpleStringProperty( Preferences.getSessionDirectory() );
@@ -26,7 +26,7 @@ public class PreferencesManager
     return sessionDirectoryProperty;
   }
 
-  public static SimpleIntegerProperty durationProperty()
+  public static synchronized SimpleIntegerProperty durationProperty()
   {
     if (durationProperty == null) {
       durationProperty = new SimpleIntegerProperty( Preferences.getDuration() );
@@ -37,7 +37,7 @@ public class PreferencesManager
     return durationProperty;
   }
 
-  public static SimpleBooleanProperty colorOnEndProperty()
+  public static synchronized SimpleBooleanProperty colorOnEndProperty()
   {
     if (colorOnEndProperty == null) {
       colorOnEndProperty = new SimpleBooleanProperty( Preferences.getColorOnEnd() );
@@ -48,7 +48,7 @@ public class PreferencesManager
     return colorOnEndProperty;
   }
 
-  public static SimpleBooleanProperty pauseOnEndProperty()
+  public static synchronized SimpleBooleanProperty pauseOnEndProperty()
   {
     if (pauseOnEndProperty == null) {
       pauseOnEndProperty = new SimpleBooleanProperty( Preferences.getPauseOnEnd() );
@@ -59,7 +59,7 @@ public class PreferencesManager
     return pauseOnEndProperty;
   }
 
-  public static SimpleBooleanProperty soundOnEndProperty()
+  public static synchronized SimpleBooleanProperty soundOnEndProperty()
   {
     if (soundOnEndProperty == null) {
       soundOnEndProperty = new SimpleBooleanProperty( Preferences.getSoundOnEnd() );

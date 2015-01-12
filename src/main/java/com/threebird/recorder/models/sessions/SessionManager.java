@@ -1,10 +1,15 @@
 package com.threebird.recorder.models.sessions;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class SessionManager
 {
+  public static ExecutorService es = Executors.newSingleThreadExecutor();
+
   private static SimpleStringProperty observerProperty;
   private static SimpleStringProperty therapistProperty;
   private static SimpleStringProperty conditionProperty;
@@ -14,6 +19,11 @@ public class SessionManager
   {
     if (observerProperty == null) {
       observerProperty = new SimpleStringProperty();
+      observerProperty.addListener( ( o, old, newV ) -> {
+        es.execute( ( ) -> {
+          System.out.println( "Saving " + newV );
+        } );
+      } );
     }
     return observerProperty;
   }

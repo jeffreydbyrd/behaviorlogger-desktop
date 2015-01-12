@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import com.threebird.recorder.controllers.PreferencesController;
 import com.threebird.recorder.controllers.StartMenuController;
+import com.threebird.recorder.models.sessions.SessionManager;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The
@@ -26,6 +27,9 @@ public class EventRecorder extends Application
   public static void main( String[] args )
   {
     launch( args );
+
+    // Cleanup background threads
+    SessionManager.es.shutdown();
   }
 
   @Override public void start( Stage primaryStage ) throws Exception

@@ -1,6 +1,9 @@
 package com.threebird.recorder.controllers;
 
+import java.util.function.Consumer;
+
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -115,6 +118,20 @@ public class StartMenuController
     } );
   }
 
+  /**
+   * Used only for the below method "initSessionDetails" for the purpose of code
+   * reduction
+   */
+  private static ChangeListener< Boolean > makeChangeListener( TextField field, Consumer< String > setter )
+  {
+    return ( obsrvr, oldV, newV ) -> {
+      if (!newV) {
+        String text = field.getText();
+        setter.accept( text != null ? text.trim() : "" );
+      }
+    };
+  }
+
   private void initSessionDetails()
   {
     observerField.setText( SessionManager.getObserver() );
@@ -122,20 +139,23 @@ public class StartMenuController
     conditionField.setText( SessionManager.getCondition() );
     sessionField.setText( SessionManager.getSessionNumber().toString() );
 
-    observerField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setObserver( newV.trim() ) );
-    therapistField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setTherapist( newV.trim() ) );
-    conditionField.textProperty().addListener( ( obsrvr, oldV, newV ) -> SessionManager.setCondition( newV.trim() ) );
+    observerField.focusedProperty().addListener( makeChangeListener( observerField, SessionManager::setObserver ) );
+    therapistField.focusedProperty().addListener( makeChangeListener( therapistField, SessionManager::setTherapist ) );
+    conditionField.focusedProperty().addListener( makeChangeListener( conditionField, SessionManager::setCondition ) );
 
     // Put in some idiot-proof logic for the session # (limit to just digits,
     // prevent exceeding max_value)
     EventHandler< ? super KeyEvent > limiter =
         EventRecorderUtil.createFieldLimiter( sessionField, "0123456789".toCharArray(), 9 );
     sessionField.setOnKeyTyped( limiter );
-    sessionField.textProperty().addListener( ( o, old, newV ) -> {
-      if (newV.isEmpty()) {
-        SessionManager.setSessionNumber( 0 );
-      } else {
-        SessionManager.setSessionNumber( Integer.valueOf( newV.trim() ) );
+    sessionField.focusedProperty().addListener( ( o, old, newV ) -> {
+      if (!newV) {
+        String text = sessionField.getText().trim();
+        if (text.isEmpty()) {
+          SessionManager.setSessionNumber( 0 );
+        } else {
+          SessionManager.setSessionNumber( Integer.valueOf( text.trim() ) );
+        }
       }
     } );
   }
