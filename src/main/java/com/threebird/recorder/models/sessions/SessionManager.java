@@ -1,12 +1,11 @@
 package com.threebird.recorder.models.sessions;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import com.threebird.recorder.persistence.SessionDetails;
+import java.io.File;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+
+import com.threebird.recorder.persistence.GsonUtils;
 
 public class SessionManager
 {
@@ -15,13 +14,32 @@ public class SessionManager
   private static SimpleStringProperty conditionProperty;
   private static SimpleIntegerProperty sessionNumberProperty;
 
+  private static File file = new File( "./resources/session-details.json" );
+
+  @SuppressWarnings("unused")
+  private static class Model
+  {
+    String observer;
+    String therapist;
+    String condition;
+    int sessionNumber;
+  }
+
+  private static void persist()
+  {
+    Model model = new Model();
+    model.observer = getObserver();
+    model.therapist = getTherapist();
+    model.condition = getCondition();
+    model.sessionNumber = getSessionNumber();
+    GsonUtils.save( file, model );
+  }
+
   public static SimpleStringProperty observerProperty()
   {
     if (observerProperty == null) {
       observerProperty = new SimpleStringProperty();
-      observerProperty.addListener( ( o, old, newV ) -> {
-        SessionDetails.saveObserver( newV );
-      } );
+      observerProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return observerProperty;
   }
@@ -30,9 +48,7 @@ public class SessionManager
   {
     if (therapistProperty == null) {
       therapistProperty = new SimpleStringProperty();
-      therapistProperty.addListener( ( o, old, newV ) -> {
-        SessionDetails.saveTherapist( newV );
-      } );
+      therapistProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return therapistProperty;
   }
@@ -41,9 +57,7 @@ public class SessionManager
   {
     if (conditionProperty == null) {
       conditionProperty = new SimpleStringProperty();
-      conditionProperty.addListener( ( o, old, newV ) -> {
-        SessionDetails.saveCondition( newV );
-      } );
+      conditionProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return conditionProperty;
   }
@@ -52,9 +66,7 @@ public class SessionManager
   {
     if (sessionNumberProperty == null) {
       sessionNumberProperty = new SimpleIntegerProperty();
-      sessionNumberProperty.addListener( ( o, old, newV ) -> {
-        SessionDetails.saveSessionNumber( newV.intValue() );
-      } );
+      sessionNumberProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return sessionNumberProperty;
   }

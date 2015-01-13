@@ -48,7 +48,7 @@ public class GsonUtils
    * Save the model to a JSON file, creating the file if it doesn't already
    * exist.
    */
-  static void save( File file, Object model )
+  public static void save( File file, Object model )
   {
     es.execute( ( ) -> {
       try {
