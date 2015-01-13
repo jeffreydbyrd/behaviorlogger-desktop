@@ -3,6 +3,8 @@ package com.threebird.recorder.models.sessions;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.threebird.recorder.persistence.SessionDetails;
+
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -21,7 +23,7 @@ public class SessionManager
       observerProperty = new SimpleStringProperty();
       observerProperty.addListener( ( o, old, newV ) -> {
         es.execute( ( ) -> {
-          System.out.println( "Saving " + newV );
+          SessionDetails.saveObserver( newV );
         } );
       } );
     }

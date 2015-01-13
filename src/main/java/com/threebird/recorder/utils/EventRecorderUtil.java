@@ -21,10 +21,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+/**
+ * A collection of helpful functions used throughout the app
+ */
 public class EventRecorderUtil
 {
   /**
-   * Loads an FXML file into a new Scene and sets it in STAGE.
+   * Loads an FXML file into a new Scene, which gets set in EventRecorder.STAGE.
    * 
    * @param T
    *          - the type of the Controller you want returned to you
