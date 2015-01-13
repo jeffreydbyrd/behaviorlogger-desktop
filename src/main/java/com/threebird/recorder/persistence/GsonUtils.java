@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;
@@ -40,27 +42,30 @@ public class GsonUtils
     }
   }
 
+  public static ExecutorService es = Executors.newSingleThreadExecutor();
+
   /**
    * Save the model to a JSON file, creating the file if it doesn't already
    * exist.
    */
-  static < T > T save( File file, T model )
+  static void save( File file, Object model )
   {
-    try {
-      if (!file.exists()) {
-        file.createNewFile();
+    es.execute( ( ) -> {
+      try {
+        if (!file.exists()) {
+          file.createNewFile();
+        }
+
+        String json = gson.toJson( model );
+
+        BufferedWriter writer = Files.newWriter( file, StandardCharsets.UTF_8 );
+        writer.write( json );
+        writer.flush();
+        writer.close();
+      } catch (Exception e) {
+        throw new RuntimeException( e );
       }
-
-      String json = gson.toJson( model );
-
-      BufferedWriter writer = Files.newWriter( file, StandardCharsets.UTF_8 );
-      writer.write( json );
-      writer.flush();
-      writer.close();
-
-      return model;
-    } catch (Exception e) {
-      throw new RuntimeException( e );
-    }
+    } );
   }
+
 }

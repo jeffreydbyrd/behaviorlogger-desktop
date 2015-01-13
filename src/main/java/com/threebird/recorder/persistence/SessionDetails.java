@@ -1,13 +1,9 @@
 package com.threebird.recorder.persistence;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.io.Files;
-import com.google.gson.Gson;
 
 public class SessionDetails
 {
@@ -42,4 +38,38 @@ public class SessionDetails
   {
     return model.get().observer;
   }
+
+  public static void saveTherapist( String therapist )
+  {
+    model.get().therapist = therapist;
+    save();
+  }
+
+  public static String getTherapist()
+  {
+    return model.get().therapist;
+  }
+
+  public static void saveCondition( String condition )
+  {
+    model.get().condition = condition;
+    save();
+  }
+
+  public static String getCondition()
+  {
+    return model.get().condition;
+  }
+
+  public static void saveSessionNumber( int sessionNumber )
+  {
+    model.get().sessionNumber = sessionNumber;
+    save();
+  }
+
+  public static int getSessionNumber()
+  {
+    return model.get().sessionNumber;
+  }
+
 }

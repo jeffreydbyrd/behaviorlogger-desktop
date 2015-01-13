@@ -10,8 +10,6 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class SessionManager
 {
-  public static ExecutorService es = Executors.newSingleThreadExecutor();
-
   private static SimpleStringProperty observerProperty;
   private static SimpleStringProperty therapistProperty;
   private static SimpleStringProperty conditionProperty;
@@ -22,9 +20,7 @@ public class SessionManager
     if (observerProperty == null) {
       observerProperty = new SimpleStringProperty();
       observerProperty.addListener( ( o, old, newV ) -> {
-        es.execute( ( ) -> {
-          SessionDetails.saveObserver( newV );
-        } );
+        SessionDetails.saveObserver( newV );
       } );
     }
     return observerProperty;
@@ -34,6 +30,9 @@ public class SessionManager
   {
     if (therapistProperty == null) {
       therapistProperty = new SimpleStringProperty();
+      therapistProperty.addListener( ( o, old, newV ) -> {
+        SessionDetails.saveTherapist( newV );
+      } );
     }
     return therapistProperty;
   }
@@ -42,6 +41,9 @@ public class SessionManager
   {
     if (conditionProperty == null) {
       conditionProperty = new SimpleStringProperty();
+      conditionProperty.addListener( ( o, old, newV ) -> {
+        SessionDetails.saveCondition( newV );
+      } );
     }
     return conditionProperty;
   }
@@ -50,6 +52,9 @@ public class SessionManager
   {
     if (sessionNumberProperty == null) {
       sessionNumberProperty = new SimpleIntegerProperty();
+      sessionNumberProperty.addListener( ( o, old, newV ) -> {
+        SessionDetails.saveSessionNumber( newV.intValue() );
+      } );
     }
     return sessionNumberProperty;
   }
