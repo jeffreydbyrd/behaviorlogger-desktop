@@ -5,19 +5,13 @@ import java.io.File;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.threebird.recorder.persistence.GsonUtils;
 
 public class SessionManager
 {
-  private static SimpleStringProperty observerProperty;
-  private static SimpleStringProperty therapistProperty;
-  private static SimpleStringProperty conditionProperty;
-  private static SimpleIntegerProperty sessionNumberProperty;
-
-  private static File file = new File( "./resources/session-details.json" );
-
-  @SuppressWarnings("unused")
-  private static class Model
+  private static class GsonBean
   {
     String observer;
     String therapist;
@@ -25,9 +19,17 @@ public class SessionManager
     int sessionNumber;
   }
 
+  private static SimpleStringProperty observerProperty;
+  private static SimpleStringProperty therapistProperty;
+  private static SimpleStringProperty conditionProperty;
+  private static SimpleIntegerProperty sessionNumberProperty;
+
+  private static File file = new File( "./resources/session-details.json" );
+  private static Supplier< GsonBean > model = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
+
   private static void persist()
   {
-    Model model = new Model();
+    GsonBean model = new GsonBean();
     model.observer = getObserver();
     model.therapist = getTherapist();
     model.condition = getCondition();
@@ -38,7 +40,7 @@ public class SessionManager
   public static SimpleStringProperty observerProperty()
   {
     if (observerProperty == null) {
-      observerProperty = new SimpleStringProperty();
+      observerProperty = new SimpleStringProperty( model.get().observer );
       observerProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return observerProperty;
@@ -47,7 +49,7 @@ public class SessionManager
   public static SimpleStringProperty therapistProperty()
   {
     if (therapistProperty == null) {
-      therapistProperty = new SimpleStringProperty();
+      therapistProperty = new SimpleStringProperty( model.get().therapist );
       therapistProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return therapistProperty;
@@ -56,7 +58,7 @@ public class SessionManager
   public static SimpleStringProperty conditionProperty()
   {
     if (conditionProperty == null) {
-      conditionProperty = new SimpleStringProperty();
+      conditionProperty = new SimpleStringProperty( model.get().condition );
       conditionProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return conditionProperty;
@@ -65,7 +67,7 @@ public class SessionManager
   public static SimpleIntegerProperty sessionNumberProperty()
   {
     if (sessionNumberProperty == null) {
-      sessionNumberProperty = new SimpleIntegerProperty();
+      sessionNumberProperty = new SimpleIntegerProperty( model.get().sessionNumber );
       sessionNumberProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return sessionNumberProperty;

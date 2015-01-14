@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 
 import com.threebird.recorder.controllers.PreferencesController;
 import com.threebird.recorder.controllers.StartMenuController;
-import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.persistence.GsonUtils;
 
 /**

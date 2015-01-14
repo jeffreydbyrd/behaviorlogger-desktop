@@ -1,27 +1,52 @@
 package com.threebird.recorder.models.preferences;
 
+import java.io.File;
+
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import com.google.common.base.Preconditions;
-import com.threebird.recorder.persistence.Preferences;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.threebird.recorder.persistence.GsonUtils;
 
 public class PreferencesManager
 {
+  private static class GsonBean
+  {
+    String directory = System.getProperty( "user.home" );
+    int duration = 600;
+    boolean colorOnEnd = true;
+    boolean pauseOnEnd = false;
+    boolean soundOnEnd = false;
+  }
+
   private static SimpleStringProperty sessionDirectoryProperty;
   private static SimpleIntegerProperty durationProperty;
   private static SimpleBooleanProperty colorOnEndProperty;
   private static SimpleBooleanProperty pauseOnEndProperty;
   private static SimpleBooleanProperty soundOnEndProperty;
 
+  private static File file = new File( "./resources/prefs.json" );
+  private static Supplier< GsonBean > model = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
+
+  private static void persist()
+  {
+    GsonBean model = new GsonBean();
+    model.directory = getSessionDirectory();
+    model.duration = getDuration();
+    model.colorOnEnd = getColorOnEnd();
+    model.pauseOnEnd = getPauseOnEnd();
+    model.soundOnEnd = getSoundOnEnd();
+    GsonUtils.save( file, model );
+  }
+
   public static synchronized SimpleStringProperty sessionDirectoryProperty()
   {
     if (sessionDirectoryProperty == null) {
-      sessionDirectoryProperty = new SimpleStringProperty( Preferences.getSessionDirectory() );
-      sessionDirectoryProperty.addListener( ( obsrvr, oldV, newV ) -> {
-        Preferences.saveSessionDirectory( newV );
-      } );
+      sessionDirectoryProperty = new SimpleStringProperty( model.get().directory );
+      sessionDirectoryProperty.addListener( ( obsrvr, oldV, newV ) -> persist() );
     }
     return sessionDirectoryProperty;
   }
@@ -29,10 +54,8 @@ public class PreferencesManager
   public static synchronized SimpleIntegerProperty durationProperty()
   {
     if (durationProperty == null) {
-      durationProperty = new SimpleIntegerProperty( Preferences.getDuration() );
-      durationProperty.addListener( ( obsrvr, oldV, newV ) -> {
-        Preferences.saveDuration( newV.intValue() );
-      } );
+      durationProperty = new SimpleIntegerProperty( model.get().duration );
+      durationProperty.addListener( ( obsrvr, oldV, newV ) -> persist() );
     }
     return durationProperty;
   }
@@ -40,10 +63,8 @@ public class PreferencesManager
   public static synchronized SimpleBooleanProperty colorOnEndProperty()
   {
     if (colorOnEndProperty == null) {
-      colorOnEndProperty = new SimpleBooleanProperty( Preferences.getColorOnEnd() );
-      colorOnEndProperty.addListener( ( obsvr, oldV, newV ) -> {
-        Preferences.saveColorOnEnd( newV );
-      } );
+      colorOnEndProperty = new SimpleBooleanProperty( model.get().colorOnEnd );
+      colorOnEndProperty.addListener( ( obsrvr, oldV, newV ) -> persist() );
     }
     return colorOnEndProperty;
   }
@@ -51,10 +72,8 @@ public class PreferencesManager
   public static synchronized SimpleBooleanProperty pauseOnEndProperty()
   {
     if (pauseOnEndProperty == null) {
-      pauseOnEndProperty = new SimpleBooleanProperty( Preferences.getPauseOnEnd() );
-      pauseOnEndProperty.addListener( ( obsrvr, old, newV ) -> {
-        Preferences.savePauseOnEnd( newV );
-      } );
+      pauseOnEndProperty = new SimpleBooleanProperty( model.get().pauseOnEnd );
+      pauseOnEndProperty.addListener( ( obsrvr, oldV, newV ) -> persist() );
     }
     return pauseOnEndProperty;
   }
@@ -62,10 +81,8 @@ public class PreferencesManager
   public static synchronized SimpleBooleanProperty soundOnEndProperty()
   {
     if (soundOnEndProperty == null) {
-      soundOnEndProperty = new SimpleBooleanProperty( Preferences.getSoundOnEnd() );
-      pauseOnEndProperty.addListener( ( obsrvr, old, newV ) -> {
-        Preferences.saveSoundOnEnd( newV );
-      } );
+      soundOnEndProperty = new SimpleBooleanProperty( model.get().soundOnEnd );
+      pauseOnEndProperty.addListener( ( obsrvr, oldV, newV ) -> persist() );
     }
     return soundOnEndProperty;
   }

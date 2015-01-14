@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -66,6 +67,20 @@ public class GsonUtils
         throw new RuntimeException( e );
       }
     } );
+  }
+
+  @SuppressWarnings("unchecked") public static < T > T get( File file, T bean )
+  {
+    try {
+      if (!file.exists()) {
+        return bean;
+      }
+
+      BufferedReader reader = Files.newReader( file, Charsets.UTF_8 );
+      return (T) gson.fromJson( reader, bean.getClass() );
+    } catch (Exception e) {
+      throw new RuntimeException( e );
+    }
   }
 
 }
