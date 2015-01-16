@@ -17,6 +17,6 @@ public enum FilenameComponent
   FilenameComponent( String display )
   {
     this.display = display;
-    this.view = new FilenameComponentView( ordinal(), display );
+    this.view = new FilenameComponentView( ordinal(), display, this );
   }
 }

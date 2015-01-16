@@ -1,5 +1,7 @@
 package com.threebird.recorder.views.preferences;
 
+import com.threebird.recorder.models.preferences.FilenameComponent;
+
 import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -15,8 +17,13 @@ public class FilenameComponentView extends Pane
   private CheckBox checkbox;
   private Label label;
 
-  public FilenameComponentView( int i, String name )
+  private int i;
+  public final FilenameComponent ref;
+
+  public FilenameComponentView( int i, String name, FilenameComponent ref )
   {
+    this.i = i;
+    this.ref = ref;
     this.index = new Label( i + "." );
     this.checkbox = new CheckBox();
     checkbox.setCursor( Cursor.DEFAULT );
@@ -32,6 +39,7 @@ public class FilenameComponentView extends Pane
 
   public void setIndex( int i )
   {
+    this.i = i;
     this.index.setText( i + "." );
   }
 
@@ -43,5 +51,10 @@ public class FilenameComponentView extends Pane
   public boolean isSelected()
   {
     return checkbox.isSelected();
+  }
+
+  public int getIndex()
+  {
+    return i;
   }
 }

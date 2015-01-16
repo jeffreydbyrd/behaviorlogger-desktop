@@ -2,6 +2,8 @@ package com.threebird.recorder.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -95,10 +97,14 @@ public class PreferencesController
 
   private void initComponentsBox()
   {
-    FilenameComponent[] components = FilenameComponent.values();
+    List< FilenameComponent > components =
+        PreferencesManager.getFilenameComponents()
+                          .stream()
+                          .map( FilenameComponent::valueOf )
+                          .collect( Collectors.toList() );
 
-    for (int i = 0; i < components.length; i++) {
-      FilenameComponentView node = components[i].view;
+    for (FilenameComponent comp : components) {
+      FilenameComponentView node = comp.view;
       componentsBox.getChildren().add( node );
 
       node.setOnDragDetected( evt -> {
@@ -123,7 +129,7 @@ public class PreferencesController
     componentsBox.setOnMouseDragReleased( evt -> {
       stage.getScene().setCursor( Cursor.DEFAULT );
       removePreview( componentsBox );
-      for (int i = 0; i < components.length; i++) {
+      for (int i = 0; i < components.size(); i++) {
         FilenameComponentView comp = (FilenameComponentView) componentsBox.getChildren().get( i );
         comp.setVisible( true );
         comp.setIndex( i + 1 );
@@ -247,6 +253,15 @@ public class PreferencesController
     PreferencesManager.saveColorOnEnd( colorCheckBox.isSelected() );
     PreferencesManager.savePauseOnEnd( pauseCheckBox.isSelected() );
     PreferencesManager.saveSoundOnEnd( beepCheckBox.isSelected() );
+
+    List< String > components =
+        componentsBox.getChildren()
+                     .stream()
+                     .map( ( Node n ) -> ((FilenameComponentView) n).ref.name() )
+                     .collect( Collectors.toList() );
+
+    PreferencesManager.saveFilenameComponents( components );
+
     stage.close();
   }
 
