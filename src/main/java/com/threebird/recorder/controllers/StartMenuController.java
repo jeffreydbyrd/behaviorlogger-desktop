@@ -1,5 +1,7 @@
 package com.threebird.recorder.controllers;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -18,8 +20,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.threebird.recorder.models.preferences.FilenameComponent;
+import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.SessionManager;
@@ -51,6 +58,8 @@ public class StartMenuController
   @FXML private TextField therapistField;
   @FXML private TextField conditionField;
   @FXML private TextField sessionField;
+
+  @FXML private VBox errMsgBox;
 
   @FXML private Button saveButton;
   @FXML private Button startButton;
@@ -190,8 +199,49 @@ public class StartMenuController
     EditSchemaController.toEditSchemaView( SchemasManager.getSelected() );
   }
 
+  private boolean validate()
+  {
+    String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+    boolean valid = true;
+
+    ImmutableMap< String, FilenameComponent > displayToComp =
+        Maps.uniqueIndex( PreferencesManager.getFilenameComponents(), c -> c.display );
+
+    Map< FilenameComponent, TextField > compToField = Maps.newHashMap();
+    compToField.put( displayToComp.get( "Observer" ), observerField );
+    compToField.put( displayToComp.get( "Therapist" ), therapistField );
+    compToField.put( displayToComp.get( "Condition" ), conditionField );
+    compToField.put( displayToComp.get( "Session Number" ), sessionField );
+
+    for (Entry< FilenameComponent, TextField > entry : compToField.entrySet()) {
+      FilenameComponent comp = entry.getKey();
+      TextField field = entry.getValue();
+      if (comp.enabled && field.getText().isEmpty()) {
+        field.setStyle( cssRed );
+        Label lbl = new Label( comp.display + " is required for the name of your data file." );
+        lbl.setTextFill( Color.RED );
+        errMsgBox.getChildren().add( lbl );
+        valid = false;
+      } else {
+        field.setStyle( "" );
+      }
+    }
+
+    if (!valid) {
+      Label lbl = new Label( "You can edit the file name in the Preferences menu." );
+      lbl.setTextFill( Color.RED );
+      errMsgBox.getChildren().add( lbl );
+    }
+
+    return valid;
+  }
+
   @FXML private void onStartClicked( ActionEvent evt )
   {
+    if (!validate()) {
+      return;
+    }
+
     RecordingController.toRecordingView();
   }
 }
