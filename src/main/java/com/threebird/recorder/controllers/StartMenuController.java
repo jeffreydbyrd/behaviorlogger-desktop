@@ -218,7 +218,7 @@ public class StartMenuController
       TextField field = entry.getValue();
       if (comp.enabled && field.getText().isEmpty()) {
         field.setStyle( cssRed );
-        Label lbl = new Label( comp.display + " is required for the name of your data file." );
+        Label lbl = new Label( "- " + comp.display + " is required for your data file's name." );
         lbl.setTextFill( Color.RED );
         errMsgBox.getChildren().add( lbl );
         valid = false;

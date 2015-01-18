@@ -12,6 +12,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -21,9 +22,11 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
@@ -187,9 +190,10 @@ public class EditSchemaController
   }
 
   /**
-   * Runs through the scene and makes sure the nameField is filled in, and that
-   * there are no duplicate keys. Any validation errors will get highlighted
-   * red, and a message gets put in the 'errorMsgBox'
+   * Runs through the scene and makes sure the nameField and projectField are
+   * filled in (if required), and that there are no duplicate keys. Any
+   * validation errors will get highlighted red, and a message gets put in the
+   * 'errorMsgBox'
    * 
    * @return true if all inputs are valid, or false if a single input fails
    */
@@ -201,22 +205,32 @@ public class EditSchemaController
     String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
 
     // Make some red error messages:
-    Text nameMsg = new Text( "You must enter a name." );
-    nameMsg.setFill( Color.RED );
-    Text dirMsg = new Text( "That folder does not exist." );
+    Text dirMsg = new Text( "- That folder does not exist." );
     dirMsg.setFill( Color.RED );
-    Text keyMsg = new Text( "You must have at least one key mapped." );
+    Text keyMsg = new Text( "- You must have at least one key mapped." );
     keyMsg.setFill( Color.RED );
-    Text duplicateMsg = new Text( "Each key must be unique." );
+    Text duplicateMsg = new Text( "- Each key must be unique." );
     duplicateMsg.setFill( Color.RED );
 
-    // Validate name field
-    if (clientField.getText().trim().isEmpty()) {
-      isValid = false;
-      clientField.setStyle( cssRed );
-      errorMsgBox.getChildren().add( nameMsg );
-    } else {
-      clientField.setStyle( "" );
+    ImmutableMap< String, FilenameComponent > displayToComp =
+        Maps.uniqueIndex( PreferencesManager.getFilenameComponents(), c -> c.display );
+
+    Map< FilenameComponent, TextField > compToField = Maps.newHashMap();
+    compToField.put( displayToComp.get( "Client" ), clientField );
+    compToField.put( displayToComp.get( "Project" ), projectField );
+
+    for (Entry< FilenameComponent, TextField > entry : compToField.entrySet()) {
+      FilenameComponent comp = entry.getKey();
+      TextField field = entry.getValue();
+      if (comp.enabled && field.getText().isEmpty()) {
+        field.setStyle( cssRed );
+        Label lbl = new Label( "- " + comp.display + " is required for your data file's name." );
+        lbl.setTextFill( Color.RED );
+        errorMsgBox.getChildren().add( lbl );
+        isValid = false;
+      } else {
+        field.setStyle( "" );
+      }
     }
 
     // Validate Directory field
