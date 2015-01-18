@@ -14,7 +14,7 @@ public class FilenameComponentView extends Pane
 {
   private HBox root;
   private Label index;
-  private CheckBox checkbox;
+  public final CheckBox checkbox;
   private Label label;
 
   private int i;

@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -37,6 +38,8 @@ public class PreferencesController
 {
   @FXML private TextField directoryField;
   @FXML private Button browseButton;
+
+  @FXML private Label exampleLbl;
   @FXML private VBox componentsBox;
 
   @FXML private RadioButton infiniteRadioBtn;
@@ -120,17 +123,35 @@ public class PreferencesController
       node.setOnMouseEntered( evt -> node.setStyle( "-fx-background-color:#e0e0e0;" ) );
       node.setOnMouseExited( evt -> node.setStyle( "" ) );
       node.setCursor( Cursor.OPEN_HAND );
+
+      node.checkbox.selectedProperty().addListener( ( o, oldv, newv ) -> redrawFilenameExample() );
     }
 
     componentsBox.setOnMouseDragReleased( evt -> {
       stage.getScene().setCursor( Cursor.DEFAULT );
       removePreview( componentsBox );
+      redrawFilenameExample();
       for (int i = 0; i < components.size(); i++) {
         FilenameComponentView comp = (FilenameComponentView) componentsBox.getChildren().get( i );
         comp.setVisible( true );
         comp.setIndex( i + 1 );
       }
     } );
+
+    redrawFilenameExample();
+  }
+
+  private void redrawFilenameExample()
+  {
+    List< String > examples =
+        componentsBox.getChildren().stream()
+                     .map( node -> ((FilenameComponentView) node).ref )
+                     .filter( c -> c.enabled )
+                     .map( c -> c.example )
+                     .collect( Collectors.toList() );
+
+    String example = String.format( "%s.xls", String.join( "-", examples ) );
+    exampleLbl.setText( example );
   }
 
   private void setupDurationRadioButtons()

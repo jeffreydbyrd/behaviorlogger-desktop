@@ -24,12 +24,12 @@ public class PreferencesManager
     boolean soundOnEnd = false;
 
     List< FilenameComponent > filenameComponents =
-        Lists.newArrayList( new FilenameComponent( 1, "Client" ),
-                            new FilenameComponent( 2, "Project" ),
-                            new FilenameComponent( 3, "Observer" ),
-                            new FilenameComponent( 4, "Therapist" ),
-                            new FilenameComponent( 5, "Condition" ),
-                            new FilenameComponent( 6, "Session Number" ) );
+        Lists.newArrayList( new FilenameComponent( 1, "Client", "client" ),
+                            new FilenameComponent( 2, "Project", "project" ),
+                            new FilenameComponent( 3, "Observer", "observer" ),
+                            new FilenameComponent( 4, "Therapist", "therapist" ),
+                            new FilenameComponent( 5, "Condition", "condition" ),
+                            new FilenameComponent( 6, "Session Number", "123" ) );
   }
 
   private static SimpleStringProperty sessionDirectoryProperty;
