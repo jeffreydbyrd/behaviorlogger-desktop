@@ -67,7 +67,7 @@ public class PreferencesController
     }
 
     FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( "./views/preferences.fxml" ) );
+        new FXMLLoader( EventRecorder.class.getResource( "./views/preferences/preferences.fxml" ) );
 
     Parent root;
     try {
@@ -97,14 +97,10 @@ public class PreferencesController
 
   private void initComponentsBox()
   {
-    List< FilenameComponent > components =
-        PreferencesManager.getFilenameComponents()
-                          .stream()
-                          .map( FilenameComponent::valueOf )
-                          .collect( Collectors.toList() );
+    List< FilenameComponent > components = PreferencesManager.getFilenameComponents();
 
     for (FilenameComponent comp : components) {
-      FilenameComponentView node = comp.view;
+      FilenameComponentView node = comp.view();
       componentsBox.getChildren().add( node );
 
       node.setOnDragDetected( evt -> {
@@ -254,10 +250,10 @@ public class PreferencesController
     PreferencesManager.savePauseOnEnd( pauseCheckBox.isSelected() );
     PreferencesManager.saveSoundOnEnd( beepCheckBox.isSelected() );
 
-    List< String > components =
+    List< FilenameComponent > components =
         componentsBox.getChildren()
                      .stream()
-                     .map( ( Node n ) -> ((FilenameComponentView) n).ref.name() )
+                     .map( ( Node n ) -> ((FilenameComponentView) n).ref )
                      .collect( Collectors.toList() );
 
     PreferencesManager.saveFilenameComponents( components );

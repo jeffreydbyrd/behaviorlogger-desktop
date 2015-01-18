@@ -2,14 +2,10 @@ package com.threebird.recorder.models.preferences;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
@@ -26,15 +22,18 @@ public class PreferencesManager
     boolean colorOnEnd = true;
     boolean pauseOnEnd = false;
     boolean soundOnEnd = false;
-    List< String > filenameComponents =
-        Lists.newArrayList( FilenameComponent.values() )
-             .stream()
-             .map( comp -> comp.name() )
-             .collect( Collectors.toList() );
+
+    List< FilenameComponent > filenameComponents =
+        Lists.newArrayList( new FilenameComponent( 1, "Client" ),
+                            new FilenameComponent( 2, "Project" ),
+                            new FilenameComponent( 3, "Observer" ),
+                            new FilenameComponent( 4, "Therapist" ),
+                            new FilenameComponent( 5, "Condition" ),
+                            new FilenameComponent( 6, "Session Number" ) );
   }
 
   private static SimpleStringProperty sessionDirectoryProperty;
-  private static List< String > filenameComponents;
+  private static List< FilenameComponent > filenameComponents;
   private static SimpleIntegerProperty durationProperty;
   private static SimpleBooleanProperty colorOnEndProperty;
   private static SimpleBooleanProperty pauseOnEndProperty;
@@ -152,7 +151,7 @@ public class PreferencesManager
     return soundOnEndProperty().get();
   }
 
-  public static List< String > getFilenameComponents()
+  public static List< FilenameComponent > getFilenameComponents()
   {
     if (filenameComponents == null) {
       filenameComponents = defaultModel.get().filenameComponents;
@@ -160,7 +159,7 @@ public class PreferencesManager
     return filenameComponents;
   }
 
-  public static void saveFilenameComponents( List< String > components )
+  public static void saveFilenameComponents( List< FilenameComponent > components )
   {
     filenameComponents = components;
     persist();

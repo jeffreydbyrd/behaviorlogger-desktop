@@ -25,7 +25,7 @@ public class SessionManager
   private static SimpleIntegerProperty sessionNumberProperty;
 
   private static File file = new File( "./resources/session-details.json" );
-  private static Supplier< GsonBean > model = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
+  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
 
   private static void persist()
   {
@@ -40,7 +40,7 @@ public class SessionManager
   public static SimpleStringProperty observerProperty()
   {
     if (observerProperty == null) {
-      observerProperty = new SimpleStringProperty( model.get().observer );
+      observerProperty = new SimpleStringProperty( defaultModel.get().observer );
       observerProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return observerProperty;
@@ -49,7 +49,7 @@ public class SessionManager
   public static SimpleStringProperty therapistProperty()
   {
     if (therapistProperty == null) {
-      therapistProperty = new SimpleStringProperty( model.get().therapist );
+      therapistProperty = new SimpleStringProperty( defaultModel.get().therapist );
       therapistProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return therapistProperty;
@@ -58,7 +58,7 @@ public class SessionManager
   public static SimpleStringProperty conditionProperty()
   {
     if (conditionProperty == null) {
-      conditionProperty = new SimpleStringProperty( model.get().condition );
+      conditionProperty = new SimpleStringProperty( defaultModel.get().condition );
       conditionProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return conditionProperty;
@@ -67,7 +67,7 @@ public class SessionManager
   public static SimpleIntegerProperty sessionNumberProperty()
   {
     if (sessionNumberProperty == null) {
-      sessionNumberProperty = new SimpleIntegerProperty( model.get().sessionNumber );
+      sessionNumberProperty = new SimpleIntegerProperty( defaultModel.get().sessionNumber );
       sessionNumberProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return sessionNumberProperty;

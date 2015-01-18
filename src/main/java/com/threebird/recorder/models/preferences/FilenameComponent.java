@@ -2,21 +2,26 @@ package com.threebird.recorder.models.preferences;
 
 import com.threebird.recorder.views.preferences.FilenameComponentView;
 
-public enum FilenameComponent
+public class FilenameComponent
 {
-  Client("Client"),
-  Project("Project"),
-  Observer("Observer"),
-  Therapist("Therapist"),
-  Condition("Condition"),
-  Session_Number("Session Number");
-
+  public int order;
   public final String display;
-  public final FilenameComponentView view;
+  public boolean enabled;
 
-  FilenameComponent( String display )
+  FilenameComponent( int order, String display, boolean enabled )
   {
+    this.order = order;
     this.display = display;
-    this.view = new FilenameComponentView( ordinal(), display, this );
+    this.enabled = enabled;
+  }
+
+  FilenameComponent( int order, String display )
+  {
+    this( order, display, false );
+  }
+
+  public FilenameComponentView view()
+  {
+    return new FilenameComponentView( this.order, this.display, this.enabled, this );
   }
 }
