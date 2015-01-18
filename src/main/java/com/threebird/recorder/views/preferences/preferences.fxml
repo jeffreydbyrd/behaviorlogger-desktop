@@ -15,6 +15,7 @@
     <RowConstraints vgrow="NEVER" />
       <RowConstraints maxHeight="387.0" minHeight="27.0" prefHeight="177.0" vgrow="NEVER" />
       <RowConstraints maxHeight="387.0" minHeight="27.0" prefHeight="200.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="370.0" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
       <RowConstraints maxHeight="370.0" minHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
   </rowConstraints>
    <children>
@@ -52,7 +53,7 @@
             </VBox>
          </children>
       </VBox>
-      <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="3">
+      <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="4">
          <children>
             <HBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <children>
@@ -71,6 +72,7 @@
             <Separator prefWidth="200.0" />
          </children>
       </VBox>
+      <VBox fx:id="errMsgBox" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

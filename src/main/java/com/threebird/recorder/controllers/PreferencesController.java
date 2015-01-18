@@ -21,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -54,6 +55,8 @@ public class PreferencesController
   @FXML private TextField hoursField;
   @FXML private TextField minutesField;
   @FXML private TextField secondsField;
+
+  @FXML private VBox errMsgBox;
 
   @FXML private Button saveBtn;
   @FXML private Button cancelBtn;
@@ -232,16 +235,39 @@ public class PreferencesController
     return new File( directoryField.getText().trim() );
   }
 
-  private void validate()
+  private boolean validate()
   {
     String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+
+    boolean valid = true;
+    errMsgBox.getChildren().clear();
 
     // Validate Directory field
     if (!getDirectory().exists()) {
       directoryField.setStyle( cssRed );
+      valid = false;
+      Label lbl = new Label( "Directory does not exist." );
+      lbl.setTextFill( Color.RED );
+      errMsgBox.getChildren().add( lbl );
     } else {
       directoryField.setStyle( "" );
     }
+
+    boolean enabledOne =
+        componentsBox.getChildren().stream()
+                     .anyMatch( node -> ((FilenameComponentView) node).checkbox.isSelected() );
+
+    if (!enabledOne) {
+      componentsBox.setStyle( cssRed );
+      valid = false;
+      Label lbl = new Label( "Your filename must have at least one enabled component." );
+      lbl.setTextFill( Color.RED );
+      errMsgBox.getChildren().add( lbl );
+    } else {
+      componentsBox.setStyle( "" );
+    }
+
+    return valid;
   }
 
   @FXML void onBrowseButtonPressed( ActionEvent evt )
@@ -262,7 +288,10 @@ public class PreferencesController
 
   @FXML private void onSavePressed( ActionEvent evt )
   {
-    validate();
+    if (!validate()) {
+      return;
+    }
+
     PreferencesManager.saveSessionDirectory( directoryField.getText().trim() );
     int duration =
         EventRecorderUtil.getDuration( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
