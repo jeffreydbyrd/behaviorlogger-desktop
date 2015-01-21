@@ -19,6 +19,8 @@ import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
@@ -30,7 +32,6 @@ public class AddKeysController
 {
   private Scene recordingScene;
   private RecordingController recordingController;
-  private Schema schema;
   private Collection< KeyBehaviorMapping > unknowns;
   private Map< TextField, KeyBehaviorMapping > behaviorFields = Maps.newHashMap();
 
@@ -38,32 +39,20 @@ public class AddKeysController
 
   public static void toAddKeysView( Scene recordingScene,
                                     RecordingController recordingController,
-                                    Schema schema,
-                                    Collection< KeyBehaviorMapping > unknowns )
+                                    RecordingManager manager )
   {
     String filepath = "./views/add_keys.fxml";
     AddKeysController controller = EventRecorderUtil.loadScene( filepath, "Add Keys" );
-    controller.init( recordingScene, recordingController, schema, unknowns );
+    controller.init( recordingScene, recordingController, manager );
   }
 
-  /**
-   * @param recordingScene
-   *          - a reference back to the recording scene so we can go back to it
-   *          after exiting the add-keys view
-   * @param schema
-   *          - the schema we are adding new keys to
-   * @param unknowns
-   *          - the collection of unknown behavior mappings
-   */
   private void init( Scene recordingScene,
                      RecordingController controller,
-                     Schema schema,
-                     Collection< KeyBehaviorMapping > unknowns )
+                     RecordingManager manager )
   {
     this.recordingScene = recordingScene;
     this.recordingController = controller;
-    this.schema = schema;
-    this.unknowns = unknowns;
+    this.unknowns = manager.unknowns.values();
 
     populateMappingsBox();
   }
@@ -131,6 +120,8 @@ public class AddKeysController
    */
   @FXML private void onSavePress( ActionEvent evt )
   {
+    Schema schema = SchemasManager.getSelected();
+
     behaviorFields.forEach( ( field, kbm ) -> {
       String behavior = field.getText().trim();
       schema.mappings.put( kbm.key, new KeyBehaviorMapping( kbm.key, behavior, kbm.isContinuous ) );

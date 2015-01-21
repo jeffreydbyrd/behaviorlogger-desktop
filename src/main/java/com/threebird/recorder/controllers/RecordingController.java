@@ -178,7 +178,7 @@ public class RecordingController
   {
     Schema schema = SchemasManager.getSelected();
     timeBox.setTime( count );
-    
+
     if (count == schema.duration) {
       if (schema.color) {
         timeBoxSlot.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:red;-fx-border-radius:2;" );
@@ -329,8 +329,7 @@ public class RecordingController
       EventHandler< ActionEvent > onEditClick = e ->
           AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(),
                                            this,
-                                           SchemasManager.getSelected(),
-                                           manager.unknowns.values() );
+                                           manager );
 
       EventRecorderUtil.dialogBox( msg, leftOption, rightOption, onDiscardClick, onEditClick );
     } else {
@@ -360,7 +359,6 @@ public class RecordingController
   {
     AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(),
                                      this,
-                                     SchemasManager.getSelected(),
-                                     manager.unknowns.values() );
+                                     manager );
   }
 }
