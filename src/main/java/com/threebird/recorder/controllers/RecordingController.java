@@ -1,14 +1,9 @@
 package com.threebird.recorder.controllers;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -24,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
@@ -34,7 +30,7 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
-import com.threebird.recorder.models.sessions.Recording;
+import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.TimeBox;
@@ -47,12 +43,7 @@ import com.threebird.recorder.views.recording.DiscreteCountBox;
  */
 public class RecordingController
 {
-  private Schema schema;
-  private int counter = 0;
-  private SimpleBooleanProperty playingProperty = new SimpleBooleanProperty( false );
-  private Timeline timer;
-  private HashMap< MappableChar, KeyBehaviorMapping > unknowns = Maps.newHashMap();
-  private Recording recording = new Recording();
+  private RecordingManager manager;
 
   @FXML private Label clientLabel;
   @FXML private Label projectLabel;
@@ -84,22 +75,23 @@ public class RecordingController
 
   private void init()
   {
-    this.schema = SchemasManager.getSelected();
+    Schema schema = SchemasManager.getSelected();
+    manager = new RecordingManager();
 
-    clientLabel.setText( this.schema.client );
-    projectLabel.setText( this.schema.project );
+    clientLabel.setText( schema.client );
+    projectLabel.setText( schema.project );
 
-    if (SessionManager.getObserver() != null) {
+    if (!Strings.isNullOrEmpty( SessionManager.getObserver() )) {
       String obsrvr = "Observer: " + SessionManager.getObserver();
       sessionDetailsBox.getChildren().add( new Label( obsrvr ) );
     }
 
-    if (SessionManager.getTherapist() != null) {
+    if (!Strings.isNullOrEmpty( SessionManager.getTherapist() )) {
       String therapist = "Therapist: " + SessionManager.getTherapist();
       sessionDetailsBox.getChildren().add( new Label( therapist ) );
     }
 
-    if (SessionManager.getCondition() != null) {
+    if (!Strings.isNullOrEmpty( SessionManager.getCondition() )) {
       String condition = "Condition: " + SessionManager.getCondition();
       sessionDetailsBox.getChildren().add( new Label( condition ) );
     }
@@ -112,17 +104,18 @@ public class RecordingController
     initializeTimer();
     initializeBehaviorCountBoxes();
 
-    playingProperty.addListener( ( obs, oldV, playing ) -> togglePlayButton( playing ) );
+    manager.playingProperty.addListener( ( obs, oldV, playing ) -> togglePlayButton( playing ) );
   }
 
   public void update()
   {
+    Schema schema = SchemasManager.getSelected();
+
     Set< MappableChar > mappedChars = schema.mappings.keySet();
-    Set< MappableChar > unknownChars = unknowns.keySet();
+    Set< MappableChar > unknownChars = manager.unknowns.keySet();
     SetView< MappableChar > ignoredChars = Sets.difference( unknownChars, mappedChars );
     SetView< MappableChar > newChars = Sets.intersection( mappedChars, unknownChars );
 
-    // Well this shit is ugly, but it gets the job done
     for (MappableChar ignored : ignoredChars) {
       BehaviorCountBox countBox = countBoxes.get( ignored );
       List< Node > target =
@@ -140,7 +133,7 @@ public class RecordingController
       countBoxes.get( newChar ).behaviorLbl.setText( behavior );
     }
 
-    unknowns.clear();
+    manager.unknowns.clear();
     addNewKeysButton.setVisible( false );
   }
 
@@ -150,10 +143,12 @@ public class RecordingController
    */
   private void initializeBehaviorCountBoxes()
   {
+    Schema schema = SchemasManager.getSelected();
+
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
       BehaviorCountBox bcb =
           kbm.isContinuous
-              ? new ContinuousCountBox( kbm, playingProperty )
+              ? new ContinuousCountBox( kbm, manager.playingProperty )
               : new DiscreteCountBox( kbm );
       VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
@@ -172,28 +167,25 @@ public class RecordingController
     timeBox = new TimeBox( 0 );
     timeBoxSlot.getChildren().clear();
     timeBoxSlot.getChildren().add( timeBox );
-    timer = new Timeline();
-    timer.setCycleCount( Animation.INDEFINITE );
-    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), this::onTick );
-    timer.getKeyFrames().add( kf );
+    manager.counter.addListener( ( ctr, old, count ) -> onTick( count.intValue() ) );
   }
 
   /**
    * Every second, update the counter. When the counter reaches the duration,
    * try to signal the user
    */
-  private void onTick( ActionEvent evt )
+  private void onTick( int count )
   {
-    counter++;
-    timeBox.setTime( counter );
-
-    if (counter == schema.duration) {
+    Schema schema = SchemasManager.getSelected();
+    timeBox.setTime( count );
+    
+    if (count == schema.duration) {
       if (schema.color) {
         timeBoxSlot.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:red;-fx-border-radius:2;" );
       }
 
       if (schema.pause) {
-        playingProperty.set( false );
+        manager.playingProperty.set( false );
       }
 
       if (schema.sound) {
@@ -208,9 +200,9 @@ public class RecordingController
   private void togglePlayButton( boolean playing )
   {
     if (playing) {
-      timer.play();
+      manager.timer.play();
     } else {
-      timer.pause();
+      manager.timer.pause();
     }
 
     playButton.setText( playing ? "Stop" : "Play" );
@@ -219,14 +211,9 @@ public class RecordingController
     recordingText.setVisible( !recordingText.isVisible() );
     pausedText.setVisible( !pausedText.isVisible() );
 
-    if (!unknowns.isEmpty()) {
+    if (!manager.unknowns.isEmpty()) {
       addNewKeysButton.setVisible( !playing );
     }
-  }
-
-  private void togglePlayingProperty()
-  {
-    playingProperty.set( !playingProperty.get() );
   }
 
   /**
@@ -244,7 +231,7 @@ public class RecordingController
   private void handleShortcut( KeyCode c )
   {
     if (KeyCode.SPACE.equals( c )) {
-      togglePlayingProperty();
+      manager.togglePlayingProperty();
     }
   }
 
@@ -258,13 +245,13 @@ public class RecordingController
     if (mapping.isContinuous) {
       if (!toggled) {
         ContinuousCountBox ccb = (ContinuousCountBox) countBoxes.get( mapping.key );
-        int duration = counter - ccb.getLastStart();
+        int duration = manager.count() - ccb.getLastStart();
         if (duration > 0) {
-          recording.log( new ContinuousBehavior( mapping.key, mapping.behavior, ccb.getLastStart(), duration ) );
+          manager.log( new ContinuousBehavior( mapping.key, mapping.behavior, ccb.getLastStart(), duration ) );
         }
       }
     } else {
-      recording.log( new DiscreteBehavior( mapping.key, mapping.behavior, counter ) );
+      manager.log( new DiscreteBehavior( mapping.key, mapping.behavior, manager.count() ) );
     }
   }
 
@@ -275,10 +262,10 @@ public class RecordingController
   private void initUnknown( MappableChar mc, boolean isContinuous )
   {
     KeyBehaviorMapping kbm = new KeyBehaviorMapping( mc, "[unknown]", isContinuous );
-    unknowns.put( mc, kbm );
+    manager.unknowns.put( mc, kbm );
     BehaviorCountBox bcb =
         kbm.isContinuous
-            ? new ContinuousCountBox( kbm, playingProperty )
+            ? new ContinuousCountBox( kbm, manager.playingProperty )
             : new DiscreteCountBox( kbm );
     VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
@@ -302,15 +289,16 @@ public class RecordingController
       return;
     }
 
-    if (!playingProperty.get()) {
+    if (!manager.playingProperty.get()) {
       return;
     }
 
     MappableChar.getForKeyCode( code ).ifPresent( mc -> {
+      Schema schema = SchemasManager.getSelected();
       if (schema.mappings.containsKey( mc )) {
         logBehavior( schema.mappings.get( mc ) );
-      } else if (unknowns.containsKey( mc )) {
-        logBehavior( unknowns.get( mc ) );
+      } else if (manager.unknowns.containsKey( mc )) {
+        logBehavior( manager.unknowns.get( mc ) );
       } else {
         initUnknown( mc, evt.isControlDown() );
       }
@@ -319,7 +307,7 @@ public class RecordingController
 
   @FXML private void onPlayPress( ActionEvent evt )
   {
-    togglePlayingProperty();
+    manager.togglePlayingProperty();
   }
 
   /**
@@ -331,7 +319,7 @@ public class RecordingController
    */
   private void checkUnknownsAndChangeScene( Runnable toScene )
   {
-    if (!unknowns.isEmpty()) {
+    if (!manager.unknowns.isEmpty()) {
       String msg = "You have recorded unknown behaviors. Would you like to edit them?";
       String leftOption = "Discard Unknowns";
       String rightOption = "Edit Unknowns";
@@ -339,7 +327,10 @@ public class RecordingController
       EventHandler< ActionEvent > onDiscardClick = e -> toScene.run();
 
       EventHandler< ActionEvent > onEditClick = e ->
-          AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
+          AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(),
+                                           this,
+                                           SchemasManager.getSelected(),
+                                           manager.unknowns.values() );
 
       EventRecorderUtil.dialogBox( msg, leftOption, rightOption, onDiscardClick, onEditClick );
     } else {
@@ -350,7 +341,7 @@ public class RecordingController
   @FXML private void onGoBackPress( ActionEvent evt )
   {
     Integer sessionNum = SessionManager.getSessionNumber();
-    if (sessionNum != null && timer.getCurrentTime().greaterThan( Duration.ZERO )) {
+    if (sessionNum != null && manager.timer.getCurrentTime().greaterThan( Duration.ZERO )) {
       SessionManager.setSessionNumber( sessionNum + 1 );
     }
     checkUnknownsAndChangeScene( ( ) -> StartMenuController.toStartMenuView() );
@@ -367,6 +358,9 @@ public class RecordingController
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-    AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(), this, schema, unknowns.values() );
+    AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(),
+                                     this,
+                                     SchemasManager.getSelected(),
+                                     manager.unknowns.values() );
   }
 }
