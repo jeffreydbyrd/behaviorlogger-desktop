@@ -205,7 +205,7 @@ public class StartMenuController
     boolean valid = true;
 
     ImmutableMap< String, FilenameComponent > displayToComp =
-        Maps.uniqueIndex( PreferencesManager.getFilenameComponents(), c -> c.display );
+        Maps.uniqueIndex( PreferencesManager.getFilenameComponents(), c -> c.name );
 
     Map< FilenameComponent, TextField > compToField = Maps.newHashMap();
     compToField.put( displayToComp.get( "Observer" ), observerField );
@@ -218,7 +218,7 @@ public class StartMenuController
       TextField field = entry.getValue();
       if (comp.enabled && field.getText().isEmpty()) {
         field.setStyle( cssRed );
-        Label lbl = new Label( "- " + comp.display + " is required for your data file's name." );
+        Label lbl = new Label( "- " + comp.name + " is required for your data file's name." );
         lbl.setTextFill( Color.RED );
         errMsgBox.getChildren().add( lbl );
         valid = false;

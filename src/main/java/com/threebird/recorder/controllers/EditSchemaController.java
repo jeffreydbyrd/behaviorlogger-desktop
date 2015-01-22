@@ -213,7 +213,7 @@ public class EditSchemaController
     duplicateMsg.setFill( Color.RED );
 
     ImmutableMap< String, FilenameComponent > displayToComp =
-        Maps.uniqueIndex( PreferencesManager.getFilenameComponents(), c -> c.display );
+        Maps.uniqueIndex( PreferencesManager.getFilenameComponents(), c -> c.name );
 
     Map< FilenameComponent, TextField > compToField = Maps.newHashMap();
     compToField.put( displayToComp.get( "Client" ), clientField );
@@ -224,7 +224,7 @@ public class EditSchemaController
       TextField field = entry.getValue();
       if (comp.enabled && field.getText().isEmpty()) {
         field.setStyle( cssRed );
-        Label lbl = new Label( "- " + comp.display + " is required for your data file's name." );
+        Label lbl = new Label( "- " + comp.name + " is required for your data file's name." );
         lbl.setTextFill( Color.RED );
         errorMsgBox.getChildren().add( lbl );
         isValid = false;

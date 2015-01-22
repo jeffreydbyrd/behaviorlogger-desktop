@@ -2,6 +2,7 @@ package com.threebird.recorder.models.preferences;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -15,6 +16,18 @@ import com.threebird.recorder.persistence.GsonUtils;
 
 public class PreferencesManager
 {
+  private static class GsonFilenameComp
+  {
+    String name;
+    boolean enabled;
+
+    public GsonFilenameComp( String name, boolean enabled )
+    {
+      this.name = name;
+      this.enabled = enabled;
+    }
+  }
+
   private static class GsonBean
   {
     String directory = System.getProperty( "user.home" );
@@ -23,13 +36,11 @@ public class PreferencesManager
     boolean pauseOnEnd = false;
     boolean soundOnEnd = false;
 
-    List< FilenameComponent > filenameComponents =
-        Lists.newArrayList( new FilenameComponent( 1, "Client", "client" ),
-                            new FilenameComponent( 2, "Project", "project" ),
-                            new FilenameComponent( 3, "Observer", "observer" ),
-                            new FilenameComponent( 4, "Therapist", "therapist" ),
-                            new FilenameComponent( 5, "Condition", "condition" ),
-                            new FilenameComponent( 6, "Session Number", "123" ) );
+    List< GsonFilenameComp > filenameComponents =
+        Lists.newArrayList( FilenameComponent.values() )
+             .stream()
+             .map( c -> new GsonFilenameComp( c.name(), c.enabled ) )
+             .collect( Collectors.toList() );
   }
 
   private static SimpleStringProperty sessionDirectoryProperty;
@@ -50,7 +61,11 @@ public class PreferencesManager
     model.colorOnEnd = getColorOnEnd();
     model.pauseOnEnd = getPauseOnEnd();
     model.soundOnEnd = getSoundOnEnd();
-    model.filenameComponents = getFilenameComponents();
+    model.filenameComponents =
+        getFilenameComponents().stream()
+                               .map( c -> new GsonFilenameComp( c.name(), c.enabled ) )
+                               .collect( Collectors.toList() );
+
     GsonUtils.save( file, model );
   }
 
@@ -154,7 +169,14 @@ public class PreferencesManager
   public static List< FilenameComponent > getFilenameComponents()
   {
     if (filenameComponents == null) {
-      filenameComponents = defaultModel.get().filenameComponents;
+      filenameComponents = Lists.newArrayList();
+      List< GsonFilenameComp > beans = defaultModel.get().filenameComponents;
+      for (GsonFilenameComp bean : beans) {
+        FilenameComponent comp = FilenameComponent.valueOf( bean.name );
+        comp.enabled = bean.enabled;
+        comp.order = beans.indexOf( bean ) + 1;
+        filenameComponents.add( comp );
+      }
     }
     return filenameComponents;
   }
@@ -164,4 +186,5 @@ public class PreferencesManager
     filenameComponents = components;
     persist();
   }
+
 }
