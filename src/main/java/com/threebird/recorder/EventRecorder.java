@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import com.threebird.recorder.controllers.PreferencesController;
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.Recordings;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The
@@ -30,6 +31,8 @@ public class EventRecorder extends Application
 
     // Cleanup background threads
     GsonUtils.es.shutdown();
+    Recordings.csvExecutor.shutdown();
+    Recordings.xlsExecutor.shutdown();
   }
 
   @Override public void start( Stage primaryStage ) throws Exception

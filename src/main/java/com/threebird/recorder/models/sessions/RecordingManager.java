@@ -1,6 +1,7 @@
 package com.threebird.recorder.models.sessions;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,16 +11,20 @@ import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.util.Duration;
 
+import com.google.common.collect.Lists;
 import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.persistence.Recordings;
 
 public class RecordingManager
 {
@@ -30,34 +35,53 @@ public class RecordingManager
   public final ObservableList< ContinuousBehavior > continuous = FXCollections.observableArrayList();
   public final ObservableMap< MappableChar, KeyBehaviorMapping > unknowns = FXCollections.observableHashMap();
 
-  private final File file;
-
   public RecordingManager()
   {
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
-    System.out.println( Thread.currentThread().getName() );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), evt -> {
       counter.set( counter.get() + 1 );
     } );
     timer.getKeyFrames().add( kf );
 
-    String directory = SchemasManager.getSelected().sessionDirectory.getPath();
-    String path = String.format( "%s/%s", directory, getFilename() );
-    this.file = new File( path );
+    String fullFileName = getFullFileName();
+
+    discrete.addListener( ( ListChangeListener.Change< ? extends DiscreteBehavior > c ) -> {
+      persist( fullFileName );
+    } );
+
+    continuous.addListener( ( ListChangeListener.Change< ? extends ContinuousBehavior > c ) -> {
+      persist( fullFileName );
+    } );
   }
 
-  public static String getFilename()
+  private void persist( String fullFileName )
   {
+//    Recordings.saveCsv( new File( fullFileName + ".csv" ), allBehaviors() );
+    Recordings.saveXls( new File( fullFileName + ".xls" ), allBehaviors() );
+  }
+
+  private List< Behavior > allBehaviors()
+  {
+    ArrayList< Behavior > behaviors = Lists.newArrayList();
+    behaviors.addAll( discrete );
+    behaviors.addAll( continuous );
+    return behaviors;
+  }
+
+  public static String getFullFileName()
+  {
+    String directory = SchemasManager.getSelected().sessionDirectory.getPath();
+
     List< String > components =
-        PreferencesManager.getFilenameComponents()
-                          .stream()
+        PreferencesManager.getFilenameComponents().stream()
                           .filter( comp -> comp.enabled )
                           .map( comp -> comp.getComponent() )
                           .collect( Collectors.toList() );
 
-    String join = String.join( "-", components );
-    return String.format( "%s.xls", join );
+    String filename = String.join( "-", components );
+
+    return String.format( "%s/%s", directory, filename );
   }
 
   public void togglePlayingProperty()
