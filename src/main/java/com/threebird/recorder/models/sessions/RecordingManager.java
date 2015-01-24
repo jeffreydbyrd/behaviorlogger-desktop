@@ -2,6 +2,7 @@ package com.threebird.recorder.models.sessions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,8 +58,9 @@ public class RecordingManager
 
   private void persist( String fullFileName )
   {
-//    Recordings.saveCsv( new File( fullFileName + ".csv" ), allBehaviors() );
-    Recordings.saveXls( new File( fullFileName + ".xls" ), allBehaviors() );
+    List< Behavior > behaviors = allBehaviors();
+    Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors );
+    // Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors );
   }
 
   private List< Behavior > allBehaviors()
@@ -66,6 +68,7 @@ public class RecordingManager
     ArrayList< Behavior > behaviors = Lists.newArrayList();
     behaviors.addAll( discrete );
     behaviors.addAll( continuous );
+    Collections.sort( behaviors, Behavior.comparator );
     return behaviors;
   }
 

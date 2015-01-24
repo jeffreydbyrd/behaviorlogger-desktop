@@ -1,6 +1,8 @@
 package com.threebird.recorder.persistence;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -9,8 +11,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.io.Files;
 import com.threebird.recorder.models.behaviors.Behavior;
 
 public class Recordings
@@ -29,20 +36,15 @@ public class Recordings
 
   public static enum Writer
   {
-    CSV(new ArrayBlockingQueue< SaveDetails >( 1 ), Executors.newSingleThreadExecutor(), Recordings::writeCsv),
-    XLS(new ArrayBlockingQueue< SaveDetails >( 1 ), Executors.newSingleThreadExecutor(), Recordings::writeXls);
+    CSV(Recordings::writeCsv),
+    XLS(Recordings::writeXls);
 
-    private BlockingQueue< SaveDetails > q;
-    private ExecutorService es;
-    private Thread taskManager;
+    private final BlockingQueue< SaveDetails > q = new ArrayBlockingQueue< SaveDetails >( 1 );
+    private final ExecutorService es = Executors.newSingleThreadExecutor();
+    private final Thread taskManager;
 
-    private Writer( BlockingQueue< SaveDetails > queue,
-                             ExecutorService executor,
-                             Function< SaveDetails, Long > func )
+    private Writer( Function< SaveDetails, Long > func )
     {
-      this.q = queue;
-      this.es = executor;
-
       this.taskManager = new Thread( ( ) -> {
         while (true) {
           try {
@@ -94,15 +96,30 @@ public class Recordings
 
   private static Long writeCsv( SaveDetails details )
   {
-    File file = details.f;
-    List< Behavior > behaviors = details.behaviors;
-    System.out.println( "Writing CSV file for " + behaviors.size() + " behaviors" );
-    return 0L;
+    try {
+      if (!details.f.exists()) {
+        details.f.createNewFile();
+      }
+
+      String[] headers = { "Key", "Timestamp", "Description" };
+      BufferedWriter out = Files.newWriter( details.f, Charsets.UTF_8 );
+      CSVPrinter printer = CSVFormat.DEFAULT.withHeader( headers ).print( out );
+
+      for (Behavior b : details.behaviors) {
+        printer.printRecord( b.key.c + "", b.timeDisplay(), b.description );
+      }
+
+      printer.flush();
+      printer.close();
+
+      return details.f.length();
+    } catch (IOException e) {
+      throw new RuntimeException( e );
+    }
   }
 
   private static Long writeXls( SaveDetails details )
   {
-    File file = details.f;
     List< Behavior > behaviors = details.behaviors;
     try {
       Thread.sleep( 1000 );
@@ -113,5 +130,4 @@ public class Recordings
     System.out.println( "Writing XLS file for " + behaviors.size() + " behaviors" );
     return 0L;
   }
-
 }

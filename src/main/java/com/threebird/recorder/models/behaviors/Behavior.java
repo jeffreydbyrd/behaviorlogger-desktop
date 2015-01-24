@@ -1,5 +1,7 @@
 package com.threebird.recorder.models.behaviors;
 
+import java.util.Comparator;
+
 import com.threebird.recorder.models.MappableChar;
 
 /**
@@ -7,14 +9,20 @@ import com.threebird.recorder.models.MappableChar;
  */
 public abstract class Behavior
 {
+  public static final Comparator< Behavior > comparator = ( Behavior o1, Behavior o2 ) -> o1.startTime - o2.startTime;
+
+  public final int startTime;
   public final MappableChar key;
   public final String description;
 
-  Behavior( MappableChar key, String description )
+  Behavior( MappableChar key, String description, int startTime )
   {
     this.key = key;
     this.description = description;
+    this.startTime = startTime;
   }
 
-  abstract boolean isContinuous();
+  public abstract boolean isContinuous();
+
+  public abstract String timeDisplay();
 }
