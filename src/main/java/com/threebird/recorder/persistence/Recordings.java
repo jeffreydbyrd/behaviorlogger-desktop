@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.threebird.recorder.models.behaviors.Behavior;
 
 public class Recordings
@@ -18,34 +19,77 @@ public class Recordings
   {
     public List< Behavior > behaviors;
     public File f;
+
+    public SaveDetails( List< Behavior > behaviors, File f )
+    {
+      this.behaviors = behaviors;
+      this.f = f;
+    }
   }
 
-  private static BlockingQueue< SaveDetails > csvQueue = new ArrayBlockingQueue< SaveDetails >( 1 );
-  public static ExecutorService csvExecutor = Executors.newSingleThreadExecutor();
-
-  private static BlockingQueue< SaveDetails > xlsQueue = new ArrayBlockingQueue< SaveDetails >( 1 );
-  public static ExecutorService xlsExecutor = Executors.newSingleThreadExecutor();
-
-  private static Thread csvWriter = new Thread( createWriter( csvQueue, csvExecutor, Recordings::writeCsv ) );
-  private static Thread xlsWriter = new Thread( createWriter( xlsQueue, xlsExecutor, Recordings::writeXls ) );
-
-  private static Runnable createWriter( BlockingQueue< SaveDetails > bq,
-                                        ExecutorService es,
-                                        Function< SaveDetails, Long > f )
+  public static enum Writer
   {
-    return ( ) -> {
-      while (true) {
-        try {
-          SaveDetails sd = bq.take();
-          Future< Long > future = es.submit( ( ) -> f.apply( sd ) );
-          future.get();
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        } catch (ExecutionException e) {
-          e.printStackTrace();
+    CSV(new ArrayBlockingQueue< SaveDetails >( 1 ), Executors.newSingleThreadExecutor(), Recordings::writeCsv),
+    XLS(new ArrayBlockingQueue< SaveDetails >( 1 ), Executors.newSingleThreadExecutor(), Recordings::writeXls);
+
+    private BlockingQueue< SaveDetails > q;
+    private ExecutorService es;
+    private Thread taskManager;
+
+    private Writer( BlockingQueue< SaveDetails > queue,
+                             ExecutorService executor,
+                             Function< SaveDetails, Long > func )
+    {
+      this.q = queue;
+      this.es = executor;
+
+      this.taskManager = new Thread( ( ) -> {
+        while (true) {
+          try {
+            SaveDetails sd = q.take();
+            Future< Long > future = es.submit( ( ) -> func.apply( sd ) );
+            future.get();
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          } catch (ExecutionException e) {
+            e.printStackTrace();
+          }
         }
+      } );
+
+      this.taskManager.setDaemon( true );
+    }
+
+    public void schedule( SaveDetails details )
+    {
+      Preconditions.checkState( !es.isShutdown() );
+
+      if (!this.taskManager.isAlive()) {
+        this.taskManager.start();
       }
-    };
+
+      q.clear();
+      try {
+        q.put( details );
+      } catch (InterruptedException e) {
+        throw new RuntimeException( e );
+      }
+    }
+
+    public void shutdown()
+    {
+      es.shutdown();
+    }
+  }
+
+  public static void saveCsv( File f, List< Behavior > behaviors )
+  {
+    Writer.CSV.schedule( new SaveDetails( behaviors, f ) );
+  }
+
+  public static void saveXls( File f, List< Behavior > behaviors )
+  {
+    Writer.XLS.schedule( new SaveDetails( behaviors, f ) );
   }
 
   private static Long writeCsv( SaveDetails details )
@@ -70,41 +114,4 @@ public class Recordings
     return 0L;
   }
 
-  public static void saveCsv( File f, List< Behavior > behaviors )
-  {
-    if (!csvWriter.isAlive()) {
-      csvWriter.setDaemon( true );
-      csvWriter.start();
-    }
-
-    csvQueue.clear();
-
-    try {
-      SaveDetails details = new SaveDetails();
-      details.behaviors = behaviors;
-      details.f = f;
-      csvQueue.put( details );
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public static void saveXls( File f, List< Behavior > behaviors )
-  {
-    if (!xlsWriter.isAlive()) {
-      xlsWriter.setDaemon( true );
-      xlsWriter.start();
-    }
-
-    xlsQueue.clear();
-
-    try {
-      SaveDetails details = new SaveDetails();
-      details.behaviors = behaviors;
-      details.f = f;
-      xlsQueue.put( details );
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
 }

@@ -31,8 +31,8 @@ public class EventRecorder extends Application
 
     // Cleanup background threads
     GsonUtils.es.shutdown();
-    Recordings.csvExecutor.shutdown();
-    Recordings.xlsExecutor.shutdown();
+    Recordings.Writer.CSV.shutdown();
+    Recordings.Writer.XLS.shutdown();
   }
 
   @Override public void start( Stage primaryStage ) throws Exception
