@@ -148,7 +148,7 @@ public class RecordingController
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
       BehaviorCountBox bcb =
           kbm.isContinuous
-              ? new ContinuousCountBox( kbm, manager.playingProperty )
+              ? new ContinuousCountBox( kbm, manager )
               : new DiscreteCountBox( kbm );
       VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
@@ -240,10 +240,10 @@ public class RecordingController
    */
   private void logBehavior( KeyBehaviorMapping mapping )
   {
-    boolean toggled = countBoxes.get( mapping.key ).toggle();
+    boolean toggledOn = countBoxes.get( mapping.key ).toggle();
 
     if (mapping.isContinuous) {
-      if (!toggled) {
+      if (!toggledOn) {
         ContinuousCountBox ccb = (ContinuousCountBox) countBoxes.get( mapping.key );
         int duration = manager.count() - ccb.getLastStart();
         if (duration > 0) {
@@ -265,7 +265,7 @@ public class RecordingController
     manager.unknowns.put( mc, kbm );
     BehaviorCountBox bcb =
         kbm.isContinuous
-            ? new ContinuousCountBox( kbm, manager.playingProperty )
+            ? new ContinuousCountBox( kbm, manager )
             : new DiscreteCountBox( kbm );
     VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 

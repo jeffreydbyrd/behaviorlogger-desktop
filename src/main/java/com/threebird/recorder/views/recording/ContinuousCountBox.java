@@ -3,11 +3,11 @@ package com.threebird.recorder.views.recording;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.util.Duration;
 
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.sessions.RecordingManager;
 
 /**
  * A {@link BehaviorCountBox} used for keeping track of a
@@ -20,16 +20,18 @@ public class ContinuousCountBox extends BehaviorCountBox
   private Timeline timer;
   private boolean toggled = false;
   private int start = 0;
+  private RecordingManager manager;
 
-  public ContinuousCountBox( KeyBehaviorMapping kbm, SimpleBooleanProperty playingProperty )
+  public ContinuousCountBox( KeyBehaviorMapping kbm, RecordingManager manager )
   {
     super( kbm );
+    this.manager = manager;
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), evt -> incrementCount() );
     timer.getKeyFrames().add( kf );
 
-    playingProperty.addListener( ( obs, oldV, playing ) -> {
+    manager.playingProperty.addListener( ( obs, oldV, playing ) -> {
       if (toggled) {
         if (playing) {
           timer.play();
@@ -52,7 +54,7 @@ public class ContinuousCountBox extends BehaviorCountBox
   {
     toggled = !toggled;
     if (toggled) {
-      start = count;
+      start = manager.count();
       timer.play();
       this.setStyle( TOGGLED_STYLE );
     } else {
