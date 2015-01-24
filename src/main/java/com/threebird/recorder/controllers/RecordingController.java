@@ -273,7 +273,12 @@ public class RecordingController
     target.getChildren().add( new Separator() );
 
     countBoxes.put( kbm.key, bcb );
-    countBoxes.get( mc ).toggle();
+
+    if (!isContinuous) {
+      logBehavior( kbm );
+    } else {
+      countBoxes.get( mc ).toggle();
+    }
   }
 
   /**
