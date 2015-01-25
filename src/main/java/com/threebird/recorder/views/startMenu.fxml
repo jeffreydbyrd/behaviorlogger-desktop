@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.*?>
 <?import javafx.geometry.*?>
@@ -135,6 +136,11 @@
                                        <children>
                                           <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Data File:" HBox.hgrow="NEVER" />
                                           <Label fx:id="filenameLbl" HBox.hgrow="ALWAYS" />
+                                          <ImageView fx:id="warningImg" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+                                             <image>
+                                                <Image url="@warning-small.png" />
+                                             </image>
+                                          </ImageView>
                                        </children>
                                        <VBox.margin>
                                           <Insets top="10.0" />

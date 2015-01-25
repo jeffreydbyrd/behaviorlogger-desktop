@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -60,6 +61,7 @@ public class StartMenuController
   @FXML private TextField sessionField;
 
   @FXML private Label filenameLbl;
+  @FXML private ImageView warningImg;
 
   @FXML private VBox errMsgBox;
 
@@ -159,6 +161,7 @@ public class StartMenuController
     SessionManager.conditionProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     SessionManager.sessionNumberProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
 
+//    warningImg.setImage( new Image("./views/warning.png") );
     updateFilenameLabel();
   }
 
@@ -170,12 +173,10 @@ public class StartMenuController
     String fullFileName = RecordingManager.getFullFileName();
     File fCsv = new File( fullFileName + ".csv" );
     File fXls = new File( fullFileName + ".xls" );
-    if (fCsv.exists() || fXls.exists()) {
-      String cssOrage = "-fx-background-color:#ffbf00;-fx-border-color: #c50;";
-      filenameLbl.setStyle( cssOrage );
-    } else {
-      filenameLbl.setStyle( "" );
-    }
+
+    boolean isConflicting = fCsv.exists() || fXls.exists();
+    warningImg.setVisible( isConflicting );
+    filenameLbl.setTextFill( isConflicting ? Color.ORANGE : Color.BLACK );
   }
 
   /**
