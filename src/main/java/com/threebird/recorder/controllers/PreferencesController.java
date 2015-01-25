@@ -103,7 +103,7 @@ public class PreferencesController
 
   private void initComponentsBox()
   {
-    List< FilenameComponent > components = PreferencesManager.getFilenameComponents();
+    List< FilenameComponent > components = PreferencesManager.filenameComponents();
 
     for (FilenameComponent comp : components) {
       FilenameComponentView node = comp.view();

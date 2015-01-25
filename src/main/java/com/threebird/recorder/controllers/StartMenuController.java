@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -160,6 +161,10 @@ public class StartMenuController
     SessionManager.therapistProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     SessionManager.conditionProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     SessionManager.sessionNumberProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
+    PreferencesManager.filenameComponents().addListener( (ListChangeListener< FilenameComponent >) c -> {
+      updateFilenameLabel();
+    } );
+    SchemasManager.selectedProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
 
     updateFilenameLabel();
   }
@@ -220,7 +225,7 @@ public class StartMenuController
     boolean valid = true;
 
     ImmutableMap< String, FilenameComponent > displayToComp =
-        Maps.uniqueIndex( PreferencesManager.getFilenameComponents(), c -> c.name );
+        Maps.uniqueIndex( PreferencesManager.filenameComponents(), c -> c.name );
 
     Map< FilenameComponent, TextField > compToField = Maps.newHashMap();
     compToField.put( displayToComp.get( "Observer" ), observerField );

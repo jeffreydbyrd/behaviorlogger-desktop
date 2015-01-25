@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
@@ -44,7 +46,7 @@ public class PreferencesManager
   }
 
   private static SimpleStringProperty sessionDirectoryProperty;
-  private static List< FilenameComponent > filenameComponents;
+  private static ObservableList< FilenameComponent > filenameComponents;
   private static SimpleIntegerProperty durationProperty;
   private static SimpleBooleanProperty colorOnEndProperty;
   private static SimpleBooleanProperty pauseOnEndProperty;
@@ -62,7 +64,7 @@ public class PreferencesManager
     model.pauseOnEnd = getPauseOnEnd();
     model.soundOnEnd = getSoundOnEnd();
     model.filenameComponents =
-        getFilenameComponents().stream()
+        filenameComponents().stream()
                                .map( c -> new GsonFilenameComp( c.name(), c.enabled ) )
                                .collect( Collectors.toList() );
 
@@ -166,10 +168,10 @@ public class PreferencesManager
     return soundOnEndProperty().get();
   }
 
-  public static List< FilenameComponent > getFilenameComponents()
+  public static ObservableList< FilenameComponent > filenameComponents()
   {
     if (filenameComponents == null) {
-      filenameComponents = Lists.newArrayList();
+      filenameComponents = FXCollections.observableArrayList();
       List< GsonFilenameComp > beans = defaultModel.get().filenameComponents;
       for (GsonFilenameComp bean : beans) {
         FilenameComponent comp = FilenameComponent.valueOf( bean.name );
@@ -183,7 +185,8 @@ public class PreferencesManager
 
   public static void saveFilenameComponents( List< FilenameComponent > components )
   {
-    filenameComponents = components;
+    filenameComponents.clear();
+    filenameComponents.addAll( components );
     persist();
   }
 

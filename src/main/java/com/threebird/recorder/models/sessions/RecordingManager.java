@@ -74,7 +74,7 @@ public class RecordingManager
 
   public static String getFileName()
   {
-    return PreferencesManager.getFilenameComponents().stream()
+    return PreferencesManager.filenameComponents().stream()
                              .filter( comp -> comp.enabled )
                              .map( comp -> comp.getComponent() )
                              .collect( Collectors.joining( "-" ) );

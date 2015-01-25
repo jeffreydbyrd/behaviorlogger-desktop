@@ -213,7 +213,7 @@ public class EditSchemaController
     duplicateMsg.setFill( Color.RED );
 
     ImmutableMap< String, FilenameComponent > displayToComp =
-        Maps.uniqueIndex( PreferencesManager.getFilenameComponents(), c -> c.name );
+        Maps.uniqueIndex( PreferencesManager.filenameComponents(), c -> c.name );
 
     Map< FilenameComponent, TextField > compToField = Maps.newHashMap();
     compToField.put( displayToComp.get( "Client" ), clientField );
