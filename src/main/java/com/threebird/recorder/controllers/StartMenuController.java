@@ -161,7 +161,6 @@ public class StartMenuController
     SessionManager.conditionProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     SessionManager.sessionNumberProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
 
-//    warningImg.setImage( new Image("./views/warning.png") );
     updateFilenameLabel();
   }
 
