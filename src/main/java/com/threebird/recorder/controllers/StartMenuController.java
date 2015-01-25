@@ -1,16 +1,11 @@
 package com.threebird.recorder.controllers;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.beans.value.WritableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -28,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
@@ -170,8 +164,18 @@ public class StartMenuController
 
   private void updateFilenameLabel()
   {
-    filenameLbl.setText( RecordingManager.getFileName() );
-    
+    String text = String.format( "%s (.csv/.xls)", RecordingManager.getFileName() );
+    filenameLbl.setText( text );
+
+    String fullFileName = RecordingManager.getFullFileName();
+    File fCsv = new File( fullFileName + ".csv" );
+    File fXls = new File( fullFileName + ".xls" );
+    if (fCsv.exists() || fXls.exists()) {
+      String cssOrage = "-fx-background-color:#ffbf00;-fx-border-color: #c50;";
+      filenameLbl.setStyle( cssOrage );
+    } else {
+      filenameLbl.setStyle( "" );
+    }
   }
 
   /**
