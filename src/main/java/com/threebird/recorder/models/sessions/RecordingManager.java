@@ -72,18 +72,18 @@ public class RecordingManager
     return behaviors;
   }
 
+  public static String getFileName()
+  {
+    return PreferencesManager.getFilenameComponents().stream()
+                             .filter( comp -> comp.enabled )
+                             .map( comp -> comp.getComponent() )
+                             .collect( Collectors.joining( "-" ) );
+  }
+
   public static String getFullFileName()
   {
     String directory = SchemasManager.getSelected().sessionDirectory.getPath();
-
-    List< String > components =
-        PreferencesManager.getFilenameComponents().stream()
-                          .filter( comp -> comp.enabled )
-                          .map( comp -> comp.getComponent() )
-                          .collect( Collectors.toList() );
-
-    String filename = String.join( "-", components );
-
+    String filename = getFileName();
     return String.format( "%s/%s", directory, filename );
   }
 

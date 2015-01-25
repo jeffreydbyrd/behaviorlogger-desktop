@@ -1,12 +1,16 @@
 package com.threebird.recorder.controllers;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WritableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -24,11 +28,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.TimeBox;
@@ -58,6 +64,8 @@ public class StartMenuController
   @FXML private TextField therapistField;
   @FXML private TextField conditionField;
   @FXML private TextField sessionField;
+
+  @FXML private Label filenameLbl;
 
   @FXML private VBox errMsgBox;
 
@@ -127,20 +135,6 @@ public class StartMenuController
     } );
   }
 
-  /**
-   * Used only for the below method "initSessionDetails" for the purpose of code
-   * reduction
-   */
-  private static ChangeListener< Boolean > makeChangeListener( TextField field, Consumer< String > setter )
-  {
-    return ( obsrvr, oldV, newV ) -> {
-      if (!newV) {
-        String text = field.getText();
-        setter.accept( text != null ? text.trim() : "" );
-      }
-    };
-  }
-
   private void initSessionDetails()
   {
     observerField.setText( SessionManager.getObserver() );
@@ -148,25 +142,36 @@ public class StartMenuController
     conditionField.setText( SessionManager.getCondition() );
     sessionField.setText( SessionManager.getSessionNumber().toString() );
 
-    observerField.focusedProperty().addListener( makeChangeListener( observerField, SessionManager::setObserver ) );
-    therapistField.focusedProperty().addListener( makeChangeListener( therapistField, SessionManager::setTherapist ) );
-    conditionField.focusedProperty().addListener( makeChangeListener( conditionField, SessionManager::setCondition ) );
+    observerField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setObserver( newV ) );
+    therapistField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setTherapist( newV ) );
+    conditionField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setCondition( newV ) );
 
     // Put in some idiot-proof logic for the session # (limit to just digits,
     // prevent exceeding max_value)
     EventHandler< ? super KeyEvent > limiter =
         EventRecorderUtil.createFieldLimiter( sessionField, "0123456789".toCharArray(), 9 );
     sessionField.setOnKeyTyped( limiter );
-    sessionField.focusedProperty().addListener( ( o, old, newV ) -> {
-      if (!newV) {
-        String text = sessionField.getText().trim();
-        if (text.isEmpty()) {
-          SessionManager.setSessionNumber( 0 );
-        } else {
-          SessionManager.setSessionNumber( Integer.valueOf( text.trim() ) );
-        }
+    sessionField.textProperty().addListener( ( o, old, newV ) -> {
+      String text = sessionField.getText().trim();
+      if (text.isEmpty()) {
+        SessionManager.setSessionNumber( 0 );
+      } else {
+        SessionManager.setSessionNumber( Integer.valueOf( text.trim() ) );
       }
     } );
+
+    SessionManager.observerProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
+    SessionManager.therapistProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
+    SessionManager.conditionProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
+    SessionManager.sessionNumberProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
+
+    updateFilenameLabel();
+  }
+
+  private void updateFilenameLabel()
+  {
+    filenameLbl.setText( RecordingManager.getFileName() );
+    
   }
 
   /**

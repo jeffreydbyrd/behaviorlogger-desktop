@@ -123,13 +123,22 @@
                                     </HBox>
                                     <HBox spacing="5.0">
                                        <children>
-                                          <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Session #" HBox.hgrow="NEVER">
+                                          <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Session #:" HBox.hgrow="NEVER">
                                              <padding>
                                                 <Insets top="5.0" />
                                              </padding>
                                           </Label>
                                           <TextField fx:id="sessionField" HBox.hgrow="ALWAYS" />
                                        </children>
+                                    </HBox>
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Data File:" HBox.hgrow="NEVER" />
+                                          <Label fx:id="filenameLbl" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
                                     </HBox>
                                     <VBox fx:id="errMsgBox" spacing="4.0" />
                                  </children>
