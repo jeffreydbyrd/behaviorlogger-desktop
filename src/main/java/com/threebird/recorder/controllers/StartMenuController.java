@@ -169,13 +169,19 @@ public class StartMenuController
     String text = String.format( "%s (.csv/.xls)", RecordingManager.getFileName() );
     filenameLbl.setText( text );
 
+    boolean isConflicting = dataFilenameHasConflict();
+    warningImg.setVisible( isConflicting );
+    filenameLbl.setTextFill( isConflicting ? Color.ORANGE : Color.BLACK );
+  }
+
+  private boolean dataFilenameHasConflict()
+  {
     String fullFileName = RecordingManager.getFullFileName();
     File fCsv = new File( fullFileName + ".csv" );
     File fXls = new File( fullFileName + ".xls" );
 
     boolean isConflicting = fCsv.exists() || fXls.exists();
-    warningImg.setVisible( isConflicting );
-    filenameLbl.setTextFill( isConflicting ? Color.ORANGE : Color.BLACK );
+    return isConflicting;
   }
 
   /**
@@ -251,6 +257,19 @@ public class StartMenuController
       return;
     }
 
-    RecordingController.toRecordingView();
+    boolean isConflicting = dataFilenameHasConflict();
+    if (isConflicting) {
+      String msg =
+          "Starting this session will overwrite an existing data file.\n"
+              + "Click Cancel to stay here or Continue to proceed.";
+      String leftOption = "Cancel";
+      String rightOption = "Continue";
+
+      EventHandler< ActionEvent > onCancelClick = e -> {};
+      EventHandler< ActionEvent > onContinueClick = e -> RecordingController.toRecordingView();
+      EventRecorderUtil.dialogBox( msg, leftOption, rightOption, onCancelClick, onContinueClick );
+    } else {
+      RecordingController.toRecordingView();
+    }
   }
 }

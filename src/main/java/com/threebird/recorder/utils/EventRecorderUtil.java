@@ -109,7 +109,7 @@ public class EventRecorderUtil
   {
     if (dialogStage == null) {
       dialogStage = new Stage();
-      dialogStage.initModality( Modality.WINDOW_MODAL );
+      dialogStage.initModality( Modality.APPLICATION_MODAL );
       dialogStage.initStyle( StageStyle.UTILITY );
       dialogStage.initOwner( EventRecorder.STAGE );
     }
