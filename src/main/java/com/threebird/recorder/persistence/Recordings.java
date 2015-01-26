@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -19,19 +18,22 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.SessionManager;
 
 public class Recordings
 {
-  private static class SaveDetails
+  static class SaveDetails
   {
     public List< Behavior > behaviors;
     public File f;
-
-    public SaveDetails( List< Behavior > behaviors, File f )
-    {
-      this.behaviors = behaviors;
-      this.f = f;
-    }
+    public String client;
+    public String project;
+    public String observer;
+    public String therapist;
+    public String condition;
+    public Integer sessionNumber;
+    public Integer totalTime;
   }
 
   public static enum Writer
@@ -51,10 +53,8 @@ public class Recordings
             SaveDetails sd = q.take();
             Future< Long > future = es.submit( ( ) -> func.apply( sd ) );
             future.get();
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          } catch (ExecutionException e) {
-            e.printStackTrace();
+          } catch (Exception e) {
+            throw new RuntimeException( e );
           }
         }
       } );
@@ -84,14 +84,30 @@ public class Recordings
     }
   }
 
-  public static void saveCsv( File f, List< Behavior > behaviors )
+  private static SaveDetails createSaveDetails( File f, List< Behavior > behaviors, int totalTime )
   {
-    Writer.CSV.schedule( new SaveDetails( behaviors, f ) );
+    SaveDetails sd = new SaveDetails();
+
+    sd.f = f;
+    sd.behaviors = behaviors;
+    sd.client = SchemasManager.getSelected().client;
+    sd.project = SchemasManager.getSelected().project;
+    sd.observer = SessionManager.getObserver();
+    sd.therapist = SessionManager.getTherapist();
+    sd.condition = SessionManager.getCondition();
+    sd.sessionNumber = SessionManager.getSessionNumber();
+    sd.totalTime = totalTime;
+    return sd;
   }
 
-  public static void saveXls( File f, List< Behavior > behaviors )
+  public static void saveCsv( File f, List< Behavior > behaviors, int count )
   {
-    Writer.XLS.schedule( new SaveDetails( behaviors, f ) );
+    Writer.CSV.schedule( createSaveDetails( f, behaviors, count ) );
+  }
+
+  public static void saveXls( File f, List< Behavior > behaviors, int count )
+  {
+    Writer.XLS.schedule( createSaveDetails( f, behaviors, count ) );
   }
 
   private static Long writeCsv( SaveDetails details )
@@ -120,14 +136,11 @@ public class Recordings
 
   private static Long writeXls( SaveDetails details )
   {
-    List< Behavior > behaviors = details.behaviors;
     try {
-      Thread.sleep( 1000 );
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      WriteXls.write( details );
+      return details.f.length();
+    } catch (IOException e) {
+      throw new RuntimeException( e );
     }
-    System.out.println( "Writing XLS file for " + behaviors.size() + " behaviors" );
-    return 0L;
   }
 }

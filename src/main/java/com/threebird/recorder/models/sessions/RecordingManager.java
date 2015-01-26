@@ -45,22 +45,21 @@ public class RecordingManager
     } );
     timer.getKeyFrames().add( kf );
 
-    String fullFileName = getFullFileName();
-
-    discrete.addListener( ( ListChangeListener.Change< ? extends DiscreteBehavior > c ) -> {
-      persist( fullFileName );
-    } );
-
-    continuous.addListener( ( ListChangeListener.Change< ? extends ContinuousBehavior > c ) -> {
-      persist( fullFileName );
+    discrete.addListener( (ListChangeListener< DiscreteBehavior >) c -> persist() );
+    continuous.addListener( (ListChangeListener< ContinuousBehavior >) c -> persist() );
+    playingProperty.addListener( ( o, oldV, newV ) -> {
+      if (!newV) {
+        persist();
+      }
     } );
   }
 
-  private void persist( String fullFileName )
+  private void persist()
   {
+    String fullFileName = getFullFileName();
     List< Behavior > behaviors = allBehaviors();
-    Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors );
-    // Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors );
+    Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors, count() );
+    Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count() );
   }
 
   private List< Behavior > allBehaviors()

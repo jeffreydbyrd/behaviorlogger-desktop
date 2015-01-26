@@ -181,4 +181,9 @@ public class EventRecorderUtil
 
     return String.format( "%02d:%02d:%02d", hours, minutes, seconds );
   }
+
+  public static double secondsToMinutes( int seconds )
+  {
+    return ((double) seconds) / 60.0;
+  }
 }

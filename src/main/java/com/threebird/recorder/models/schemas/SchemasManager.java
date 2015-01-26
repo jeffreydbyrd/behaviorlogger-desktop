@@ -7,10 +7,6 @@ import javafx.collections.ObservableList;
 
 import com.threebird.recorder.persistence.Schemas;
 
-/**
- * @author biff
- *
- */
 public class SchemasManager
 {
   private static ObservableList< Schema > schemas;

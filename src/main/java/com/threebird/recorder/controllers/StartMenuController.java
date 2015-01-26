@@ -183,7 +183,7 @@ public class StartMenuController
   {
     String fullFileName = RecordingManager.getFullFileName();
     File fCsv = new File( fullFileName + ".csv" );
-    File fXls = new File( fullFileName + ".xls" );
+    File fXls = new File( fullFileName + ".xlsx" );
 
     boolean isConflicting = fCsv.exists() || fXls.exists();
     return isConflicting;
