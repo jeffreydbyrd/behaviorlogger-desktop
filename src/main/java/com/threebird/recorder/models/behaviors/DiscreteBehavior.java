@@ -20,6 +20,6 @@ public class DiscreteBehavior extends Behavior
 
   @Override public String timeDisplay()
   {
-    return EventRecorderUtil.secondsToTimestamp( startTime );
+    return EventRecorderUtil.millisToTimestamp( startTime );
   }
 }

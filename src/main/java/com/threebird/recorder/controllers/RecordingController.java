@@ -14,7 +14,6 @@ import javafx.scene.control.Separator;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -33,7 +32,6 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
-import com.threebird.recorder.views.TimeBox;
 import com.threebird.recorder.views.recording.BehaviorCountBox;
 import com.threebird.recorder.views.recording.ContinuousCountBox;
 import com.threebird.recorder.views.recording.DiscreteCountBox;
@@ -55,8 +53,7 @@ public class RecordingController
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
-  @FXML private Pane timeBoxSlot;
-  private TimeBox timeBox;
+  @FXML private Label timeBox;
 
   @FXML private Button playButton;
   @FXML private Button goBackButton;
@@ -164,24 +161,21 @@ public class RecordingController
    */
   private void initializeTimer()
   {
-    timeBox = new TimeBox( 0 );
-    timeBoxSlot.getChildren().clear();
-    timeBoxSlot.getChildren().add( timeBox );
     manager.counter.addListener( ( ctr, old, count ) -> onTick( count.intValue() ) );
   }
 
   /**
-   * Every second, update the counter. When the counter reaches the duration,
-   * try to signal the user
+   * Every millisecond, update the counter. When the counter reaches the
+   * duration, try to signal the user
    */
-  private void onTick( int count )
+  private void onTick( int millis )
   {
     Schema schema = SchemasManager.getSelected();
-    timeBox.setTime( count );
+    timeBox.setText( EventRecorderUtil.millisToTimestamp( millis ) );
 
-    if (count == schema.duration) {
+    if (millis == schema.duration * 1000) {
       if (schema.color) {
-        timeBoxSlot.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:red;-fx-border-radius:2;" );
+        timeBox.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:red;-fx-border-radius:2;" );
       }
 
       if (schema.pause) {
@@ -246,9 +240,7 @@ public class RecordingController
       if (!toggledOn) {
         ContinuousCountBox ccb = (ContinuousCountBox) countBoxes.get( mapping.key );
         int duration = manager.count() - ccb.getLastStart();
-        if (duration > 0) {
-          manager.log( new ContinuousBehavior( mapping.key, mapping.behavior, ccb.getLastStart(), duration ) );
-        }
+        manager.log( new ContinuousBehavior( mapping.key, mapping.behavior, ccb.getLastStart(), duration ) );
       }
     } else {
       manager.log( new DiscreteBehavior( mapping.key, mapping.behavior, manager.count() ) );

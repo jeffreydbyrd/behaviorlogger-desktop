@@ -72,7 +72,7 @@ public class WriteXls
     // Session Time
     r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Session Time" );
-    r.createCell( 1 ).setCellValue( EventRecorderUtil.secondsToTimestamp( details.totalTime ) );
+    r.createCell( 1 ).setCellValue( EventRecorderUtil.millisToTimestamp( details.totalTimeMillis ) );
 
     rownum++; // Skip a row
 
@@ -103,7 +103,7 @@ public class WriteXls
       r.createCell( 1 ).setCellValue( dbs.get( 0 ).description );
       r.createCell( 2 ).setCellValue( dbs.size() );
 
-      double mins = EventRecorderUtil.secondsToMinutes( details.totalTime );
+      double mins = EventRecorderUtil.millisToMinutes( details.totalTimeMillis );
       r.createCell( 3 ).setCellValue( ((double) dbs.size()) / mins );
     }
 
@@ -134,9 +134,9 @@ public class WriteXls
       for (ContinuousBehavior cb : cbs) {
         sum += cb.getDuration();
       }
-      r.createCell( 2 ).setCellValue( sum + "s" );
+      r.createCell( 2 ).setCellValue( sum / 1000.0 + "s" );
 
-      double percent = sum / details.totalTime;
+      double percent = sum / details.totalTimeMillis;
       r.createCell( 3 ).setCellValue( percent );
     }
 

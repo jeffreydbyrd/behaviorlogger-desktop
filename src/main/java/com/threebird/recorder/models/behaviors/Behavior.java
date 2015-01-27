@@ -15,6 +15,12 @@ public abstract class Behavior
   public final MappableChar key;
   public final String description;
 
+  /**
+   * @param key
+   * @param description
+   * @param startTime
+   *          - start-time in millis
+   */
   Behavior( MappableChar key, String description, int startTime )
   {
     this.key = key;

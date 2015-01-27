@@ -19,7 +19,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -33,7 +32,6 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
-import com.threebird.recorder.views.TimeBox;
 
 /**
  * Controls the first view the user sees. All these member variables with the @FXML
@@ -53,8 +51,7 @@ public class StartMenuController
 
   @FXML private VBox mappingsBox;
 
-  @FXML private Pane timeBoxSlot;
-  private TimeBox timeBox;
+  @FXML private Label timeBox;
 
   @FXML private TextField observerField;
   @FXML private TextField therapistField;
@@ -82,9 +79,6 @@ public class StartMenuController
 
   private void init()
   {
-    timeBox = new TimeBox( 0 );
-    timeBoxSlot.getChildren().add( timeBox );
-
     rightSide.setVisible( false );
     initSchemaListView();
     initSessionDetails();
@@ -202,7 +196,7 @@ public class StartMenuController
       rightSide.setVisible( true );
       emptyMessage.setVisible( false );
       populateMappingsTable( newV );
-      timeBox.setTime( newV.duration );
+      timeBox.setText( EventRecorderUtil.secondsToTimestamp( newV.duration ) );
     } else {
       rightSide.setVisible( false );
       emptyMessage.setVisible( true );

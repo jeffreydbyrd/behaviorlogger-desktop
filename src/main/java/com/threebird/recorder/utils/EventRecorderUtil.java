@@ -172,18 +172,23 @@ public class EventRecorderUtil
     return (hours * 60 * 60) + (mins * 60) + secs;
   }
 
-  public static String secondsToTimestamp( int totalSeconds )
+  public static String millisToTimestamp( int totalMillis )
+  {
+    return secondsToTimestamp( totalMillis / 1000 );
+  }
+
+  public static String secondsToTimestamp( Integer totalSeconds )
   {
     int remaining = totalSeconds % (60 * 60);
     int hours = totalSeconds / (60 * 60);
     int minutes = remaining / 60;
     int seconds = remaining % 60;
 
-    return String.format( "%02d:%02d:%02d", hours, minutes, seconds );
+    return String.format( "%02d : %02d : %02d", hours, minutes, seconds );
   }
 
-  public static double secondsToMinutes( int seconds )
+  public static double millisToMinutes( int millis )
   {
-    return ((double) seconds) / 60.0;
+    return ((double) millis) / (1000 * 60.0);
   }
 }

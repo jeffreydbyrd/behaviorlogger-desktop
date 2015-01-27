@@ -43,7 +43,8 @@ public class ContinuousCountBox extends BehaviorCountBox
   }
 
   /**
-   * Returns the time at which you last toggled on this counter
+   * Returns whatever the state of manager.count was when you last toggled on
+   * this counter
    */
   public int getLastStart()
   {

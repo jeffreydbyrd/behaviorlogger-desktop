@@ -140,14 +140,6 @@
                   <Font size="18.0" />
                </font>
             </Text>
-            <StackPane fx:id="timeBoxSlot" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
-               <children>
-                  <Label alignment="TOP_LEFT" text="00 : 00 : 00" />
-               </children>
-               <padding>
-                  <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
-               </padding>
-            </StackPane>
             <Text layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" />
             <HBox layoutY="71.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
@@ -157,14 +149,7 @@
                   <Button fx:id="addNewKeysButton" focusTraversable="false" mnemonicParsing="false" onAction="#onAddNewKeysPress" text="Edit Unknown Behaviors" visible="false" />
                </children>
             </HBox>
-            <StackPane fx:id="timeBoxSlot" layoutX="576.0" layoutY="5.0" style="-fx-background-color: #F8F8F8; -fx-border-color: black; -fx-border-radius: 2;" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="0.0">
-               <children>
-                  <Label alignment="TOP_LEFT" text="00 : 00 : 00" />
-               </children>
-               <padding>
-                  <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
-               </padding>
-            </StackPane>
+            <Label fx:id="timeBox" alignment="TOP_LEFT" layoutX="411.0" layoutY="8.0" text="00 : 00 : 00" />
             <Pane focusTraversable="true" layoutX="661.0" layoutY="97.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
       </AnchorPane>

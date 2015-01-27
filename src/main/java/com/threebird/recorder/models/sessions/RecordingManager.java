@@ -40,7 +40,7 @@ public class RecordingManager
   {
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
-    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), evt -> {
+    KeyFrame kf = new KeyFrame( Duration.millis( 1 ), evt -> {
       counter.set( counter.get() + 1 );
     } );
     timer.getKeyFrames().add( kf );

@@ -33,7 +33,7 @@ public class Recordings
     public String therapist;
     public String condition;
     public Integer sessionNumber;
-    public Integer totalTime;
+    public Integer totalTimeMillis;
   }
 
   public static enum Writer
@@ -96,7 +96,7 @@ public class Recordings
     sd.therapist = SessionManager.getTherapist();
     sd.condition = SessionManager.getCondition();
     sd.sessionNumber = SessionManager.getSessionNumber();
-    sd.totalTime = totalTime;
+    sd.totalTimeMillis = totalTime;
     return sd;
   }
 

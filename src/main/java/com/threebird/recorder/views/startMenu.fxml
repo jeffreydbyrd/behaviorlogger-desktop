@@ -74,7 +74,7 @@
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin></Label>
-                                    <Pane fx:id="timeBoxSlot" />
+                                    <Label fx:id="timeBox" text="00 : 00 : 00" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
