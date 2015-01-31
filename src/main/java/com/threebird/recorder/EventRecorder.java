@@ -11,6 +11,7 @@ import com.threebird.recorder.controllers.PreferencesController;
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.Recordings;
+import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The
@@ -37,9 +38,18 @@ public class EventRecorder extends Application
 
   @Override public void start( Stage primaryStage ) throws Exception
   {
-    STAGE = primaryStage;
-    StartMenuController.toStartMenuView();
-    createMainMenuBar();
+    try {
+      STAGE = primaryStage;
+      StartMenuController.toStartMenuView();
+      createMainMenuBar();
+    } catch (Exception e) {
+      String msg = "";
+      msg += e.getMessage();
+      for (StackTraceElement el : e.getStackTrace()) {
+        msg += "\n" + el.getClassName() + "." + el.getMethodName() + ": " + el.getLineNumber();
+      }
+      EventRecorderUtil.dialogBox( msg, "ok", "ok", evt -> {}, evt -> {} );
+    }
   }
 
   /**

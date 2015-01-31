@@ -72,7 +72,7 @@ public class StartMenuController
    */
   public static void toStartMenuView()
   {
-    String filepath = "./views/startMenu.fxml";
+    String filepath = "views/startMenu.fxml";
     StartMenuController controller = EventRecorderUtil.loadScene( filepath, "Start Menu" );
     controller.init();
   }
