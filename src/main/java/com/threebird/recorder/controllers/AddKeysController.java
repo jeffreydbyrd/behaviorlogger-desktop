@@ -41,7 +41,7 @@ public class AddKeysController
                                     RecordingController recordingController,
                                     RecordingManager manager )
   {
-    String filepath = "./views/add_keys.fxml";
+    String filepath = "views/add_keys.fxml";
     AddKeysController controller = EventRecorderUtil.loadScene( filepath, "Add Keys" );
     controller.init( recordingScene, recordingController, manager );
   }

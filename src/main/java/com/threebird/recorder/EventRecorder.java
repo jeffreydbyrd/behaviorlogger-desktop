@@ -43,12 +43,9 @@ public class EventRecorder extends Application
       StartMenuController.toStartMenuView();
       createMainMenuBar();
     } catch (Exception e) {
-      String msg = "";
-      msg += e.getMessage();
-      for (StackTraceElement el : e.getStackTrace()) {
-        msg += "\n" + el.getClassName() + "." + el.getMethodName() + ": " + el.getLineNumber();
-      }
-      EventRecorderUtil.dialogBox( msg, "ok", "ok", evt -> {}, evt -> {} );
+      String msg = "The program ran into a problem: " + e.getMessage();
+      EventRecorderUtil.dialogBox( msg, "ok", evt -> {} );
+      e.printStackTrace();
     }
   }
 

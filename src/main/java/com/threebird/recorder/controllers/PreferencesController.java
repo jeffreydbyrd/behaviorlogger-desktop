@@ -73,7 +73,7 @@ public class PreferencesController
     }
 
     FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( "./views/preferences/preferences.fxml" ) );
+        new FXMLLoader( EventRecorder.class.getResource( "views/preferences/preferences.fxml" ) );
 
     Parent root;
     try {

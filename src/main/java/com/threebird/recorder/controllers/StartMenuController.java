@@ -158,13 +158,19 @@ public class StartMenuController
     PreferencesManager.filenameComponents().addListener( (ListChangeListener< FilenameComponent >) c -> {
       updateFilenameLabel();
     } );
-    SchemasManager.selectedProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
-
-    updateFilenameLabel();
+    SchemasManager.selectedProperty().addListener( ( o, old, newV ) -> {
+      System.out.println( "SELECTED! Update filename label" );
+      updateFilenameLabel();
+    } );
   }
 
   private void updateFilenameLabel()
   {
+    if (RecordingManager.getFileName() == null) {
+      filenameLbl.setText( "" );
+      return;
+    }
+
     String text = String.format( "%s (.csv/.xls)", RecordingManager.getFileName() );
     filenameLbl.setText( text );
 

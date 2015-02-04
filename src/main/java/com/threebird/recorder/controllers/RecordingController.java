@@ -65,7 +65,7 @@ public class RecordingController
    */
   public static void toRecordingView()
   {
-    String filepath = "./views/recording/recording.fxml";
+    String filepath = "views/recording/recording.fxml";
     RecordingController controller = EventRecorderUtil.loadScene( filepath, "Recording" );
     controller.init();
   }

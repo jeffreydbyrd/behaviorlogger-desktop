@@ -1,10 +1,15 @@
 package com.threebird.recorder.utils.persistence;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.google.common.collect.Lists;
+import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
  * A small library that handles SQLite Connections and PreparedStatements for
@@ -25,11 +30,50 @@ public class SqliteDao
   // Load the Sqlite JDBC driver
   static {
     try {
+      String dirPath = System.getProperty( "user.dir" ) + "/resources";
+      String filePath = dirPath + "/recorder.db";
+
+      new File( dirPath ).mkdirs();
+      File f = new File( filePath );
+      boolean created = f.createNewFile();
+
       DriverManager.registerDriver( new org.sqlite.JDBC() );
       conn = getConnection();
-    } catch (SQLException e) {
-      throw new RuntimeException( e );
+
+      if (created) {
+        initTables();
+      }
+    } catch (Exception e) {
+      String msg = "There was a problem connecting to the database: " + e.getMessage();
+      EventRecorderUtil.dialogBox( msg, "ok", evt -> {} );
     }
+  }
+
+  private static void initTables() throws IOException, SQLException
+  {
+    String createSchemas =
+        "CREATE TABLE IF NOT EXISTS schemas (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "client TEXT NOT NULL," +
+            "project TEXT NOT NULL," +
+            "session_directory TEXT NOT NULL," +
+            "duration INTEGER NOT NULL," +
+            "pause_on_end INTEGER NOT NULL," +
+            "color_on_end INTEGER NOT NULL," +
+            "sound_on_end INTEGER NOT NULL );";
+
+    String createBehaviors =
+        "CREATE TABLE IF NOT EXISTS key_behaviors (" +
+            "schema_id INTEGER NOT NULL," +
+            "key CHAR(1) NOT NULL," +
+            "behavior TEXT NOT NULL," +
+            "is_continuous INTEGER NOT NULL," +
+
+            "FOREIGN KEY (schema_id) REFERENCES schemas(id)," +
+            "PRIMARY KEY(schema_id, key) );";
+
+    update( SqlQueryData.create( createSchemas, Lists.newArrayList(), rs -> {} ) );
+    update( SqlQueryData.create( createBehaviors, Lists.newArrayList(), rs -> {} ) );
   }
 
   /**

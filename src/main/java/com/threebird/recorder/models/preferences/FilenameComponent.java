@@ -7,12 +7,12 @@ import com.threebird.recorder.views.preferences.FilenameComponentView;
 
 public enum FilenameComponent
 {
-  Client("Client", "client", ( ) -> SchemasManager.getSelected().client),
-  Project("Project", "project", ( ) -> SchemasManager.getSelected().project),
-  Observer("Observer", "observer", ( ) -> SessionManager.getObserver()),
-  Therapist("Therapist", "therapist", ( ) -> SessionManager.getTherapist()),
-  Condition("Condition", "condition", ( ) -> SessionManager.getCondition()),
-  Session_Number("Session Number", "123", ( ) -> SessionManager.getSessionNumber().toString());
+  Client("Client", "client", true, ( ) -> SchemasManager.getSelected().client),
+  Project("Project", "project", true, ( ) -> SchemasManager.getSelected().project),
+  Observer("Observer", "observer", false, ( ) -> SessionManager.getObserver()),
+  Therapist("Therapist", "therapist", false, ( ) -> SessionManager.getTherapist()),
+  Condition("Condition", "condition", false, ( ) -> SessionManager.getCondition()),
+  Session_Number("Session Number", "123", true, ( ) -> SessionManager.getSessionNumber().toString());
 
   public int order;
   public final String name;
@@ -22,12 +22,14 @@ public enum FilenameComponent
 
   private FilenameComponent( String display,
                              String example,
+                             boolean defaultEnabled,
                              Supplier< String > getComponent )
   {
     this.getComponent = getComponent;
     this.order = ordinal() + 1;
     this.name = display;
     this.example = example;
+    this.enabled = defaultEnabled;
   }
 
   public FilenameComponentView view()

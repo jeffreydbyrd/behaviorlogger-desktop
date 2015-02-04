@@ -117,22 +117,25 @@ public class EventRecorderUtil
     Label question = new Label( msg );
     question.setAlignment( Pos.BASELINE_CENTER );
 
-    Button left = new Button( leftBtn );
-    left.setOnAction( evt -> {
-      dialogStage.close();
-      onLeftClicked.handle( evt );
-    } );
+    HBox hBox = new HBox();
+    hBox.setAlignment( Pos.BASELINE_RIGHT );
+    hBox.setSpacing( 20.0 );
+
+    if (onLeftClicked != null && leftBtn != null) {
+      Button left = new Button( leftBtn );
+      left.setOnAction( evt -> {
+        dialogStage.close();
+        onLeftClicked.handle( evt );
+      } );
+      hBox.getChildren().add( left );
+    }
 
     Button right = new Button( rightBtn );
     right.setOnAction( evt -> {
       dialogStage.close();
       onRightClicked.handle( evt );
     } );
-
-    HBox hBox = new HBox();
-    hBox.setAlignment( Pos.BASELINE_RIGHT );
-    hBox.setSpacing( 20.0 );
-    hBox.getChildren().addAll( left, right );
+    hBox.getChildren().add( right );
 
     VBox vBox = new VBox();
     vBox.setSpacing( 20.0 );
@@ -141,6 +144,13 @@ public class EventRecorderUtil
 
     dialogStage.setScene( new Scene( vBox ) );
     dialogStage.show();
+  }
+
+  public static void dialogBox( String msg,
+                                String button,
+                                EventHandler< ActionEvent > onBtnClicked )
+  {
+    dialogBox( msg, null, button, null, onBtnClicked );
   }
 
   public static int strToInt( String s )

@@ -73,6 +73,10 @@ public class RecordingManager
 
   public static String getFileName()
   {
+    if (SchemasManager.getSelected() == null) {
+      return null;
+    }
+
     return PreferencesManager.filenameComponents().stream()
                              .filter( comp -> comp.enabled )
                              .map( comp -> comp.getComponent() )
@@ -81,6 +85,9 @@ public class RecordingManager
 
   public static String getFullFileName()
   {
+    if (SchemasManager.getSelected() == null) {
+      return null;
+    }
     String directory = SchemasManager.getSelected().sessionDirectory.getPath();
     String filename = getFileName();
     return String.format( "%s/%s", directory, filename );
