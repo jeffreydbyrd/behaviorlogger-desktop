@@ -199,7 +199,6 @@ public class StartMenuController
       emptyMessage.setVisible( false );
       populateMappingsTable( newV );
       timeBox.setText( EventRecorderUtil.secondsToTimestamp( newV.duration ) );
-      System.out.println( "SCHEMA SELECTED" );
       updateFilenameLabel();
     } else {
       rightSide.setVisible( false );
