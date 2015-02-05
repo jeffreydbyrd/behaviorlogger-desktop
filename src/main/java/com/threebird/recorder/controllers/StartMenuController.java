@@ -158,10 +158,6 @@ public class StartMenuController
     PreferencesManager.filenameComponents().addListener( (ListChangeListener< FilenameComponent >) c -> {
       updateFilenameLabel();
     } );
-    SchemasManager.selectedProperty().addListener( ( o, old, newV ) -> {
-      System.out.println( "SELECTED! Update filename label" );
-      updateFilenameLabel();
-    } );
   }
 
   private void updateFilenameLabel()
@@ -203,6 +199,8 @@ public class StartMenuController
       emptyMessage.setVisible( false );
       populateMappingsTable( newV );
       timeBox.setText( EventRecorderUtil.secondsToTimestamp( newV.duration ) );
+      System.out.println( "SCHEMA SELECTED" );
+      updateFilenameLabel();
     } else {
       rightSide.setVisible( false );
       emptyMessage.setVisible( true );
