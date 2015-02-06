@@ -1,7 +1,10 @@
 package com.threebird.recorder.controllers;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +20,9 @@ import javafx.scene.layout.VBox;
 
 import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
@@ -36,6 +42,7 @@ public class AddKeysController
   private Map< TextField, KeyBehaviorMapping > behaviorFields = Maps.newHashMap();
 
   @FXML private VBox mappingsBox;
+  private RecordingManager manager;
 
   public static void toAddKeysView( Scene recordingScene,
                                     RecordingController recordingController,
@@ -52,6 +59,7 @@ public class AddKeysController
   {
     this.recordingScene = recordingScene;
     this.recordingController = controller;
+    this.manager = manager;
     this.unknowns = manager.unknowns.values();
 
     populateMappingsBox();
@@ -128,7 +136,43 @@ public class AddKeysController
     } );
 
     Schemas.save( schema );
+
+    Set< MappableChar > newChars = behaviorFields.values()
+                                                 .stream()
+                                                 .map( kbm -> kbm.key )
+                                                 .collect( Collectors.toSet() );
+
+    List< DiscreteBehavior > updatedDiscretes =
+        manager.discrete.stream()
+                        .filter( disc -> newChars.contains( disc.key ) )
+                        .collect( Collectors.toList() );
+
+    // So the user has mapped this behavior. We must remove it and add an
+    // updated version
+    for (DiscreteBehavior discrete : updatedDiscretes) {
+      String description = schema.mappings.get( discrete.key ).behavior;
+      DiscreteBehavior addMe =
+          new DiscreteBehavior( discrete.key, description, discrete.startTime );
+      manager.discrete.remove( discrete );
+      manager.discrete.add( addMe );
+    }
+
+    List< ContinuousBehavior > updatedContinuous =
+        manager.continuous.stream()
+                          .filter( disc -> newChars.contains( disc.key ) )
+                          .collect( Collectors.toList() );
+
+    for (ContinuousBehavior continuous : updatedContinuous) {
+      String description = schema.mappings.get( continuous.key ).behavior;
+      ContinuousBehavior addMe =
+          new ContinuousBehavior( continuous.key, description, continuous.startTime, continuous.getDuration() );
+      manager.continuous.remove( continuous );
+      manager.continuous.add( addMe );
+    }
+
     recordingController.update();
+    
+    manager.unknowns.clear();
     EventRecorder.STAGE.setScene( recordingScene );
   }
 }

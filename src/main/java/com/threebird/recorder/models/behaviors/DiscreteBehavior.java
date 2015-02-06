@@ -5,12 +5,9 @@ import com.threebird.recorder.utils.EventRecorderUtil;
 
 public class DiscreteBehavior extends Behavior
 {
-  public final Integer time;
-
   public DiscreteBehavior( MappableChar key, String description, Integer time )
   {
     super( key, description, time );
-    this.time = time;
   }
 
   @Override public boolean isContinuous()

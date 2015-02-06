@@ -105,6 +105,8 @@ public class WriteXls
 
       double mins = EventRecorderUtil.millisToMinutes( details.totalTimeMillis );
       r.createCell( 3 ).setCellValue( ((double) dbs.size()) / mins );
+      
+      r = s.createRow( rownum++ );
     }
 
     // Continuous Behaviors
@@ -138,6 +140,8 @@ public class WriteXls
 
       double percent = sum / details.totalTimeMillis;
       r.createCell( 3 ).setCellValue( percent );
+      
+      r = s.createRow( rownum++ );
     }
 
     // __Behavior Log__

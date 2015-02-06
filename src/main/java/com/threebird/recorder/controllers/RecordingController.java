@@ -108,11 +108,13 @@ public class RecordingController
   {
     Schema schema = SchemasManager.getSelected();
 
+    // Figure out which unknowns were ignored and which were updated
     Set< MappableChar > mappedChars = schema.mappings.keySet();
     Set< MappableChar > unknownChars = manager.unknowns.keySet();
     SetView< MappableChar > ignoredChars = Sets.difference( unknownChars, mappedChars );
     SetView< MappableChar > newChars = Sets.intersection( mappedChars, unknownChars );
 
+    // Remove the [unknown]s we don't care about from the GUI
     for (MappableChar ignored : ignoredChars) {
       BehaviorCountBox countBox = countBoxes.get( ignored );
       List< Node > target =
@@ -125,12 +127,12 @@ public class RecordingController
       countBoxes.remove( ignored );
     }
 
+    // Update the CountBoxes labels
     for (MappableChar newChar : newChars) {
       String behavior = schema.mappings.get( newChar ).behavior;
       countBoxes.get( newChar ).behaviorLbl.setText( behavior );
     }
 
-    manager.unknowns.clear();
     addNewKeysButton.setVisible( false );
   }
 
