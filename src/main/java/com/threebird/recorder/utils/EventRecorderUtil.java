@@ -2,8 +2,6 @@ package com.threebird.recorder.utils;
 
 import java.io.IOException;
 
-import com.threebird.recorder.EventRecorder;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -21,11 +19,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import com.threebird.recorder.EventRecorder;
+
 /**
  * A collection of helpful functions used throughout the app
  */
 public class EventRecorderUtil
 {
+
   /**
    * Loads an FXML file into a new Scene, which gets set in EventRecorder.STAGE.
    * 

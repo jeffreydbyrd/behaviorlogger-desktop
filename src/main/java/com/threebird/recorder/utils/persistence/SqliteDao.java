@@ -1,6 +1,5 @@
 package com.threebird.recorder.utils.persistence;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.google.common.collect.Lists;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.resources.ResourceUtils;
 
 /**
  * A small library that handles SQLite Connections and PreparedStatements for
@@ -18,35 +17,14 @@ import com.threebird.recorder.utils.EventRecorderUtil;
  */
 public class SqliteDao
 {
-  private static String DATABASE = "jdbc:sqlite:resources/recorder.db";
+  private static String DATABASE =
+      String.format( "jdbc:sqlite:%s", ResourceUtils.getDbPath() );
 
   private static Connection conn;
 
   private interface ExecuteStatement
   {
     ResultSet execute( PreparedStatement stmt ) throws SQLException;
-  }
-
-  // Load the Sqlite JDBC driver
-  static {
-    try {
-      String dirPath = System.getProperty( "user.dir" ) + "/resources";
-      String filePath = dirPath + "/recorder.db";
-
-      new File( dirPath ).mkdirs();
-      File f = new File( filePath );
-      boolean created = f.createNewFile();
-
-      DriverManager.registerDriver( new org.sqlite.JDBC() );
-      conn = getConnection();
-
-      if (created) {
-        initTables();
-      }
-    } catch (Exception e) {
-      String msg = "There was a problem connecting to the database: " + e.getMessage();
-      EventRecorderUtil.dialogBox( msg, "ok", evt -> {} );
-    }
   }
 
   private static void initTables() throws IOException, SQLException
@@ -77,27 +55,32 @@ public class SqliteDao
   }
 
   /**
-   * Returns a Connection to the local "recorder" database
-   * 
-   * @throws SQLException
-   */
-  private static Connection getConnection() throws SQLException
-  {
-    return DriverManager.getConnection( DATABASE );
-  }
-
-  /**
    * @return false if a Connection is already open, or true if a new Connection
    *         was successfully created
    * @throws SQLException
    */
   private static boolean open() throws SQLException
   {
+    if (conn == null) {
+      boolean created = ResourceUtils.createDB();
+
+      DriverManager.registerDriver( new org.sqlite.JDBC() );
+      conn = DriverManager.getConnection( DATABASE );
+
+      if (created) {
+        try {
+          initTables();
+        } catch (IOException e) {
+          throw new RuntimeException( e );
+        }
+      }
+    }
+
     if (!conn.isClosed()) {
       return false;
     }
 
-    conn = getConnection();
+    conn = DriverManager.getConnection( DATABASE );
     return true;
   }
 

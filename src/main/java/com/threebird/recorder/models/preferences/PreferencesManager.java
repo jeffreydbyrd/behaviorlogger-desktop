@@ -15,6 +15,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.utils.resources.ResourceUtils;
 
 public class PreferencesManager
 {
@@ -52,7 +53,7 @@ public class PreferencesManager
   private static SimpleBooleanProperty pauseOnEndProperty;
   private static SimpleBooleanProperty soundOnEndProperty;
 
-  private static File file = new File( "./resources/prefs.json" );
+  private static File file = ResourceUtils.getPrefs();
   private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
 
   private static void persist()
@@ -65,8 +66,8 @@ public class PreferencesManager
     model.soundOnEnd = getSoundOnEnd();
     model.filenameComponents =
         filenameComponents().stream()
-                               .map( c -> new GsonFilenameComp( c.name(), c.enabled ) )
-                               .collect( Collectors.toList() );
+                            .map( c -> new GsonFilenameComp( c.name(), c.enabled ) )
+                            .collect( Collectors.toList() );
 
     GsonUtils.save( file, model );
   }
