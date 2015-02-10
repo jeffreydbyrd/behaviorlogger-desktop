@@ -12,6 +12,7 @@ import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.Recordings;
 import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.resources.ResourceUtils;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The
@@ -28,6 +29,7 @@ public class EventRecorder extends Application
 
   public static void main( String[] args )
   {
+    
     launch( args );
 
     // Cleanup background threads
@@ -39,6 +41,8 @@ public class EventRecorder extends Application
   @Override public void start( Stage primaryStage ) throws Exception
   {
     try {
+      ResourceUtils.getResources().mkdirs();
+      
       STAGE = primaryStage;
       StartMenuController.toStartMenuView();
       createMainMenuBar();

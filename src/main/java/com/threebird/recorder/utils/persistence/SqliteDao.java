@@ -1,5 +1,6 @@
 package com.threebird.recorder.utils.persistence;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +19,7 @@ import com.threebird.recorder.utils.resources.ResourceUtils;
 public class SqliteDao
 {
   private static String DATABASE =
-      String.format( "jdbc:sqlite:%s", ResourceUtils.getDbPath() );
+      String.format( "jdbc:sqlite:%s", ResourceUtils.getDb().getAbsolutePath() );
 
   private static Connection conn;
 
@@ -58,21 +59,19 @@ public class SqliteDao
    * @return false if a Connection is already open, or true if a new Connection
    *         was successfully created
    * @throws SQLException
+   * @throws IOException
    */
-  private static boolean open() throws SQLException
+  private static boolean open() throws SQLException, IOException
   {
     if (conn == null) {
-      boolean created = ResourceUtils.createDB();
+      File dbFile = ResourceUtils.getDb();
+      boolean created = dbFile.createNewFile();
 
       DriverManager.registerDriver( new org.sqlite.JDBC() );
       conn = DriverManager.getConnection( DATABASE );
 
       if (created) {
-        try {
-          initTables();
-        } catch (IOException e) {
-          throw new RuntimeException( e );
-        }
+        initTables();
       }
     }
 
@@ -106,7 +105,7 @@ public class SqliteDao
       if (topLevel) {
         conn.close();
       }
-    } catch (SQLException e) {
+    } catch (Exception e) {
       throw new RuntimeException( e );
     }
   }

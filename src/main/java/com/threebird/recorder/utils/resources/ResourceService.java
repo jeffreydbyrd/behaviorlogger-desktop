@@ -4,11 +4,11 @@ import java.io.File;
 
 interface ResourceService
 {
-  boolean createDB();
+  File getResources();
 
-  String getDbPath();
+  File getDb();
 
   File getPrefs();
 
-  File getResources();
+  File getSessionDetails();
 }

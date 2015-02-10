@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.utils.resources.ResourceUtils;
 
 public class SessionManager
 {
@@ -24,7 +25,7 @@ public class SessionManager
   private static SimpleStringProperty conditionProperty;
   private static SimpleIntegerProperty sessionNumberProperty;
 
-  private static File file = new File( "./resources/session-details.json" );
+  private static File file = ResourceUtils.getSessionDetails();
   private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
 
   private static void persist()

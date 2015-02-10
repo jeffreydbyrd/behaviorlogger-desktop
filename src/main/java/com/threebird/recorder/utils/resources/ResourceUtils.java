@@ -20,9 +20,9 @@ public class ResourceUtils
     return service;
   }
 
-  public static boolean createDB()
+  public static File getDb()
   {
-    return service().createDB();
+    return service().getDb();
   }
 
   public static File getPrefs()
@@ -35,9 +35,9 @@ public class ResourceUtils
     return service().getResources();
   }
 
-  public static String getDbPath()
+  public static File getSessionDetails()
   {
-    return service().getDbPath();
+    return service().getSessionDetails();
   }
 
 }
