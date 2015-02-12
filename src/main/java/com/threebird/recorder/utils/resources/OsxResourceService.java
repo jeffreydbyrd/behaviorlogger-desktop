@@ -6,6 +6,13 @@ class OsxResourceService implements ResourceService
 {
   File resources = getResources();
 
+  @Override public File getResources()
+  {
+    String home = System.getProperty( "user.home" );
+    String resourcesPath = String.format( "%s/Library/Application Support/3bird/event-recorder/resources/", home );
+    return new File( resourcesPath );
+  }
+
   @Override public File getDb()
   {
     String path = resources.getAbsolutePath() + "/recorder.db";
@@ -16,13 +23,6 @@ class OsxResourceService implements ResourceService
   {
     resources.mkdirs();
     return new File( resources.getAbsolutePath() + "/prefs.json" );
-  }
-
-  @Override public File getResources()
-  {
-    String home = System.getProperty( "user.home" );
-    String resourcesPath = String.format( "%s/Library/Application Support/3bird/event-recorder/resources/", home );
-    return new File( resourcesPath );
   }
 
   @Override public File getSessionDetails()

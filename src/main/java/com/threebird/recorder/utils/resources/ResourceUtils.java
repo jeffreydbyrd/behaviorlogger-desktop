@@ -4,7 +4,7 @@ import java.io.File;
 
 public class ResourceUtils
 {
-  public static ResourceService service;
+  private static ResourceService service;
 
   private static ResourceService service()
   {
