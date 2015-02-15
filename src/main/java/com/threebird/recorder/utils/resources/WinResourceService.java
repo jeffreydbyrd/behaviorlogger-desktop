@@ -8,7 +8,7 @@ public class WinResourceService implements ResourceService
 
   @Override public File getResources()
   {
-    String path = System.getenv( "APPDATA" ) + "\\3bird\\event-recorder\\resources\\";
+    String path = System.getenv( "localappdata" ) + "\\3bird\\event-recorder\\resources\\";
     return new File( path );
   }
 
