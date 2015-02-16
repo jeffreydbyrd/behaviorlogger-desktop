@@ -12,6 +12,8 @@ public class ResourceUtils
       String osName = System.getProperty( "os.name" );
       if (osName.equals( "Mac OS X" )) {
         service = new OsxResourceService();
+      } else if (osName.toUpperCase().contains( "WIN" )) {
+        service = new WinResourceService();
       } else {
         throw new IllegalStateException( "Unsupported Operating System: " + osName );
       }
