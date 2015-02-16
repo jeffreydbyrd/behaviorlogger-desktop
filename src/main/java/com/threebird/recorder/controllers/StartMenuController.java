@@ -253,6 +253,11 @@ public class StartMenuController
     return valid;
   }
 
+  @FXML private void onPrefsClicked( ActionEvent evt )
+  {
+    PreferencesController.showPreferences();
+  }
+
   @FXML private void onStartClicked( ActionEvent evt )
   {
     if (!validate()) {
