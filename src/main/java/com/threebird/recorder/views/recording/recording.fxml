@@ -149,7 +149,7 @@
                   <Button fx:id="addNewKeysButton" focusTraversable="false" mnemonicParsing="false" onAction="#onAddNewKeysPress" text="Edit Unknown Behaviors" visible="false" />
                </children>
             </HBox>
-            <Label fx:id="timeBox" alignment="TOP_LEFT" layoutX="411.0" layoutY="8.0" text="00 : 00 : 00" />
+            <Label fx:id="timeBox" alignment="TOP_LEFT" layoutX="411.0" layoutY="8.0" text="00 : 00 : 00" AnchorPane.rightAnchor="5.0" />
             <Pane focusTraversable="true" layoutX="661.0" layoutY="97.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
       </AnchorPane>
