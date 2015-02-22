@@ -69,10 +69,16 @@ public class EventRecorderUtil
     } catch (IOException e) {
       throw new RuntimeException( e );
     }
-    Scene scene = new Scene( root );
+    
+    Scene scene = EventRecorder.STAGE.getScene();
+    if (scene == null) {
+      scene = new Scene( root );
+      EventRecorder.STAGE.setScene( scene );
+    } else {
+      scene.setRoot( root );
+    }
 
     EventRecorder.STAGE.setTitle( title );
-    EventRecorder.STAGE.setScene( scene );
     EventRecorder.STAGE.show();
 
     return fxmlLoader.< T > getController();
@@ -200,9 +206,10 @@ public class EventRecorderUtil
     Integer secs = strToInt( secondsField.getText() );
     return (hours * 60 * 60) + (mins * 60) + secs;
   }
-  
-  public static String millisToTimestampNoSpaces(int totalMillis) {
-    String withSpaces = secondsToTimestamp(totalMillis / 1000);
+
+  public static String millisToTimestampNoSpaces( int totalMillis )
+  {
+    String withSpaces = secondsToTimestamp( totalMillis / 1000 );
     return withSpaces.replaceAll( " *", "" );
   }
 

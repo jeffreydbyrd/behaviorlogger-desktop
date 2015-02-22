@@ -14,12 +14,12 @@
    <children>
       <HBox spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox prefHeight="414.0" prefWidth="274.0" spacing="10.0">
+            <VBox prefHeight="414.0" prefWidth="275.0" spacing="10.0" HBox.hgrow="ALWAYS">
                <children>
-                  <TableView fx:id="schemaTable" prefHeight="378.0" prefWidth="200.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="schemaTable" prefHeight="378.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
                     <columns>
-                      <TableColumn fx:id="clientCol" prefWidth="96.0" text="Client" />
-                      <TableColumn fx:id="projectCol" minWidth="0.0" prefWidth="178.0" text="Project" />
+                      <TableColumn fx:id="clientCol" prefWidth="119.76555061340332" text="Client" />
+                      <TableColumn fx:id="projectCol" minWidth="0.0" prefWidth="153.23446655273438" text="Project" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
