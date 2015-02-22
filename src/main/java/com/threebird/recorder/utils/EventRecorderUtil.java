@@ -21,6 +21,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.threebird.recorder.EventRecorder;
 
 /**
@@ -29,6 +31,21 @@ import com.threebird.recorder.EventRecorder;
 public class EventRecorderUtil
 {
 
+  public static Supplier< Stage > dialogStage = Suppliers.memoize( ( ) -> {
+    Stage s = new Stage();
+    s.initModality( Modality.APPLICATION_MODAL );
+    s.initStyle( StageStyle.UTILITY );
+    s.initOwner( EventRecorder.STAGE );
+    return s;
+  } );
+
+  /**
+   * @param window
+   *          - the containing window that will own the FileChooser
+   * @param textField
+   *          - the TextField that we will populate after the user chooses a
+   *          file
+   */
   public static void chooseFile( Stage window, TextField textField )
   {
     File f = new File( textField.getText().trim() );
@@ -46,7 +63,39 @@ public class EventRecorderUtil
   }
 
   /**
-   * Loads an FXML file into a new Scene, which gets set in EventRecorder.STAGE.
+   * Displays a dialog window containing the resource specified by fxmlPath
+   * 
+   * @param stage
+   *          - the stage that will house the new scene
+   * @param fxmlPath
+   *          - the file path to the fxml template (relative to
+   *          EventRecorder.java)
+   * @param title
+   *          - the title of the scene
+   * @return the controller T associated with the fxml resource specified
+   */
+  public static < T > T showScene( String fxmlPath, String title )
+  {
+    FXMLLoader fxmlLoader =
+        new FXMLLoader( EventRecorder.class.getResource( fxmlPath ) );
+
+    Parent root;
+    try {
+      root = (Parent) fxmlLoader.load();
+    } catch (IOException e) {
+      throw new RuntimeException( e );
+    }
+    Scene scene = new Scene( root );
+
+    dialogStage.get().setTitle( title );
+    dialogStage.get().setScene( scene );
+    dialogStage.get().show();
+
+    return fxmlLoader.< T > getController();
+  }
+
+  /**
+   * Loads an FXML file into EventRecorder.STAGE's current scene
    * 
    * @param T
    *          - the type of the Controller you want returned to you
@@ -69,7 +118,7 @@ public class EventRecorderUtil
     } catch (IOException e) {
       throw new RuntimeException( e );
     }
-    
+
     Scene scene = EventRecorder.STAGE.getScene();
     if (scene == null) {
       scene = new Scene( root );
@@ -109,8 +158,6 @@ public class EventRecorderUtil
     };
   }
 
-  private static Stage dialogStage;
-
   /**
    * Display a simple dialog-box that displays a message and allows the user to
    * click two buttons
@@ -132,13 +179,6 @@ public class EventRecorderUtil
                                 EventHandler< ActionEvent > onLeftClicked,
                                 EventHandler< ActionEvent > onRightClicked )
   {
-    if (dialogStage == null) {
-      dialogStage = new Stage();
-      dialogStage.initModality( Modality.APPLICATION_MODAL );
-      dialogStage.initStyle( StageStyle.UTILITY );
-      dialogStage.initOwner( EventRecorder.STAGE );
-    }
-
     Label question = new Label( msg );
     question.setAlignment( Pos.BASELINE_CENTER );
 
@@ -149,7 +189,7 @@ public class EventRecorderUtil
     if (onLeftClicked != null && leftBtn != null) {
       Button left = new Button( leftBtn );
       left.setOnAction( evt -> {
-        dialogStage.close();
+        dialogStage.get().close();
         onLeftClicked.handle( evt );
       } );
       hBox.getChildren().add( left );
@@ -157,7 +197,7 @@ public class EventRecorderUtil
 
     Button right = new Button( rightBtn );
     right.setOnAction( evt -> {
-      dialogStage.close();
+      dialogStage.get().close();
       onRightClicked.handle( evt );
     } );
     hBox.getChildren().add( right );
@@ -167,8 +207,8 @@ public class EventRecorderUtil
     vBox.getChildren().addAll( question, hBox );
     vBox.setPadding( new Insets( 10 ) );
 
-    dialogStage.setScene( new Scene( vBox ) );
-    dialogStage.show();
+    dialogStage.get().setScene( new Scene( vBox ) );
+    dialogStage.get().show();
   }
 
   public static void dialogBox( String msg,

@@ -10,7 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -19,7 +18,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import com.google.common.collect.Maps;
-import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
@@ -36,7 +34,6 @@ import com.threebird.recorder.utils.EventRecorderUtil;
  */
 public class AddKeysController
 {
-  private Scene recordingScene;
   private RecordingController recordingController;
   private Collection< KeyBehaviorMapping > unknowns;
   private Map< TextField, KeyBehaviorMapping > behaviorFields = Maps.newHashMap();
@@ -44,20 +41,16 @@ public class AddKeysController
   @FXML private VBox mappingsBox;
   private RecordingManager manager;
 
-  public static void toAddKeysView( Scene recordingScene,
-                                    RecordingController recordingController,
-                                    RecordingManager manager )
+  public static void showAddKeysView( RecordingController recordingController,
+                                      RecordingManager manager )
   {
-    String filepath = "views/add_keys.fxml";
-    AddKeysController controller = EventRecorderUtil.loadScene( filepath, "Add Keys" );
-    controller.init( recordingScene, recordingController, manager );
+    String filepath = "views/add-keys.fxml";
+    AddKeysController controller = EventRecorderUtil.showScene( filepath, "Add Keys" );
+    controller.init( recordingController, manager );
   }
 
-  private void init( Scene recordingScene,
-                     RecordingController controller,
-                     RecordingManager manager )
+  private void init( RecordingController controller, RecordingManager manager )
   {
-    this.recordingScene = recordingScene;
     this.recordingController = controller;
     this.manager = manager;
     this.unknowns = manager.unknowns.values();
@@ -115,16 +108,16 @@ public class AddKeysController
   }
 
   /**
-   * Bring us back to the recording view
+   * Close the window
    */
   @FXML private void onCancelPress( ActionEvent evt )
   {
-    EventRecorder.STAGE.setScene( recordingScene );
+    EventRecorderUtil.dialogStage.get().close();
   }
 
   /**
    * Runs through the 'behaviorFields' and adds new KeyBehaviorMappings to
-   * 'schema'. Then saves 'schema'
+   * 'schema', saves 'schema', redraws the recording window with new information
    */
   @FXML private void onSavePress( ActionEvent evt )
   {
@@ -171,8 +164,8 @@ public class AddKeysController
     }
 
     recordingController.update();
-    
+
     manager.unknowns.clear();
-    EventRecorder.STAGE.setScene( recordingScene );
+    EventRecorderUtil.dialogStage.get().close();
   }
 }

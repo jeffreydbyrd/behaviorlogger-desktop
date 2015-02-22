@@ -79,7 +79,7 @@ public class EditSchemaController
    */
   public static void toEditSchemaView( Schema selected )
   {
-    String filepath = "views/edit_schema/edit_schema.fxml";
+    String filepath = "views/edit_schema/edit-schema.fxml";
     EditSchemaController controller = EventRecorderUtil.loadScene( filepath, "Create Schema" );
     controller.init( selected );
   }

@@ -22,7 +22,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
-import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
@@ -326,9 +325,7 @@ public class RecordingController
       EventHandler< ActionEvent > onDiscardClick = e -> toScene.run();
 
       EventHandler< ActionEvent > onEditClick = e ->
-          AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(),
-                                           this,
-                                           manager );
+          AddKeysController.showAddKeysView( this, manager );
 
       EventRecorderUtil.dialogBox( msg, leftOption, rightOption, onDiscardClick, onEditClick );
     } else {
@@ -356,8 +353,6 @@ public class RecordingController
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-    AddKeysController.toAddKeysView( EventRecorder.STAGE.getScene(),
-                                     this,
-                                     manager );
+    AddKeysController.showAddKeysView( this, manager );
   }
 }
