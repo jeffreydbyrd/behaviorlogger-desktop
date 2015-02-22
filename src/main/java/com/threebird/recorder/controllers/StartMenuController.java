@@ -17,11 +17,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -46,11 +44,8 @@ public class StartMenuController
   @FXML private TableColumn< Schema, String > projectCol;
   @FXML private Button createSchemaButton;
 
-  @FXML private AnchorPane rightSide;
-  @FXML private Text emptyMessage;
-
+  @FXML private VBox rightSide;
   @FXML private VBox mappingsBox;
-
   @FXML private Label timeBox;
 
   @FXML private TextField observerField;
@@ -196,13 +191,11 @@ public class StartMenuController
     SchemasManager.setSelected( newV );
     if (newV != null) {
       rightSide.setVisible( true );
-      emptyMessage.setVisible( false );
       populateMappingsTable( newV );
       timeBox.setText( EventRecorderUtil.secondsToTimestamp( newV.duration ) );
       updateFilenameLabel();
     } else {
       rightSide.setVisible( false );
-      emptyMessage.setVisible( true );
     }
   }
 
