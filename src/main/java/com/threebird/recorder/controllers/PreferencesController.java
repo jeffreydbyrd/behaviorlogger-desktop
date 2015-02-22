@@ -22,7 +22,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -272,18 +271,7 @@ public class PreferencesController
 
   @FXML void onBrowseButtonPressed( ActionEvent evt )
   {
-    File f = getDirectory();
-    if (!f.exists()) {
-      f = new File( System.getProperty( "user.home" ) );
-    }
-
-    DirectoryChooser dirChooser = new DirectoryChooser();
-    dirChooser.setInitialDirectory( f );
-    File newFile = dirChooser.showDialog( null );
-
-    if (newFile != null) {
-      directoryField.setText( newFile.getPath() );
-    }
+    EventRecorderUtil.chooseFile( stage, directoryField );
   }
 
   @FXML private void onSavePressed( ActionEvent evt )

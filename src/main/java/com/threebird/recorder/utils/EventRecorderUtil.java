@@ -1,5 +1,6 @@
 package com.threebird.recorder.utils;
 
+import java.io.File;
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
@@ -15,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -26,6 +28,22 @@ import com.threebird.recorder.EventRecorder;
  */
 public class EventRecorderUtil
 {
+
+  public static void chooseFile( Stage window, TextField textField )
+  {
+    File f = new File( textField.getText().trim() );
+    if (!f.exists()) {
+      f = new File( System.getProperty( "user.home" ) );
+    }
+
+    DirectoryChooser dirChooser = new DirectoryChooser();
+    dirChooser.setInitialDirectory( f );
+    File newFile = dirChooser.showDialog( window );
+
+    if (newFile != null) {
+      textField.setText( newFile.getPath() );
+    }
+  }
 
   /**
    * Loads an FXML file into a new Scene, which gets set in EventRecorder.STAGE.

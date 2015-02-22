@@ -19,7 +19,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -286,18 +285,7 @@ public class EditSchemaController
 
   @FXML void onBrowseButtonPressed( ActionEvent evt )
   {
-    File f = getDirectory();
-    if (!f.exists()) {
-      f = new File( System.getProperty( "user.home" ) );
-    }
-
-    DirectoryChooser dirChooser = new DirectoryChooser();
-    dirChooser.setInitialDirectory( f );
-    File newFile = dirChooser.showDialog( EventRecorder.STAGE );
-
-    if (newFile != null) {
-      directoryField.setText( newFile.getPath() );
-    }
+    EventRecorderUtil.chooseFile( EventRecorder.STAGE, directoryField );
   }
 
   /**
