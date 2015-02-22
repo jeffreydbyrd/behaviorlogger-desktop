@@ -17,6 +17,11 @@ public class DiscreteBehavior extends Behavior
 
   @Override public String timeDisplay()
   {
-    return EventRecorderUtil.millisToTimestamp( startTime );
+    return EventRecorderUtil.millisToTimestampNoSpaces( startTime );
+  }
+
+  @Override public String type()
+  {
+    return "discrete";
   }
 }

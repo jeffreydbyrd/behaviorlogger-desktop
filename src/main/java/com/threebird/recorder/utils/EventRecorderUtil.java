@@ -200,6 +200,11 @@ public class EventRecorderUtil
     Integer secs = strToInt( secondsField.getText() );
     return (hours * 60 * 60) + (mins * 60) + secs;
   }
+  
+  public static String millisToTimestampNoSpaces(int totalMillis) {
+    String withSpaces = secondsToTimestamp(totalMillis / 1000);
+    return withSpaces.replaceAll( " *", "" );
+  }
 
   public static String millisToTimestamp( int totalMillis )
   {

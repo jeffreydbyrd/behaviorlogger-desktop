@@ -31,4 +31,6 @@ public abstract class Behavior
   public abstract boolean isContinuous();
 
   public abstract String timeDisplay();
+
+  public abstract String type();
 }

@@ -33,8 +33,13 @@ public class ContinuousBehavior extends Behavior
 
   @Override public String timeDisplay()
   {
-    String start = EventRecorderUtil.millisToTimestamp( startTime );
-    String end = EventRecorderUtil.millisToTimestamp( startTime + duration );
-    return String.format( "%s - %s", start, end );
+    String start = EventRecorderUtil.millisToTimestampNoSpaces( startTime );
+    String end = EventRecorderUtil.millisToTimestampNoSpaces( startTime + duration );
+    return String.format( "%s-%s", start, end );
+  }
+
+  @Override public String type()
+  {
+    return "continuous";
   }
 }

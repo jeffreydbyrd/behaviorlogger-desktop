@@ -117,12 +117,12 @@ public class Recordings
         details.f.createNewFile();
       }
 
-      String[] headers = { "Key", "Timestamp", "Description" };
+      String[] headers = { "Key", "Type", "Timestamp", "Description" };
       BufferedWriter out = Files.newWriter( details.f, Charsets.UTF_8 );
       CSVPrinter printer = CSVFormat.DEFAULT.withHeader( headers ).print( out );
 
       for (Behavior b : details.behaviors) {
-        printer.printRecord( b.key.c + "", b.timeDisplay(), b.description );
+        printer.printRecord( b.key.c + "", b.type(), b.timeDisplay(), b.description );
       }
 
       printer.flush();
