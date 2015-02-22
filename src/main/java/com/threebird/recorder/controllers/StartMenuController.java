@@ -272,4 +272,9 @@ public class StartMenuController
       RecordingController.toRecordingView();
     }
   }
+
+  @FXML private void onIoaBtnPressed()
+  {
+    IoaCalculatorController.showIoaCalculator();
+  }
 }
