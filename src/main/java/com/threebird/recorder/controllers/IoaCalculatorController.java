@@ -123,4 +123,9 @@ public class IoaCalculatorController
       throw new RuntimeException( e );
     }
   }
+
+  @FXML private void onCloseBtnPressed()
+  {
+    EventRecorderUtil.dialogStage.get().close();
+  }
 }
