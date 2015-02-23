@@ -229,6 +229,21 @@ public class EventRecorderUtil
   }
 
   /**
+   * @param timestamp
+   *          - String in the form of 'hh:mm:ss'
+   * @return the equivalent number of seconds
+   */
+  public static int getDuration( String timestamp )
+  {
+    String[] split = timestamp.split( " *: *" );
+    int hrs = EventRecorderUtil.strToInt( split[0] );
+    int min = EventRecorderUtil.strToInt( split[1] );
+    int sec = EventRecorderUtil.strToInt( split[2] );
+
+    return (hrs * 60 * 60) + (min * 60) + sec;
+  }
+
+  /**
    * Converts the contents of hoursField, minutesField, and secondsField into
    * the equivalent number of seconds. If "isInfinite" is true, then returns 0
    */

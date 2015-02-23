@@ -1,9 +1,7 @@
 package com.threebird.recorder.controllers;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,6 +11,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.ioa.IoaUtils;
 
 public class IoaCalculatorController
 {
@@ -116,10 +115,8 @@ public class IoaCalculatorController
     File f2 = getFile2();
 
     try {
-      BufferedReader rdr1 = new BufferedReader( new FileReader( f1 ) );
-      BufferedReader rdr2 = new BufferedReader( new FileReader( f2 ) );
-
-    } catch (FileNotFoundException e) {
+      File result = IoaUtils.compare( f1, f2 );
+    } catch (IOException e) {
       throw new RuntimeException( e );
     }
   }
