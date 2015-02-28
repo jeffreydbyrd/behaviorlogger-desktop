@@ -2,9 +2,12 @@ package com.threebird.recorder.utils.ioa;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.csv.CSVFormat;
@@ -32,14 +35,14 @@ public class IoaUtils
      * vals: all seconds in which said behavior occurred and how many times it
      * occurred
      */
-    public Map< DiscreteBehavior, Multiset< Integer >> discrete = Maps.newHashMap();
+    public Map< Character, Multiset< Integer >> discrete = Maps.newHashMap();
 
     /**
      * keys: ContinuousBehaviors
      * 
      * vals: all seconds in which said behavior occurred
      */
-    public Map< ContinuousBehavior, Set< Integer >> continuous = Maps.newHashMap();
+    public Map< Character, Set< Integer >> continuous = Maps.newHashMap();
   }
 
   private static DiscreteBehavior recordToDiscrete( CSVRecord rec )
@@ -70,23 +73,27 @@ public class IoaUtils
   private static BehaviorCounts getCounts( File f ) throws IOException
   {
     BehaviorCounts c = new BehaviorCounts();
-    Iterable< CSVRecord > recs = CSVFormat.DEFAULT.parse( Files.newReader( f, Charsets.UTF_8 ) );
+    Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( Files.newReader( f, Charsets.UTF_8 ) ).iterator();
+    recsItor.next(); // skip header
 
-    for (CSVRecord rec : recs) {
+    while (recsItor.hasNext()) {
+      CSVRecord rec = recsItor.next();
       boolean isDiscrete = rec.get( 1 ).equals( "discrete" );
       if (isDiscrete) {
         DiscreteBehavior db = recordToDiscrete( rec );
-        if (!c.discrete.containsKey( db )) {
-          c.discrete.put( db, HashMultiset.create() );
+        char ch = db.key.c;
+        if (!c.discrete.containsKey( ch )) {
+          c.discrete.put( ch, HashMultiset.create() );
         }
-        c.discrete.get( db ).add( db.startTime );
+        c.discrete.get( ch ).add( db.startTime );
       } else {
         ContinuousBehavior cb = recordToContinuous( rec );
-        if (!c.continuous.containsKey( cb )) {
-          c.continuous.put( cb, Sets.newHashSet() );
+        char ch = cb.key.c;
+        if (!c.continuous.containsKey( ch )) {
+          c.continuous.put( ch, Sets.newHashSet() );
         }
 
-        Set< Integer > intervals = c.continuous.get( cb );
+        Set< Integer > intervals = c.continuous.get( ch );
         intervals.add( cb.startTime );
 
         for (int t = cb.startTime + 1; t <= cb.startTime + cb.getDuration(); t++) {
@@ -100,6 +107,8 @@ public class IoaUtils
 
   public static File compare( File f1, File f2 ) throws IOException
   {
+    BehaviorCounts counts1 = getCounts( f1 );
+    BehaviorCounts counts2 = getCounts( f2 );
     return null;
   }
 }
