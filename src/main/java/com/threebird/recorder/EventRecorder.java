@@ -24,7 +24,6 @@ public class EventRecorder extends Application
 
   public static void main( String[] args )
   {
-    
     launch( args );
 
     // Cleanup background threads
@@ -37,7 +36,7 @@ public class EventRecorder extends Application
   {
     try {
       ResourceUtils.getResources().mkdirs();
-      
+
       STAGE = primaryStage;
       StartMenuController.toStartMenuView();
     } catch (Exception e) {

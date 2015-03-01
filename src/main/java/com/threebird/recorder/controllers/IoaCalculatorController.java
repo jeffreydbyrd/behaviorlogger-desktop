@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.threebird.recorder.models.ioa.IoaManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -26,6 +27,7 @@ public class IoaCalculatorController
   @FXML private Button browse1Btn;
   @FXML private Button browse2Btn;
   @FXML private ChoiceBox< String > methodChoiceBox;
+  @FXML private TextField thresholdField;
   @FXML private Button generateBtn;
   @FXML private Label file1NotFoundLbl;
   @FXML private Label file2NotFoundLbl;
@@ -38,8 +40,12 @@ public class IoaCalculatorController
 
   @FXML private void initialize()
   {
+
     file1Field.setText( IoaManager.file1Property().get() );
     file2Field.setText( IoaManager.file2Property().get() );
+    thresholdField.setText( IoaManager.thresholdProperty().get() + "" );
+    char[] digits = "0123456789".toCharArray();
+    thresholdField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( thresholdField, digits, 5 ) );
 
     List< String > methods = Lists.newArrayList();
     for (IoaMethod m : IoaMethod.values()) {
@@ -55,11 +61,24 @@ public class IoaCalculatorController
                    .addListener( ( observable, oldValue, newValue ) -> {
                      IoaManager.methodProperty().set( newValue );
                    } );
+    thresholdField.textProperty().addListener( ( o, old, newV ) -> {
+      int n = Strings.isNullOrEmpty( newV ) ? 1 : Integer.valueOf( newV );
+      IoaManager.thresholdProperty().set( n );
+    } );
+    thresholdField.focusedProperty().addListener( ( o, old, selected ) -> {
+      if (!selected) {
+        String text = thresholdField.getText();
+        if (Strings.isNullOrEmpty( text )) {
+          thresholdField.setText( "0" );
+        }
+      }
+    } );
   }
 
   private File getFile( TextField fileField )
   {
-    return new File( fileField.getText().trim() );
+    String text = Strings.nullToEmpty( fileField.getText() ).trim();
+    return new File( text );
   }
 
   private File getFile1()
@@ -139,11 +158,12 @@ public class IoaCalculatorController
       return;
     }
 
-    File f1 = getFile1();
-    File f2 = getFile2();
-
     try {
-      File result = IoaUtils.compare( f1, f2, null );
+      File result =
+          IoaUtils.compare( getFile1(),
+                            getFile2(),
+                            IoaMethod.get( IoaManager.methodProperty().get() ),
+                            IoaManager.thresholdProperty().get() );
     } catch (IOException e) {
       throw new RuntimeException( e );
     }

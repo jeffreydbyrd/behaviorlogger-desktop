@@ -36,14 +36,33 @@
             </VBox>
          </children>
       </HBox>
-      <HBox spacing="10.0">
+      <HBox spacing="20.0">
          <children>
-            <Label text="Method:">
-               <HBox.margin>
-                  <Insets top="5.0" />
-               </HBox.margin>
-            </Label>
-            <ChoiceBox fx:id="methodChoiceBox" prefWidth="150.0" />
+            <HBox spacing="5.0">
+               <children>
+                  <Label text="Method:">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ChoiceBox fx:id="methodChoiceBox" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox spacing="5.0">
+               <children>
+                  <Label text="Block Size:">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="thresholdField" prefWidth="50.0" />
+                  <Label text="seconds">
+                     <HBox.margin>
+                        <Insets top="7.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
          </children>
       </HBox>
       <HBox spacing="10.0">

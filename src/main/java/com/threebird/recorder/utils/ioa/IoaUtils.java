@@ -72,10 +72,14 @@ public class IoaUtils
       } else {
         ContinuousBehavior cb = (ContinuousBehavior) b;
         Multiset< Integer > intervals = counts.get( ch );
-        intervals.add( b.startTime );
+        if (!intervals.contains( b.startTime )) {
+          intervals.add( b.startTime );
+        }
 
-        for (int t = b.startTime + 1; t <= b.startTime + cb.getDuration(); t++) {
-          intervals.add( t );
+        for (int t = b.startTime; t <= b.startTime + cb.getDuration(); t++) {
+          if (!intervals.contains( t )) {
+            intervals.add( t );
+          }
         }
       }
     } );
@@ -91,10 +95,18 @@ public class IoaUtils
     return Lists.newArrayList( behItor );
   }
 
-  public static File compare( File f1, File f2, IoaMethod method ) throws IOException
+  public static File compare( File f1, File f2, IoaMethod method, int threshold ) throws IOException
   {
-    mapKeysToTime( toBehaviors( f1 ) );
-    mapKeysToTime( toBehaviors( f2 ) );
+    KeyToTime data1 = mapKeysToTime( toBehaviors( f1 ) );
+    KeyToTime data2 = mapKeysToTime( toBehaviors( f2 ) );
+
+    if (method == IoaMethod.Exact_Agreement) {
+      IoaCalculations.exactAgreement( data1, data2, threshold );
+    } else if (method == IoaMethod.Partial_Agreement) {
+
+    } else if (method == IoaMethod.Time_Window) {
+
+    }
 
     return null;
   }

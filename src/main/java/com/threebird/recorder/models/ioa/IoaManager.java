@@ -19,7 +19,7 @@ public class IoaManager
     String file1;
     String file2;
     String method = IoaMethod.Partial_Agreement.display;
-    int threshold;
+    int threshold = 1;
   }
 
   private static SimpleStringProperty file1Property;
