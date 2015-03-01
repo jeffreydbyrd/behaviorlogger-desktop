@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -22,6 +23,7 @@ public class IoaCalculatorController
   @FXML private Button generateBtn;
   @FXML private Label file1NotFoundLbl;
   @FXML private Label file2NotFoundLbl;
+  @FXML private ChoiceBox methodChoiceBox;
 
   public static void showIoaCalculator()
   {

@@ -2,12 +2,10 @@ package com.threebird.recorder.utils.ioa;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.csv.CSVFormat;
@@ -15,11 +13,12 @@ import org.apache.commons.csv.CSVRecord;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -27,22 +26,26 @@ import com.threebird.recorder.utils.EventRecorderUtil;
 public class IoaUtils
 {
 
-  private static class BehaviorCounts
+  public static enum IoaMethod
   {
-    /**
-     * keys: DiscreteBehaviors
-     * 
-     * vals: all seconds in which said behavior occurred and how many times it
-     * occurred
-     */
-    public Map< Character, Multiset< Integer >> discrete = Maps.newHashMap();
+    Exact_Agreement,
+    Partial_Agreement,
+    Time_Window
+  }
 
-    /**
-     * keys: ContinuousBehaviors
-     * 
-     * vals: all seconds in which said behavior occurred
-     */
-    public Map< Character, Set< Integer >> continuous = Maps.newHashMap();
+  /**
+   * Typedef: Maps each key to all the seconds that they occurred in.
+   */
+  private static class KeyToTime extends HashMap< Character, Multiset< Integer >>
+  {
+    private static final long serialVersionUID = 1091663297033821383L;
+  }
+
+  private static Behavior recordToBehavior( CSVRecord rec )
+  {
+    return rec.get( 1 ).equals( "discrete" )
+        ? recordToDiscrete( rec )
+        : recordToContinuous( rec );
   }
 
   private static DiscreteBehavior recordToDiscrete( CSVRecord rec )
@@ -70,45 +73,45 @@ public class IoaUtils
     return new ContinuousBehavior( key.get(), behavior, start, end - start );
   }
 
-  private static BehaviorCounts getCounts( File f ) throws IOException
+  private static KeyToTime mapKeysToTime( List< Behavior > bs ) throws IOException
   {
-    BehaviorCounts c = new BehaviorCounts();
-    Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( Files.newReader( f, Charsets.UTF_8 ) ).iterator();
-    recsItor.next(); // skip header
+    KeyToTime counts = new KeyToTime();
 
-    while (recsItor.hasNext()) {
-      CSVRecord rec = recsItor.next();
-      boolean isDiscrete = rec.get( 1 ).equals( "discrete" );
-      if (isDiscrete) {
-        DiscreteBehavior db = recordToDiscrete( rec );
-        char ch = db.key.c;
-        if (!c.discrete.containsKey( ch )) {
-          c.discrete.put( ch, HashMultiset.create() );
-        }
-        c.discrete.get( ch ).add( db.startTime );
+    bs.forEach( b -> {
+      char ch = b.key.c;
+      if (!counts.containsKey( ch )) {
+        counts.put( ch, HashMultiset.create() );
+      }
+
+      if (!b.isContinuous()) {
+        counts.get( ch ).add( b.startTime );
       } else {
-        ContinuousBehavior cb = recordToContinuous( rec );
-        char ch = cb.key.c;
-        if (!c.continuous.containsKey( ch )) {
-          c.continuous.put( ch, Sets.newHashSet() );
-        }
+        ContinuousBehavior cb = (ContinuousBehavior) b;
+        Multiset< Integer > intervals = counts.get( ch );
+        intervals.add( b.startTime );
 
-        Set< Integer > intervals = c.continuous.get( ch );
-        intervals.add( cb.startTime );
-
-        for (int t = cb.startTime + 1; t <= cb.startTime + cb.getDuration(); t++) {
+        for (int t = b.startTime + 1; t <= b.startTime + cb.getDuration(); t++) {
           intervals.add( t );
         }
       }
-    }
+    } );
 
-    return c;
+    return counts;
+  }
+
+  public static List< Behavior > toBehaviors( File f ) throws IOException
+  {
+    Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( Files.newReader( f, Charsets.UTF_8 ) ).iterator();
+    recsItor.next(); // skip header
+    Iterator< Behavior > behItor = Iterators.transform( recsItor, IoaUtils::recordToBehavior );
+    return Lists.newArrayList( behItor );
   }
 
   public static File compare( File f1, File f2 ) throws IOException
   {
-    BehaviorCounts counts1 = getCounts( f1 );
-    BehaviorCounts counts2 = getCounts( f2 );
+    mapKeysToTime( toBehaviors( f1 ) );
+    mapKeysToTime( toBehaviors( f2 ) );
+
     return null;
   }
 }

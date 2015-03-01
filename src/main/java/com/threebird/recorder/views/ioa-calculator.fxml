@@ -7,7 +7,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.IoaCalculatorController">
    <children>
-      <HBox prefHeight="61.0" prefWidth="580.0" spacing="20.0">
+      <HBox spacing="20.0">
          <children>
             <VBox HBox.hgrow="ALWAYS">
                <children>
@@ -21,7 +21,7 @@
                   <Label fx:id="file1NotFoundLbl" text="That file does not exist" textFill="RED" visible="false" />
                </children>
             </VBox>
-            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <Separator orientation="VERTICAL" />
             <VBox HBox.hgrow="ALWAYS">
                <children>
                   <Label text="File 2" />
@@ -34,6 +34,16 @@
                   <Label fx:id="file2NotFoundLbl" text="That file does not exist" textFill="RED" visible="false" />
                </children>
             </VBox>
+         </children>
+      </HBox>
+      <HBox spacing="10.0">
+         <children>
+            <Label text="Method:">
+               <HBox.margin>
+                  <Insets top="5.0" />
+               </HBox.margin>
+            </Label>
+            <ChoiceBox fx:id="methodChoiceBox" prefWidth="150.0" />
          </children>
       </HBox>
       <HBox spacing="10.0">
