@@ -42,4 +42,9 @@ public class ResourceUtils
     return service().getSessionDetails();
   }
 
+  public static File getIoaDetails()
+  {
+    return service().getIoaDetails();
+  }
+
 }
