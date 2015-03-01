@@ -8,16 +8,17 @@ import javafx.beans.property.SimpleStringProperty;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.utils.ioa.IoaMethod;
 import com.threebird.recorder.utils.resources.ResourceUtils;
 
-public class IoaCalculatorManager
+public class IoaManager
 {
 
   private static class GsonBean
   {
     String file1;
     String file2;
-    String method;
+    String method = IoaMethod.Partial_Agreement.display;
     int threshold;
   }
 

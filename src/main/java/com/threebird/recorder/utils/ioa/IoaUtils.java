@@ -2,7 +2,6 @@ package com.threebird.recorder.utils.ioa;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -25,21 +24,6 @@ import com.threebird.recorder.utils.EventRecorderUtil;
 
 public class IoaUtils
 {
-
-  public static enum IoaMethod
-  {
-    Exact_Agreement,
-    Partial_Agreement,
-    Time_Window
-  }
-
-  /**
-   * Typedef: Maps each key to all the seconds that they occurred in.
-   */
-  private static class KeyToTime extends HashMap< Character, Multiset< Integer >>
-  {
-    private static final long serialVersionUID = 1091663297033821383L;
-  }
 
   private static Behavior recordToBehavior( CSVRecord rec )
   {
@@ -107,7 +91,7 @@ public class IoaUtils
     return Lists.newArrayList( behItor );
   }
 
-  public static File compare( File f1, File f2 ) throws IOException
+  public static File compare( File f1, File f2, IoaMethod method ) throws IOException
   {
     mapKeysToTime( toBehaviors( f1 ) );
     mapKeysToTime( toBehaviors( f2 ) );
