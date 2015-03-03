@@ -57,7 +57,7 @@ public class IoaUtils
     return new ContinuousBehavior( key.get(), behavior, start, end - start );
   }
 
-  private static KeyToTime mapKeysToTime( List< Behavior > bs ) throws IOException
+  private static KeyToTime mapKeysToTime( List< Behavior > bs, int blockSize ) throws IOException
   {
     KeyToTime counts = new KeyToTime();
 
@@ -68,17 +68,15 @@ public class IoaUtils
       }
 
       if (!b.isContinuous()) {
-        counts.get( ch ).add( b.startTime );
+        counts.get( ch ).add( b.startTime / blockSize );
       } else {
         ContinuousBehavior cb = (ContinuousBehavior) b;
         Multiset< Integer > intervals = counts.get( ch );
-        if (!intervals.contains( b.startTime )) {
-          intervals.add( b.startTime );
-        }
 
-        for (int t = b.startTime; t <= b.startTime + cb.getDuration(); t++) {
-          if (!intervals.contains( t )) {
-            intervals.add( t );
+        for (int t = b.startTime; t <= (b.startTime + cb.getDuration()); t++) {
+          int i = t / blockSize;
+          if (!intervals.contains( i )) {
+            intervals.add( i );
           }
         }
       }
@@ -95,17 +93,17 @@ public class IoaUtils
     return Lists.newArrayList( behItor );
   }
 
-  public static File compare( File f1, File f2, IoaMethod method, int threshold ) throws IOException
+  public static File compare( File f1, File f2, IoaMethod method, int blockSize ) throws IOException
   {
-    KeyToTime data1 = mapKeysToTime( toBehaviors( f1 ) );
-    KeyToTime data2 = mapKeysToTime( toBehaviors( f2 ) );
-
     if (method == IoaMethod.Exact_Agreement) {
-      IoaCalculations.exactAgreement( data1, data2, threshold );
+      KeyToTime data1 = mapKeysToTime( toBehaviors( f1 ), blockSize );
+      KeyToTime data2 = mapKeysToTime( toBehaviors( f2 ), blockSize );
+      IoaCalculations.exactAgreement( data1, data2 );
     } else if (method == IoaMethod.Partial_Agreement) {
 
     } else if (method == IoaMethod.Time_Window) {
-
+      // KeyToTime data1 = mapKeysToTime( toBehaviors( f1 ), 1 );
+      // KeyToTime data2 = mapKeysToTime( toBehaviors( f2 ), 1 );
     }
 
     return null;
