@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.codec.Charsets;
@@ -20,7 +21,9 @@ import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.persistence.WriteIoaIntervals;
 import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.ioa.IoaCalculations.IntervalCalculations;
 
 public class IoaUtils
 {
@@ -93,19 +96,23 @@ public class IoaUtils
     return Lists.newArrayList( behItor );
   }
 
-  public static File compare( File f1, File f2, IoaMethod method, int blockSize ) throws IOException
+  public static void process( File f1,
+                              File f2,
+                              IoaMethod method,
+                              int blockSize,
+                              File out ) throws IOException
   {
-    if (method == IoaMethod.Exact_Agreement) {
+    if (method != IoaMethod.Time_Window) {
       KeyToTime data1 = mapKeysToTime( toBehaviors( f1 ), blockSize );
       KeyToTime data2 = mapKeysToTime( toBehaviors( f2 ), blockSize );
-      IoaCalculations.exactAgreement( data1, data2 );
-    } else if (method == IoaMethod.Partial_Agreement) {
-
-    } else if (method == IoaMethod.Time_Window) {
+      Map< Character, IntervalCalculations > intervals =
+          method == IoaMethod.Exact_Agreement
+              ? IoaCalculations.exactAgreement( data1, data2 )
+              : IoaCalculations.partialAgreement( data1, data2 );
+      WriteIoaIntervals.write( intervals, out );
+    } else {
       // KeyToTime data1 = mapKeysToTime( toBehaviors( f1 ), 1 );
       // KeyToTime data2 = mapKeysToTime( toBehaviors( f2 ), 1 );
     }
-
-    return null;
   }
 }

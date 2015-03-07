@@ -1,6 +1,5 @@
 package com.threebird.recorder.utils.ioa;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -13,6 +12,23 @@ import com.google.common.collect.Sets.SetView;
 
 public class IoaCalculations
 {
+  private static double exactComparison( int x, int y )
+  {
+    return x == y ? 1.0 : 0.0;
+  }
+
+  private static double partialComparison( int x, int y )
+  {
+    if (x == y) {
+      return 1.0;
+    }
+    if (x == 0 || y == 0) {
+      return 0.0;
+    }
+    double _x = (double) x;
+    double _y = (double) y;
+    return (x > y ? _y / _x : _x / _y);
+  }
 
   private static int getNumIntervals( Multiset< Integer > times )
   {
@@ -22,7 +38,7 @@ public class IoaCalculations
     return Collections.max( times ) + 1;
   }
 
-  private static class Intervals
+  public static class IntervalCalculations
   {
     public final Character c;
     public final int[] intervals1;
@@ -30,7 +46,7 @@ public class IoaCalculations
     public final double[] result;
     public final double avg;
 
-    public Intervals( Character c, int[] intervals1, int[] intervals2, double[] result )
+    public IntervalCalculations( Character c, int[] intervals1, int[] intervals2, double[] result )
     {
       this.c = c;
       this.intervals1 = intervals1;
@@ -40,13 +56,13 @@ public class IoaCalculations
     }
   }
 
-  private static Map< Character, Intervals >
+  private static Map< Character, IntervalCalculations >
     getIntervals( KeyToTime data1,
                   KeyToTime data2,
                   BiFunction< Integer, Integer, Double > compare )
   {
     SetView< Character > common = Sets.union( data1.keySet(), data2.keySet() );
-    Map< Character, Intervals > map = Maps.newHashMap();
+    Map< Character, IntervalCalculations > map = Maps.newHashMap();
 
     for (Character c : common) {
       int numIntervals1 = getNumIntervals( data1.get( c ) );
@@ -68,35 +84,19 @@ public class IoaCalculations
         result[i] = compare.apply( x, y );
       }
 
-      map.put( c, new Intervals( c, intervals1, intervals2, result ) );
+      map.put( c, new IntervalCalculations( c, intervals1, intervals2, result ) );
     }
 
     return map;
   }
 
-  private static File printIntervals( Map< Character, Intervals > intervals )
+  static Map< Character, IntervalCalculations > exactAgreement( KeyToTime data1, KeyToTime data2 )
   {
-    return null;
+    return getIntervals( data1, data2, IoaCalculations::exactComparison );
   }
 
-  static File exactAgreement( KeyToTime data1, KeyToTime data2 )
+  static Map< Character, IntervalCalculations > partialAgreement( KeyToTime data1, KeyToTime data2 )
   {
-    Map< Character, Intervals > intervals = getIntervals( data1, data2, ( x, y ) -> x == y ? 1.0 : 0.0 );
-    return printIntervals( intervals );
-  }
-
-  static File partialAgreement( KeyToTime data1, KeyToTime data2 )
-  {
-    Map< Character, Intervals > intervals = getIntervals( data1, data2, ( x, y ) -> {
-      if (x == y) {
-        return 1.0;
-      }
-      if (x == 0 || y == 0) {
-        return 0.0;
-      }
-      return (double) (x > y ? y / x : y / x);
-    } );
-
-    return printIntervals( intervals );
+    return getIntervals( data1, data2, IoaCalculations::partialComparison );
   }
 }

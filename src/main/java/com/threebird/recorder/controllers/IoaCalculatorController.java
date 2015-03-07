@@ -26,7 +26,7 @@ public class IoaCalculatorController
   @FXML private TextField file2Field;
   @FXML private Button browse1Btn;
   @FXML private Button browse2Btn;
-  @FXML private ChoiceBox< String > methodChoiceBox;
+  @FXML private ChoiceBox< IoaMethod > methodChoiceBox;
   @FXML private TextField thresholdField;
   @FXML private Button generateBtn;
   @FXML private Label file1NotFoundLbl;
@@ -47,26 +47,22 @@ public class IoaCalculatorController
     char[] digits = "0123456789".toCharArray();
     thresholdField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( thresholdField, digits, 5 ) );
 
-    List< String > methods = Lists.newArrayList();
-    for (IoaMethod m : IoaMethod.values()) {
-      methods.add( m.display );
-    }
-    methodChoiceBox.setItems( FXCollections.observableArrayList( methods ) );
-    methodChoiceBox.getSelectionModel().select( IoaManager.methodProperty().get() );
+    methodChoiceBox.setItems( FXCollections.observableArrayList( IoaMethod.values() ) );
+    methodChoiceBox.getSelectionModel().select( IoaManager.getSelectedMethod() );
 
     file1Field.textProperty().addListener( ( o, old, newV ) -> IoaManager.file1Property().set( newV ) );
     file2Field.textProperty().addListener( ( o, old, newV ) -> IoaManager.file2Property().set( newV ) );
     methodChoiceBox.getSelectionModel()
                    .selectedItemProperty()
                    .addListener( ( observable, oldValue, newValue ) -> {
-                     IoaManager.methodProperty().set( newValue );
+                     IoaManager.methodProperty().set( newValue.name() );
                    } );
     thresholdField.textProperty().addListener( ( o, old, newV ) -> {
       int n = Strings.isNullOrEmpty( newV ) ? 1 : Integer.valueOf( newV );
       IoaManager.thresholdProperty().set( n );
     } );
-    thresholdField.focusedProperty().addListener( ( o, old, selected ) -> {
-      if (!selected) {
+    thresholdField.focusedProperty().addListener( ( o, old, focused ) -> {
+      if (!focused) {
         String text = thresholdField.getText();
         if (Strings.isNullOrEmpty( text )) {
           thresholdField.setText( "0" );
@@ -158,12 +154,17 @@ public class IoaCalculatorController
       return;
     }
 
+    FileChooser fileChooser = new FileChooser();
+    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "XLS files (*.xls)", "*.xls" );
+    fileChooser.getExtensionFilters().add( extFilter );
+    File result = fileChooser.showSaveDialog( EventRecorderUtil.dialogStage.get() );
+
     try {
-      File result =
-          IoaUtils.compare( getFile1(),
-                            getFile2(),
-                            IoaMethod.get( IoaManager.methodProperty().get() ),
-                            IoaManager.thresholdProperty().get() );
+      IoaUtils.process( getFile1(),
+                        getFile2(),
+                        IoaManager.getSelectedMethod(),
+                        IoaManager.thresholdProperty().get(),
+                        result );
     } catch (IOException e) {
       throw new RuntimeException( e );
     }

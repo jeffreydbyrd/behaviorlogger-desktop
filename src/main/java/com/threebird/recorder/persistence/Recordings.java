@@ -137,7 +137,7 @@ public class Recordings
   private static Long writeXls( SaveDetails details )
   {
     try {
-      WriteXls.write( details );
+      WriteRecordingXls.write( details );
       return details.f.length();
     } catch (IOException e) {
       throw new RuntimeException( e );

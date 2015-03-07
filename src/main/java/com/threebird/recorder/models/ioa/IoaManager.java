@@ -18,7 +18,7 @@ public class IoaManager
   {
     String file1;
     String file2;
-    String method = IoaMethod.Partial_Agreement.display;
+    String method = IoaMethod.Partial_Agreement.name();
     int threshold = 1;
   }
 
@@ -66,6 +66,11 @@ public class IoaManager
       methodProperty.addListener( ( o, old, newV ) -> persist() );
     }
     return methodProperty;
+  }
+
+  public static IoaMethod getSelectedMethod()
+  {
+    return IoaMethod.valueOf( methodProperty().get() );
   }
 
   public static SimpleIntegerProperty thresholdProperty()

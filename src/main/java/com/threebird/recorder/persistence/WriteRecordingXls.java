@@ -19,7 +19,7 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.persistence.Recordings.SaveDetails;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
-public class WriteXls
+public class WriteRecordingXls
 {
   public static void write( SaveDetails details ) throws IOException
   {

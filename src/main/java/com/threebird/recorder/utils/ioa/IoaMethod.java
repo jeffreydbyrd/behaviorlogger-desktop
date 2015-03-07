@@ -13,14 +13,8 @@ public enum IoaMethod
     this.display = display;
   }
 
-  public static IoaMethod get( String display )
+  @Override public String toString()
   {
-    for (IoaMethod m : IoaMethod.values()) {
-      if (m.display.equals( display )) {
-        return m;
-      }
-    }
-
-    throw new IllegalStateException( "No IoaMethod with that display exists." );
+    return display;
   }
 }
