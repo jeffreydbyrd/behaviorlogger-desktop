@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -16,10 +17,15 @@ import org.apache.commons.csv.CSVPrinter;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
 import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.SessionManager;
+import com.threebird.recorder.utils.ioa.IoaUtils;
+import com.threebird.recorder.utils.ioa.KeyToTime;
 
 public class Recordings
 {
@@ -110,6 +116,38 @@ public class Recordings
     Writer.XLS.schedule( createSaveDetails( f, behaviors, count ) );
   }
 
+  /**
+   * @return an array where each index represents a second, and each element is
+   *         a bar-separated list of keys pressed within each second
+   */
+  private static String[] mapTimeToKeys( List< Behavior > behaviors, int totalTimeSeconds )
+  {
+    @SuppressWarnings("unchecked") List< Character >[] res1 = new List[totalTimeSeconds + 1];
+    KeyToTime keysToTime = IoaUtils.mapKeysToTime( behaviors, 1000 );
+
+    for (Entry< Character, Multiset< Integer >> e : keysToTime.entrySet()) {
+      Character ch = e.getKey();
+      Multiset< Integer > millis = e.getValue();
+      for (Integer i : millis) {
+        int s = i.intValue();
+        if (res1[s] == null) {
+          res1[s] = Lists.< Character > newArrayList();
+        }
+        res1[s].add( ch );
+      }
+    }
+
+    String[] res2 = new String[totalTimeSeconds + 1];
+    for (int s = 0; s < totalTimeSeconds + 1; s++) {
+      if (res1[s] != null) {
+        res2[s] = String.join( "|", Iterables.transform( res1[s], c -> c.toString() ) );
+      } else {
+        res2[s] = "";
+      }
+    }
+    return res2;
+  }
+
   private static Long writeCsv( SaveDetails details )
   {
     try {
@@ -117,12 +155,14 @@ public class Recordings
         details.f.createNewFile();
       }
 
-      String[] headers = { "Key", "Type", "Timestamp", "Description" };
+      String[] timeToKeys = mapTimeToKeys( details.behaviors, details.totalTimeMillis / 1000 );
+
+      String[] headers = { "Time", "Keys" };
       BufferedWriter out = Files.newWriter( details.f, Charsets.UTF_8 );
       CSVPrinter printer = CSVFormat.DEFAULT.withHeader( headers ).print( out );
 
-      for (Behavior b : details.behaviors) {
-        printer.printRecord( b.key.c + "", b.type(), b.timeDisplay(), b.description );
+      for (int s = 0; s < timeToKeys.length; s++) {
+        printer.printRecord( s, timeToKeys[s] );
       }
 
       printer.flush();

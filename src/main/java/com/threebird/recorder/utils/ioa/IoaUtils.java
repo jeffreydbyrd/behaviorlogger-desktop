@@ -60,7 +60,7 @@ public class IoaUtils
     return new ContinuousBehavior( key.get(), behavior, start, end - start );
   }
 
-  private static KeyToTime mapKeysToTime( List< Behavior > bs, int blockSize ) throws IOException
+  public static KeyToTime mapKeysToTime( List< Behavior > bs, int blockSize )
   {
     KeyToTime counts = new KeyToTime();
 

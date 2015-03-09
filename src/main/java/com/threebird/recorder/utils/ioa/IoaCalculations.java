@@ -1,9 +1,9 @@
 package com.threebird.recorder.utils.ioa;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
@@ -32,10 +32,25 @@ public class IoaCalculations
 
   private static int getNumIntervals( Multiset< Integer > times )
   {
-    if (times == null) {
-      return 0;
-    }
-    return Collections.max( times ) + 1;
+    return times.stream()
+                .collect( Collectors.maxBy( Integer::compare ) )
+                .orElse( 0 );
+  }
+
+  private static int getNumIntervals( KeyToTime data1, KeyToTime data2 )
+  {
+    Integer numIntervals1 = data1.values().stream()
+                                 .map( IoaCalculations::getNumIntervals )
+                                 .collect( Collectors.maxBy( Integer::compare ) )
+                                 .orElse( 0 );
+
+    Integer numIntervals2 = data2.values().stream()
+                                 .map( IoaCalculations::getNumIntervals )
+                                 .collect( Collectors.maxBy( Integer::compare ) )
+                                 .orElse( 0 );
+
+    int numIntervals = Math.max( numIntervals1, numIntervals2 );
+    return numIntervals;
   }
 
   public static class IntervalCalculations
@@ -64,11 +79,9 @@ public class IoaCalculations
     SetView< Character > common = Sets.union( data1.keySet(), data2.keySet() );
     Map< Character, IntervalCalculations > map = Maps.newHashMap();
 
-    for (Character c : common) {
-      int numIntervals1 = getNumIntervals( data1.get( c ) );
-      int numIntervals2 = getNumIntervals( data2.get( c ) );
-      int numIntervals = numIntervals1 > numIntervals2 ? numIntervals1 : numIntervals2;
+    int numIntervals = getNumIntervals( data1, data2 );
 
+    for (Character c : common) {
       int[] intervals1 = new int[numIntervals];
       int[] intervals2 = new int[numIntervals];
       double[] result = new double[numIntervals];
