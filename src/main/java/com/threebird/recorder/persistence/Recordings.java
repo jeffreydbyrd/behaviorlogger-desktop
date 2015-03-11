@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -17,15 +16,11 @@ import org.apache.commons.csv.CSVPrinter;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
 import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.SessionManager;
-import com.threebird.recorder.utils.ioa.IoaUtils;
-import com.threebird.recorder.utils.ioa.KeyToTime;
 
 public class Recordings
 {
@@ -118,34 +113,29 @@ public class Recordings
 
   /**
    * @return an array where each index represents a second, and each element is
-   *         a bar-separated list of keys pressed within each second
+   *         a list of keys pressed within each second
    */
   private static String[] mapTimeToKeys( List< Behavior > behaviors, int totalTimeSeconds )
   {
-    @SuppressWarnings("unchecked") List< Character >[] res1 = new List[totalTimeSeconds + 1];
-    KeyToTime keysToTime = IoaUtils.mapKeysToTime( behaviors, 1000 );
+    String[] res = new String[totalTimeSeconds + 1];
 
-    for (Entry< Character, Multiset< Integer >> e : keysToTime.entrySet()) {
-      Character ch = e.getKey();
-      Multiset< Integer > millis = e.getValue();
-      for (Integer i : millis) {
-        int s = i.intValue();
-        if (res1[s] == null) {
-          res1[s] = Lists.< Character > newArrayList();
+    for (Behavior b : behaviors) {
+      char ch = b.key.c;
+      int s = b.startTime / 1000;
+      int dur = (b.isContinuous()) ? ((ContinuousBehavior) b).getDuration() / 1000 : 0;
+      int end = s + dur;
+
+      for (; s <= end; s++) {
+        if (res[s] == null) {
+          res[s] = "";
         }
-        res1[s].add( ch );
+        if (!b.isContinuous() || !res[s].contains( ch + "" )) {
+          res[s] += ch;
+        }
       }
     }
 
-    String[] res2 = new String[totalTimeSeconds + 1];
-    for (int s = 0; s < totalTimeSeconds + 1; s++) {
-      if (res1[s] != null) {
-        res2[s] = String.join( "|", Iterables.transform( res1[s], c -> c.toString() ) );
-      } else {
-        res2[s] = "";
-      }
-    }
-    return res2;
+    return res;
   }
 
   private static Long writeCsv( SaveDetails details )
@@ -162,7 +152,7 @@ public class Recordings
       CSVPrinter printer = CSVFormat.DEFAULT.withHeader( headers ).print( out );
 
       for (int s = 0; s < timeToKeys.length; s++) {
-        printer.printRecord( s, timeToKeys[s] );
+        printer.printRecord( s, timeToKeys[s] == null ? "" : timeToKeys[s] );
       }
 
       printer.flush();

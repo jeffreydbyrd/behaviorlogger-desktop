@@ -2,7 +2,6 @@ package com.threebird.recorder.controllers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -14,7 +13,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.threebird.recorder.models.ioa.IoaManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.utils.ioa.IoaMethod;

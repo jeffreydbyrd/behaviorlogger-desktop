@@ -3,10 +3,8 @@ package com.threebird.recorder.utils.ioa;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
@@ -28,29 +26,6 @@ public class IoaCalculations
     double _x = (double) x;
     double _y = (double) y;
     return (x > y ? _y / _x : _x / _y);
-  }
-
-  private static int getNumIntervals( Multiset< Integer > times )
-  {
-    return times.stream()
-                .collect( Collectors.maxBy( Integer::compare ) )
-                .orElse( 0 );
-  }
-
-  private static int getNumIntervals( KeyToTime data1, KeyToTime data2 )
-  {
-    Integer numIntervals1 = data1.values().stream()
-                                 .map( IoaCalculations::getNumIntervals )
-                                 .collect( Collectors.maxBy( Integer::compare ) )
-                                 .orElse( 0 );
-
-    Integer numIntervals2 = data2.values().stream()
-                                 .map( IoaCalculations::getNumIntervals )
-                                 .collect( Collectors.maxBy( Integer::compare ) )
-                                 .orElse( 0 );
-
-    int numIntervals = Math.max( numIntervals1, numIntervals2 );
-    return numIntervals;
   }
 
   public static class IntervalCalculations
@@ -79,7 +54,7 @@ public class IoaCalculations
     SetView< Character > common = Sets.union( data1.keySet(), data2.keySet() );
     Map< Character, IntervalCalculations > map = Maps.newHashMap();
 
-    int numIntervals = getNumIntervals( data1, data2 );
+    int numIntervals = Math.max( data1.totalIntervals, data2.totalIntervals );
 
     for (Character c : common) {
       int[] intervals1 = new int[numIntervals];
@@ -92,9 +67,7 @@ public class IoaCalculations
       }
 
       for (int i = 0; i < numIntervals; i++) {
-        int x = intervals1[i];
-        int y = intervals2[i];
-        result[i] = compare.apply( x, y );
+        result[i] = compare.apply( intervals1[i], intervals2[i] );
       }
 
       map.put( c, new IntervalCalculations( c, intervals1, intervals2, result ) );

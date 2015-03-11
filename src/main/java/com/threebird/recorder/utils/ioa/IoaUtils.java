@@ -2,6 +2,7 @@ package com.threebird.recorder.utils.ioa;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.Behavior;
@@ -60,32 +60,39 @@ public class IoaUtils
     return new ContinuousBehavior( key.get(), behavior, start, end - start );
   }
 
-  public static KeyToTime mapKeysToTime( List< Behavior > bs, int blockSize )
+  /**
+   * @param timeTokeys
+   *          - each index represents a second mapped to an array of characters
+   * @param blockSize
+   *          - the partition size of intervals
+   * @return a map of keys to the times they occurred in
+   */
+  private static KeyToTime mapKeysToTime( String[] timeToKeys, int blockSize )
   {
     KeyToTime counts = new KeyToTime();
 
-    bs.forEach( b -> {
-      char ch = b.key.c;
-      if (!counts.containsKey( ch )) {
-        counts.put( ch, HashMultiset.create() );
-      }
-
-      if (!b.isContinuous()) {
-        counts.get( ch ).add( b.startTime / blockSize );
-      } else {
-        ContinuousBehavior cb = (ContinuousBehavior) b;
-        Multiset< Integer > intervals = counts.get( ch );
-
-        for (int t = b.startTime; t <= (b.startTime + cb.getDuration()); t++) {
-          int i = t / blockSize;
-          if (!intervals.contains( i )) {
-            intervals.add( i );
-          }
+    int second = 0;
+    for (String keys : timeToKeys) {
+      counts.totalIntervals = second / blockSize;
+      for (char ch : keys.toCharArray()) {
+        if (!counts.containsKey( ch )) {
+          counts.put( ch, HashMultiset.create() );
         }
+        counts.get( ch ).add( counts.totalIntervals );
       }
-    } );
+      second++;
+    }
 
     return counts;
+  }
+
+  private static String[] timesToKeys( File f ) throws IOException
+  {
+    Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( Files.newReader( f, Charsets.UTF_8 ) ).iterator();
+    recsItor.next(); // skip header
+    Iterator< String > keyItor = Iterators.transform( recsItor, rec -> rec.get( 1 ) );
+    ArrayList< String > keys = Lists.newArrayList( keyItor );
+    return keys.toArray( new String[keys.size()] );
   }
 
   public static List< Behavior > toBehaviors( File f ) throws IOException
@@ -103,8 +110,8 @@ public class IoaUtils
                               File out ) throws IOException
   {
     if (method != IoaMethod.Time_Window) {
-      KeyToTime data1 = mapKeysToTime( toBehaviors( f1 ), blockSize );
-      KeyToTime data2 = mapKeysToTime( toBehaviors( f2 ), blockSize );
+      KeyToTime data1 = mapKeysToTime( timesToKeys( f1 ), blockSize );
+      KeyToTime data2 = mapKeysToTime( timesToKeys( f2 ), blockSize );
       Map< Character, IntervalCalculations > intervals =
           method == IoaMethod.Exact_Agreement
               ? IoaCalculations.exactAgreement( data1, data2 )
