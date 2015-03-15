@@ -63,7 +63,7 @@ public class WriteIoaIntervals
     Row[] rows = new Row[max];
 
     int start = r;
-    for (int i = 0; r < start + max; r++, i++) {
+    for (int i = 0; r < start + rows.length; r++, i++) {
       rows[i] = s.createRow( r );
       rows[i].createCell( 0 ).setCellValue( i );
     }
@@ -84,6 +84,7 @@ public class WriteIoaIntervals
     }
 
     wb.write( out );
+    out.flush();
     wb.close();
     out.close();
   }

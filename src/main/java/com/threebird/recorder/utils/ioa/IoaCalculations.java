@@ -44,14 +44,20 @@ public class IoaCalculations
       this.result = result;
       this.avg = Arrays.stream( result ).average().orElse( 0 );
     }
+
+    @Override public String toString()
+    {
+      return "IntervalCalculations [\n c=" + c + ",\n intervals1=" + Arrays.toString( intervals1 ) + ",\n intervals2="
+          + Arrays.toString( intervals2 ) + ",\n result=" + Arrays.toString( result ) + ",\n avg=" + avg + "\n]";
+    }
   }
 
   private static Map< Character, IntervalCalculations >
-    getIntervals( KeyToTime data1,
-                  KeyToTime data2,
+    getIntervals( KeyToInterval data1,
+                  KeyToInterval data2,
                   BiFunction< Integer, Integer, Double > compare )
   {
-    SetView< Character > common = Sets.union( data1.keySet(), data2.keySet() );
+    SetView< Character > common = Sets.union( data1.charToIntervals.keySet(), data2.charToIntervals.keySet() );
     Map< Character, IntervalCalculations > map = Maps.newHashMap();
 
     int numIntervals = Math.max( data1.totalIntervals, data2.totalIntervals );
@@ -62,8 +68,8 @@ public class IoaCalculations
       double[] result = new double[numIntervals];
 
       for (Integer i = 0; i < numIntervals; i++) {
-        intervals1[i] += data1.get( c ) != null ? data1.get( c ).count( i ) : 0;
-        intervals2[i] += data2.get( c ) != null ? data2.get( c ).count( i ) : 0;
+        intervals1[i] += data1.charToIntervals.get( c ) != null ? data1.charToIntervals.get( c ).count( i ) : 0;
+        intervals2[i] += data2.charToIntervals.get( c ) != null ? data2.charToIntervals.get( c ).count( i ) : 0;
       }
 
       for (int i = 0; i < numIntervals; i++) {
@@ -76,12 +82,12 @@ public class IoaCalculations
     return map;
   }
 
-  static Map< Character, IntervalCalculations > exactAgreement( KeyToTime data1, KeyToTime data2 )
+  static Map< Character, IntervalCalculations > exactAgreement( KeyToInterval data1, KeyToInterval data2 )
   {
     return getIntervals( data1, data2, IoaCalculations::exactComparison );
   }
 
-  static Map< Character, IntervalCalculations > partialAgreement( KeyToTime data1, KeyToTime data2 )
+  static Map< Character, IntervalCalculations > partialAgreement( KeyToInterval data1, KeyToInterval data2 )
   {
     return getIntervals( data1, data2, IoaCalculations::partialComparison );
   }
