@@ -36,7 +36,7 @@ public class WriteIoaIntervals
     // __Behavior Summary__
     row = s.createRow( r++ );
     Cell totalCell = row.createCell( 0 );
-    totalCell.setCellValue( "Total" );
+    totalCell.setCellValue( "Overall" );
     row.createCell( 1 ).setCellValue( total.doubleValue() );
 
     for (Entry< Character, IntervalCalculations > entry : intervals.entrySet()) {

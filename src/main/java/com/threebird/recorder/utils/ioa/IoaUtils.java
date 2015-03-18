@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
+import com.threebird.recorder.persistence.WriteIoaTimeWindows;
 
 public class IoaUtils
 {
@@ -61,8 +62,9 @@ public class IoaUtils
                               File out ) throws IOException
   {
     if (method != IoaMethod.Time_Window) {
-      KeyToInterval data1 = mapKeysToInterval( timesToKeys( f1 ), blockSize );
-      KeyToInterval data2 = mapKeysToInterval( timesToKeys( f2 ), blockSize );
+      int size = blockSize < 1 ? 1 : blockSize;
+      KeyToInterval data1 = mapKeysToInterval( timesToKeys( f1 ), size );
+      KeyToInterval data2 = mapKeysToInterval( timesToKeys( f2 ), size );
       Map< Character, IntervalCalculations > intervals =
           method == IoaMethod.Exact_Agreement
               ? IoaCalculations.exactAgreement( data1, data2 )
@@ -72,6 +74,7 @@ public class IoaUtils
       KeyToInterval data1 = mapKeysToInterval( timesToKeys( f1 ), 1 );
       KeyToInterval data2 = mapKeysToInterval( timesToKeys( f2 ), 1 );
       Map< Character, Double > windowAgreement = IoaCalculations.windowAgreement( data1, data2, blockSize );
+      WriteIoaTimeWindows.write( windowAgreement, out );
     }
   }
 }
