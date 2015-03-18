@@ -1,10 +1,14 @@
 package com.threebird.recorder.utils.ioa;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
@@ -26,30 +30,6 @@ public class IoaCalculations
     double _x = (double) x;
     double _y = (double) y;
     return (x > y ? _y / _x : _x / _y);
-  }
-
-  public static class IntervalCalculations
-  {
-    public final Character c;
-    public final int[] intervals1;
-    public final int[] intervals2;
-    public final double[] result;
-    public final double avg;
-
-    public IntervalCalculations( Character c, int[] intervals1, int[] intervals2, double[] result )
-    {
-      this.c = c;
-      this.intervals1 = intervals1;
-      this.intervals2 = intervals2;
-      this.result = result;
-      this.avg = Arrays.stream( result ).average().orElse( 0 );
-    }
-
-    @Override public String toString()
-    {
-      return "IntervalCalculations [\n c=" + c + ",\n intervals1=" + Arrays.toString( intervals1 ) + ",\n intervals2="
-          + Arrays.toString( intervals2 ) + ",\n result=" + Arrays.toString( result ) + ",\n avg=" + avg + "\n]";
-    }
   }
 
   private static Map< Character, IntervalCalculations >
@@ -90,5 +70,41 @@ public class IoaCalculations
   static Map< Character, IntervalCalculations > partialAgreement( KeyToInterval data1, KeyToInterval data2 )
   {
     return getIntervals( data1, data2, IoaCalculations::partialComparison );
+  }
+
+  private static double windowAgreement( List< Integer > seconds, List< Integer > comparison, int threshold )
+  {
+    int numMatched = 0;
+
+    for (int k = 0; k < seconds.size(); k++) {
+      int s = seconds.get( k );
+      int min = s - threshold;
+      int max = s + threshold;
+
+      Optional< Integer > optMatch = Iterables.tryFind( comparison, i -> i >= min && i <= max );
+      for (Integer match : optMatch.asSet()) {
+        comparison.remove( match );
+        numMatched++;
+      }
+    }
+
+    return ((double) numMatched) / seconds.size();
+  }
+
+  static Map< Character, Double > windowAgreement( KeyToInterval data1, KeyToInterval data2, int threshold )
+  {
+    SetView< Character > common = Sets.union( data1.charToIntervals.keySet(), data2.charToIntervals.keySet() );
+    Map< Character, Double > result = Maps.newHashMap();
+
+    for (Character c : common) {
+      Multiset< Integer > seconds1 = data1.charToIntervals.get( c );
+      Multiset< Integer > seconds2 = data2.charToIntervals.get( c );
+
+      double result1 = windowAgreement( Lists.newArrayList( seconds1 ), Lists.newArrayList( seconds2 ), threshold );
+      double result2 = windowAgreement( Lists.newArrayList( seconds2 ), Lists.newArrayList( seconds1 ), threshold );
+      result.put( c, (result1 + result2) / 2 );
+    }
+
+    return result;
   }
 }

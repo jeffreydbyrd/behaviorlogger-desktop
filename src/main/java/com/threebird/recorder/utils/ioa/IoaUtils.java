@@ -18,7 +18,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
-import com.threebird.recorder.utils.ioa.IoaCalculations.IntervalCalculations;
 
 public class IoaUtils
 {
@@ -72,8 +71,7 @@ public class IoaUtils
     } else {
       KeyToInterval data1 = mapKeysToInterval( timesToKeys( f1 ), 1 );
       KeyToInterval data2 = mapKeysToInterval( timesToKeys( f2 ), 1 );
-      
-      
+      Map< Character, Double > windowAgreement = IoaCalculations.windowAgreement( data1, data2, blockSize );
     }
   }
 }
