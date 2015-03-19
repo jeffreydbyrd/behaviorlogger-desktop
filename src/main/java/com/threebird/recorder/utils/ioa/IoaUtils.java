@@ -29,7 +29,7 @@ public class IoaUtils
    *          - the partition size of intervals
    * @return a map of keys to the times they occurred in
    */
-  private static KeyToInterval mapKeysToInterval( String[] timeToKeys, int blockSize )
+  static KeyToInterval mapKeysToInterval( String[] timeToKeys, int blockSize )
   {
     HashMap< Character, Multiset< Integer >> charToIntervals = Maps.newHashMap();
 
@@ -46,7 +46,7 @@ public class IoaUtils
     return new KeyToInterval( charToIntervals, timeToKeys.length / blockSize );
   }
 
-  private static String[] timesToKeys( File f ) throws IOException
+  static String[] timesToKeys( File f ) throws IOException
   {
     Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( Files.newReader( f, Charsets.UTF_8 ) ).iterator();
     recsItor.next(); // skip header
