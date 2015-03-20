@@ -43,7 +43,7 @@ public class IoaUtils
       }
     }
 
-    return new KeyToInterval( charToIntervals, timeToKeys.length / blockSize );
+    return new KeyToInterval( charToIntervals, (int) Math.ceil( (double) timeToKeys.length / blockSize ) );
   }
 
   static String[] timesToKeys( File f ) throws IOException
