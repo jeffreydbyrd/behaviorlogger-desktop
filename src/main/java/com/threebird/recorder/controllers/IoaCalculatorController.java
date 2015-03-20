@@ -157,6 +157,10 @@ public class IoaCalculatorController
     fileChooser.getExtensionFilters().add( extFilter );
     File result = fileChooser.showSaveDialog( EventRecorderUtil.dialogStage.get() );
 
+    if (result == null) {
+      return;
+    }
+
     try {
       IoaUtils.process( getFile1(),
                         getFile2(),
