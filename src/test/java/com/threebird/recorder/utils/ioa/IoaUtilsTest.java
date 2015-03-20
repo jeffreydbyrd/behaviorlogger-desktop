@@ -23,5 +23,17 @@ public class IoaUtilsTest
   }
 
   @Test public void mapKeysToInterval_empty() throws Exception
-  {}
+  {
+    URL url = IoaUtilsTest.class.getResource( "test-empty.csv" );
+    File f = new File( url.toURI() );
+    String[] actual = IoaUtils.timesToKeys( f );
+    String[] expected = new String[0];
+
+    assertTrue( Arrays.equals( actual, expected ) );
+  }
+
+  @Test public void mapKeysToInterval_()
+  {
+
+  }
 }
