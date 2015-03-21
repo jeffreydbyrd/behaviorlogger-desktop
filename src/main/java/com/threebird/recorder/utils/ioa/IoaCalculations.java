@@ -72,7 +72,7 @@ public class IoaCalculations
     return getIntervals( data1, data2, IoaCalculations::partialComparison );
   }
 
-  private static double windowAgreement( List< Integer > seconds, List< Integer > comparison, int threshold )
+  static double windowAgreement( List< Integer > seconds, List< Integer > comparison, int threshold )
   {
     int numMatched = 0;
 
