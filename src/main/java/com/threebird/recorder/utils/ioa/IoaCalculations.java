@@ -72,23 +72,25 @@ public class IoaCalculations
     return getIntervals( data1, data2, IoaCalculations::partialComparison );
   }
 
-  static double windowAgreement( List< Integer > seconds, List< Integer > comparison, int threshold )
+  static double windowAgreement( Multiset< Integer > seconds, Multiset< Integer > comparison, int threshold )
   {
+    List< Integer > _seconds = Lists.newArrayList( seconds );
+    List< Integer > _comparison = Lists.newArrayList( comparison );
     int numMatched = 0;
 
-    for (int k = 0; k < seconds.size(); k++) {
-      int s = seconds.get( k );
+    for (int k = 0; k < _seconds.size(); k++) {
+      int s = _seconds.get( k );
       int min = s - threshold;
       int max = s + threshold;
 
-      Optional< Integer > optMatch = Iterables.tryFind( comparison, i -> i >= min && i <= max );
+      Optional< Integer > optMatch = Iterables.tryFind( _comparison, i -> i >= min && i <= max );
       for (Integer match : optMatch.asSet()) {
-        comparison.remove( match );
+        _comparison.remove( match );
         numMatched++;
       }
     }
 
-    return ((double) numMatched) / seconds.size();
+    return ((double) numMatched) / _seconds.size();
   }
 
   static Map< Character, Double > windowAgreement( KeyToInterval data1, KeyToInterval data2, int threshold )
@@ -100,8 +102,8 @@ public class IoaCalculations
       Multiset< Integer > seconds1 = data1.charToIntervals.get( c );
       Multiset< Integer > seconds2 = data2.charToIntervals.get( c );
 
-      double result1 = windowAgreement( Lists.newArrayList( seconds1 ), Lists.newArrayList( seconds2 ), threshold );
-      double result2 = windowAgreement( Lists.newArrayList( seconds2 ), Lists.newArrayList( seconds1 ), threshold );
+      double result1 = windowAgreement( seconds1, seconds2, threshold );
+      double result2 = windowAgreement( seconds2, seconds1, threshold );
       result.put( c, (result1 + result2) / 2 );
     }
 
