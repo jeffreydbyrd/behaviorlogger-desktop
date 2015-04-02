@@ -297,16 +297,73 @@ public class IoaCalculationsTest
 
   @Test public void windowAgreement_blockSize0()
   {
-//    int blockSize = 0;
-//    String[] input1 = new String[] { "d", "dd" };
-//    String[] input2 = new String[] { "d", "d" };
-//
-//    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-//    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
-//
-//    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
-//    Map< Character, Double > expected = Maps.newHashMap();
-//
-//    expected.put( 'd', (1.0 + .5) / 2 );
+    int blockSize = 0;
+    String[] input1 = new String[] { "d", "dd" };
+    String[] input2 = new String[] { "d", "d" };
+
+    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
+
+    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
+    Map< Character, Double > expected = Maps.newHashMap();
+
+    double result1 = 2.0 / 3.0;
+    double result2 = 2.0 / 2.0;
+
+    expected.put( 'd', (result1 + result2) / 2 );
+
+    Assert.assertEquals( expected, actual );
+  }
+
+  @Test public void windowAgreement_blockSize1()
+  {
+    int blockSize = 1;
+    String[] input1 = new String[] { "d", "dd", "", "dd" };
+    String[] input2 = new String[] { "d", "d", "dd" };
+
+    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
+
+    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
+    Map< Character, Double > expected = Maps.newHashMap();
+
+    double result1 = 4.0 / 5.0;
+    double result2 = 4.0 / 4.0;
+
+    expected.put( 'd', (result1 + result2) / 2 );
+
+    Assert.assertEquals( expected, actual );
+  }
+
+  @Test public void windowAgreement_blockSizeBig()
+  {
+    int blockSize = 5;
+    String[] input1 = new String[] { "dddddd", };
+    String[] input2 = new String[] { "d", "d", "dd", "", "d", "d" };
+
+    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
+
+    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
+    Map< Character, Double > expected = Maps.newHashMap();
+
+    expected.put( 'd', 1.0 );
+
+    Assert.assertEquals( expected, actual );
+  }
+
+  @Test public void windowAgreement_empty()
+  {
+    int blockSize = 0;
+    String[] input1 = new String[] {};
+    String[] input2 = new String[] {};
+
+    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
+
+    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
+    Map< Character, Double > expected = Maps.newHashMap();
+
+    Assert.assertEquals( expected, actual );
   }
 }
