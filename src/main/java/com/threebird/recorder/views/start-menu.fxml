@@ -151,10 +151,19 @@
          </children>
       </HBox>
       <Separator prefWidth="200.0" />
-      <HBox spacing="10.0" VBox.vgrow="NEVER">
+      <HBox>
          <children>
-            <Button fx:id="prefsBtn" mnemonicParsing="false" onAction="#onPrefsClicked" text="Preferences" />
-            <Button mnemonicParsing="false" onAction="#onIoaBtnPressed" text="IOA Calculator" />
+            <HBox spacing="10.0" VBox.vgrow="NEVER">
+               <children>
+                  <Button fx:id="prefsBtn" mnemonicParsing="false" onAction="#onPrefsClicked" text="Preferences" />
+                  <Button mnemonicParsing="false" onAction="#onIoaBtnPressed" text="IOA Calculator" />
+               </children>
+            </HBox>
+            <HBox nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button mnemonicParsing="false" text="?" />
+               </children>
+            </HBox>
          </children>
       </HBox>
    </children>
