@@ -60,6 +60,7 @@ public class StartMenuController
 
   @FXML private Button saveButton;
   @FXML private Button startButton;
+  @FXML private Button helpButton;
 
   /**
    * load up the FXML file we generated with Scene Builder, "schemas.fxml". This
@@ -276,5 +277,10 @@ public class StartMenuController
   @FXML private void onIoaBtnPressed()
   {
     IoaCalculatorController.showIoaCalculator();
+  }
+
+  @FXML private void onHelpBtnPressed()
+  {
+    EventRecorderUtil.openManual( "start-menu" );
   }
 }

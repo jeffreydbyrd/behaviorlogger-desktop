@@ -161,7 +161,7 @@
             </HBox>
             <HBox nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                <children>
-                  <Button mnemonicParsing="false" text="?" />
+                  <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
                </children>
             </HBox>
          </children>

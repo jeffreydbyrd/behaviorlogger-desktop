@@ -1,7 +1,10 @@
 package com.threebird.recorder.utils;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -286,5 +289,19 @@ public class EventRecorderUtil
   public static double millisToMinutes( int millis )
   {
     return ((double) millis) / (1000 * 60.0);
+  }
+
+  public static void openManual( String section )
+  {
+    String filepath = "views/manual/manual.html";
+    URL resource = EventRecorder.class.getResource( filepath );
+    String addrFmt = "file://%s#%s";
+    String address = String.format( addrFmt, resource.getPath(), section );
+    try {
+      URI uri = new URI( address );
+      Desktop.getDesktop().browse( uri );
+    } catch (Exception e) {
+      throw new RuntimeException( e );
+    }
   }
 }
