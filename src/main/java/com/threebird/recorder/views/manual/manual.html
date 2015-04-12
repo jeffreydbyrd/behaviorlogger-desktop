@@ -1,8 +1,11 @@
-<p><a name="introduction"></a></p>
+<p><link rel="stylesheet" href="markdown3.css">
+<a name="introduction"></a></p>
 
 <h1>Introduction</h1>
 
 <p>The 3Bird Behavior Logger is a data collection tool for applied behavior analysis. The interface was designed for researchers conducting treatment while one or more data-collectors record behaviors. We recognize that every lab has different preferences on methods and so Behavior Logger allows for substantial customization. This manual details each of the screens and how to achieve some of the most common use-cases.</p>
+
+<hr />
 
 <p><a name="installation"></a></p>
 
@@ -20,6 +23,8 @@
 
 <p>After downloading the installer (3Bird Behavior Logger.dmg), double-click the file. ...</p>
 
+<hr />
+
 <p><a name="start-menu"></a></p>
 
 <h1>Start Menu</h1>
@@ -27,22 +32,24 @@
 <p><em>insert image of start menu</em></p>
 
 <ol>
-<li><strong>Schema List</strong> - a list of current schemas saved on your computer.</li>
-<li><strong>Create Schema</strong> - opens a menu for creating a new schema</li>
-<li><strong>Edit Schema</strong> - opens the selected schema into an edit menu</li>
-<li><strong>Preferences</strong> - opens a menu for customizing default values</li>
-<li><strong>IOA Calculator</strong> - opens a menu for calculating IOA between two data files</li>
-<li><strong>Key-Behavior Mappings</strong> - a summary of the selected schema's key-behavior mappings</li>
-<li><strong>New Session Summary</strong> - the details to be applied to the upcoming session
+<li><strong>Schema List</strong> - A list of current schemas saved on your computer.</li>
+<li><strong>Create Schema</strong> - Opens a menu for creating a new schema.</li>
+<li><strong>Edit Schema</strong> - Opens the selected schema into an edit menu.</li>
+<li><strong>Preferences</strong> - Opens a menu for customizing default values.</li>
+<li><strong>IOA Calculator</strong> - Opens a menu for calculating IOA between two data files.</li>
+<li><strong>Key-Behavior Mappings</strong> - A summary of the selected schema's key-behavior mappings.</li>
+<li><strong>New Session Summary</strong> - The details to be applied to the upcoming session.
 <ul>
-<li><em>Duration</em> - The duration of the session (set by the schema)</li>
-<li><em>Observer</em> - The name of the observer collecting data</li>
-<li><em>Therapist</em> - The name of the therapist performing the treatment</li>
-<li><em>Condition</em> - The type of treatment being applied</li>
+<li><em>Duration</em> - The duration of the session (set by the schema).</li>
+<li><em>Observer</em> - The name of the observer collecting data.</li>
+<li><em>Therapist</em> - The name of the therapist performing the treatment.</li>
+<li><em>Condition</em> - The type of treatment being applied.</li>
 <li><em>Session #</em> - The number of the next session. This number will increment automatically between sessions.</li>
-<li><em>Data File</em> - The name of the data-file the next session will generate. Users can configure this in <a href="#preferences">Preferences</a></li>
+<li><em>Data File</em> - The name of the data-file the next session will generate. Users can configure this in <a href="#preferences">Preferences</a>. The app will warn the user if this file will overwrite an existing one of the same name.</li>
 </ul></li>
 </ol>
+
+<hr />
 
 <p><a name="edit-schema"></a></p>
 
@@ -51,11 +58,105 @@
 <p><em>insert image of edit schema menu</em></p>
 
 <ol>
-<li><strong>blah</strong></li>
+<li><strong>Client</strong> - The identifier of the client.</li>
+<li><strong>Project</strong> - The research project this schema is for.</li>
+<li><strong>Key-Behavior Mappings</strong> - The keys used to record target behaviors.
+<ul>
+<li><em>Cont.</em> - Check if this is a <em>continuous behavior</em> (ie. it has a duration rather than a count).</li>
+<li><em>Key</em> - A single character to represent the behavior. Accepted character include lower-case letters, digits, and some symbols ( ` '  - = [ ] ; , . \ / )</li>
+<li><em>Behavior</em> - A description of the target behavior.</li>
+</ul></li>
+<li><strong>Add Row</strong> - Adds a new row to the Mappings section.</li>
+<li><strong>Delete Schema</strong> - Deletes the current schema. Prompts the user for confirmation.</li>
+<li><strong>Save Session Data To</strong> - The directory session data-files will get saved to.</li>
+<li><strong>Session Duration</strong>
+<ul>
+<li><em>infinite</em> - If checked, sessions will never end.</li>
+<li><em>timed</em> - If checked, sessions will be considered "finished" when they reach the set duration. If this field is set to zero, or left empty, it's the same as checking <em>infinite</em>.</li>
+<li><em>When timer finishes</em> - Check each action to take when a session is over.</li>
+</ul></li>
+<li><strong>Cancel</strong> - Discard all changes and return to Start Menu.</li>
+<li><strong>Save</strong> - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.</li>
 </ol>
+
+<hr />
 
 <p><a name="preferences"></a></p>
 
 <h1>Preferences</h1>
 
 <p><em>insert image of preferences menu</em></p>
+
+<ol>
+<li><strong>Default Save Location</strong> - New schemas will start with this directory.</li>
+<li><strong>Filename Format</strong> - Since most researchers have a preferred naming structure for their data-files, we allow users to customize them. Check each component that you want to include in the filename. You can also drag-and-drop components to reorder them.</li>
+<li><strong>Default Session Duration</strong> - New schemas will start with this duration setting.</li>
+</ol>
+
+<hr />
+
+<p><a name="ioa-calculator"></a></p>
+
+<h1>IOA Calculator</h1>
+
+<p><em>insert image of IOA calculator</em></p>
+
+<ol>
+<li><strong>File 1 / File 2</strong> - Paths to the .csv data-files you wish to compare.</li>
+<li><strong>Method</strong> - The type of calculation to be done. See <a href="#ioa-methods">IOA Methods</a>.</li>
+<li><strong>Block Size</strong> - The number of seconds designated to each partition in partial/exact agreement.</li>
+<li><strong>Threshold</strong> - The number of seconds of leniency in time-window analysis.</li>
+<li><strong>Close</strong> - Closes the calculator window.</li>
+<li><strong>Generate IOA File</strong> - Calculates IOA between File 1 and File 2 and prompts the user save the result in an Excel file.</li>
+</ol>
+
+<hr />
+
+<p><a name="ioa-methods"></a></p>
+
+<h1>IOA Methods</h1>
+
+<p><a name="exact-aggrement"></a></p>
+
+<h2>Exact Agreement</h2>
+
+<p><a name="partial-aggrement"></a></p>
+
+<h2>Partial Agreement</h2>
+
+<p><a name="time-window"></a></p>
+
+<h2>Time Window</h2>
+
+<hr />
+
+<p><a name="recording"></a></p>
+
+<h1>Recording</h1>
+
+<p><em>insert image of the recording view</em></p>
+
+<ol>
+<li><strong>Behavior Summary</strong> - Each row keeps track of the count/duration of each behavior.</li>
+<li><strong>Play/Stop</strong> - Starts and Stops the recording session. You can also press <code>spacebar</code> as a shortcut. You can only record behaviors while playing.</li>
+<li><strong>Timer</strong> - The timer will increase while playing. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the <a href="#edit-schema">edit-schema menu</a>.</li>
+<li><strong>Start New Session</strong> - Starts a new session with the same schema and same session-detais. The session #, however, will increment.</li>
+<li><strong>Edit Uknown Behaviors</strong> - Only visible if you have logged an unknown behavior, it will open a new menu for assigning values to any you might have logged.</li>
+</ol>
+
+<p><a name="logging-behaviors"></a></p>
+
+<h2>Logging Behaviors</h2>
+
+<p>While a session is playing, press any of the mapped keys to log a behavior. <strong>Discrete</strong> behaviors flash green and the counter will increment. <strong>Continuous</strong> behaviors toggle on and off.</p>
+
+<p><a name="logging-new-behaviors"></a></p>
+
+<h2>Logging New Behaviors</h2>
+
+<p>You can also log new behaviors on the fly while recording.</p>
+
+<p><strong>Discrete</strong> - press an unmapped key. <br />
+<strong>Continuous</strong> - press an unmapped key while holding <code>ctrl</code>. Once the new continuous key is added, you don't have to hold <code>ctrl</code> to toggle it.</p>
+
+<p>When you pause the session, you can click <em>Edit Unknown Behaviors</em> to assign values to any unknowns you might have logged. If you logged an unknown by mistake, you can ignore it.</p>
