@@ -24,7 +24,12 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <Button fx:id="createSchemaButton" mnemonicParsing="false" onAction="#onCreateSchemaClicked" text="Create New Schema" textAlignment="CENTER" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button fx:id="createSchemaButton" mnemonicParsing="false" onAction="#onCreateSchemaClicked" text="Create New Schema" textAlignment="CENTER" />
+                        <Button fx:id="editSchemaBtn" mnemonicParsing="false" onAction="#onEditSchemaClicked" text="Edit Schema" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
             <VBox fx:id="rightSide" prefHeight="414.0" prefWidth="350.0" spacing="5.0" HBox.hgrow="ALWAYS">
@@ -143,14 +148,16 @@
                   <HBox layoutX="313.0" layoutY="464.0" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
                         <Button fx:id="startButton" layoutY="377.0" mnemonicParsing="false" onAction="#onStartClicked" text="Start New Session" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                        <Button mnemonicParsing="false" onAction="#onEditSchemaClicked" text="Edit Schema" />
                      </children>
                   </HBox>
                </children>
             </VBox>
          </children>
       </HBox>
-      <Separator prefWidth="200.0" />
+      <Separator prefWidth="200.0">
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin></Separator>
       <HBox>
          <children>
             <HBox spacing="10.0" VBox.vgrow="NEVER">
@@ -161,7 +168,7 @@
             </HBox>
             <HBox nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
+                  <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
                </children>
             </HBox>
          </children>

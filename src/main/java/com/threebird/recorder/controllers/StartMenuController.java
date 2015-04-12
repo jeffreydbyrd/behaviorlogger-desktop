@@ -43,6 +43,7 @@ public class StartMenuController
   @FXML private TableColumn< Schema, String > clientCol;
   @FXML private TableColumn< Schema, String > projectCol;
   @FXML private Button createSchemaButton;
+  @FXML private Button editSchemaBtn;
 
   @FXML private VBox rightSide;
   @FXML private VBox mappingsBox;
@@ -76,6 +77,7 @@ public class StartMenuController
   private void init()
   {
     rightSide.setVisible( false );
+    editSchemaBtn.setVisible( false );
     initSchemaListView();
     initSessionDetails();
   }
@@ -192,11 +194,13 @@ public class StartMenuController
     SchemasManager.setSelected( newV );
     if (newV != null) {
       rightSide.setVisible( true );
+      editSchemaBtn.setVisible( true );
       populateMappingsTable( newV );
       timeBox.setText( EventRecorderUtil.secondsToTimestamp( newV.duration ) );
       updateFilenameLabel();
     } else {
       rightSide.setVisible( false );
+      editSchemaBtn.setVisible( false );
     }
   }
 
