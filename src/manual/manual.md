@@ -96,11 +96,17 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 <a name="exact-aggrement"></a>
 ## Exact Agreement
 
+The data-logs from File 1 and File 2 get partitioned into intervals of a size specified by `block-size`. For each interval, the observers are considered in agreement if they both recorded the same number of occurrences within the interval. A behavior's percent agreement is equal to the number of agreements divided by the total number of intervals and multiplied by 100.
+
 <a name="partial-aggrement"></a>
 ## Partial Agreement
 
+The data-logs in same way as in *exact agreement*. A score between 0 and 1 is calcuated per interval by dividing the smaller of the two counts by the larger. If both counts are zero, the score equals 1. A behavior's percent agreement is equal to the sum of all scores divided by the number of intervals, multiplied by 100.
+
 <a name="time-window"></a>
 ## Time Window
+
+Each occurrence of a behavior within each data-log is given a score of 0 or 1. If a behavior in one log occurs within &plusmn; `threshold` seconds of the same behavior recorded in the other log, it gets a score of 1. If the behavior does not have a match within the bounds set by `threshold`, it gets a score of 0. Next, each data-log gets an overall score by summing the scores and dividing by the total occurrences. The percent agreement for a behavior is equal to the sum of the two data-log scores, divided by 2, and multiplied by 100.
 
 ---
 
