@@ -355,4 +355,9 @@ public class RecordingController
   {
     AddKeysController.showAddKeysView( this, manager );
   }
+
+  @FXML private void onHelpBtnPressed()
+  {
+    EventRecorderUtil.openManual( "recording" );
+  }
 }

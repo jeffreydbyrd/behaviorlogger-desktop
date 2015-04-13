@@ -53,16 +53,12 @@
             </VBox>
          </children>
       </VBox>
-      <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="4">
+      <HBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" GridPane.rowIndex="4">
          <children>
-            <HBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-               <children>
-                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelPressed" text="Cancel" />
-                  <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSavePressed" text="Save" />
-               </children>
-            </HBox>
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelPressed" text="Cancel" />
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSavePressed" text="Save" />
          </children>
-      </AnchorPane>
+      </HBox>
       <Label text="Filename Format:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
       <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
@@ -73,6 +69,7 @@
          </children>
       </VBox>
       <VBox fx:id="errMsgBox" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

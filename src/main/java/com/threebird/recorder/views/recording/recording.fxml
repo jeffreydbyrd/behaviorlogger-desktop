@@ -151,6 +151,7 @@
             </HBox>
             <Label fx:id="timeBox" alignment="TOP_LEFT" layoutX="411.0" layoutY="8.0" text="00 : 00 : 00" AnchorPane.rightAnchor="5.0" />
             <Pane focusTraversable="true" layoutX="661.0" layoutY="97.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+            <Button fx:id="helpButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
       </AnchorPane>
    </children>

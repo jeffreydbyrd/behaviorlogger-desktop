@@ -176,4 +176,9 @@ public class IoaCalculatorController
   {
     EventRecorderUtil.dialogStage.get().close();
   }
+
+  @FXML private void onHelpBtnPressed()
+  {
+    EventRecorderUtil.openManual( "ioa-calculator" );
+  }
 }

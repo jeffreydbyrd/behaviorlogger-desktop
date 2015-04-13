@@ -356,4 +356,9 @@ public class EditSchemaController
                                  e -> {},
                                  onDeleteClicked );
   }
+
+  @FXML void onHelpBtnPressed()
+  {
+    EventRecorderUtil.openManual( "edit-schema" );
+  }
 }

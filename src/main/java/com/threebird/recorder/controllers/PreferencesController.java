@@ -278,4 +278,8 @@ public class PreferencesController
     EventRecorderUtil.dialogStage.get().close();
   }
 
+  @FXML void onHelpBtnPressed()
+  {
+    EventRecorderUtil.openManual( "preferences" );
+  }
 }
