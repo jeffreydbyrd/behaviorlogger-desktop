@@ -6,19 +6,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -159,66 +152,6 @@ public class EventRecorderUtil
           || !String.valueOf( acceptableKeys ).contains( evt.getCharacter() ))
         evt.consume();
     };
-  }
-
-  /**
-   * Display a simple dialog-box that displays a message and allows the user to
-   * click two buttons
-   * 
-   * @param msg
-   *          - the main message to display
-   * @param leftBtn
-   *          - the text displayed on the left-button
-   * @param rightBtn
-   *          - the text displayed on the right-button
-   * @param onLeftClicked
-   *          - what happens when user clicks left-button
-   * @param onRightClicked
-   *          - what happens when user clicks right-button
-   */
-  public static void dialogBox( String msg,
-                                String leftBtn,
-                                String rightBtn,
-                                EventHandler< ActionEvent > onLeftClicked,
-                                EventHandler< ActionEvent > onRightClicked )
-  {
-    Label question = new Label( msg );
-    question.setAlignment( Pos.BASELINE_CENTER );
-
-    HBox hBox = new HBox();
-    hBox.setAlignment( Pos.BASELINE_RIGHT );
-    hBox.setSpacing( 20.0 );
-
-    if (onLeftClicked != null && leftBtn != null) {
-      Button left = new Button( leftBtn );
-      left.setOnAction( evt -> {
-        dialogStage.get().close();
-        onLeftClicked.handle( evt );
-      } );
-      hBox.getChildren().add( left );
-    }
-
-    Button right = new Button( rightBtn );
-    right.setOnAction( evt -> {
-      dialogStage.get().close();
-      onRightClicked.handle( evt );
-    } );
-    hBox.getChildren().add( right );
-
-    VBox vBox = new VBox();
-    vBox.setSpacing( 20.0 );
-    vBox.getChildren().addAll( question, hBox );
-    vBox.setPadding( new Insets( 10 ) );
-
-    dialogStage.get().setScene( new Scene( vBox ) );
-    dialogStage.get().show();
-  }
-
-  public static void dialogBox( String msg,
-                                String button,
-                                EventHandler< ActionEvent > onBtnClicked )
-  {
-    dialogBox( msg, null, button, null, onBtnClicked );
   }
 
   public static int strToInt( String s )

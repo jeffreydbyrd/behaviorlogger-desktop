@@ -5,12 +5,14 @@ import java.util.Map;
 import java.util.Set;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -319,15 +321,21 @@ public class RecordingController
   {
     if (!manager.unknowns.isEmpty()) {
       String msg = "You have recorded unknown behaviors. Would you like to edit them?";
-      String leftOption = "Discard Unknowns";
-      String rightOption = "Edit Unknowns";
-
-      EventHandler< ActionEvent > onDiscardClick = e -> toScene.run();
-
-      EventHandler< ActionEvent > onEditClick = e ->
-          AddKeysController.showAddKeysView( this, manager );
-
-      EventRecorderUtil.dialogBox( msg, leftOption, rightOption, onDiscardClick, onEditClick );
+      Alert alert = new Alert( Alert.AlertType.CONFIRMATION );
+      alert.setTitle( "Confirm deletion." );
+      alert.setHeaderText( null );
+      alert.setContentText( msg );
+      ButtonType editBtn = new ButtonType( "Edit Unknowns" );
+      ButtonType discardBtn = new ButtonType( "Discard Unknowns", ButtonData.CANCEL_CLOSE );
+      alert.getButtonTypes().setAll( discardBtn, editBtn );
+      alert.showAndWait()
+           .ifPresent( r -> {
+             if (r == editBtn) {
+               AddKeysController.showAddKeysView( this, manager );
+             } else {
+               toScene.run();
+             }
+           } );
     } else {
       toScene.run();
     }

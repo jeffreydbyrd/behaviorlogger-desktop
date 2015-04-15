@@ -10,7 +10,9 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -266,13 +268,15 @@ public class StartMenuController
     if (isConflicting) {
       String msg =
           "Starting this session will overwrite an existing data file.\n"
-              + "Click Cancel to stay here or Continue to proceed.";
-      String leftOption = "Cancel";
-      String rightOption = "Continue";
+              + "Click Cancel to stay here or Ok to proceed.";
 
-      EventHandler< ActionEvent > onCancelClick = e -> {};
-      EventHandler< ActionEvent > onContinueClick = e -> RecordingController.toRecordingView();
-      EventRecorderUtil.dialogBox( msg, leftOption, rightOption, onCancelClick, onContinueClick );
+      Alert alert = new Alert( Alert.AlertType.CONFIRMATION );
+      alert.setTitle( "File already exists." );
+      alert.setHeaderText( null );
+      alert.setContentText( msg );
+      alert.showAndWait()
+           .filter( result -> result == ButtonType.OK )
+           .ifPresent( r -> RecordingController.toRecordingView() );
     } else {
       RecordingController.toRecordingView();
     }

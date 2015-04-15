@@ -8,9 +8,10 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -345,16 +346,16 @@ public class EditSchemaController
   {
     String msg = "Are you sure you want to delete this schema?\nYou can't undo this action.";
 
-    EventHandler< ActionEvent > onDeleteClicked = evt -> {
-      SchemasManager.schemas().remove( model );
-      StartMenuController.toStartMenuView();
-    };
-
-    EventRecorderUtil.dialogBox( msg,
-                                 "Cancel",
-                                 "Delete",
-                                 e -> {},
-                                 onDeleteClicked );
+    Alert alert = new Alert( Alert.AlertType.CONFIRMATION );
+    alert.setTitle( "Confirm deletion." );
+    alert.setHeaderText( null );
+    alert.setContentText( msg );
+    alert.showAndWait()
+         .filter( result -> result == ButtonType.OK )
+         .ifPresent( r -> {
+           SchemasManager.schemas().remove( model );
+           StartMenuController.toStartMenuView();
+         } );
   }
 
   @FXML void onHelpBtnPressed()
