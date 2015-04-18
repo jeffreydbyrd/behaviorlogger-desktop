@@ -1,19 +1,25 @@
 package com.threebird.recorder.utils.ioa;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class IoaCalculationsTest
 {
-  @Test public void partialAgreement__blocksize1__half_agree()
+  @Test public void partialAgreement__blocksize1()
   {
     int blockSize = 1;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "", "d" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "d", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -30,11 +36,15 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void partialAgreement__blocksize2__half_agree()
+  @Test public void partialAgreement__blocksize2()
   {
     int blockSize = 2;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "", "d" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "d", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -51,11 +61,15 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void partialAgreement__blocksizeBig__half_agree()
+  @Test public void partialAgreement__blocksizeBig()
   {
     int blockSize = 5;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "", "d" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "d", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -75,8 +89,12 @@ public class IoaCalculationsTest
   @Test public void partialAgreement_multipleChars()
   {
     int blockSize = 1;
-    String[] input1 = new String[] { "d", "cdd" };
-    String[] input2 = new String[] { "c", "cd" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "c" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "c" ),
+                            new BehaviorLogRow( "d", "c" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -100,8 +118,14 @@ public class IoaCalculationsTest
   @Test public void partialAgreement__blockSize1__uneven()
   {
     int blockSize = 1;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "", "d", "d", "" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -120,8 +144,14 @@ public class IoaCalculationsTest
   @Test public void partialAgreement__imperfectPartitions()
   {
     int blockSize = 3;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "", "d", "d", "" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -140,8 +170,8 @@ public class IoaCalculationsTest
   @Test public void partialAgreement_empty()
   {
     int blockSize = 1;
-    String[] input1 = new String[] {};
-    String[] input2 = new String[] {};
+    List< BehaviorLogRow > input1 = Lists.newArrayList();
+    List< BehaviorLogRow > input2 = Lists.newArrayList();
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -155,8 +185,12 @@ public class IoaCalculationsTest
   @Test public void exactAgreement__blocksize1__half_agree()
   {
     int blockSize = 1;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "d", "d" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -176,8 +210,12 @@ public class IoaCalculationsTest
   @Test public void exactAgreement__blocksize2__half_agree()
   {
     int blockSize = 2;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "d", "d" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -197,8 +235,12 @@ public class IoaCalculationsTest
   @Test public void exactAgreement__blocksizeBig__half_agree()
   {
     int blockSize = 5;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "d", "d" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -218,8 +260,12 @@ public class IoaCalculationsTest
   @Test public void exactAgreement_multipleChars()
   {
     int blockSize = 1;
-    String[] input1 = new String[] { "d", "cdd" };
-    String[] input2 = new String[] { "c", "cd" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "c" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "c" ),
+                            new BehaviorLogRow( "d", "c" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -243,8 +289,14 @@ public class IoaCalculationsTest
   @Test public void exactAgreement__blockSize1__uneven()
   {
     int blockSize = 1;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "d", "d", "d", "" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -263,8 +315,14 @@ public class IoaCalculationsTest
   @Test public void exactAgreement__imperfectPartitions()
   {
     int blockSize = 3;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "", "d", "d", "" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -283,8 +341,8 @@ public class IoaCalculationsTest
   @Test public void exactAgreement_empty()
   {
     int blockSize = 1;
-    String[] input1 = new String[] {};
-    String[] input2 = new String[] {};
+    List< BehaviorLogRow > input1 = Lists.newArrayList();
+    List< BehaviorLogRow > input2 = Lists.newArrayList();
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
@@ -298,8 +356,12 @@ public class IoaCalculationsTest
   @Test public void windowAgreement_blockSize0()
   {
     int blockSize = 0;
-    String[] input1 = new String[] { "d", "dd" };
-    String[] input2 = new String[] { "d", "d" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
@@ -318,8 +380,15 @@ public class IoaCalculationsTest
   @Test public void windowAgreement_blockSize1()
   {
     int blockSize = 1;
-    String[] input1 = new String[] { "d", "dd", "", "dd" };
-    String[] input2 = new String[] { "d", "d", "dd" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ),
+                            new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
@@ -338,8 +407,15 @@ public class IoaCalculationsTest
   @Test public void windowAgreement_blockSizeBig()
   {
     int blockSize = 5;
-    String[] input1 = new String[] { "dddddd", };
-    String[] input2 = new String[] { "d", "d", "dd", "", "d", "d" };
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "dddddd", "" ) );
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "dd", "" ),
+                            new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "d", "" ),
+                            new BehaviorLogRow( "d", "" ) );
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
@@ -355,8 +431,8 @@ public class IoaCalculationsTest
   @Test public void windowAgreement_empty()
   {
     int blockSize = 0;
-    String[] input1 = new String[] {};
-    String[] input2 = new String[] {};
+    List< BehaviorLogRow > input1 = Lists.newArrayList();
+    List< BehaviorLogRow > input2 = Lists.newArrayList();
 
     KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
     KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );

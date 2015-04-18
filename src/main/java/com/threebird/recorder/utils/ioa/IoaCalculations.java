@@ -37,7 +37,7 @@ public class IoaCalculations
                   KeyToInterval data2,
                   BiFunction< Integer, Integer, Double > compare )
   {
-    SetView< Character > common = Sets.union( data1.charToIntervals.keySet(), data2.charToIntervals.keySet() );
+    SetView< Character > common = Sets.union( data1.discreteToIntervals.keySet(), data2.discreteToIntervals.keySet() );
     Map< Character, IntervalCalculations > map = Maps.newHashMap();
 
     int numIntervals = Math.max( data1.totalIntervals, data2.totalIntervals );
@@ -48,8 +48,8 @@ public class IoaCalculations
       double[] result = new double[numIntervals];
 
       for (Integer i = 0; i < numIntervals; i++) {
-        intervals1[i] += data1.charToIntervals.get( c ) != null ? data1.charToIntervals.get( c ).count( i ) : 0;
-        intervals2[i] += data2.charToIntervals.get( c ) != null ? data2.charToIntervals.get( c ).count( i ) : 0;
+        intervals1[i] += data1.discreteToIntervals.get( c ) != null ? data1.discreteToIntervals.get( c ).count( i ) : 0;
+        intervals2[i] += data2.discreteToIntervals.get( c ) != null ? data2.discreteToIntervals.get( c ).count( i ) : 0;
       }
 
       for (int i = 0; i < numIntervals; i++) {
@@ -95,12 +95,12 @@ public class IoaCalculations
 
   static Map< Character, Double > windowAgreement( KeyToInterval data1, KeyToInterval data2, int threshold )
   {
-    SetView< Character > common = Sets.union( data1.charToIntervals.keySet(), data2.charToIntervals.keySet() );
+    SetView< Character > common = Sets.union( data1.discreteToIntervals.keySet(), data2.discreteToIntervals.keySet() );
     Map< Character, Double > result = Maps.newHashMap();
 
     for (Character c : common) {
-      Multiset< Integer > seconds1 = data1.charToIntervals.get( c );
-      Multiset< Integer > seconds2 = data2.charToIntervals.get( c );
+      Multiset< Integer > seconds1 = data1.discreteToIntervals.get( c );
+      Multiset< Integer > seconds2 = data2.discreteToIntervals.get( c );
 
       double result1 = windowAgreement( seconds1, seconds2, threshold );
       double result2 = windowAgreement( seconds2, seconds1, threshold );

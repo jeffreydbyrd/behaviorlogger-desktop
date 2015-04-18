@@ -2,9 +2,9 @@ package com.threebird.recorder.utils.ioa;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.Charsets;
@@ -18,7 +18,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
-import com.threebird.recorder.persistence.WriteIoaTimeWindows;
 
 public class IoaUtils
 {
@@ -29,12 +28,13 @@ public class IoaUtils
    *          - the partition size of intervals
    * @return a map of keys to the times they occurred in
    */
-  static KeyToInterval mapKeysToInterval( String[] timeToKeys, int blockSize )
+  static KeyToInterval mapKeysToInterval( List< BehaviorLogRow > timeToKeys, int blockSize )
   {
     HashMap< Character, Multiset< Integer >> charToIntervals = Maps.newHashMap();
 
-    for (int s = 0; s < timeToKeys.length; s++) {
-      String keys = timeToKeys[s];
+    for (int s = 0; s < timeToKeys.size(); s++) {
+      BehaviorLogRow row = timeToKeys.get( s );
+      String keys = row.discrete + row.continuous;
       for (char ch : keys.toCharArray()) {
         if (!charToIntervals.containsKey( ch )) {
           charToIntervals.put( ch, HashMultiset.create() );
@@ -43,16 +43,16 @@ public class IoaUtils
       }
     }
 
-    return new KeyToInterval( charToIntervals, (int) Math.ceil( (double) timeToKeys.length / blockSize ) );
+    return new KeyToInterval( charToIntervals, (int) Math.ceil( (double) timeToKeys.size() / blockSize ) );
   }
 
-  static String[] timesToKeys( File f ) throws IOException
+  static List< BehaviorLogRow > deserialize( File f ) throws IOException
   {
     Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( Files.newReader( f, Charsets.UTF_8 ) ).iterator();
     recsItor.next(); // skip header
-    Iterator< String > keyItor = Iterators.transform( recsItor, rec -> rec.get( 1 ) );
-    ArrayList< String > keys = Lists.newArrayList( keyItor );
-    return keys.toArray( new String[keys.size()] );
+    Iterator< BehaviorLogRow > keyItor =
+        Iterators.transform( recsItor, rec -> new BehaviorLogRow( rec.get( 1 ), rec.get( 2 ) ) );
+    return Lists.newArrayList( keyItor );
   }
 
   public static void process( File f1,
@@ -63,18 +63,19 @@ public class IoaUtils
   {
     if (method != IoaMethod.Time_Window) {
       int size = blockSize < 1 ? 1 : blockSize;
-      KeyToInterval data1 = mapKeysToInterval( timesToKeys( f1 ), size );
-      KeyToInterval data2 = mapKeysToInterval( timesToKeys( f2 ), size );
+      KeyToInterval data1 = mapKeysToInterval( deserialize( f1 ), size );
+      KeyToInterval data2 = mapKeysToInterval( deserialize( f2 ), size );
       Map< Character, IntervalCalculations > intervals =
           method == IoaMethod.Exact_Agreement
               ? IoaCalculations.exactAgreement( data1, data2 )
               : IoaCalculations.partialAgreement( data1, data2 );
       WriteIoaIntervals.write( intervals, out );
     } else {
-      KeyToInterval data1 = mapKeysToInterval( timesToKeys( f1 ), 1 );
-      KeyToInterval data2 = mapKeysToInterval( timesToKeys( f2 ), 1 );
-      Map< Character, Double > windowAgreement = IoaCalculations.windowAgreement( data1, data2, blockSize );
-      WriteIoaTimeWindows.write( windowAgreement, out );
+      // KeyToInterval data1 = mapKeysToInterval( timesToKeys( f1 ), 1 );
+      // KeyToInterval data2 = mapKeysToInterval( timesToKeys( f2 ), 1 );
+      // Map< Character, Double > windowAgreement =
+      // IoaCalculations.windowAgreement( data1, data2, blockSize );
+      // WriteIoaTimeWindows.write( windowAgreement, out );
     }
   }
 }

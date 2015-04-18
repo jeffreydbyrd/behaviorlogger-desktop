@@ -1,7 +1,7 @@
-Time,Keys
-0,cd
-1,dcd
-2,
-3,ddc
-4,c
-5,
+Time,Discrete,Continuous
+0,d,c
+1,dd,c
+2,,
+3,dd,c
+4,,c
+5,,

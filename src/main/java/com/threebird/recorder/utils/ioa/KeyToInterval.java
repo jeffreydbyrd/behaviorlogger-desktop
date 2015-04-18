@@ -5,24 +5,24 @@ import java.util.HashMap;
 import com.google.common.collect.Multiset;
 
 /**
- * A simple typedef for a Map that maps each key to all the intervals that they
- * occurred in. It also contains a reference to the total number of intervals
+ * Maps each key to all the intervals that they occurred in. It also contains a
+ * reference to the total number of intervals
  */
 public class KeyToInterval
 {
-  public final HashMap< Character, Multiset< Integer >> charToIntervals;
+  public final HashMap< Character, Multiset< Integer >> discreteToIntervals;
   public final int totalIntervals;
 
   public KeyToInterval( HashMap< Character, Multiset< Integer >> charToIntervals, int totalIntervals )
   {
-    this.charToIntervals = charToIntervals;
+    this.discreteToIntervals = charToIntervals;
     this.totalIntervals = totalIntervals;
   }
 
   @Override public String toString()
   {
     StringBuilder sb = new StringBuilder();
-    charToIntervals.forEach( ( ch, intervals ) -> {
+    discreteToIntervals.forEach( ( ch, intervals ) -> {
       sb.append( "  " + ch + "->" + intervals.toString() + "\n" );
     } );
     return "KeyToInterval [\n charToIntervals=\n" + sb.toString() + ", totalIntervals=" + totalIntervals + "\n]";
@@ -32,7 +32,7 @@ public class KeyToInterval
   {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((charToIntervals == null) ? 0 : charToIntervals.hashCode());
+    result = prime * result + ((discreteToIntervals == null) ? 0 : discreteToIntervals.hashCode());
     result = prime * result + totalIntervals;
     return result;
   }
@@ -46,10 +46,10 @@ public class KeyToInterval
     if (getClass() != obj.getClass())
       return false;
     KeyToInterval other = (KeyToInterval) obj;
-    if (charToIntervals == null) {
-      if (other.charToIntervals != null)
+    if (discreteToIntervals == null) {
+      if (other.discreteToIntervals != null)
         return false;
-    } else if (!charToIntervals.equals( other.charToIntervals ))
+    } else if (!discreteToIntervals.equals( other.discreteToIntervals ))
       return false;
     if (totalIntervals != other.totalIntervals)
       return false;

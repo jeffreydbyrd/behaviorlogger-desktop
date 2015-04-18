@@ -1,45 +1,52 @@
 package com.threebird.recorder.utils.ioa;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Test;
 
 import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 
 public class IoaUtilsTest
 {
-  private static String[] standard = new String[] { "cd", "dcd", "", "ddc", "c", "" };
+  List< BehaviorLogRow > standard =
+      Lists.newArrayList( new BehaviorLogRow( "d", "c" ),
+                          new BehaviorLogRow( "dd", "c" ),
+                          new BehaviorLogRow( "", "" ),
+                          new BehaviorLogRow( "dd", "c" ),
+                          new BehaviorLogRow( "", "c" ),
+                          new BehaviorLogRow( "", "" ) );
 
   @Test public void timesToKeys_standard() throws Exception
   {
     URL url = IoaUtilsTest.class.getResource( "test-0.csv" );
     File f = new File( url.toURI() );
-    String[] actual = IoaUtils.timesToKeys( f );
-    String[] expected = standard;
+    List< BehaviorLogRow > actual = IoaUtils.deserialize( f );
+    List< BehaviorLogRow > expected = standard;
 
-    assertTrue( Arrays.equals( actual, expected ) );
+    assertEquals( expected, actual );
   }
 
   @Test public void timesToKeys_empty() throws Exception
   {
     URL url = IoaUtilsTest.class.getResource( "test-empty.csv" );
     File f = new File( url.toURI() );
-    String[] actual = IoaUtils.timesToKeys( f );
-    String[] expected = new String[0];
+    List< BehaviorLogRow > actual = IoaUtils.deserialize( f );
+    List< BehaviorLogRow > expected = Lists.newArrayList();
 
-    assertTrue( Arrays.equals( actual, expected ) );
+    assertEquals( expected, actual );
   }
 
   @Test public void mapKeysToInterval_standard()
   {
-    String[] input = standard;
+    List< BehaviorLogRow > input = standard;
     int blockSize = 1;
 
     int expectedNumIntervals = 6;
@@ -69,7 +76,7 @@ public class IoaUtilsTest
 
   @Test public void mapKeysToInterval_blockSize_4()
   {
-    String[] input = standard;
+    List< BehaviorLogRow > input = standard;
     int blockSize = 4;
 
     int expectedNumIntervals = 2;
@@ -99,9 +106,9 @@ public class IoaUtilsTest
 
   @Test public void mapKeysToInterval_empty()
   {
-    String[] input = new String[0];
+    List< BehaviorLogRow > input = Lists.newArrayList();
     int blockSize = 1;
-    int expectedNumIntervals = input.length;
+    int expectedNumIntervals = input.size();
     HashMap< Character, Multiset< Integer >> expectedCharToIntervals = Maps.newHashMap();
     KeyToInterval expected = new KeyToInterval( expectedCharToIntervals, expectedNumIntervals );
     KeyToInterval actual = IoaUtils.mapKeysToInterval( input, blockSize );
