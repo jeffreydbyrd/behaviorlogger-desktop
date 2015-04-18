@@ -111,26 +111,37 @@ public class Recordings
     Writer.XLS.schedule( createSaveDetails( f, behaviors, count ) );
   }
 
+  private static class DiscreteContinuousPair
+  {
+    public String discrete = "";
+    public String continuous = "";
+  }
+
   /**
    * @return an array where each index represents a second, and each element is
    *         a list of keys pressed within each second
    */
-  private static String[] mapTimeToKeys( List< Behavior > behaviors, int totalTimeSeconds )
+  private static DiscreteContinuousPair[] mapTimeToKeys( List< Behavior > behaviors, int totalTimeSeconds )
   {
-    String[] res = new String[totalTimeSeconds + 1];
+    DiscreteContinuousPair[] res = new DiscreteContinuousPair[totalTimeSeconds + 1];
 
     for (Behavior b : behaviors) {
-      char ch = b.key.c;
+      String ch = b.key.c + "";
       int s = b.startTime / 1000;
       int dur = (b.isContinuous()) ? ((ContinuousBehavior) b).getDuration() / 1000 : 0;
       int end = s + dur;
 
       for (; s <= end; s++) {
         if (res[s] == null) {
-          res[s] = "";
+          res[s] = new DiscreteContinuousPair();
         }
-        if (!b.isContinuous() || !res[s].contains( ch + "" )) {
-          res[s] += ch;
+
+        if (b.isContinuous() && !res[s].continuous.contains( ch )) {
+          res[s].continuous += ch;
+        }
+
+        if (!b.isContinuous()) {
+          res[s].discrete += ch;
         }
       }
     }
@@ -145,14 +156,16 @@ public class Recordings
         details.f.createNewFile();
       }
 
-      String[] timeToKeys = mapTimeToKeys( details.behaviors, details.totalTimeMillis / 1000 );
+      DiscreteContinuousPair[] timeToKeys = mapTimeToKeys( details.behaviors, details.totalTimeMillis / 1000 );
 
-      String[] headers = { "Time", "Keys" };
+      String[] headers = { "Time", "Discrete", "Continuous" };
       BufferedWriter out = Files.newWriter( details.f, Charsets.UTF_8 );
       CSVPrinter printer = CSVFormat.DEFAULT.withHeader( headers ).print( out );
 
       for (int s = 0; s < timeToKeys.length; s++) {
-        printer.printRecord( s, timeToKeys[s] == null ? "" : timeToKeys[s] );
+        String discrete = timeToKeys[s] == null ? "" : timeToKeys[s].discrete;
+        String continuous = timeToKeys[s] == null ? "" : timeToKeys[s].continuous;
+        printer.printRecord( s, discrete, continuous );
       }
 
       printer.flush();
