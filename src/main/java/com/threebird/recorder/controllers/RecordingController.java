@@ -344,19 +344,25 @@ public class RecordingController
   @FXML private void onGoBackPress( ActionEvent evt )
   {
     Integer sessionNum = SessionManager.getSessionNumber();
-    if (sessionNum != null && manager.timer.getCurrentTime().greaterThan( Duration.ZERO )) {
-      SessionManager.setSessionNumber( sessionNum + 1 );
-    }
-    checkUnknownsAndChangeScene( ( ) -> StartMenuController.toStartMenuView() );
+
+    checkUnknownsAndChangeScene( ( ) -> {
+      if (sessionNum != null && manager.timer.getCurrentTime().greaterThan( Duration.ZERO )) {
+        SessionManager.setSessionNumber( sessionNum + 1 );
+      }
+      StartMenuController.toStartMenuView();
+    } );
   }
 
   @FXML private void onNewSessionPress( ActionEvent evt )
   {
     Integer sessionNum = SessionManager.getSessionNumber();
-    if (sessionNum != null) {
-      SessionManager.setSessionNumber( sessionNum + 1 );
-    }
-    checkUnknownsAndChangeScene( ( ) -> RecordingController.toRecordingView() );
+
+    checkUnknownsAndChangeScene( ( ) -> {
+      if (sessionNum != null) {
+        SessionManager.setSessionNumber( sessionNum + 1 );
+      }
+      RecordingController.toRecordingView();
+    } );
   }
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
