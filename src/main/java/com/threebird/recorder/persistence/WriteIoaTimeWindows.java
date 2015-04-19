@@ -11,9 +11,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import com.threebird.recorder.utils.ioa.TimeWindowCalculations;
+
 public class WriteIoaTimeWindows
 {
-  public static void write( Map< Character, Double > results, File f ) throws IOException
+  public static void write( Map< Character, TimeWindowCalculations > ioaDiscrete,
+                            Map< Character, Double > ioaContinuous,
+                            String file1,
+                            String file2,
+                            File f ) throws IOException
   {
     if (!f.exists()) {
       f.createNewFile();
@@ -27,21 +33,41 @@ public class WriteIoaTimeWindows
     Row row;
     int r = 0;
 
-    Double sum = results.values().stream().reduce( 0.0, ( d1, acc ) -> d1 + acc );
-    Double overall = sum / results.size();
-
-    // __Key Summary__
+    // __Discrete Key Summary__
     row = s.createRow( r++ );
-    row.createCell( 0 ).setCellValue( "Overall" );
-    row.createCell( 1 ).setCellValue( overall.doubleValue() );
+    row.createCell( 0 ).setCellValue( "Discrete IOA Calculations" );
 
-    for (Entry< Character, Double > entry : results.entrySet()) {
-      Character c = entry.getKey();
-      Double avg = entry.getValue();
+    row = s.createRow( r++ );
+    row.createCell( 0 ).setCellValue( "Key" );
+    row.createCell( 1 ).setCellValue( file1 );
+    row.createCell( 2 ).setCellValue( file1 );
+
+    for (Entry< Character, TimeWindowCalculations > e : ioaDiscrete.entrySet()) {
+      Character c = e.getKey();
+      TimeWindowCalculations calcs = e.getValue();
 
       row = s.createRow( r++ );
       row.createCell( 0 ).setCellValue( c.toString() );
-      row.createCell( 1 ).setCellValue( avg );
+      row.createCell( 1 ).setCellValue( calcs.result1 );
+      row.createCell( 2 ).setCellValue( calcs.result2 );
+    }
+
+    // __Continuous Key Summary__
+    r++; // Skip a row
+    row = s.createRow( r++ );
+    row.createCell( 0 ).setCellValue( "Continuous IOA Calculations" );
+
+    row = s.createRow( r++ );
+    row.createCell( 0 ).setCellValue( "Key" );
+    row.createCell( 1 ).setCellValue( "IOA Coefficient" );
+
+    for (Entry< Character, Double > e : ioaContinuous.entrySet()) {
+      Character c = e.getKey();
+      double v = e.getValue();
+
+      row = s.createRow( r++ );
+      row.createCell( 0 ).setCellValue( c.toString() );
+      row.createCell( 1 ).setCellValue( v );
     }
 
     wb.write( out );

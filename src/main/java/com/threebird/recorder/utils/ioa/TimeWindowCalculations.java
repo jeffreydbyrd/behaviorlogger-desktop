@@ -2,8 +2,14 @@ package com.threebird.recorder.utils.ioa;
 
 public class TimeWindowCalculations
 {
-  double result1;
-  double result2;
+  public final double result1;
+  public final double result2;
+
+  public TimeWindowCalculations( double result1, double result2 )
+  {
+    this.result1 = result1;
+    this.result2 = result2;
+  }
 
   @Override public int hashCode()
   {

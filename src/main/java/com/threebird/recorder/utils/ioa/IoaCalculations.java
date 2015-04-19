@@ -116,9 +116,9 @@ public class IoaCalculations
       Multiset< Integer > seconds1 = data1.keyToIntervals.get( c );
       Multiset< Integer > seconds2 = data2.keyToIntervals.get( c );
 
-      TimeWindowCalculations calcs = new TimeWindowCalculations();
-      calcs.result1 = windowAgreementDiscrete( seconds1, seconds2, threshold );
-      calcs.result2 = windowAgreementDiscrete( seconds2, seconds1, threshold );
+      double result1 = windowAgreementDiscrete( seconds1, seconds2, threshold );
+      double result2 = windowAgreementDiscrete( seconds2, seconds1, threshold );
+      TimeWindowCalculations calcs = new TimeWindowCalculations( result1, result2 );
       result.put( c, calcs );
     }
 

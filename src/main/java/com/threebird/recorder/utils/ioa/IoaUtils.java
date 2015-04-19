@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
+import com.threebird.recorder.persistence.WriteIoaTimeWindows;
 
 public class IoaUtils
 {
@@ -76,17 +77,28 @@ public class IoaUtils
     WriteIoaIntervals.write( intervals, out );
   }
 
-  private static void processTimeWindow( File out,
+  private static void processTimeWindow( String file1,
+                                         String file2,
+                                         File out,
                                          int threshold,
                                          List< BehaviorLogRow > rows1,
-                                         List< BehaviorLogRow > rows2 )
+                                         List< BehaviorLogRow > rows2 ) throws IOException
   {
     KeyToInterval discrete1 = mapKeysToInterval( Lists.transform( rows1, r -> r.discrete ), 1 );
     KeyToInterval discrete2 = mapKeysToInterval( Lists.transform( rows2, r -> r.discrete ), 1 );
     KeyToInterval continuous1 = mapKeysToInterval( Lists.transform( rows1, r -> r.continuous ), 1 );
     KeyToInterval continuous2 = mapKeysToInterval( Lists.transform( rows2, r -> r.continuous ), 1 );
 
-    Map< Character, TimeWindowCalculations > ioaDiscrete = IoaCalculations.windowAgreementDiscrete( discrete1, discrete2, threshold );
+    Map< Character, TimeWindowCalculations > ioaDiscrete =
+        IoaCalculations.windowAgreementDiscrete( discrete1, discrete2, threshold );
+    Map< Character, Double > ioaContinuous =
+        IoaCalculations.windowAgreementContinuous( continuous1, continuous2 );
+
+    WriteIoaTimeWindows.write( ioaDiscrete,
+                               ioaContinuous,
+                               file1,
+                               file2,
+                               out );
   }
 
   public static void process( File f1,
@@ -101,7 +113,7 @@ public class IoaUtils
     if (method != IoaMethod.Time_Window) {
       processTimeBlock( method, blockSize, out, rows1, rows2 );
     } else {
-      processTimeWindow( out, blockSize, rows1, rows2 );
+      processTimeWindow( f1.getName(), f2.getName(), out, blockSize, rows1, rows2 );
     }
   }
 }

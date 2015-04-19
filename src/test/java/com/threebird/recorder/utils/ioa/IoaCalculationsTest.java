@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 
 public class IoaCalculationsTest
 {
-  @Test public void partialAgreement__blocksize1()
+  @Test public void partialAgreement_blocksize1()
   {
     int blockSize = 1;
     List< BehaviorLogRow > input1 =
@@ -36,7 +36,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void partialAgreement__blocksize2()
+  @Test public void partialAgreement_blocksize2()
   {
     int blockSize = 2;
     List< BehaviorLogRow > input1 =
@@ -61,7 +61,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void partialAgreement__blocksizeBig()
+  @Test public void partialAgreement_blocksizeBig()
   {
     int blockSize = 5;
     List< BehaviorLogRow > input1 =
@@ -115,7 +115,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void partialAgreement__blockSize1__uneven()
+  @Test public void partialAgreement_blockSize1_uneven()
   {
     int blockSize = 1;
     List< BehaviorLogRow > input1 =
@@ -141,7 +141,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void partialAgreement__imperfectPartitions()
+  @Test public void partialAgreement_imperfectPartitions()
   {
     int blockSize = 3;
     List< BehaviorLogRow > input1 =
@@ -182,7 +182,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void exactAgreement__blocksize1__half_agree()
+  @Test public void exactAgreement_blocksize1_half_agree()
   {
     int blockSize = 1;
     List< BehaviorLogRow > input1 =
@@ -207,7 +207,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void exactAgreement__blocksize2__half_agree()
+  @Test public void exactAgreement_blocksize2__half_agree()
   {
     int blockSize = 2;
     List< BehaviorLogRow > input1 =
@@ -232,7 +232,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void exactAgreement__blocksizeBig__half_agree()
+  @Test public void exactAgreement_blocksizeBig__half_agree()
   {
     int blockSize = 5;
     List< BehaviorLogRow > input1 =
@@ -286,7 +286,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void exactAgreement__blockSize1__uneven()
+  @Test public void exactAgreement_blockSize1_uneven()
   {
     int blockSize = 1;
     List< BehaviorLogRow > input1 =
@@ -312,7 +312,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void exactAgreement__imperfectPartitions()
+  @Test public void exactAgreement_imperfectPartitions()
   {
     int blockSize = 3;
     List< BehaviorLogRow > input1 =
@@ -369,9 +369,9 @@ public class IoaCalculationsTest
     Map< Character, TimeWindowCalculations > actual = IoaCalculations.windowAgreementDiscrete( data1, data2, blockSize );
     Map< Character, TimeWindowCalculations > expected = Maps.newHashMap();
 
-    TimeWindowCalculations expectedD = new TimeWindowCalculations();
-    expectedD.result1 = 2.0 / 3.0;
-    expectedD.result2 = 2.0 / 2.0;
+    double result1 = 2.0 / 3.0;
+    double result2 = 2.0 / 2.0;
+    TimeWindowCalculations expectedD = new TimeWindowCalculations( result1, result2 );
 
     expected.put( 'd', expectedD );
 
@@ -397,9 +397,9 @@ public class IoaCalculationsTest
     Map< Character, TimeWindowCalculations > actual = IoaCalculations.windowAgreementDiscrete( data1, data2, blockSize );
     Map< Character, TimeWindowCalculations > expected = Maps.newHashMap();
 
-    TimeWindowCalculations expectedD = new TimeWindowCalculations();
-    expectedD.result1 = 4.0 / 5.0;
-    expectedD.result2 = 4.0 / 4.0;
+    double result1 = 4.0 / 5.0;
+    double result2 = 4.0 / 4.0;
+    TimeWindowCalculations expectedD = new TimeWindowCalculations( result1, result2 );
 
     expected.put( 'd', expectedD );
 
@@ -425,9 +425,9 @@ public class IoaCalculationsTest
     Map< Character, TimeWindowCalculations > actual = IoaCalculations.windowAgreementDiscrete( data1, data2, blockSize );
     Map< Character, TimeWindowCalculations > expected = Maps.newHashMap();
 
-    TimeWindowCalculations expectedD = new TimeWindowCalculations();
-    expectedD.result1 = 1;
-    expectedD.result2 = 1;
+    double result1 = 1;
+    double result2 = 1;
+    TimeWindowCalculations expectedD = new TimeWindowCalculations( result1, result2 );
 
     expected.put( 'd', expectedD );
 
@@ -455,6 +455,7 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "", "c" ),
                             new BehaviorLogRow( "", "ct" ),
                             new BehaviorLogRow( "", "ct" ),
+                            new BehaviorLogRow( "", "" ),
                             new BehaviorLogRow( "", "" ),
                             new BehaviorLogRow( "", "t" ) );
 
