@@ -2,6 +2,7 @@ package com.threebird.recorder.utils.ioa;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 import com.google.common.base.Optional;
@@ -93,6 +94,16 @@ public class IoaCalculations
     return ((double) numMatched) / _seconds.size();
   }
 
+  static double windowAgreementContinuous( Multiset< Integer > seconds1, Multiset< Integer > seconds2 )
+  {
+    Set< Integer > set1 = seconds1.elementSet();
+    Set< Integer > set2 = seconds2.elementSet();
+    SetView< Integer > intersection = Sets.intersection( set1, set2 );
+    SetView< Integer > union = Sets.union( set1, set2 );
+
+    return ((double) intersection.size()) / union.size();
+  }
+
   static Map< Character, TimeWindowCalculations >
     windowAgreementDiscrete( KeyToInterval data1,
                              KeyToInterval data2,
@@ -114,10 +125,18 @@ public class IoaCalculations
     return result;
   }
 
-  static Map< Character, TimeWindowCalculations > windowAgreementContinuous( KeyToInterval data1, KeyToInterval data2 )
+  static Map< Character, Double > windowAgreementContinuous( KeyToInterval data1, KeyToInterval data2 )
   {
     SetView< Character > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
+    Map< Character, Double > result = Maps.newHashMap();
 
-    return null;
+    for (Character c : common) {
+      Multiset< Integer > seconds1 = data1.keyToIntervals.get( c );
+      Multiset< Integer > seconds2 = data2.keyToIntervals.get( c );
+
+      result.put( c, windowAgreementContinuous( seconds1, seconds2 ) );
+    }
+
+    return result;
   }
 }
