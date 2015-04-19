@@ -353,7 +353,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void windowAgreement_blockSize0()
+  @Test public void windowAgreementDiscrete_blockSize0()
   {
     int blockSize = 0;
     List< BehaviorLogRow > input1 =
@@ -378,7 +378,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void windowAgreement_blockSize1()
+  @Test public void windowAgreementDiscrete_blockSize1()
   {
     int blockSize = 1;
     List< BehaviorLogRow > input1 =
@@ -406,7 +406,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void windowAgreement_blockSizeBig()
+  @Test public void windowAgreementDiscrete_blockSizeBig()
   {
     int blockSize = 5;
     List< BehaviorLogRow > input1 =
@@ -434,7 +434,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expected, actual );
   }
 
-  @Test public void windowAgreement_empty()
+  @Test public void windowAgreementDiscrete_empty()
   {
     int blockSize = 0;
     List< BehaviorLogRow > input1 = Lists.newArrayList();
@@ -445,6 +445,33 @@ public class IoaCalculationsTest
 
     Map< Character, TimeWindowCalculations > actual = IoaCalculations.windowAgreementDiscrete( data1, data2, blockSize );
     Map< Character, TimeWindowCalculations > expected = Maps.newHashMap();
+
+    Assert.assertEquals( expected, actual );
+  }
+
+  @Test public void windowAgreementContinuous()
+  {
+    List< BehaviorLogRow > input1 =
+        Lists.newArrayList( new BehaviorLogRow( "", "c" ),
+                            new BehaviorLogRow( "", "ct" ),
+                            new BehaviorLogRow( "", "ct" ),
+                            new BehaviorLogRow( "", "" ),
+                            new BehaviorLogRow( "", "t" ) );
+
+    List< BehaviorLogRow > input2 =
+        Lists.newArrayList( new BehaviorLogRow( "", "c" ),
+                            new BehaviorLogRow( "", "ct" ),
+                            new BehaviorLogRow( "", "ct" ),
+                            new BehaviorLogRow( "", "t" ),
+                            new BehaviorLogRow( "", "c" ) );
+
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, 1 );
+
+    Map< Character, Double > actual = IoaCalculations.windowAgreementContinuous( data1, data2 );
+    Map< Character, Double > expected = Maps.newHashMap();
+    expected.put( 'c', 3.0 / 4.0 );
+    expected.put( 't', 2.0 / 4.0 );
 
     Assert.assertEquals( expected, actual );
   }
