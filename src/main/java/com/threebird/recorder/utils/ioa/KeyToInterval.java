@@ -10,19 +10,19 @@ import com.google.common.collect.Multiset;
  */
 public class KeyToInterval
 {
-  public final HashMap< Character, Multiset< Integer >> discreteToIntervals;
+  public final HashMap< Character, Multiset< Integer >> keyToIntervals;
   public final int totalIntervals;
 
   public KeyToInterval( HashMap< Character, Multiset< Integer >> charToIntervals, int totalIntervals )
   {
-    this.discreteToIntervals = charToIntervals;
+    this.keyToIntervals = charToIntervals;
     this.totalIntervals = totalIntervals;
   }
 
   @Override public String toString()
   {
     StringBuilder sb = new StringBuilder();
-    discreteToIntervals.forEach( ( ch, intervals ) -> {
+    keyToIntervals.forEach( ( ch, intervals ) -> {
       sb.append( "  " + ch + "->" + intervals.toString() + "\n" );
     } );
     return "KeyToInterval [\n charToIntervals=\n" + sb.toString() + ", totalIntervals=" + totalIntervals + "\n]";
@@ -32,7 +32,7 @@ public class KeyToInterval
   {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((discreteToIntervals == null) ? 0 : discreteToIntervals.hashCode());
+    result = prime * result + ((keyToIntervals == null) ? 0 : keyToIntervals.hashCode());
     result = prime * result + totalIntervals;
     return result;
   }
@@ -46,10 +46,10 @@ public class KeyToInterval
     if (getClass() != obj.getClass())
       return false;
     KeyToInterval other = (KeyToInterval) obj;
-    if (discreteToIntervals == null) {
-      if (other.discreteToIntervals != null)
+    if (keyToIntervals == null) {
+      if (other.keyToIntervals != null)
         return false;
-    } else if (!discreteToIntervals.equals( other.discreteToIntervals ))
+    } else if (!keyToIntervals.equals( other.keyToIntervals ))
       return false;
     if (totalIntervals != other.totalIntervals)
       return false;

@@ -37,7 +37,7 @@ public class IoaCalculations
                   KeyToInterval data2,
                   BiFunction< Integer, Integer, Double > compare )
   {
-    SetView< Character > common = Sets.union( data1.discreteToIntervals.keySet(), data2.discreteToIntervals.keySet() );
+    SetView< Character > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
     Map< Character, IntervalCalculations > map = Maps.newHashMap();
 
     int numIntervals = Math.max( data1.totalIntervals, data2.totalIntervals );
@@ -48,8 +48,8 @@ public class IoaCalculations
       double[] result = new double[numIntervals];
 
       for (Integer i = 0; i < numIntervals; i++) {
-        intervals1[i] += data1.discreteToIntervals.get( c ) != null ? data1.discreteToIntervals.get( c ).count( i ) : 0;
-        intervals2[i] += data2.discreteToIntervals.get( c ) != null ? data2.discreteToIntervals.get( c ).count( i ) : 0;
+        intervals1[i] += data1.keyToIntervals.get( c ) != null ? data1.keyToIntervals.get( c ).count( i ) : 0;
+        intervals2[i] += data2.keyToIntervals.get( c ) != null ? data2.keyToIntervals.get( c ).count( i ) : 0;
       }
 
       for (int i = 0; i < numIntervals; i++) {
@@ -72,7 +72,7 @@ public class IoaCalculations
     return getIntervals( data1, data2, IoaCalculations::partialComparison );
   }
 
-  static double windowAgreement( Multiset< Integer > seconds, Multiset< Integer > comparison, int threshold )
+  static double windowAgreementDiscrete( Multiset< Integer > seconds, Multiset< Integer > comparison, int threshold )
   {
     List< Integer > _seconds = Lists.newArrayList( seconds );
     List< Integer > _comparison = Lists.newArrayList( comparison );
@@ -93,20 +93,31 @@ public class IoaCalculations
     return ((double) numMatched) / _seconds.size();
   }
 
-  static Map< Character, Double > windowAgreement( KeyToInterval data1, KeyToInterval data2, int threshold )
+  static Map< Character, TimeWindowCalculations >
+    windowAgreementDiscrete( KeyToInterval data1,
+                             KeyToInterval data2,
+                             int threshold )
   {
-    SetView< Character > common = Sets.union( data1.discreteToIntervals.keySet(), data2.discreteToIntervals.keySet() );
-    Map< Character, Double > result = Maps.newHashMap();
+    SetView< Character > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
+    Map< Character, TimeWindowCalculations > result = Maps.newHashMap();
 
     for (Character c : common) {
-      Multiset< Integer > seconds1 = data1.discreteToIntervals.get( c );
-      Multiset< Integer > seconds2 = data2.discreteToIntervals.get( c );
+      Multiset< Integer > seconds1 = data1.keyToIntervals.get( c );
+      Multiset< Integer > seconds2 = data2.keyToIntervals.get( c );
 
-      double result1 = windowAgreement( seconds1, seconds2, threshold );
-      double result2 = windowAgreement( seconds2, seconds1, threshold );
-      result.put( c, (result1 + result2) / 2 );
+      TimeWindowCalculations calcs = new TimeWindowCalculations();
+      calcs.result1 = windowAgreementDiscrete( seconds1, seconds2, threshold );
+      calcs.result2 = windowAgreementDiscrete( seconds2, seconds1, threshold );
+      result.put( c, calcs );
     }
 
     return result;
+  }
+
+  static Map< Character, TimeWindowCalculations > windowAgreementContinuous( KeyToInterval data1, KeyToInterval data2 )
+  {
+    SetView< Character > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
+
+    return null;
   }
 }

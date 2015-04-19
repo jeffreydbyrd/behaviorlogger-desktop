@@ -44,7 +44,7 @@ public class IoaUtilsTest
     assertEquals( expected, actual );
   }
 
-  @Test public void mapKeysToInterval_standard()
+  @Test public void mapRowsToInterval_standard()
   {
     List< BehaviorLogRow > input = standard;
     int blockSize = 1;
@@ -69,12 +69,12 @@ public class IoaUtilsTest
     expectedCharToIntervals.put( 'd', expectedDTimes );
 
     KeyToInterval expected = new KeyToInterval( expectedCharToIntervals, expectedNumIntervals );
-    KeyToInterval actual = IoaUtils.mapKeysToInterval( input, blockSize );
+    KeyToInterval actual = IoaUtils.mapRowsToInterval( input, blockSize );
 
     assertEquals( expected, actual );
   }
 
-  @Test public void mapKeysToInterval_blockSize_4()
+  @Test public void mapRowsToInterval_blockSize_4()
   {
     List< BehaviorLogRow > input = standard;
     int blockSize = 4;
@@ -99,19 +99,19 @@ public class IoaUtilsTest
     expectedCharToIntervals.put( 'd', expectedDTimes );
 
     KeyToInterval expected = new KeyToInterval( expectedCharToIntervals, expectedNumIntervals );
-    KeyToInterval actual = IoaUtils.mapKeysToInterval( input, blockSize );
+    KeyToInterval actual = IoaUtils.mapRowsToInterval( input, blockSize );
 
     assertEquals( expected, actual );
   }
 
-  @Test public void mapKeysToInterval_empty()
+  @Test public void mapRowsToInterval_empty()
   {
     List< BehaviorLogRow > input = Lists.newArrayList();
     int blockSize = 1;
     int expectedNumIntervals = input.size();
     HashMap< Character, Multiset< Integer >> expectedCharToIntervals = Maps.newHashMap();
     KeyToInterval expected = new KeyToInterval( expectedCharToIntervals, expectedNumIntervals );
-    KeyToInterval actual = IoaUtils.mapKeysToInterval( input, blockSize );
+    KeyToInterval actual = IoaUtils.mapRowsToInterval( input, blockSize );
 
     assertEquals( expected, actual );
   }

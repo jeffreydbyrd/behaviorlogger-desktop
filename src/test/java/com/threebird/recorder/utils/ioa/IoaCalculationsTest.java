@@ -21,8 +21,8 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "", "" ),
                             new BehaviorLogRow( "d", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -46,8 +46,8 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "", "" ),
                             new BehaviorLogRow( "d", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -71,8 +71,8 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "", "" ),
                             new BehaviorLogRow( "d", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -96,8 +96,8 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "", "c" ),
                             new BehaviorLogRow( "d", "c" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -127,8 +127,8 @@ public class IoaCalculationsTest
                             new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -153,8 +153,8 @@ public class IoaCalculationsTest
                             new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -173,8 +173,8 @@ public class IoaCalculationsTest
     List< BehaviorLogRow > input1 = Lists.newArrayList();
     List< BehaviorLogRow > input2 = Lists.newArrayList();
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -192,8 +192,8 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "d", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -217,8 +217,8 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "d", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -242,8 +242,8 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "d", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -267,8 +267,8 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "", "c" ),
                             new BehaviorLogRow( "d", "c" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -298,8 +298,8 @@ public class IoaCalculationsTest
                             new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -324,8 +324,8 @@ public class IoaCalculationsTest
                             new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -344,8 +344,8 @@ public class IoaCalculationsTest
     List< BehaviorLogRow > input1 = Lists.newArrayList();
     List< BehaviorLogRow > input2 = Lists.newArrayList();
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, blockSize );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, blockSize );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, blockSize );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, blockSize );
 
     Map< Character, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< Character, IntervalCalculations > expected = Maps.newHashMap();
@@ -363,16 +363,17 @@ public class IoaCalculationsTest
         Lists.newArrayList( new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "d", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, 1 );
 
-    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
-    Map< Character, Double > expected = Maps.newHashMap();
+    Map< Character, TimeWindowCalculations > actual = IoaCalculations.windowAgreementDiscrete( data1, data2, blockSize );
+    Map< Character, TimeWindowCalculations > expected = Maps.newHashMap();
 
-    double result1 = 2.0 / 3.0;
-    double result2 = 2.0 / 2.0;
+    TimeWindowCalculations expectedD = new TimeWindowCalculations();
+    expectedD.result1 = 2.0 / 3.0;
+    expectedD.result2 = 2.0 / 2.0;
 
-    expected.put( 'd', (result1 + result2) / 2 );
+    expected.put( 'd', expectedD );
 
     Assert.assertEquals( expected, actual );
   }
@@ -390,16 +391,17 @@ public class IoaCalculationsTest
                             new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "dd", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, 1 );
 
-    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
-    Map< Character, Double > expected = Maps.newHashMap();
+    Map< Character, TimeWindowCalculations > actual = IoaCalculations.windowAgreementDiscrete( data1, data2, blockSize );
+    Map< Character, TimeWindowCalculations > expected = Maps.newHashMap();
 
-    double result1 = 4.0 / 5.0;
-    double result2 = 4.0 / 4.0;
+    TimeWindowCalculations expectedD = new TimeWindowCalculations();
+    expectedD.result1 = 4.0 / 5.0;
+    expectedD.result2 = 4.0 / 4.0;
 
-    expected.put( 'd', (result1 + result2) / 2 );
+    expected.put( 'd', expectedD );
 
     Assert.assertEquals( expected, actual );
   }
@@ -417,13 +419,17 @@ public class IoaCalculationsTest
                             new BehaviorLogRow( "d", "" ),
                             new BehaviorLogRow( "d", "" ) );
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, 1 );
 
-    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
-    Map< Character, Double > expected = Maps.newHashMap();
+    Map< Character, TimeWindowCalculations > actual = IoaCalculations.windowAgreementDiscrete( data1, data2, blockSize );
+    Map< Character, TimeWindowCalculations > expected = Maps.newHashMap();
 
-    expected.put( 'd', 1.0 );
+    TimeWindowCalculations expectedD = new TimeWindowCalculations();
+    expectedD.result1 = 1;
+    expectedD.result2 = 1;
+
+    expected.put( 'd', expectedD );
 
     Assert.assertEquals( expected, actual );
   }
@@ -434,11 +440,11 @@ public class IoaCalculationsTest
     List< BehaviorLogRow > input1 = Lists.newArrayList();
     List< BehaviorLogRow > input2 = Lists.newArrayList();
 
-    KeyToInterval data1 = IoaUtils.mapKeysToInterval( input1, 1 );
-    KeyToInterval data2 = IoaUtils.mapKeysToInterval( input2, 1 );
+    KeyToInterval data1 = IoaUtils.mapRowsToInterval( input1, 1 );
+    KeyToInterval data2 = IoaUtils.mapRowsToInterval( input2, 1 );
 
-    Map< Character, Double > actual = IoaCalculations.windowAgreement( data1, data2, blockSize );
-    Map< Character, Double > expected = Maps.newHashMap();
+    Map< Character, TimeWindowCalculations > actual = IoaCalculations.windowAgreementDiscrete( data1, data2, blockSize );
+    Map< Character, TimeWindowCalculations > expected = Maps.newHashMap();
 
     Assert.assertEquals( expected, actual );
   }
