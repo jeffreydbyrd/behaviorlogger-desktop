@@ -8,7 +8,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <VBox prefHeight="476.0" prefWidth="608.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.EditSchemaController">
    <children>
       <HBox spacing="10.0">
@@ -98,11 +97,11 @@
                         <Button mnemonicParsing="false" onAction="#onSaveSchemaClicked" text="Save Schema" />
                      </children>
                   </HBox>
-                  <Pane nodeOrientation="RIGHT_TO_LEFT">
+                  <AnchorPane VBox.vgrow="ALWAYS">
                      <children>
-                        <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
+                        <Button fx:id="helpButton" layoutX="313.0" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                      </children>
-                  </Pane>
+                  </AnchorPane>
                </children>
             </VBox>
          </children>
