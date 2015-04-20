@@ -1,10 +1,10 @@
 package com.threebird.recorder.controllers;
 
 import java.io.File;
-import java.io.IOException;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -167,8 +167,12 @@ public class IoaCalculatorController
                         IoaManager.getSelectedMethod(),
                         IoaManager.thresholdProperty().get(),
                         result );
-    } catch (IOException e) {
-      throw new RuntimeException( e );
+    } catch (Exception e) {
+      Alert alert = new Alert( Alert.AlertType.ERROR );
+      alert.setHeaderText( "IOA Calculator encountered a problem." );
+      alert.setContentText( e.getMessage() );
+      alert.showAndWait();
+      e.printStackTrace();
     }
   }
 

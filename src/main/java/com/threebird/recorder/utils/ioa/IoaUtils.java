@@ -1,7 +1,9 @@
 package com.threebird.recorder.utils.ioa;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -53,11 +55,22 @@ public class IoaUtils
 
   static List< BehaviorLogRow > deserialize( File f ) throws IOException
   {
-    Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( Files.newReader( f, Charsets.UTF_8 ) ).iterator();
-    recsItor.next(); // skip header
-    Iterator< BehaviorLogRow > keyItor =
-        Iterators.transform( recsItor, rec -> new BehaviorLogRow( rec.get( 1 ), rec.get( 2 ) ) );
-    return Lists.newArrayList( keyItor );
+    try {
+      BufferedReader reader;
+      reader = Files.newReader( f, Charsets.UTF_8 );
+      Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( reader ).iterator();
+      recsItor.next(); // skip header
+      Iterator< BehaviorLogRow > keyItor =
+          Iterators.transform( recsItor, rec -> new BehaviorLogRow( rec.get( 1 ), rec.get( 2 ) ) );
+      ArrayList< BehaviorLogRow > rows = Lists.newArrayList( keyItor );
+      reader.close();
+      return rows;
+    } catch (RuntimeException e) {
+      String msg =
+          String.format( "A problem occurred while processing %s. Please consult the manual for the file format IOA Calculator uses.",
+                         f.getName() );
+      throw new RuntimeException( msg, e );
+    }
   }
 
   private static void processTimeBlock( IoaMethod method,
