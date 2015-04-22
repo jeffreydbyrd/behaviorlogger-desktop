@@ -76,40 +76,6 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 
 ---
 
-<a name="ioa-calculator"></a>
-# IOA Calculator
-
-*insert image of IOA calculator*
-
-1. **File 1 / File 2** - Paths to the .csv data-files you wish to compare.
-2. **Method** - The type of calculation to be done. See [IOA Methods](#ioa-methods).
-3. **Block Size** - The number of seconds designated to each partition in partial/exact agreement.
-4. **Threshold** - The number of seconds of leniency in time-window analysis.
-5. **Close** - Closes the calculator window.
-6. **Generate IOA File** - Calculates IOA between File 1 and File 2 and prompts the user save the result in an Excel file.
-
----
-
-<a name="ioa-methods"></a>
-# IOA Methods
-
-<a name="exact-aggrement"></a>
-## Exact Agreement
-
-The data-logs from File 1 and File 2 get partitioned into intervals of a size specified by `block-size`. For each interval, the observers are considered in agreement if they both recorded the same number of occurrences within the interval. A behavior's percent agreement is equal to the number of agreements divided by the total number of intervals and multiplied by 100.
-
-<a name="partial-aggrement"></a>
-## Partial Agreement
-
-The data-logs in same way as in *exact agreement*. A score between 0 and 1 is calcuated per interval by dividing the smaller of the two counts by the larger. If both counts are zero, the score equals 1. A behavior's percent agreement is equal to the sum of all scores divided by the number of intervals, multiplied by 100.
-
-<a name="time-window"></a>
-## Time Window
-
-Each occurrence of a behavior within each data-log is given a score of 0 or 1. If a behavior in one log occurs within &plusmn; `threshold` seconds of the same behavior recorded in the other log, it gets a score of 1. If the behavior does not have a match within the bounds set by `threshold`, it gets a score of 0. Next, each data-log gets an overall score by summing the scores and dividing by the total occurrences. The percent agreement for a behavior is equal to the sum of the two data-log scores, divided by 2, and multiplied by 100.
-
----
-
 <a name="recording"></a>
 # Recording
 
@@ -135,3 +101,61 @@ You can also log new behaviors on the fly while recording.
 
 When you pause the session, you can click *Edit Unknown Behaviors* to assign values to any unknowns you might have logged. If you logged an unknown by mistake, you can ignore it.
 
+<a name="session-output"></a>
+## Session Output
+
+The app saves logged behaviors in the directory specified by the Schema (see [Edit Schema](#edit-schema)). It outputs two files per session:
+
+- a human-readable *Excel* file summarizing the session
+- a *CSV* file meant for the [IOA Calculator](#ioa-calculator)
+
+Tnames of these files can be configured in [Preferences](#preferences).
+
+---
+
+<a name="ioa-calculator"></a>
+# IOA Calculator
+
+*insert image of IOA calculator*
+
+1. **File 1 / File 2** - Paths to the .csv data-files you wish to compare. You should upload the data output from your behavior recording sessions.
+2. **Method** - The type of calculation to be done. See [IOA Methods](#ioa-methods).
+3. **Block Size** - The number of seconds designated to each partition in partial/exact agreement.
+4. **Threshold** - The number of seconds of leniency in time-window analysis.
+5. **Close** - Closes the calculator window.
+6. **Generate IOA File** - Calculates IOA between File 1 and File 2 and prompts the user save the result in an Excel file.
+
+---
+
+<a name="ioa-methods"></a>
+# IOA Methods
+
+Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from two papers (see [References](#references)). 
+
+<a name="exact-aggrement"></a>
+## Exact Agreement
+
+*Exact agreement* outputs a single percent agreement for a behavior between both observers. The data-logs from File 1 and File 2 get partitioned into intervals of a size specified by `block-size`. For each interval, the observers are considered in agreement if they both recorded the same number of occurrences within the interval. A behavior's percent agreement is equal to the number of agreements divided by the total number of intervals and multiplied by 100%.
+
+<a name="partial-aggrement"></a>
+## Partial Agreement
+
+Similar to *exact agreement*, the data-logs from File 1 and File 2 get partitioned according to `block-size`. A score between 0 and 1 is calcuated per interval by dividing the smaller of the two behavior counts by the larger. If both counts are zero, the score equals 1. A behavior's percent agreement is equal to the sum of all scores divided by the number of intervals, multiplied by 100%.
+
+<a name="time-window"></a>
+## Time Window
+
+*Time window* varies from the other two in that it generates two percent agreements for each discrete behavior (one for each observer) and one percent agreement for continuous behaviors.
+
+For **discrete behaviors**, each occurrence within each data-log is given a score of 0 or 1. A behavor recorded by one observer gets a 1 if the other observer recorded the same behavior within &plusmn; `threshold` seconds. If the behavior does not have a match within the bounds set by `threshold`, it gets a score of 0. The discrete behavior's percent agreement for each observer is equal to the sum of the scores, divided by the total occurrences, and multipled by 100%.
+
+For **continuous behaviors**, the `threshold` does not matter. The data-log is partitioned into 1-second intervals. A continuous behavior's percent agreement is equal to the number of intervals where both observers recorded it, divided by the number of intervals where either of the observers recorded it, multiplied by 100%.
+
+---
+
+<a name="references"></a>
+# References
+
+MacLean, W.E., Tapp, J.T., Johnson, W.L. (1985). Alternate Methods and Software for Calculating Interobserver Agreement for Continuous Observation Data. *Journal of Psychopathology and Behavioral Assessment, 8*.
+
+Mudford, O.C., Taylor, S.A., & Martin, N.T. (2009). Continuous Recording and Interobserver Agreement Algorithms Reported in the Journal of Applied Behavior Analysis (1995-2005). *Journal of Applied Behavior Analysis, 42*, 165-169.*

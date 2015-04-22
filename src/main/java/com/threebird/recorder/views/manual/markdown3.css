@@ -1,41 +1,40 @@
-html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-
-body{
-color:#222;
-Font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
-font-size:12px;
-line-height:1.5em;
-padding:1em;
-margin:auto;
-max-width:60em;
-background:#fefefe;
+html {
+    font-size: 100%;
+    overflow-y: scroll;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
 }
 
-a{ color: #0645ad; text-decoration:none;}
-a:visited{ color: #0b0080; }
-a:hover{ color: #06e; }
-a:active{ color:#faa700; }
-a:focus{ outline: thin dotted; }
-a:hover, a:active{ outline: 0; }
+body{
+    color:#222;
+    Font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+    font-size:12px;
+    line-height:1.5em;
+    padding:1em;
+    margin:auto;
+    max-width:60em;
+    background:#fefefe;
+}
 
-::-moz-selection{background:rgba(255,255,0,0.3);color:#000}
-::selection{background:rgba(255,255,0,0.3);color:#000}
-
-a::-moz-selection{background:rgba(255,255,0,0.3);color:#0645ad}
-a::selection{background:rgba(255,255,0,0.3);color:#0645ad}
+/* a{ color: #0645ad; text-decoration:none;} */
+/* a:visited{ color: #0b0080; } */
+/* a:hover{ color: #06e; } */
+/* a:active{ color:#faa700; } */
+/* a:focus{ outline: thin dotted; } */
+/* a:hover, a:active{ outline: 0; } */
 
 p{
-margin:1em 0;
+    margin:1em 0;
 }
 
 img{
-max-width:100%;
+    max-width:100%;
 }
 
 h1,h2,h3,h4,h5,h6{
-font-weight:normal;
-color:#111;
-line-height:1em;
+    font-weight:normal;
+    color:#111;
+    line-height:1em;
 }
 h4,h5,h6{ font-weight: bold; }
 h1{ font-size:2.5em; }
@@ -46,24 +45,38 @@ h5{ font-size:1em; }
 h6{ font-size:0.9em; }
 
 blockquote{
-color:#666666;
-margin:0;
-padding-left: 3em;
-border-left: 0.5em #EEE solid;
+    color:#666666;
+    margin:0;
+    padding-left: 3em;
+    border-left: 0.5em #EEE solid;
 }
-hr { display: block; height: 2px; border: 0; border-top: 1px solid #aaa;border-bottom: 1px solid #eee; margin: 1em 0; padding: 0; }
+
+hr {
+    display: block;
+    height: 2px;
+    border: 0;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #eee;
+    margin: 1em 0;
+    padding: 0;
+}
+
 pre, code, kbd, samp {
     color: #000;
     font-family: monospace, monospace;
     _font-family: monospace, 'courier new';
     font-size: 0.98em;
-    border:1px solid #999;
+    border:1px solid #ccc;
     background-color: #eee;
     border-radius:3px;
-    
     padding: 0 3px 0 3px;
 }
-pre { white-space: pre; white-space: pre-wrap; word-wrap: break-word; }
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
 
 b, strong { font-weight: bold; }
 
