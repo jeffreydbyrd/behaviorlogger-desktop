@@ -202,7 +202,7 @@ public class RecordingController
       manager.timer.pause();
     }
 
-    playButton.setText( playing ? "Stop" : "Play" );
+    playButton.setText( playing ? "Stop" : "Continue" );
     goBackButton.setVisible( !playing );
     newSessionButton.setVisible( !playing );
     recordingText.setVisible( !recordingText.isVisible() );
