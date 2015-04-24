@@ -155,8 +155,12 @@
                   </Text>
                </children>
             </StackPane>
+            <StackPane>
+               <children>
+                  <Label fx:id="spacebarLbl" text="Spacebar = Start Session" />
+               </children>
+            </StackPane>
             <Pane focusTraversable="true" prefHeight="0.0" prefWidth="0.0" />
-            <Text layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" />
             <HBox layoutY="71.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
                   <Button fx:id="playButton" focusTraversable="false" layoutX="10.0" layoutY="433.0" mnemonicParsing="false" onAction="#onPlayPress" text="Start Session" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />

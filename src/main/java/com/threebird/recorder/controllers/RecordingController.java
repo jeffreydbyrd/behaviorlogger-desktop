@@ -58,6 +58,7 @@ public class RecordingController
   @FXML private Text recordingText;
   @FXML private Label timeBox;
 
+  @FXML private Label spacebarLbl;
   @FXML private Button playButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
@@ -209,6 +210,7 @@ public class RecordingController
 
     behaviorGrid.setDisable( !behaviorGrid.isDisabled() );
     timeBox.setDisable( !timeBox.isDisabled() );
+    spacebarLbl.setText( playing ? "Spacebar = Stop" : "Spacebar = Continue" );
     playButton.setText( playing ? "Stop" : "Continue" );
     goBackButton.setVisible( !playing );
     newSessionButton.setVisible( !playing );
