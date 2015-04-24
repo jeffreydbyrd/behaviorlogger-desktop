@@ -9,12 +9,13 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -48,6 +49,7 @@ public class RecordingController
   @FXML private Label projectLabel;
   @FXML private HBox sessionDetailsBox;
 
+  @FXML private GridPane behaviorGrid;
   @FXML private VBox discreteBox;
   @FXML private VBox continuousBox;
   private Map< MappableChar, BehaviorCountBox > countBoxes = Maps.newHashMap();
@@ -75,6 +77,9 @@ public class RecordingController
   {
     Schema schema = SchemasManager.getSelected();
     manager = new RecordingManager();
+
+    behaviorGrid.setDisable( true );
+    timeBox.setDisable( true );
 
     clientLabel.setText( schema.client );
     projectLabel.setText( schema.project );
@@ -202,6 +207,8 @@ public class RecordingController
       manager.timer.pause();
     }
 
+    behaviorGrid.setDisable( !behaviorGrid.isDisabled() );
+    timeBox.setDisable( !timeBox.isDisabled() );
     playButton.setText( playing ? "Stop" : "Continue" );
     goBackButton.setVisible( !playing );
     newSessionButton.setVisible( !playing );

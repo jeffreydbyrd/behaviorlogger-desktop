@@ -52,7 +52,8 @@
             <HBox fx:id="sessionDetailsBox" fillHeight="false" spacing="25.0" />
          </children>
       </VBox>
-      <GridPane hgap="20.0" layoutX="10.0" layoutY="60.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" VBox.vgrow="ALWAYS">
+      <Separator prefWidth="200.0" />
+      <GridPane fx:id="behaviorGrid" hgap="20.0" layoutX="10.0" layoutY="60.0" prefHeight="307.0" prefWidth="483.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" VBox.vgrow="ALWAYS">
          <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" prefWidth="242.39256286621094" />
             <ColumnConstraints hgrow="ALWAYS" prefWidth="240.60743713378906" />
@@ -128,18 +129,33 @@
             </VBox>
          </children>
       </GridPane>
-      <AnchorPane layoutX="10.0" layoutY="463.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <StackPane>
          <children>
-            <Text fx:id="recordingText" fill="#00ae11" strokeType="OUTSIDE" strokeWidth="0.0" text="recording" visible="false" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0">
+            <Label fx:id="timeBox" alignment="TOP_LEFT" text="00 : 00 : 00">
                <font>
                   <Font size="18.0" />
                </font>
-            </Text>
-            <Text fx:id="pausedText" fill="#bc0101" layoutY="5.0" strokeType="OUTSIDE" strokeWidth="0.0" text="paused" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Text>
+            </Label>
+         </children>
+      </StackPane>
+      <Separator prefWidth="200.0" />
+      <VBox spacing="5.0">
+         <children>
+            <StackPane>
+               <children>
+                  <Text fx:id="pausedText" fill="#bc0101" layoutY="5.0" strokeType="OUTSIDE" strokeWidth="0.0" text="paused" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="recordingText" fill="#00ae11" strokeType="OUTSIDE" strokeWidth="0.0" text="recording" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Text>
+               </children>
+            </StackPane>
+            <Pane focusTraversable="true" prefHeight="0.0" prefWidth="0.0" />
             <Text layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use spacebar to start / pause" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" />
             <HBox layoutY="71.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
@@ -147,13 +163,15 @@
                   <Button fx:id="goBackButton" focusTraversable="false" layoutX="20.0" layoutY="443.0" mnemonicParsing="false" onAction="#onGoBackPress" text="Go Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" />
                   <Button fx:id="newSessionButton" focusTraversable="false" layoutX="230.0" layoutY="453.0" mnemonicParsing="false" onAction="#onNewSessionPress" text="Start New Session" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="125.0" />
                   <Button fx:id="addNewKeysButton" focusTraversable="false" mnemonicParsing="false" onAction="#onAddNewKeysPress" text="Edit Unknown Behaviors" visible="false" />
+                  <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
+                     </children>
+                  </Pane>
                </children>
             </HBox>
-            <Label fx:id="timeBox" alignment="TOP_LEFT" layoutX="411.0" layoutY="8.0" text="00 : 00 : 00" AnchorPane.rightAnchor="5.0" />
-            <Pane focusTraversable="true" layoutX="661.0" layoutY="97.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
-      </AnchorPane>
+      </VBox>
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
