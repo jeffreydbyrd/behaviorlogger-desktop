@@ -12,6 +12,7 @@ public enum FilenameComponent
   Observer("Observer", "observer", false, ( ) -> SessionManager.getObserver()),
   Therapist("Therapist", "therapist", false, ( ) -> SessionManager.getTherapist()),
   Condition("Condition", "condition", false, ( ) -> SessionManager.getCondition()),
+  Location("Location", "location", false, ( ) -> SessionManager.getLocation()),
   Session_Number("Session Number", "123", true, ( ) -> SessionManager.getSessionNumber().toString());
 
   public int order;

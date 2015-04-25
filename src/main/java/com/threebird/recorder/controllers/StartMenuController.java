@@ -54,6 +54,7 @@ public class StartMenuController
   @FXML private TextField observerField;
   @FXML private TextField therapistField;
   @FXML private TextField conditionField;
+  @FXML private TextField locationField;
   @FXML private TextField sessionField;
 
   @FXML private Label filenameLbl;
@@ -131,11 +132,13 @@ public class StartMenuController
     observerField.setText( SessionManager.getObserver() );
     therapistField.setText( SessionManager.getTherapist() );
     conditionField.setText( SessionManager.getCondition() );
+    locationField.setText( SessionManager.getLocation() );
     sessionField.setText( SessionManager.getSessionNumber().toString() );
 
     observerField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setObserver( newV ) );
     therapistField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setTherapist( newV ) );
     conditionField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setCondition( newV ) );
+    locationField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setLocation( newV ) );
 
     // Put in some idiot-proof logic for the session # (limit to just digits,
     // prevent exceeding max_value)
@@ -228,6 +231,7 @@ public class StartMenuController
     compToField.put( displayToComp.get( "Observer" ), observerField );
     compToField.put( displayToComp.get( "Therapist" ), therapistField );
     compToField.put( displayToComp.get( "Condition" ), conditionField );
+    compToField.put( displayToComp.get( "Location" ), locationField );
     compToField.put( displayToComp.get( "Session Number" ), sessionField );
 
     for (Entry< FilenameComponent, TextField > entry : compToField.entrySet()) {

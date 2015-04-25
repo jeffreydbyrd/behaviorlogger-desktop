@@ -17,12 +17,14 @@ public class SessionManager
     String observer;
     String therapist;
     String condition;
+    String location;
     int sessionNumber;
   }
 
   private static SimpleStringProperty observerProperty;
   private static SimpleStringProperty therapistProperty;
   private static SimpleStringProperty conditionProperty;
+  private static SimpleStringProperty locationProperty;
   private static SimpleIntegerProperty sessionNumberProperty;
 
   private static File file = ResourceUtils.getSessionDetails();
@@ -34,6 +36,7 @@ public class SessionManager
     model.observer = getObserver();
     model.therapist = getTherapist();
     model.condition = getCondition();
+    model.location = getLocation();
     model.sessionNumber = getSessionNumber();
     GsonUtils.save( file, model );
   }
@@ -64,6 +67,15 @@ public class SessionManager
     }
     return conditionProperty;
   }
+  
+  public static SimpleStringProperty locationProperty()
+  {
+    if (locationProperty == null) {
+      locationProperty = new SimpleStringProperty( defaultModel.get().location );
+      locationProperty.addListener( ( o, old, newV ) -> persist() );
+    }
+    return locationProperty;
+  }
 
   public static SimpleIntegerProperty sessionNumberProperty()
   {
@@ -88,6 +100,11 @@ public class SessionManager
   {
     return conditionProperty().get();
   }
+  
+  public static String getLocation()
+  {
+    return locationProperty().get();
+  }
 
   public static Integer getSessionNumber()
   {
@@ -107,6 +124,11 @@ public class SessionManager
   public static void setCondition( String s )
   {
     conditionProperty().set( s );
+  }
+  
+  public static void setLocation( String s )
+  {
+    locationProperty().set( s );
   }
 
   public static void setSessionNumber( Integer n )

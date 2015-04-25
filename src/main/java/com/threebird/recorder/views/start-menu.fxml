@@ -63,7 +63,7 @@
                         <Insets bottom="5.0" top="5.0" />
                      </VBox.margin>
                   </Separator>
-                  <Label text="New Session Details:">
+                  <Label text="New Session Properties:">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -110,6 +110,16 @@
                                  </padding>
                               </Label>
                               <TextField fx:id="conditionField" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Location:" HBox.hgrow="NEVER">
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
+                              </Label>
+                              <TextField fx:id="locationField" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                         <HBox spacing="5.0">

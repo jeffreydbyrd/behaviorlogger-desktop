@@ -99,6 +99,11 @@ public class RecordingController
       String condition = "Condition: " + SessionManager.getCondition();
       sessionDetailsBox.getChildren().add( new Label( condition ) );
     }
+    
+    if (!Strings.isNullOrEmpty( SessionManager.getLocation() )) {
+      String condition = "Location: " + SessionManager.getLocation();
+      sessionDetailsBox.getChildren().add( new Label( condition ) );
+    }
 
     if (SessionManager.getSessionNumber() != null) {
       String session = "Session: " + SessionManager.getSessionNumber();

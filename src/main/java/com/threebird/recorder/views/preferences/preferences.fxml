@@ -6,16 +6,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="608.0" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.PreferencesController">
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="514.0" prefWidth="608.0" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.PreferencesController">
   <columnConstraints>
     <ColumnConstraints hgrow="NEVER" maxWidth="165.0" minWidth="-Infinity" prefWidth="165.0" />
     <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="413.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints vgrow="NEVER" />
-      <RowConstraints maxHeight="387.0" minHeight="27.0" prefHeight="177.0" vgrow="NEVER" />
+      <RowConstraints vgrow="NEVER" />
       <RowConstraints maxHeight="387.0" minHeight="27.0" prefHeight="200.0" vgrow="NEVER" />
-      <RowConstraints maxHeight="370.0" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="370.0" minHeight="1.0" prefHeight="1.0" vgrow="ALWAYS" />
       <RowConstraints maxHeight="370.0" minHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
   </rowConstraints>
    <children>
@@ -64,7 +64,7 @@
          <children>
             <Label fx:id="exampleLbl" text="example-filename.xls" />
             <Separator prefWidth="200.0" />
-            <VBox fx:id="componentsBox" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <VBox fx:id="componentsBox" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Separator prefWidth="200.0" />
          </children>
       </VBox>
