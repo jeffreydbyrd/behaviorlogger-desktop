@@ -8,29 +8,29 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="476.0" prefWidth="608.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.EditSchemaController">
+<VBox prefHeight="453.0" prefWidth="492.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.EditSchemaController">
    <children>
-      <HBox spacing="10.0">
+      <HBox spacing="10.0" VBox.vgrow="NEVER">
          <children>
-            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+            <VBox HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Client:" />
-                  <TextField fx:id="clientField" layoutY="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" />
+                  <Label text="Client" />
+                  <TextField fx:id="clientField" prefColumnCount="0" />
                </children>
             </VBox>
-            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+            <VBox HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Project:" />
-                  <TextField fx:id="projectField" layoutX="4.0" layoutY="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Label text="Project" />
+                  <TextField fx:id="projectField" prefColumnCount="0" />
                </children>
             </VBox>
          </children>
       </HBox>
       <HBox spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+            <VBox spacing="10.0" GridPane.rowIndex="1" HBox.hgrow="ALWAYS">
                <children>
-                  <ScrollPane fitToWidth="true" prefHeight="320.0" prefWidth="290.0" AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="35.0" VBox.vgrow="ALWAYS">
+                  <ScrollPane fitToWidth="true" AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="35.0" VBox.vgrow="ALWAYS">
                      <content>
                         <AnchorPane>
                            <children>
@@ -49,14 +49,14 @@
                   <Button fx:id="addRowButton" mnemonicParsing="false" onAction="#onAddRowClicked" text="Add Row" />
                </children>
             </VBox>
-            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+            <VBox spacing="10.0" GridPane.columnIndex="1" HBox.hgrow="ALWAYS">
                <children>
-                  <VBox spacing="5.0">
+                  <VBox>
                      <children>
-                        <Label text="Save session data to:" />
+                        <Label text="Session Data Directory" />
                         <HBox spacing="5.0">
                            <children>
-                              <TextField fx:id="directoryField" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="directoryField" prefColumnCount="0" HBox.hgrow="ALWAYS" />
                               <Button fx:id="browseButton" mnemonicParsing="false" onAction="#onBrowseButtonPressed" text="Browse" HBox.hgrow="NEVER" />
                            </children>
                         </HBox>
@@ -64,7 +64,7 @@
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label text="Session Duration" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Label text="Session Duration" />
                         <RadioButton fx:id="infiniteRadioBtn" mnemonicParsing="false" text="infinite" />
                         <RadioButton fx:id="timedRadioBtn" mnemonicParsing="false" text="timed" />
                         <VBox fx:id="durationBox" spacing="10.0">
@@ -89,23 +89,33 @@
                         </VBox>
                      </children>
                   </VBox>
-                  <VBox fx:id="errorMsgBox" />
-                  <HBox spacing="10.0">
-                     <children>
-                        <Button fx:id="deleteSchemaButton" mnemonicParsing="false" onAction="#onDeleteSchemaClicked" style="-fx-background-color: linear-gradient(#ff4400, #be1d00); -fx-background-radius: 5; -fx-text-fill: white;" text="Delete Schema" visible="false" />
-                        <Button mnemonicParsing="false" onAction="#onCancelClicked" text="Cancel" />
-                        <Button mnemonicParsing="false" onAction="#onSaveSchemaClicked" text="Save Schema" />
-                     </children>
-                  </HBox>
-                  <AnchorPane VBox.vgrow="ALWAYS">
-                     <children>
-                        <Button fx:id="helpButton" layoutX="313.0" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
                </children>
             </VBox>
          </children>
       </HBox>
+      <Separator prefWidth="200.0" />
+      <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1" HBox.hgrow="ALWAYS">
+         <children>
+            <VBox fx:id="errorMsgBox" />
+            <VBox spacing="10.0">
+               <children>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onSaveSchemaClicked" text="Save Schema" />
+                        <Button mnemonicParsing="false" onAction="#onCancelClicked" text="Cancel" />
+                        <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onExportBtnPressed" text="Export Schema" />
+                        <Button fx:id="deleteSchemaButton" mnemonicParsing="false" onAction="#onDeleteSchemaClicked" style="-fx-background-color: linear-gradient(#ff4400, #be1d00); -fx-background-radius: 5; -fx-text-fill: white;" text="Delete Schema" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <AnchorPane VBox.vgrow="ALWAYS">
+               <children>
+                  <Button fx:id="helpButton" layoutX="313.0" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

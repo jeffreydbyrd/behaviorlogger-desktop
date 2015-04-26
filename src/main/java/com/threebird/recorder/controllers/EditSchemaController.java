@@ -357,6 +357,11 @@ public class EditSchemaController
            StartMenuController.toStartMenuView();
          } );
   }
+  
+  @FXML void onExportBtnPressed()
+  {
+    System.out.println("Export Schema pressed");
+  }
 
   @FXML void onHelpBtnPressed()
   {
