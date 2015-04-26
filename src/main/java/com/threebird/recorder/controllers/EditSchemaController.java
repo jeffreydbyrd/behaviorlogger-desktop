@@ -46,7 +46,6 @@ public class EditSchemaController
 
   @FXML private VBox mappingsBox;
   @FXML private Button addRowButton;
-  @FXML private Button deleteSchemaButton;
 
   @FXML private TextField directoryField;
   @FXML private Button browseButton;
@@ -65,6 +64,10 @@ public class EditSchemaController
   @FXML private CheckBox beepCheckBox;
 
   @FXML private VBox errorMsgBox;
+
+  
+  @FXML private Button exportSchemaButton;
+  @FXML private Button deleteSchemaButton;
 
   protected static int defaultNumBoxes = 10;
   private static char[] digits = "0123456789".toCharArray();
@@ -92,6 +95,7 @@ public class EditSchemaController
   private void init( Schema selected )
   {
     deleteSchemaButton.setVisible( selected != null );
+    exportSchemaButton.setVisible( selected != null );
     model = selected == null ? new Schema() : selected;
 
     clientField.setText( Strings.nullToEmpty( model.client ) );
