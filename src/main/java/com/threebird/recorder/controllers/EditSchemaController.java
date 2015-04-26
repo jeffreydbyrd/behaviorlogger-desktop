@@ -20,6 +20,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -31,6 +32,7 @@ import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.edit_schema.MappingBox;
@@ -65,7 +67,6 @@ public class EditSchemaController
 
   @FXML private VBox errorMsgBox;
 
-  
   @FXML private Button exportSchemaButton;
   @FXML private Button deleteSchemaButton;
 
@@ -361,10 +362,18 @@ public class EditSchemaController
            StartMenuController.toStartMenuView();
          } );
   }
-  
+
   @FXML void onExportBtnPressed()
   {
-    System.out.println("Export Schema pressed");
+    Schema selected = SchemasManager.getSelected();
+    FileChooser fileChooser = new FileChooser();
+    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
+    fileChooser.getExtensionFilters().add( extFilter );
+    File result = fileChooser.showSaveDialog( EventRecorder.STAGE );
+
+    if (result != null) {
+      GsonUtils.save( result, selected );
+    }
   }
 
   @FXML void onHelpBtnPressed()
