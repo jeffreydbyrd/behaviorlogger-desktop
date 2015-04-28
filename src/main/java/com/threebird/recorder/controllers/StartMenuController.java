@@ -22,6 +22,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -31,6 +33,7 @@ import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
+import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
@@ -217,6 +220,16 @@ public class StartMenuController
   @FXML private void onEditSchemaClicked( ActionEvent evt )
   {
     EditSchemaController.toEditSchemaView( SchemasManager.getSelected() );
+  }
+
+  @FXML private void onImportSchemaPressed()
+  {
+    FileChooser fileChooser = new FileChooser();
+    ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
+    fileChooser.getExtensionFilters().add( extFilter );
+    File newFile = fileChooser.showOpenDialog( EventRecorderUtil.dialogStage.get() );
+    
+    GsonUtils.< Schema > get( newFile, new Schema() );
   }
 
   private boolean validate()

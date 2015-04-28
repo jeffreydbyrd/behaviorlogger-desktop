@@ -11,10 +11,15 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.threebird.recorder.models.MappableChar;
 
 public class GsonUtils
 {
-  private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+  private static Gson gson =
+      new GsonBuilder().setPrettyPrinting()
+                       .registerTypeAdapter( MappableChar.class, MappableChar.gsonSerializer )
+                       .registerTypeAdapter( MappableChar.class, MappableChar.gsonDeserializer )
+                       .create();
 
   public static ExecutorService es = Executors.newSingleThreadExecutor();
 

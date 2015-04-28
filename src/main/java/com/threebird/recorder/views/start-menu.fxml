@@ -30,6 +30,7 @@
                         <Button fx:id="editSchemaBtn" mnemonicParsing="false" onAction="#onEditSchemaClicked" text="Edit Schema" />
                      </children>
                   </HBox>
+                  <Button fx:id="importSchemaButton" mnemonicParsing="false" onAction="#onImportSchemaPressed" text="Import Schema" />
                </children>
             </VBox>
             <VBox fx:id="rightSide" prefHeight="414.0" prefWidth="350.0" spacing="5.0" HBox.hgrow="ALWAYS">

@@ -5,6 +5,11 @@ import java.util.Optional;
 
 import javafx.scene.input.KeyCode;
 
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
+
 /**
  * All the possible chars that a user is allowed to map to a behavior in a
  * Schema
@@ -58,6 +63,20 @@ public enum MappableChar
   COMMA(',', KeyCode.COMMA),
   PERIOD('.', KeyCode.PERIOD),
   SLASH('/', KeyCode.SLASH);
+
+  public static final JsonDeserializer< MappableChar > gsonDeserializer =
+      ( json, typeOfT, context ) -> {
+        MappableChar ch = getForChar( json.getAsJsonPrimitive().getAsCharacter() ).orElse( null );
+        System.out.println( ch.name() );
+        return ch;
+      };
+
+  public static final JsonSerializer< MappableChar > gsonSerializer =
+      ( src, typeOfSrc, context ) -> {
+        JsonElement el = new JsonPrimitive( src.name() );
+        System.out.println( el );
+        return el;
+      };
 
   public final char c;
   public final KeyCode code;
