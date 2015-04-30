@@ -60,7 +60,7 @@ public class KeyBehaviors
     String sql =
         "INSERT INTO key_behaviors (schema_id,key,behavior,is_continuous) VALUES (?,?,?,?)";
     List< Object > params =
-        Lists.newArrayList( schemaId, mapping.key.toString(), mapping.behavior, mapping.isContinuous );
+        Lists.newArrayList( schemaId, mapping.key.c + "", mapping.behavior, mapping.isContinuous );
 
     SqliteDao.update( SqlQueryData.create( sql, params, stmt -> {} ) );
   }
@@ -74,7 +74,7 @@ public class KeyBehaviors
         "DELETE FROM key_behaviors WHERE schema_id = ? AND key = ?";
 
     List< Object > params =
-        Lists.newArrayList( schemaId, key.toString() );
+        Lists.newArrayList( schemaId, key.c + "" );
 
     SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
   }

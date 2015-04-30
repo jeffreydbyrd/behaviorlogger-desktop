@@ -185,7 +185,7 @@ public class EditSchemaController
     mappingsBox.getChildren().clear();
 
     schema.mappings.forEach( ( key, mapping ) -> {
-      addMappingBox( mapping.isContinuous, mapping.key.toString(), mapping.behavior );
+      addMappingBox( mapping.isContinuous, mapping.key.c + "", mapping.behavior );
     } );
 
     // add some extra boxes at the end to match 'defaultNumBoxes'

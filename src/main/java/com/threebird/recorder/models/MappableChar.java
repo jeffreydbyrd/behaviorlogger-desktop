@@ -66,9 +66,10 @@ public enum MappableChar
 
   public static final JsonDeserializer< MappableChar > gsonDeserializer =
       ( json, typeOfT, context ) -> {
-        MappableChar ch = getForChar( json.getAsJsonPrimitive().getAsCharacter() ).orElse( null );
-        System.out.println( ch.name() );
-        return ch;
+        String str = json.getAsJsonPrimitive().getAsString();
+        MappableChar mc = MappableChar.valueOf( str );
+        System.out.println( mc.name() );
+        return mc;
       };
 
   public static final JsonSerializer< MappableChar > gsonSerializer =
@@ -107,10 +108,5 @@ public enum MappableChar
   public static Optional< MappableChar > getForChar( char c )
   {
     return Optional.ofNullable( chars.get( c ) );
-  }
-
-  @Override public String toString()
-  {
-    return c + "";
   }
 }

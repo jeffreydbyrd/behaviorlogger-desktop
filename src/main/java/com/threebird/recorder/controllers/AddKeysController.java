@@ -77,7 +77,7 @@ public class AddKeysController
       HBox.setHgrow( contLabel, Priority.NEVER );
       HBox.setMargin( contLabel, new Insets( 5, 0, 0, 5 ) );
 
-      Label keyText = new Label( kbm.key.toString() );
+      Label keyText = new Label( kbm.key.c + "" );
       keyText.setMaxWidth( 40 );
       keyText.setMinWidth( 40 );
       keyText.setAlignment( Pos.CENTER );

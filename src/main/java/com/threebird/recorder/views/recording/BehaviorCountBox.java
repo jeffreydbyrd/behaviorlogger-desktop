@@ -26,7 +26,7 @@ public abstract class BehaviorCountBox extends HBox
   {
     super();
 
-    keyLabel = new Label( kbm.key.toString() );
+    keyLabel = new Label( kbm.key.c + "" );
     keyLabel.setAlignment( Pos.CENTER );
     keyLabel.setMinWidth( 30 );
     keyLabel.setMaxWidth( 30 );

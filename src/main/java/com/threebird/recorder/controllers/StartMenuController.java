@@ -116,7 +116,7 @@ public class StartMenuController
       contLbl.setText( mapping.isContinuous ? "(cont.)" : "" );
       contLbl.setMinWidth( 45 );
 
-      Label keyLbl = new Label( mapping.key.toString() );
+      Label keyLbl = new Label( mapping.key.c + "" );
       keyLbl.setMinWidth( 15 );
 
       Label separator = new Label( ":" );
@@ -160,6 +160,7 @@ public class StartMenuController
     SessionManager.observerProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     SessionManager.therapistProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     SessionManager.conditionProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
+    SessionManager.locationProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     SessionManager.sessionNumberProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     PreferencesManager.filenameComponents().addListener( (ListChangeListener< FilenameComponent >) c -> {
       updateFilenameLabel();
@@ -229,7 +230,10 @@ public class StartMenuController
     fileChooser.getExtensionFilters().add( extFilter );
     File newFile = fileChooser.showOpenDialog( EventRecorderUtil.dialogStage.get() );
     
-    GsonUtils.< Schema > get( newFile, new Schema() );
+    Schema schema = GsonUtils.< Schema > get( newFile, new Schema() );
+    schema.id = null;
+    
+    SchemasManager.schemas().add( schema );
   }
 
   private boolean validate()

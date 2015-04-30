@@ -63,4 +63,8 @@ public class Schema
     return true;
   }
 
+  @Override public String toString()
+  {
+    return "Schema [id=" + id + ", client=" + client + ", project=" + project + "]";
+  }
 }
