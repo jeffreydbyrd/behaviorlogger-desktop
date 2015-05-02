@@ -103,7 +103,6 @@
                      <children>
                         <Button mnemonicParsing="false" onAction="#onSaveSchemaClicked" text="Save Schema" />
                         <Button mnemonicParsing="false" onAction="#onCancelClicked" text="Cancel" />
-                        <Button fx:id="exportSchemaButton" mnemonicParsing="false" onAction="#onExportBtnPressed" text="Export Schema" />
                         <Button fx:id="deleteSchemaButton" mnemonicParsing="false" onAction="#onDeleteSchemaClicked" style="-fx-background-color: linear-gradient(#ff4400, #be1d00); -fx-background-radius: 5; -fx-text-fill: white;" text="Delete Schema" />
                         <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                            <children>

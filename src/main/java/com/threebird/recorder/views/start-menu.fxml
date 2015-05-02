@@ -26,11 +26,16 @@
                   </TableView>
                   <HBox spacing="10.0">
                      <children>
-                        <Button fx:id="createSchemaButton" mnemonicParsing="false" onAction="#onCreateSchemaClicked" text="Create New Schema" textAlignment="CENTER" />
-                        <Button fx:id="editSchemaBtn" mnemonicParsing="false" onAction="#onEditSchemaClicked" text="Edit Schema" />
+                        <Button fx:id="createSchemaButton" mnemonicParsing="false" onAction="#onCreateSchemaClicked" text="Create" textAlignment="CENTER" />
+                        <Button fx:id="importSchemaButton" mnemonicParsing="false" onAction="#onImportSchemaPressed" text="Import" />
                      </children>
                   </HBox>
-                  <Button fx:id="importSchemaButton" mnemonicParsing="false" onAction="#onImportSchemaPressed" text="Import Schema" />
+                  <HBox spacing="26.0">
+                     <children>
+                        <Button fx:id="editSchemaBtn" mnemonicParsing="false" onAction="#onEditSchemaClicked" text="Edit" />
+                        <Button fx:id="exportSchemaButton" mnemonicParsing="false" onAction="#onExportBtnPressed" text="Export" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
             <VBox fx:id="rightSide" prefHeight="414.0" prefWidth="350.0" spacing="5.0" HBox.hgrow="ALWAYS">

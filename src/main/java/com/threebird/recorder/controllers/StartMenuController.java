@@ -27,6 +27,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.Schema;
@@ -49,6 +50,7 @@ public class StartMenuController
   @FXML private TableColumn< Schema, String > projectCol;
   @FXML private Button createSchemaButton;
   @FXML private Button editSchemaBtn;
+  @FXML private Button exportSchemaButton;
 
   @FXML private VBox rightSide;
   @FXML private VBox mappingsBox;
@@ -82,10 +84,16 @@ public class StartMenuController
 
   private void init()
   {
-    rightSide.setVisible( false );
-    editSchemaBtn.setVisible( false );
+    setVisibility( false );
     initSchemaListView();
     initSessionDetails();
+  }
+
+  private void setVisibility( boolean visible )
+  {
+    rightSide.setVisible( visible );
+    editSchemaBtn.setVisible( visible );
+    exportSchemaButton.setVisible( visible );
   }
 
   /**
@@ -202,14 +210,12 @@ public class StartMenuController
   {
     SchemasManager.setSelected( newV );
     if (newV != null) {
-      rightSide.setVisible( true );
-      editSchemaBtn.setVisible( true );
+      setVisibility( true );
       populateMappingsTable( newV );
       timeBox.setText( EventRecorderUtil.secondsToTimestamp( newV.duration ) );
       updateFilenameLabel();
     } else {
-      rightSide.setVisible( false );
-      editSchemaBtn.setVisible( false );
+      setVisibility( false );
     }
   }
 
@@ -229,11 +235,29 @@ public class StartMenuController
     ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
     fileChooser.getExtensionFilters().add( extFilter );
     File newFile = fileChooser.showOpenDialog( EventRecorderUtil.dialogStage.get() );
-    
+
+    if (newFile == null) {
+      return;
+    }
+
     Schema schema = GsonUtils.< Schema > get( newFile, new Schema() );
     schema.id = null;
-    
+
     SchemasManager.schemas().add( schema );
+    schemaTable.getSelectionModel().select( schema );
+  }
+
+  @FXML private void onExportBtnPressed()
+  {
+    Schema selected = SchemasManager.getSelected();
+    FileChooser fileChooser = new FileChooser();
+    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
+    fileChooser.getExtensionFilters().add( extFilter );
+    File result = fileChooser.showSaveDialog( EventRecorder.STAGE );
+
+    if (result != null) {
+      GsonUtils.save( result, selected );
+    }
   }
 
   private boolean validate()
