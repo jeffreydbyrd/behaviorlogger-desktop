@@ -9,9 +9,7 @@ import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -32,6 +30,7 @@ import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.edit_schema.MappingBox;
 
@@ -347,16 +346,10 @@ public class EditSchemaController
   {
     String msg = "Are you sure you want to delete this schema?\nYou can't undo this action.";
 
-    Alert alert = new Alert( Alert.AlertType.CONFIRMATION );
-    alert.setTitle( "Confirm deletion." );
-    alert.setHeaderText( null );
-    alert.setContentText( msg );
-    alert.showAndWait()
-         .filter( result -> result == ButtonType.OK )
-         .ifPresent( r -> {
-           SchemasManager.schemas().remove( model );
-           StartMenuController.toStartMenuView();
-         } );
+    Alerts.confirm( "Confirm deletion", null, msg, ( ) -> {
+      SchemasManager.schemas().remove( model );
+      StartMenuController.toStartMenuView();
+    } );
   }
 
   @FXML void onHelpBtnPressed()

@@ -10,9 +10,7 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -35,6 +33,7 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
@@ -315,13 +314,7 @@ public class StartMenuController
           "Starting this session will overwrite an existing data file.\n"
               + "Click Cancel to stay here or Ok to proceed.";
 
-      Alert alert = new Alert( Alert.AlertType.CONFIRMATION );
-      alert.setTitle( "File already exists." );
-      alert.setHeaderText( null );
-      alert.setContentText( msg );
-      alert.showAndWait()
-           .filter( result -> result == ButtonType.OK )
-           .ifPresent( r -> RecordingController.toRecordingView() );
+      Alerts.confirm( "File already exists.", null, msg, RecordingController::toRecordingView );
     } else {
       RecordingController.toRecordingView();
     }

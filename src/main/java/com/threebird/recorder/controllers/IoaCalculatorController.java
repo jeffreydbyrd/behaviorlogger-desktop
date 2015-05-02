@@ -4,7 +4,6 @@ import java.io.File;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -14,6 +13,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 import com.google.common.base.Strings;
 import com.threebird.recorder.models.ioa.IoaManager;
+import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.utils.ioa.IoaMethod;
 import com.threebird.recorder.utils.ioa.IoaUtils;
@@ -168,10 +168,7 @@ public class IoaCalculatorController
                         IoaManager.thresholdProperty().get(),
                         result );
     } catch (Exception e) {
-      Alert alert = new Alert( Alert.AlertType.ERROR );
-      alert.setHeaderText( "IOA Calculator encountered a problem." );
-      alert.setContentText( e.getMessage() );
-      alert.showAndWait();
+      Alerts.error( null, "IOA Calculator encountered a problem.", e, ( ) -> System.out.println( "TEST" ) );
       e.printStackTrace();
     }
   }
