@@ -332,7 +332,11 @@ public class EditSchemaController
     if (model.id == null) {
       SchemasManager.schemas().add( model );
     } else {
-      Schemas.save( model );
+      try {
+        Schemas.save( model );
+      } catch (Exception e) {
+        Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
+      }
     }
 
     StartMenuController.toStartMenuView();

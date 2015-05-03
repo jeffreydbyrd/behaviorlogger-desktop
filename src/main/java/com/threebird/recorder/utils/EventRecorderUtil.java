@@ -79,6 +79,7 @@ public class EventRecorderUtil
     try {
       root = (Parent) fxmlLoader.load();
     } catch (IOException e) {
+      Alerts.error( "Error Loading Resource", "There was a problem loading a resource: " + fxmlPath, e );
       throw new RuntimeException( e );
     }
     Scene scene = new Scene( root );
@@ -112,6 +113,7 @@ public class EventRecorderUtil
     try {
       root = (Parent) fxmlLoader.load();
     } catch (IOException e) {
+      Alerts.error( "Error Loading Resource", "There was a problem loading a resource: " + fxmlPath, e );
       throw new RuntimeException( e );
     }
 
@@ -234,7 +236,7 @@ public class EventRecorderUtil
       URI uri = new URI( address );
       Desktop.getDesktop().browse( uri );
     } catch (Exception e) {
-      throw new RuntimeException( e );
+      Alerts.error( "Error Loading Resource", "There was a problem loading a resource: " + address, e );
     }
   }
 }

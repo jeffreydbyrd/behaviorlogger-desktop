@@ -19,8 +19,10 @@ public class KeyBehaviors
 
   /**
    * For a given Schema, return all
+   * 
+   * @throws Exception
    */
-  public static Set< KeyBehaviorMapping > getAllForSchema( Integer schemaId )
+  public static Set< KeyBehaviorMapping > getAllForSchema( Integer schemaId ) throws Exception
   {
     String sql = "SELECT * FROM key_behaviors WHERE schema_id = " + schemaId;
 
@@ -29,7 +31,7 @@ public class KeyBehaviors
     SqlCallback callback = rs -> {
       while (rs.next()) {
         String key = rs.getString( "key" );
-        MappableChar ch = MappableChar.getForChar( key.charAt(0) ).get();
+        MappableChar ch = MappableChar.getForChar( key.charAt( 0 ) ).get();
         String behavior = rs.getString( "behavior" );
         boolean isContinuous = rs.getBoolean( "is_continuous" );
         mappings.add( new KeyBehaviorMapping( ch, behavior, isContinuous ) );
@@ -44,8 +46,10 @@ public class KeyBehaviors
   /**
    * Adds each KeyBehaviorMapping to key_behaviors. This function will explode
    * if you try to enter a duplicate
+   * 
+   * @throws Exception
    */
-  public static void addAll( Integer schemaId, Iterable< KeyBehaviorMapping > mappings )
+  public static void addAll( Integer schemaId, Iterable< KeyBehaviorMapping > mappings ) throws Exception
   {
     for (KeyBehaviorMapping mapping : mappings) {
       create( schemaId, mapping );
@@ -54,8 +58,10 @@ public class KeyBehaviors
 
   /**
    * Inserts a new KeyBehaviorMapping into the key_behaviors table
+   * 
+   * @throws Exception
    */
-  public static void create( Integer schemaId, KeyBehaviorMapping mapping )
+  public static void create( Integer schemaId, KeyBehaviorMapping mapping ) throws Exception
   {
     String sql =
         "INSERT INTO key_behaviors (schema_id,key,behavior,is_continuous) VALUES (?,?,?,?)";
@@ -67,8 +73,10 @@ public class KeyBehaviors
 
   /**
    * Deletes the KeyBehaviorMapping with a specific schema_id and key
+   * 
+   * @throws Exception
    */
-  public static void delete( Integer schemaId, MappableChar key )
+  public static void delete( Integer schemaId, MappableChar key ) throws Exception
   {
     String sql =
         "DELETE FROM key_behaviors WHERE schema_id = ? AND key = ?";

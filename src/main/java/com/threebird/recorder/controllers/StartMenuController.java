@@ -1,6 +1,7 @@
 package com.threebird.recorder.controllers;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -239,7 +240,14 @@ public class StartMenuController
       return;
     }
 
-    Schema schema = GsonUtils.< Schema > get( newFile, new Schema() );
+    Schema schema;
+    try {
+      schema = GsonUtils.< Schema > get( newFile, new Schema() );
+    } catch (IOException e) {
+      Alerts.error( "Error Importing Schema", "There was a problem while importing the Schema.", e );
+      e.printStackTrace();
+      return;
+    }
     schema.id = null;
 
     SchemasManager.schemas().add( schema );
@@ -255,7 +263,12 @@ public class StartMenuController
     File result = fileChooser.showSaveDialog( EventRecorder.STAGE );
 
     if (result != null) {
-      GsonUtils.save( result, selected );
+      try {
+        GsonUtils.save( result, selected );
+      } catch (Exception e) {
+        Alerts.error( "Failed to Export", "There was a problem while exporting the selected schema.", e );
+        e.printStackTrace();
+      }
     }
   }
 

@@ -58,8 +58,14 @@ public class RecordingManager
   {
     String fullFileName = getFullFileName();
     List< Behavior > behaviors = allBehaviors();
+
+    // CompletableFuture< Long > fCsvLen =
     Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors, count() );
+
+    // CompletableFuture< Long > fXlsLen =
     Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count() );
+
+    // TODO: if exceptions: display errors to user
   }
 
   private List< Behavior > allBehaviors()

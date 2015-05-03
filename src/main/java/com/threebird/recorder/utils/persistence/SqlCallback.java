@@ -1,7 +1,6 @@
 package com.threebird.recorder.utils.persistence;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * A {@link FunctionalInterface} that users can use to handle ResultSets
@@ -11,5 +10,5 @@ public interface SqlCallback
 {
   public SqlCallback NOOP = rs -> {};
 
-  void handle( ResultSet input ) throws SQLException;
+  void handle( ResultSet input ) throws Exception;
 }

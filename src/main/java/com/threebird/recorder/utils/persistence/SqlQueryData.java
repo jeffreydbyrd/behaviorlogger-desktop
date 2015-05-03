@@ -1,7 +1,6 @@
 package com.threebird.recorder.utils.persistence;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -26,8 +25,10 @@ public interface SqlQueryData
 
   /**
    * Handles the ResultSet created after executing the query
+   * 
+   * @throws Exception
    */
-  void handle( ResultSet rs );
+  void handle( ResultSet rs ) throws Exception;
 
   /**
    * @return a new instance of {@link SqlQueryData} where getSql() returns
@@ -49,13 +50,9 @@ public interface SqlQueryData
         return sql;
       }
 
-      @Override public void handle( ResultSet rs )
+      @Override public void handle( ResultSet rs ) throws Exception
       {
-        try {
-          callback.handle( rs );
-        } catch (SQLException e) {
-          throw new RuntimeException( e );
-        }
+        callback.handle( rs );
       }
     };
   }

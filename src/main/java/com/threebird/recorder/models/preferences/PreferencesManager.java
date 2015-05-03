@@ -54,7 +54,15 @@ public class PreferencesManager
   private static SimpleBooleanProperty soundOnEndProperty;
 
   private static File file = ResourceUtils.getPrefs();
-  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
+  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> {
+    GsonBean bean = new GsonBean();
+    try {
+      return GsonUtils.get( file, bean );
+    } catch (Exception e) {
+      // TODO: display warning message
+      return bean;
+    }
+  } );
 
   private static void persist()
   {
@@ -69,7 +77,11 @@ public class PreferencesManager
                             .map( c -> new GsonFilenameComp( c.name(), c.enabled ) )
                             .collect( Collectors.toList() );
 
-    GsonUtils.save( file, model );
+    try {
+      GsonUtils.save( file, model );
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public static synchronized SimpleStringProperty sessionDirectoryProperty()

@@ -3,6 +3,7 @@ package com.threebird.recorder.persistence;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,42 +28,37 @@ public class GsonUtils
   /**
    * Save the model to a JSON file, creating the file if it doesn't already
    * exist.
+   * 
+   * @throws Exception
    */
-  public static void save( File file, Object model )
+  public static void save( File file, Object model ) throws Exception
   {
-    es.execute( ( ) -> {
-      try {
-        if (!file.exists()) {
-          file.getParentFile().mkdirs();
-          file.createNewFile();
-        }
-
-        String json = gson.toJson( model );
-
-        BufferedWriter writer = Files.newWriter( file, StandardCharsets.UTF_8 );
-        writer.write( json );
-        writer.flush();
-        writer.close();
-      } catch (Exception e) {
-        throw new RuntimeException( e );
+    es.submit( ( ) -> {
+      if (!file.exists()) {
+        file.getParentFile().mkdirs();
+        file.createNewFile();
       }
-    } );
+
+      String json = gson.toJson( model );
+
+      BufferedWriter writer = Files.newWriter( file, StandardCharsets.UTF_8 );
+      writer.write( json );
+      writer.flush();
+      writer.close();
+      return null;
+    } ).get();
   }
 
-  @SuppressWarnings("unchecked") public static < T > T get( File file, T bean )
+  @SuppressWarnings("unchecked") public static < T > T get( File file, T bean ) throws IOException
   {
-    try {
-      if (!file.exists()) {
-        return bean;
-      }
-
-      BufferedReader reader = Files.newReader( file, Charsets.UTF_8 );
-      T t = (T) gson.fromJson( reader, bean.getClass() );
-      reader.close();
-      
-      return t;
-    } catch (Exception e) {
-      throw new RuntimeException( e );
+    if (!file.exists()) {
+      return bean;
     }
+
+    BufferedReader reader = Files.newReader( file, Charsets.UTF_8 );
+    T t = (T) gson.fromJson( reader, bean.getClass() );
+    reader.close();
+
+    return t;
   }
 }

@@ -23,8 +23,10 @@ public class Schemas
   /**
    * If schema.id is null, creates a new schema in the database. Otherwise, it
    * updates the row that matches schema.id
+   * 
+   * @throws Exception
    */
-  public static void save( Schema schema )
+  public static void save( Schema schema ) throws Exception
   {
     if (schema.id == null) {
       create( schema );
@@ -36,8 +38,10 @@ public class Schemas
   /**
    * Updates all the values of the given schema in the 'schemas' and
    * 'key_behaviors' table
+   * 
+   * @throws Exception
    */
-  private static void update( Schema schema )
+  private static void update( Schema schema ) throws Exception
   {
     String sql =
         "UPDATE schemas SET "
@@ -81,8 +85,10 @@ public class Schemas
   /**
    * Creates the given schema in the 'schemas' table. Also adds all related
    * behaviors to the key_behaviors table
+   * 
+   * @throws Exception
    */
-  private static void create( Schema schema )
+  private static void create( Schema schema ) throws Exception
   {
     String sql =
         "INSERT INTO schemas "
@@ -106,8 +112,10 @@ public class Schemas
 
   /**
    * Deletes the given Schema and all of its KeyBehaviorMappings
+   * 
+   * @throws Exception
    */
-  public static void delete( Schema schema )
+  public static void delete( Schema schema ) throws Exception
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
       KeyBehaviors.delete( schema.id, kbm.key );
@@ -120,8 +128,10 @@ public class Schemas
 
   /**
    * Retrieves all Schemas
+   * 
+   * @throws Exception
    */
-  public static List< Schema > all()
+  public static List< Schema > all() throws Exception
   {
     String sql = "SELECT * FROM schemas";
     List< Schema > result = Lists.newArrayList();

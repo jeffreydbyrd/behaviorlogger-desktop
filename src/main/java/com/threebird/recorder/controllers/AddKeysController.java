@@ -26,6 +26,7 @@ import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
@@ -128,7 +129,15 @@ public class AddKeysController
       schema.mappings.put( kbm.key, new KeyBehaviorMapping( kbm.key, behavior, kbm.isContinuous ) );
     } );
 
-    Schemas.save( schema );
+    try {
+      Schemas.save( schema );
+    } catch (Exception e) {
+      Alerts.error( "Failed to Save Schema",
+                    "The application encountered a problem while trying to save the schema.",
+                    e );
+      e.printStackTrace();
+      return;
+    }
 
     Set< MappableChar > newChars = behaviorFields.values()
                                                  .stream()

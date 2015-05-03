@@ -41,4 +41,12 @@ public class Alerts
   {
     alert( Alert.AlertType.CONFIRMATION, title, header, message, onOk );
   }
+
+  /**
+   * Displays a Warning dialog box that takes no action upon clicking "Ok"
+   */
+  public static void warning( String title, String header, String message )
+  {
+    alert( Alert.AlertType.WARNING, title, header, message, ( ) -> {} );
+  }
 }

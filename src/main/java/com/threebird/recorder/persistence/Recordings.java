@@ -6,15 +6,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 import com.threebird.recorder.models.behaviors.Behavior;
@@ -26,8 +27,9 @@ public class Recordings
 {
   static class SaveDetails
   {
-    public List< Behavior > behaviors;
     public File f;
+    public CompletableFuture< Long > fResult;
+    public List< Behavior > behaviors;
     public String client;
     public String project;
     public String observer;
@@ -46,16 +48,15 @@ public class Recordings
     private final ExecutorService es = Executors.newSingleThreadExecutor();
     private final Thread taskManager;
 
-    private Writer( Function< SaveDetails, Long > func )
+    private Writer( Consumer< SaveDetails > c )
     {
       this.taskManager = new Thread( ( ) -> {
         while (true) {
           try {
             SaveDetails sd = q.take();
-            Future< Long > future = es.submit( ( ) -> func.apply( sd ) );
-            future.get();
+            es.submit( ( ) -> c.accept( sd ) ).get();
           } catch (Exception e) {
-            throw new RuntimeException( e );
+            e.printStackTrace();
           }
         }
       } );
@@ -72,10 +73,12 @@ public class Recordings
       }
 
       q.clear();
+
       try {
         q.put( details );
       } catch (InterruptedException e) {
-        throw new RuntimeException( e );
+        e.printStackTrace();
+        details.fResult.completeExceptionally( e );
       }
     }
 
@@ -90,6 +93,7 @@ public class Recordings
     SaveDetails sd = new SaveDetails();
 
     sd.f = f;
+    sd.fResult = new CompletableFuture< Long >();
     sd.behaviors = behaviors;
     sd.client = SchemasManager.getSelected().client;
     sd.project = SchemasManager.getSelected().project;
@@ -101,14 +105,18 @@ public class Recordings
     return sd;
   }
 
-  public static void saveCsv( File f, List< Behavior > behaviors, int count )
+  public static CompletableFuture< Long > saveCsv( File f, List< Behavior > behaviors, int count )
   {
-    Writer.CSV.schedule( createSaveDetails( f, behaviors, count ) );
+    SaveDetails saveDetails = createSaveDetails( f, behaviors, count );
+    Writer.CSV.schedule( saveDetails );
+    return saveDetails.fResult;
   }
 
-  public static void saveXls( File f, List< Behavior > behaviors, int count )
+  public static CompletableFuture< Long > saveXls( File f, List< Behavior > behaviors, int count )
   {
-    Writer.XLS.schedule( createSaveDetails( f, behaviors, count ) );
+    SaveDetails saveDetails = createSaveDetails( f, behaviors, count );
+    Writer.XLS.schedule( saveDetails );
+    return saveDetails.fResult;
   }
 
   private static class DiscreteContinuousPair
@@ -149,7 +157,7 @@ public class Recordings
     return res;
   }
 
-  private static Long writeCsv( SaveDetails details )
+  private static void writeCsv( SaveDetails details )
   {
     try {
       if (!details.f.exists()) {
@@ -171,19 +179,20 @@ public class Recordings
       printer.flush();
       printer.close();
 
-      return details.f.length();
+      details.fResult.complete( details.f.length() );
     } catch (IOException e) {
-      throw new RuntimeException( e );
+      details.fResult.completeExceptionally( e );
     }
   }
 
-  private static Long writeXls( SaveDetails details )
+  private static void writeXls( SaveDetails details )
   {
     try {
       WriteRecordingXls.write( details );
-      return details.f.length();
+
+      details.fResult.complete( details.f.length() );
     } catch (IOException e) {
-      throw new RuntimeException( e );
+      details.fResult.completeExceptionally( e );
     }
   }
 }

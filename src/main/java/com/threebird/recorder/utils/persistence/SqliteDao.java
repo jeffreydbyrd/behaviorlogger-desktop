@@ -1,7 +1,6 @@
 package com.threebird.recorder.utils.persistence;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,7 +27,7 @@ public class SqliteDao
     ResultSet execute( PreparedStatement stmt ) throws SQLException;
   }
 
-  private static void initTables() throws IOException, SQLException
+  private static void initTables() throws Exception
   {
     String createSchemas =
         "CREATE TABLE IF NOT EXISTS schemas (" +
@@ -58,10 +57,10 @@ public class SqliteDao
   /**
    * @return false if a Connection is already open, or true if a new Connection
    *         was successfully created
-   * @throws SQLException
-   * @throws IOException
+   * 
+   * @throws Exception
    */
-  private static boolean open() throws SQLException, IOException
+  private static boolean open() throws Exception
   {
     if (conn == null) {
       File dbFile = ResourceUtils.getDb();
@@ -86,27 +85,25 @@ public class SqliteDao
   /**
    * Makes a PreparedStatement, executes it with 'executeStatement', and handles
    * the returned ResultSet
+   * 
+   * @throws Exception
    */
   private static void execute( SqlQueryData sqd,
-                               ExecuteStatement executeStatement )
+                               ExecuteStatement executeStatement ) throws Exception
   {
-    try {
-      boolean topLevel = open();
-      PreparedStatement stmt = conn.prepareStatement( sqd.getSql() );
+    boolean topLevel = open();
+    PreparedStatement stmt = conn.prepareStatement( sqd.getSql() );
 
-      int i = 1;
-      for (Object o : sqd.getSqlParams()) {
-        stmt.setObject( i++, o );
-      }
+    int i = 1;
+    for (Object o : sqd.getSqlParams()) {
+      stmt.setObject( i++, o );
+    }
 
-      sqd.handle( executeStatement.execute( stmt ) );
-      stmt.close();
+    sqd.handle( executeStatement.execute( stmt ) );
+    stmt.close();
 
-      if (topLevel) {
-        conn.close();
-      }
-    } catch (Exception e) {
-      throw new RuntimeException( e );
+    if (topLevel) {
+      conn.close();
     }
   }
 
@@ -114,8 +111,10 @@ public class SqliteDao
    * Executes a SQL Query (ie. a select statment) according to the data provided
    * by a {@link SqlQueryData}. The ResultSet given to the 'handle' function
    * consists of each column specified in the query
+   * 
+   * @throws Exception
    */
-  public static void query( final SqlQueryData sqc )
+  public static void query( final SqlQueryData sqc ) throws Exception
   {
     execute( sqc, stmt -> stmt.executeQuery() );
   }
@@ -124,8 +123,10 @@ public class SqliteDao
    * Executes a DML statment (insert, update, delete) with the data provided by
    * a {@link SqlQueryData}. The ResultSet given to the 'handle' function
    * consists of the statement's generated keys.
+   * 
+   * @throws Exception
    */
-  public static void update( final SqlQueryData sqc )
+  public static void update( final SqlQueryData sqc ) throws Exception
   {
     execute( sqc, stmt -> {
       stmt.executeUpdate();

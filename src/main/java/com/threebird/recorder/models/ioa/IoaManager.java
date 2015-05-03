@@ -29,7 +29,15 @@ public class IoaManager
 
   private static File file = ResourceUtils.getIoaDetails();
 
-  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
+  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> {
+    GsonBean bean = new GsonBean();
+    try {
+      return GsonUtils.get( file, bean );
+    } catch (Exception e) {
+      // TODO: display warning message
+      return bean;
+    }
+  } );
 
   private static void persist()
   {
@@ -38,7 +46,13 @@ public class IoaManager
     model.file2 = file2Property().get();
     model.method = methodProperty().get();
     model.threshold = thresholdProperty().get();
-    GsonUtils.save( file, model );
+
+    try {
+      GsonUtils.save( file, model );
+    } catch (Exception e) {
+      // TODO: display warning message
+      e.printStackTrace();
+    }
   }
 
   public static SimpleStringProperty file1Property()

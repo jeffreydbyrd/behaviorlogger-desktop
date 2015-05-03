@@ -28,7 +28,15 @@ public class SessionManager
   private static SimpleIntegerProperty sessionNumberProperty;
 
   private static File file = ResourceUtils.getSessionDetails();
-  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> GsonUtils.get( file, new GsonBean() ) );
+  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> {
+    GsonBean bean = new GsonBean();
+    try {
+      return GsonUtils.get( file, bean );
+    } catch (Exception e) {
+      // TODO: display warning message
+      return bean;
+    }
+  } );
 
   private static void persist()
   {
@@ -38,7 +46,12 @@ public class SessionManager
     model.condition = getCondition();
     model.location = getLocation();
     model.sessionNumber = getSessionNumber();
-    GsonUtils.save( file, model );
+
+    try {
+      GsonUtils.save( file, model );
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public static SimpleStringProperty observerProperty()
@@ -67,7 +80,7 @@ public class SessionManager
     }
     return conditionProperty;
   }
-  
+
   public static SimpleStringProperty locationProperty()
   {
     if (locationProperty == null) {
@@ -100,7 +113,7 @@ public class SessionManager
   {
     return conditionProperty().get();
   }
-  
+
   public static String getLocation()
   {
     return locationProperty().get();
@@ -125,7 +138,7 @@ public class SessionManager
   {
     conditionProperty().set( s );
   }
-  
+
   public static void setLocation( String s )
   {
     locationProperty().set( s );
