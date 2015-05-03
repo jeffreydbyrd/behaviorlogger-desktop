@@ -33,7 +33,7 @@ public class SessionManager
     try {
       return GsonUtils.get( file, bean );
     } catch (Exception e) {
-      // TODO: display warning message
+      // XXX: No err message...the user can still continue if this fails
       return bean;
     }
   } );

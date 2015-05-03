@@ -49,7 +49,7 @@ public class IoaManager
     try {
       GsonUtils.save( file, model );
     } catch (Exception e) {
-      // TODO: display warning message
+      // XXX: No err message...the user can still continue if this fails
       e.printStackTrace();
     }
   }

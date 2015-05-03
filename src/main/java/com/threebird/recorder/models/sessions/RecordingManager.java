@@ -30,6 +30,7 @@ import com.threebird.recorder.persistence.Recordings;
 public class RecordingManager
 {
   public final Timeline timer;
+  public final SimpleBooleanProperty saveSuccessfulProperty = new SimpleBooleanProperty( true );
   public final SimpleBooleanProperty playingProperty = new SimpleBooleanProperty( false );
   public final SimpleIntegerProperty counter = new SimpleIntegerProperty( 0 );
   public final ObservableList< DiscreteBehavior > discrete = FXCollections.observableArrayList();
@@ -47,8 +48,8 @@ public class RecordingManager
 
     discrete.addListener( (ListChangeListener< DiscreteBehavior >) c -> persist() );
     continuous.addListener( (ListChangeListener< ContinuousBehavior >) c -> persist() );
-    playingProperty.addListener( ( o, oldV, newV ) -> {
-      if (!newV) {
+    playingProperty.addListener( ( o, oldV, playing ) -> {
+      if (!playing) {
         persist();
       }
     } );
@@ -59,13 +60,13 @@ public class RecordingManager
     String fullFileName = getFullFileName();
     List< Behavior > behaviors = allBehaviors();
 
-    // CompletableFuture< Long > fCsvLen =
-    Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors, count() );
-
-    // CompletableFuture< Long > fXlsLen =
-    Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count() );
-
-    // TODO: if exceptions: display errors to user
+    try {
+      Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors, count() ).get();
+      Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count() ).get();
+      saveSuccessfulProperty.set( true );
+    } catch (Exception e) {
+      saveSuccessfulProperty.set( false );
+    }
   }
 
   private List< Behavior > allBehaviors()

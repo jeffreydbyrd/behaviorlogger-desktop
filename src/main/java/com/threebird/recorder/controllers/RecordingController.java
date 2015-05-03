@@ -59,6 +59,9 @@ public class RecordingController
   @FXML private Label timeBox;
 
   @FXML private Label spacebarLbl;
+  @FXML private Label failedLabel;
+  @FXML private Label savedLabel;
+
   @FXML private Button playButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
@@ -99,7 +102,7 @@ public class RecordingController
       String condition = "Condition: " + SessionManager.getCondition();
       sessionDetailsBox.getChildren().add( new Label( condition ) );
     }
-    
+
     if (!Strings.isNullOrEmpty( SessionManager.getLocation() )) {
       String condition = "Location: " + SessionManager.getLocation();
       sessionDetailsBox.getChildren().add( new Label( condition ) );
@@ -110,10 +113,13 @@ public class RecordingController
       sessionDetailsBox.getChildren().add( new Label( session ) );
     }
 
+    savedLabel.setText( "Saved data to " + RecordingManager.getFullFileName() + "(.csv/.xls)" );
+    savedLabel.setVisible( false );
+
     initializeTimer();
     initializeBehaviorCountBoxes();
 
-    manager.playingProperty.addListener( ( obs, oldV, playing ) -> togglePlayButton( playing ) );
+    manager.playingProperty.addListener( ( obs, oldV, playing ) -> onPlayToggled( playing ) );
   }
 
   public void update()
@@ -205,12 +211,16 @@ public class RecordingController
   /**
    * Starts and stops recording, changes the playButton text appropriately.
    */
-  private void togglePlayButton( boolean playing )
+  private void onPlayToggled( boolean playing )
   {
     if (playing) {
       manager.timer.play();
+      failedLabel.setVisible( false );
+      savedLabel.setVisible( false );
     } else {
       manager.timer.pause();
+      failedLabel.setVisible( !manager.saveSuccessfulProperty.get() );
+      savedLabel.setVisible( manager.saveSuccessfulProperty.get() );
     }
 
     behaviorGrid.setDisable( !behaviorGrid.isDisabled() );

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
@@ -160,7 +161,12 @@
                   <Label fx:id="spacebarLbl" text="Spacebar = Start Session" />
                </children>
             </StackPane>
-            <Pane focusTraversable="true" prefHeight="0.0" prefWidth="0.0" />
+            <StackPane focusTraversable="true">
+               <children>
+                  <Label fx:id="failedLabel" text="Warning: failed to save most recent data." textFill="#ff8800" visible="false" />
+                  <Label fx:id="savedLabel" text="Data saved to" textFill="#00ab00" />
+               </children>
+            </StackPane>
             <HBox layoutY="71.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
                   <Button fx:id="playButton" focusTraversable="false" layoutX="10.0" layoutY="433.0" mnemonicParsing="false" onAction="#onPlayPress" text="Start Session" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
