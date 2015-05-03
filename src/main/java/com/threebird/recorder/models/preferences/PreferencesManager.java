@@ -15,6 +15,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.resources.ResourceUtils;
 
 public class PreferencesManager
@@ -59,7 +60,9 @@ public class PreferencesManager
     try {
       return GsonUtils.get( file, bean );
     } catch (Exception e) {
-      // TODO: display warning message
+      Alerts.warning( "Error Loading Preferences",
+                      "There was a problem while loading your preferences. The application will use default values.",
+                      e.getMessage() );
       return bean;
     }
   } );

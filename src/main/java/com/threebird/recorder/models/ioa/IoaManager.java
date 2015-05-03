@@ -34,7 +34,6 @@ public class IoaManager
     try {
       return GsonUtils.get( file, bean );
     } catch (Exception e) {
-      // TODO: display warning message
       return bean;
     }
   } );
