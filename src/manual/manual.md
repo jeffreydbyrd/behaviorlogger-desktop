@@ -27,16 +27,19 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 *insert image of start menu*
 
 1. **Schema List** - A list of current schemas saved on your computer.
-2. **Create Schema** - Opens a menu for creating a new schema.
-3. **Edit Schema** - Opens the selected schema into an edit menu.
-4. **Preferences** - Opens a menu for customizing default values.
-5. **IOA Calculator** - Opens a menu for calculating IOA between two data files.
-6. **Key-Behavior Mappings** - A summary of the selected schema's key-behavior mappings.
-7. **New Session Summary** - The details to be applied to the upcoming session.
+2. **Create** - Opens a menu for creating a new schema.
+3. **Edit** - Opens the selected schema into an edit menu.
+4. **Import** - Allows the user to import a new schema by selecting a ".schema" file.
+5. **Export** - Allows the user to export a schema into a ".schema" file, to be shared with other users.
+6. **Preferences** - Opens a menu for customizing default values.
+7. **IOA Calculator** - Opens a menu for calculating IOA between two data files.
+8. **Key-Behavior Mappings** - A summary of the selected schema's key-behavior mappings.
+9. **New Session Summary** - The details to be applied to the upcoming session.
   - *Duration* - The duration of the session (set by the schema).
   - *Observer* - The name of the observer collecting data.
   - *Therapist* - The name of the therapist performing the treatment.
   - *Condition* - The type of treatment being applied.
+  - *Location* - The location where the session is taking place.
   - *Session #* - The number of the next session. This number will increment automatically between sessions.
   - *Data File* - The name of the data-file the next session will generate. Users can configure this in [Preferences](#preferences). The app will warn the user if this file will overwrite an existing one of the same name.
 
@@ -59,7 +62,7 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 7. **Session Duration**
   - *infinite* - If checked, sessions will never end.
   - *timed* - If checked, sessions will be considered "finished" when they reach the set duration. If this field is set to zero, or left empty, it's the same as checking *infinite*.
-  - *When timer finishes* - Check each action to take when a session is over.
+  - *When timer finishes* - Check the actions you would like to happen when a session is over.
 8. **Cancel** - Discard all changes and return to Start Menu.
 9. **Save** - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.
 
@@ -72,7 +75,7 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 
 1. **Default Save Location** - New schemas will start with this directory.
 2. **Filename Format** - Since most researchers have a preferred naming structure for their data-files, we allow users to customize them. Check each component that you want to include in the filename. You can also drag-and-drop components to reorder them.
-3. **Default Session Duration** - New schemas will start with this duration setting.
+3. **Default Session Duration** - New schemas will start with this duration setting. See the [edit-schema menu](#edit-schema) for an explanation of each option.
 
 ---
 
@@ -82,10 +85,10 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 *insert image of the recording view*
 
 1. **Behavior Summary** - Each row keeps track of the count/duration of each behavior.
-2. **Play/Stop** - Starts and Stops the recording session. You can also press `spacebar` as a shortcut. You can only record behaviors while playing.
-3. **Timer** - The timer will increase while playing. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the [edit-schema menu](#edit-schema).
+2. **Start Session** - When pressed, it will start the session timer. You can also press `spacebar` as a shortcut. You can only record behaviors while the timer is active.
+3. **Timer** - The timer will increase while recording. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the [edit-schema menu](#edit-schema).
 4. **Start New Session** - Starts a new session with the same schema and same session-detais. The session #, however, will increment.
-5. **Edit Uknown Behaviors** - Only visible if you have logged an unknown behavior, it will open a new menu for assigning values to any you might have logged.
+5. **Edit Uknown Behaviors** - Becomes visible if you have logged an unknown behavior. When clicked, it opens a new menu for assigning values to unknown behaviors.
 
 <a name="logging-behaviors"></a>
 ## Logging Behaviors
@@ -109,7 +112,7 @@ The app saves logged behaviors in the directory specified by the Schema (see [Ed
 - a human-readable *Excel* file summarizing the session
 - a *CSV* file meant for the [IOA Calculator](#ioa-calculator)
 
-Tnames of these files can be configured in [Preferences](#preferences).
+The names of these files can be configured in [Preferences](#preferences).
 
 ---
 

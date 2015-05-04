@@ -33,8 +33,10 @@
 
 <ol>
 <li><strong>Schema List</strong> - A list of current schemas saved on your computer.</li>
-<li><strong>Create Schema</strong> - Opens a menu for creating a new schema.</li>
-<li><strong>Edit Schema</strong> - Opens the selected schema into an edit menu.</li>
+<li><strong>Create</strong> - Opens a menu for creating a new schema.</li>
+<li><strong>Edit</strong> - Opens the selected schema into an edit menu.</li>
+<li><strong>Import</strong> - Allows the user to import a new schema by selecting a ".schema" file.</li>
+<li><strong>Export</strong> - Allows the user to export a schema into a ".schema" file, to be shared with other users.</li>
 <li><strong>Preferences</strong> - Opens a menu for customizing default values.</li>
 <li><strong>IOA Calculator</strong> - Opens a menu for calculating IOA between two data files.</li>
 <li><strong>Key-Behavior Mappings</strong> - A summary of the selected schema's key-behavior mappings.</li>
@@ -44,6 +46,7 @@
 <li><em>Observer</em> - The name of the observer collecting data.</li>
 <li><em>Therapist</em> - The name of the therapist performing the treatment.</li>
 <li><em>Condition</em> - The type of treatment being applied.</li>
+<li><em>Location</em> - The location where the session is taking place.</li>
 <li><em>Session #</em> - The number of the next session. This number will increment automatically between sessions.</li>
 <li><em>Data File</em> - The name of the data-file the next session will generate. Users can configure this in <a href="#preferences">Preferences</a>. The app will warn the user if this file will overwrite an existing one of the same name.</li>
 </ul></li>
@@ -73,7 +76,7 @@
 <ul>
 <li><em>infinite</em> - If checked, sessions will never end.</li>
 <li><em>timed</em> - If checked, sessions will be considered "finished" when they reach the set duration. If this field is set to zero, or left empty, it's the same as checking <em>infinite</em>.</li>
-<li><em>When timer finishes</em> - Check each action to take when a session is over.</li>
+<li><em>When timer finishes</em> - Check the actions you would like to happen when a session is over.</li>
 </ul></li>
 <li><strong>Cancel</strong> - Discard all changes and return to Start Menu.</li>
 <li><strong>Save</strong> - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.</li>
@@ -90,7 +93,7 @@
 <ol>
 <li><strong>Default Save Location</strong> - New schemas will start with this directory.</li>
 <li><strong>Filename Format</strong> - Since most researchers have a preferred naming structure for their data-files, we allow users to customize them. Check each component that you want to include in the filename. You can also drag-and-drop components to reorder them.</li>
-<li><strong>Default Session Duration</strong> - New schemas will start with this duration setting.</li>
+<li><strong>Default Session Duration</strong> - New schemas will start with this duration setting. See the <a href="#edit-schema">edit-schema menu</a> for an explanation of each option.</li>
 </ol>
 
 <hr />
@@ -103,10 +106,10 @@
 
 <ol>
 <li><strong>Behavior Summary</strong> - Each row keeps track of the count/duration of each behavior.</li>
-<li><strong>Play/Stop</strong> - Starts and Stops the recording session. You can also press <code>spacebar</code> as a shortcut. You can only record behaviors while playing.</li>
-<li><strong>Timer</strong> - The timer will increase while playing. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the <a href="#edit-schema">edit-schema menu</a>.</li>
+<li><strong>Start Session</strong> - When pressed, it will start the session timer. You can also press <code>spacebar</code> as a shortcut. You can only record behaviors while the timer is active.</li>
+<li><strong>Timer</strong> - The timer will increase while recording. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the <a href="#edit-schema">edit-schema menu</a>.</li>
 <li><strong>Start New Session</strong> - Starts a new session with the same schema and same session-detais. The session #, however, will increment.</li>
-<li><strong>Edit Uknown Behaviors</strong> - Only visible if you have logged an unknown behavior, it will open a new menu for assigning values to any you might have logged.</li>
+<li><strong>Edit Uknown Behaviors</strong> - Becomes visible if you have logged an unknown behavior. When clicked, it opens a new menu for assigning values to unknown behaviors.</li>
 </ol>
 
 <p><a name="logging-behaviors"></a></p>
@@ -137,7 +140,7 @@
 <li>a <em>CSV</em> file meant for the <a href="#ioa-calculator">IOA Calculator</a></li>
 </ul>
 
-<p>Tnames of these files can be configured in <a href="#preferences">Preferences</a>.</p>
+<p>The names of these files can be configured in <a href="#preferences">Preferences</a>.</p>
 
 <hr />
 
