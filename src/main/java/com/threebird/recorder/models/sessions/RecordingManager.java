@@ -4,11 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -60,13 +62,18 @@ public class RecordingManager
     String fullFileName = getFullFileName();
     List< Behavior > behaviors = allBehaviors();
 
-    try {
-      Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors, count() ).get();
-      Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count() ).get();
-      saveSuccessfulProperty.set( true );
-    } catch (Exception e) {
-      saveSuccessfulProperty.set( false );
-    }
+    CompletableFuture< Long > fCsv =
+        Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors, count() );
+    CompletableFuture< Long > fXls =
+        Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count() );
+
+    CompletableFuture.allOf( fCsv, fXls ).handleAsync( ( v, t ) -> {
+      Platform.runLater( ( ) -> saveSuccessfulProperty.set( t == null ) );
+      if (t != null) {
+        t.printStackTrace();
+      }
+      return null;
+    } );
   }
 
   private List< Behavior > allBehaviors()
