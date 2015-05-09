@@ -39,6 +39,13 @@ public class RecordingManager
   public final ObservableList< ContinuousBehavior > continuous = FXCollections.observableArrayList();
   public final ObservableMap< MappableChar, KeyBehaviorMapping > unknowns = FXCollections.observableHashMap();
 
+  public final ObservableMap< KeyBehaviorMapping, ContinuousBehavior > midContinuous =
+      FXCollections.observableHashMap();
+  public final ObservableMap< KeyBehaviorMapping, SimpleIntegerProperty > discreteCounts =
+      FXCollections.observableHashMap();
+  public final ObservableMap< KeyBehaviorMapping, Timeline > continuousCounts =
+      FXCollections.observableHashMap();
+
   public RecordingManager()
   {
     timer = new Timeline();
@@ -112,6 +119,9 @@ public class RecordingManager
     playingProperty.set( !playingProperty.get() );
   }
 
+  /**
+   * @return the current count of the timer, in milliseconds
+   */
   public int count()
   {
     return counter.get();

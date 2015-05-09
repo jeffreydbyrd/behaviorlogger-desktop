@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -22,6 +26,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
@@ -163,17 +168,49 @@ public class RecordingController
     Schema schema = SchemasManager.getSelected();
 
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      BehaviorCountBox bcb =
-          kbm.isContinuous
-              ? new ContinuousCountBox( kbm, manager )
-              : new DiscreteCountBox( kbm );
-      VBox target = kbm.isContinuous ? continuousBox : discreteBox;
+      BehaviorCountBox bcb;
+      VBox target;
+      SimpleIntegerProperty count = new SimpleIntegerProperty( 0 );
 
+      if (kbm.isContinuous) {
+        bcb = new ContinuousCountBox( kbm );
+        target = continuousBox;
+        initializeContinuousCountBox( kbm, count );
+      } else {
+        bcb = new DiscreteCountBox( kbm );
+        target = discreteBox;
+        manager.discreteCounts.put( kbm, count );
+      }
+
+      count.addListener( ( obs, old, newv ) -> bcb.setCount( newv.intValue() ) );
       target.getChildren().add( bcb );
       target.getChildren().add( new Separator() );
 
       countBoxes.put( kbm.key, bcb );
     }
+  }
+
+  private void initializeContinuousCountBox( KeyBehaviorMapping kbm, SimpleIntegerProperty count )
+  {
+    Timeline timer = new Timeline();
+    
+    timer.setCycleCount( Animation.INDEFINITE );
+    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), evt -> {
+      count.set( count.get() + 1 );
+    } );
+    timer.getKeyFrames().add( kf );
+    
+    manager.playingProperty.addListener( ( obs, oldV, playing ) -> {
+      if (manager.midContinuous.containsKey( kbm )) {
+        if (playing) {
+          timer.play();
+        } else {
+          timer.pause();
+        }
+      }
+    } );
+
+    manager.continuousCounts.put( kbm, timer );
   }
 
   /**
@@ -238,39 +275,67 @@ public class RecordingController
   }
 
   /**
-   * @return true if 'c' is supposed to trigger one of he available shortcuts,
-   *         or false otherwise
+   * If the event is executing a shortcut, then execute the shortcut and return
+   * true, else return false.
    */
-  private boolean isShortcut( KeyCode c )
+  private boolean handleShortcut( KeyEvent evt )
   {
-    return KeyCode.SPACE.equals( c );
+    KeyCode c = evt.getCode();
+
+    if (KeyCode.SPACE.equals( c )) {
+      manager.togglePlayingProperty();
+      return true;
+    }
+
+    if (KeyCode.Z.equals( c ) && evt.isShortcutDown()) {
+      undo();
+      return true;
+    }
+
+    return false;
   }
 
   /**
-   * Fires the appropriate action corresponding to the shortcut 'c' represents
+   * Removes the latest logged behavior from either the Discrete or Continuous
+   * list (whichever is latest)
    */
-  private void handleShortcut( KeyCode c )
+  public void undo()
   {
-    if (KeyCode.SPACE.equals( c )) {
-      manager.togglePlayingProperty();
+    int lastIndexDiscrete = manager.discrete.size() - 1;
+    int lastIndexContinuous = manager.continuous.size() - 1;
+
+    System.out.println( Lists.transform( manager.discrete, d -> d.startTime ) );
+    System.out.println( Lists.transform( manager.continuous, c -> c.startTime + c.getDuration() ) );
+  }
+
+  private void logBehavior( KeyBehaviorMapping mapping )
+  {
+    if (mapping.isContinuous) {
+      logContinuous( mapping );
+    } else {
+      manager.log( new DiscreteBehavior( mapping.key, mapping.behavior, manager.count() ) );
     }
   }
 
   /**
-   * Logs a KeyMappingBehavior in GUI for the user to see
+   * Converts the KeyBehaviorMapping to a ContinuousBehavior and registers it
+   * with the manager. If the behavior hasn't been initialized, it gets cached
+   * in manager.midContinuous. If it *has* been initialized, it gets moved into
+   * manager.continuous.
    */
-  private void logBehavior( KeyBehaviorMapping mapping )
+  private void logContinuous( KeyBehaviorMapping mapping )
   {
-    boolean toggledOn = countBoxes.get( mapping.key ).toggle();
-
-    if (mapping.isContinuous) {
-      if (!toggledOn) {
-        ContinuousCountBox ccb = (ContinuousCountBox) countBoxes.get( mapping.key );
-        int duration = manager.count() - ccb.getLastStart();
-        manager.log( new ContinuousBehavior( mapping.key, mapping.behavior, ccb.getLastStart(), duration ) );
-      }
+    if (manager.midContinuous.containsKey( mapping )) {
+      ContinuousBehavior cb = manager.midContinuous.get( mapping );
+      int duration = manager.count() - cb.startTime;
+      manager.log( new ContinuousBehavior( cb.key, cb.description, cb.startTime, duration ) );
+      manager.midContinuous.remove( mapping );
+      manager.continuousCounts.get( mapping ).pause();
     } else {
-      manager.log( new DiscreteBehavior( mapping.key, mapping.behavior, manager.count() ) );
+      ContinuousBehavior cb =
+          new ContinuousBehavior( mapping.key, mapping.behavior, manager.count(), null );
+      manager.midContinuous.put( mapping, cb );
+      manager.continuousCounts.get( mapping ).play();
     }
   }
 
@@ -284,7 +349,7 @@ public class RecordingController
     manager.unknowns.put( mc, kbm );
     BehaviorCountBox bcb =
         kbm.isContinuous
-            ? new ContinuousCountBox( kbm, manager )
+            ? new ContinuousCountBox( kbm )
             : new DiscreteCountBox( kbm );
     VBox target = kbm.isContinuous ? continuousBox : discreteBox;
 
@@ -308,8 +373,8 @@ public class RecordingController
   {
     KeyCode code = evt.getCode();
 
-    if (isShortcut( code )) {
-      handleShortcut( code );
+    boolean isShortcut = handleShortcut( evt );
+    if (isShortcut) {
       return;
     }
 
@@ -324,7 +389,7 @@ public class RecordingController
       } else if (manager.unknowns.containsKey( mc )) {
         logBehavior( manager.unknowns.get( mc ) );
       } else {
-        initUnknown( mc, evt.isControlDown() );
+        initUnknown( mc, evt.isShiftDown() );
       }
     } );
   }
