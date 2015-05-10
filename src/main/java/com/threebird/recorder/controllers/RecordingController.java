@@ -193,13 +193,13 @@ public class RecordingController
   private void initializeContinuousCountBox( KeyBehaviorMapping kbm, SimpleIntegerProperty count )
   {
     Timeline timer = new Timeline();
-    
+
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), evt -> {
       count.set( count.get() + 1 );
     } );
     timer.getKeyFrames().add( kf );
-    
+
     manager.playingProperty.addListener( ( obs, oldV, playing ) -> {
       if (manager.midContinuous.containsKey( kbm )) {
         if (playing) {
@@ -310,10 +310,14 @@ public class RecordingController
 
   private void logBehavior( KeyBehaviorMapping mapping )
   {
+    countBoxes.get( mapping.key ).toggle();
+    
     if (mapping.isContinuous) {
       logContinuous( mapping );
     } else {
       manager.log( new DiscreteBehavior( mapping.key, mapping.behavior, manager.count() ) );
+      SimpleIntegerProperty count = manager.discreteCounts.get( mapping );
+      count.set( count.get() + 1 );
     }
   }
 
