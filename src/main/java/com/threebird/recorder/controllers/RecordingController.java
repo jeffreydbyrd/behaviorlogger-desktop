@@ -57,7 +57,7 @@ public class RecordingController
   @FXML private GridPane behaviorGrid;
   @FXML private VBox discreteBox;
   @FXML private VBox continuousBox;
-  private Map< MappableChar, BehaviorCountBox > countBoxes = Maps.newHashMap();
+  private Map< KeyBehaviorMapping, BehaviorCountBox > countBoxes = Maps.newHashMap();
 
   @FXML private Text pausedText;
   @FXML private Text recordingText;
@@ -186,7 +186,7 @@ public class RecordingController
       target.getChildren().add( bcb );
       target.getChildren().add( new Separator() );
 
-      countBoxes.put( kbm.key, bcb );
+      countBoxes.put( kbm, bcb );
     }
   }
 
@@ -311,7 +311,7 @@ public class RecordingController
   private void logBehavior( KeyBehaviorMapping mapping )
   {
     countBoxes.get( mapping.key ).toggle();
-    
+
     if (mapping.isContinuous) {
       logContinuous( mapping );
     } else {
@@ -345,7 +345,7 @@ public class RecordingController
 
   /**
    * The user just pressed a key that isn't mapped. Add it to the 'unknowns'
-   * map, the 'countBoxes' map, and display it on the screen
+   * map
    */
   private void initUnknown( MappableChar mc, boolean isContinuous )
   {
@@ -360,12 +360,10 @@ public class RecordingController
     target.getChildren().add( bcb );
     target.getChildren().add( new Separator() );
 
-    countBoxes.put( kbm.key, bcb );
+    countBoxes.put( kbm, bcb );
 
     if (!isContinuous) {
       logBehavior( kbm );
-    } else {
-      countBoxes.get( mc ).toggle();
     }
   }
 
