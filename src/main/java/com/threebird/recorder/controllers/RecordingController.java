@@ -168,26 +168,31 @@ public class RecordingController
     Schema schema = SchemasManager.getSelected();
 
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      BehaviorCountBox bcb;
-      VBox target;
-      SimpleIntegerProperty count = new SimpleIntegerProperty( 0 );
-
-      if (kbm.isContinuous) {
-        bcb = new ContinuousCountBox( kbm );
-        target = continuousBox;
-        initializeContinuousCountBox( kbm, count );
-      } else {
-        bcb = new DiscreteCountBox( kbm );
-        target = discreteBox;
-        manager.discreteCounts.put( kbm, count );
-      }
-
-      count.addListener( ( obs, old, newv ) -> bcb.setCount( newv.intValue() ) );
-      target.getChildren().add( bcb );
-      target.getChildren().add( new Separator() );
-
-      countBoxes.put( kbm, bcb );
+      initializeBehaviorCountBox( kbm );
     }
+  }
+
+  private void initializeBehaviorCountBox( KeyBehaviorMapping kbm )
+  {
+    BehaviorCountBox bcb;
+    VBox target;
+    SimpleIntegerProperty count = new SimpleIntegerProperty( 0 );
+
+    if (kbm.isContinuous) {
+      bcb = new ContinuousCountBox( kbm );
+      target = continuousBox;
+      initializeContinuousCountBox( kbm, count );
+    } else {
+      bcb = new DiscreteCountBox( kbm );
+      target = discreteBox;
+      manager.discreteCounts.put( kbm, count );
+    }
+
+    count.addListener( ( obs, old, newv ) -> bcb.setCount( newv.intValue() ) );
+    target.getChildren().add( bcb );
+    target.getChildren().add( new Separator() );
+
+    countBoxes.put( kbm, bcb );
   }
 
   private void initializeContinuousCountBox( KeyBehaviorMapping kbm, SimpleIntegerProperty count )
@@ -310,7 +315,7 @@ public class RecordingController
 
   private void logBehavior( KeyBehaviorMapping mapping )
   {
-    countBoxes.get( mapping.key ).toggle();
+    countBoxes.get( mapping ).toggle();
 
     if (mapping.isContinuous) {
       logContinuous( mapping );
@@ -344,27 +349,14 @@ public class RecordingController
   }
 
   /**
-   * The user just pressed a key that isn't mapped. Add it to the 'unknowns'
-   * map
+   * The user just pressed a key that isn't mapped. Add it to the 'unknowns' map
    */
   private void initUnknown( MappableChar mc, boolean isContinuous )
   {
     KeyBehaviorMapping kbm = new KeyBehaviorMapping( mc, "[unknown]", isContinuous );
+    initializeBehaviorCountBox( kbm );
     manager.unknowns.put( mc, kbm );
-    BehaviorCountBox bcb =
-        kbm.isContinuous
-            ? new ContinuousCountBox( kbm )
-            : new DiscreteCountBox( kbm );
-    VBox target = kbm.isContinuous ? continuousBox : discreteBox;
-
-    target.getChildren().add( bcb );
-    target.getChildren().add( new Separator() );
-
-    countBoxes.put( kbm, bcb );
-
-    if (!isContinuous) {
-      logBehavior( kbm );
-    }
+    logBehavior( kbm );
   }
 
   /**
