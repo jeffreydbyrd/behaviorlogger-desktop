@@ -43,7 +43,7 @@ public class RecordingManager
       FXCollections.observableHashMap();
   public final ObservableMap< KeyBehaviorMapping, SimpleIntegerProperty > discreteCounts =
       FXCollections.observableHashMap();
-  public final ObservableMap< KeyBehaviorMapping, Timeline > continuousCounts =
+  public final ObservableMap< KeyBehaviorMapping, ContinuousCounter > continuousCounts =
       FXCollections.observableHashMap();
 
   public RecordingManager()

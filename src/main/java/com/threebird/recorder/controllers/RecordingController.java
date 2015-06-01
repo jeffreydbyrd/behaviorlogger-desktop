@@ -2,6 +2,8 @@ package com.threebird.recorder.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import javafx.animation.Animation;
@@ -26,7 +28,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
@@ -36,6 +37,7 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.ContinuousCounter;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -215,7 +217,7 @@ public class RecordingController
       }
     } );
 
-    manager.continuousCounts.put( kbm, timer );
+    manager.continuousCounts.put( kbm, new ContinuousCounter( timer, count ) );
   }
 
   /**
@@ -301,16 +303,68 @@ public class RecordingController
   }
 
   /**
+   * Returns the latest, actively running, ContinuousBehavior wrapped in an
+   * Optional, or empty if there are none running
+   */
+  private Optional< ContinuousBehavior > getLatestRunningContinuous()
+  {
+    Optional< ContinuousBehavior > result = Optional.empty();
+
+    for (Entry< KeyBehaviorMapping, ContinuousBehavior > entry : manager.midContinuous.entrySet()) {
+      ContinuousBehavior cb = entry.getValue();
+      if (!result.isPresent() || result.get().startTime < cb.startTime) {
+        result = Optional.of( cb );
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Removes the latest logged behavior from either the Discrete or Continuous
    * list (whichever is latest)
    */
-  public void undo()
+  private void undo()
   {
     int lastIndexDiscrete = manager.discrete.size() - 1;
     int lastIndexContinuous = manager.continuous.size() - 1;
 
-    System.out.println( Lists.transform( manager.discrete, d -> d.startTime ) );
-    System.out.println( Lists.transform( manager.continuous, c -> c.startTime + c.getDuration() ) );
+    // TODO: address the case where we haven't recording any behaviors yet.
+    // Currently we get Array Index Out-Of-Bounds
+    DiscreteBehavior db = manager.discrete.get( lastIndexDiscrete );
+    ContinuousBehavior cb = manager.continuous.get( lastIndexContinuous );
+    Optional< ContinuousBehavior > optCb = getLatestRunningContinuous();
+
+    // If discrete-behavior started after the continuous-behavior ended and
+    // after the mid-continuous started (if there is one):
+    if (db.startTime > (cb.startTime + cb.getDuration())
+        && (!optCb.isPresent() || cb.startTime > optCb.get().startTime)) {
+      manager.discrete.remove( lastIndexDiscrete );
+      SimpleIntegerProperty count = manager.discreteCounts.get( db );
+      count.set( count.get() - 1 );
+      return;
+    }
+
+    // If continuous-behavior ended after mid-continuous started
+    if (!optCb.isPresent() || (cb.startTime + cb.getDuration() > optCb.get().startTime)) {
+      manager.continuous.remove( lastIndexContinuous );
+      KeyBehaviorMapping kbm = new KeyBehaviorMapping( cb.key, cb.description, true );
+      manager.midContinuous.put( kbm, cb );
+      ContinuousCounter counter = manager.continuousCounts.get( kbm );
+      counter.count.set( counter.count.get() + (manager.count() - counter.count.get()) );
+      counter.timer.play();
+      return;
+    }
+
+    // If we made it this far and mid-continuous is present, then it must be the
+    // latest action
+    if (optCb.isPresent()) {
+      ContinuousBehavior midCb = optCb.get();
+      KeyBehaviorMapping kbm = new KeyBehaviorMapping( midCb.key, midCb.description, true );
+      ContinuousCounter counter = manager.continuousCounts.get( kbm );
+      counter.timer.stop();
+      counter.count.set( counter.count.get() - (manager.count() - midCb.startTime) );
+    }
   }
 
   private void logBehavior( KeyBehaviorMapping mapping )
@@ -339,12 +393,12 @@ public class RecordingController
       int duration = manager.count() - cb.startTime;
       manager.log( new ContinuousBehavior( cb.key, cb.description, cb.startTime, duration ) );
       manager.midContinuous.remove( mapping );
-      manager.continuousCounts.get( mapping ).pause();
+      manager.continuousCounts.get( mapping ).timer.pause();
     } else {
       ContinuousBehavior cb =
           new ContinuousBehavior( mapping.key, mapping.behavior, manager.count(), null );
       manager.midContinuous.put( mapping, cb );
-      manager.continuousCounts.get( mapping ).play();
+      manager.continuousCounts.get( mapping ).timer.play();
     }
   }
 
