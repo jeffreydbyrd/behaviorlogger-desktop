@@ -432,14 +432,9 @@ public class RecordingController
     manager.continuous.remove( lastIndexContinuous );
 
     KeyBehaviorMapping kbm = new KeyBehaviorMapping( cb.key, cb.description, true );
-    manager.midContinuous.put( kbm, cb );
-
     ContinuousCounter counter = manager.continuousCounts.get( kbm );
-    int newTime = counter.count.get() + ((manager.count() / 1000) - counter.count.get());
-    counter.count.set( newTime );
-    counter.timer.play();
 
-    countBoxes.get( kbm ).toggle();
+    counter.count.set( counter.count.get() - (cb.getDuration() / 1000) );
   }
 
   private void removeMidContinuous( ContinuousBehavior midCb )
@@ -449,8 +444,8 @@ public class RecordingController
 
     ContinuousCounter counter = manager.continuousCounts.get( kbm );
     counter.timer.stop();
-    int oldTime = counter.count.get() - ((manager.count() - midCb.startTime) / 1000);
-    counter.count.set( oldTime );
+    int duration = manager.count() - midCb.startTime;
+    counter.count.set( counter.count.get() - (duration / 1000) );
 
     countBoxes.get( kbm ).toggle();
   }
