@@ -2,8 +2,13 @@ package com.threebird.recorder.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -31,6 +36,7 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.ContinuousCounter;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -135,20 +141,27 @@ public class RecordingController
     // Remove the [unknown]s we don't care about from the GUI
     for (MappableChar ignored : ignoredChars) {
       BehaviorCountBox countBox = countBoxes.get( ignored );
+      boolean isDiscrete = discreteBox.getChildren().contains( countBox );
       List< Node > target =
-          discreteBox.getChildren().contains( countBox ) ? discreteBox.getChildren() : continuousBox.getChildren();
+          isDiscrete ? discreteBox.getChildren() : continuousBox.getChildren();
 
       int i = target.indexOf( countBox );
       target.remove( i + 1 );
       target.remove( i );
 
       countBoxes.remove( ignored );
+
+      if (isDiscrete) {
+        manager.discreteCounts.remove( ignored );
+      } else {
+        manager.continuousCounts.remove( ignored );
+      }
     }
 
     // Update the CountBoxes labels
     for (MappableChar newChar : newChars) {
-      String behavior = schema.mappings.get( newChar ).behavior;
-      countBoxes.get( newChar ).behaviorLbl.setText( behavior );
+      KeyBehaviorMapping kbm = schema.mappings.get( newChar );
+      countBoxes.get( kbm.key ).behaviorLbl.setText( kbm.behavior );
     }
 
     addNewKeysButton.setVisible( false );
@@ -163,17 +176,54 @@ public class RecordingController
     Schema schema = SchemasManager.getSelected();
 
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      BehaviorCountBox bcb =
-          kbm.isContinuous
-              ? new ContinuousCountBox( kbm, manager )
-              : new DiscreteCountBox( kbm );
-      VBox target = kbm.isContinuous ? continuousBox : discreteBox;
-
-      target.getChildren().add( bcb );
-      target.getChildren().add( new Separator() );
-
-      countBoxes.put( kbm.key, bcb );
+      initializeBehaviorCountBox( kbm );
     }
+  }
+
+  private void initializeBehaviorCountBox( KeyBehaviorMapping kbm )
+  {
+    BehaviorCountBox bcb;
+    VBox target;
+    SimpleIntegerProperty count = new SimpleIntegerProperty( 0 );
+
+    if (kbm.isContinuous) {
+      bcb = new ContinuousCountBox( kbm );
+      target = continuousBox;
+      initializeContinuousCountBox( kbm, count );
+    } else {
+      bcb = new DiscreteCountBox( kbm );
+      target = discreteBox;
+      manager.discreteCounts.put( kbm.key, count );
+    }
+
+    count.addListener( ( obs, old, newv ) -> bcb.setCount( newv.intValue() ) );
+    target.getChildren().add( bcb );
+    target.getChildren().add( new Separator() );
+
+    countBoxes.put( kbm.key, bcb );
+  }
+
+  private void initializeContinuousCountBox( KeyBehaviorMapping kbm, SimpleIntegerProperty count )
+  {
+    Timeline timer = new Timeline();
+
+    timer.setCycleCount( Animation.INDEFINITE );
+    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), evt -> {
+      count.set( count.get() + 1 );
+    } );
+    timer.getKeyFrames().add( kf );
+
+    manager.playingProperty.addListener( ( obs, oldV, playing ) -> {
+      if (manager.midContinuous.containsKey( kbm.key )) {
+        if (playing) {
+          timer.play();
+        } else {
+          timer.pause();
+        }
+      }
+    } );
+
+    manager.continuousCounts.put( kbm.key, new ContinuousCounter( timer, count ) );
   }
 
   /**
@@ -238,66 +288,215 @@ public class RecordingController
   }
 
   /**
-   * @return true if 'c' is supposed to trigger one of he available shortcuts,
-   *         or false otherwise
+   * If the event is executing a shortcut, then execute the shortcut and return
+   * true, else return false.
    */
-  private boolean isShortcut( KeyCode c )
+  private boolean handleShortcut( KeyEvent evt )
   {
-    return KeyCode.SPACE.equals( c );
-  }
+    KeyCode c = evt.getCode();
 
-  /**
-   * Fires the appropriate action corresponding to the shortcut 'c' represents
-   */
-  private void handleShortcut( KeyCode c )
-  {
     if (KeyCode.SPACE.equals( c )) {
       manager.togglePlayingProperty();
+      return true;
     }
+
+    if (KeyCode.Z.equals( c ) && evt.isShortcutDown()) {
+      undo();
+      return true;
+    }
+
+    return false;
   }
 
   /**
-   * Logs a KeyMappingBehavior in GUI for the user to see
+   * Returns the latest, actively running, ContinuousBehavior or null if there
+   * are none running
    */
+  private ContinuousBehavior getLatestRunningContinuous()
+  {
+    ContinuousBehavior result = null;
+
+    for (Entry< MappableChar, ContinuousBehavior > entry : manager.midContinuous.entrySet()) {
+      ContinuousBehavior cb = entry.getValue();
+      if (result == null || result.startTime < cb.startTime) {
+        result = cb;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Removes the latest logged behavior from either the Discrete or Continuous
+   * list (whichever is latest)
+   */
+  private void undo()
+  {
+    int lastIndexDiscrete = manager.discrete.size() - 1;
+    int lastIndexContinuous = manager.continuous.size() - 1;
+
+    DiscreteBehavior db = lastIndexDiscrete < 0 ? null : manager.discrete.get( lastIndexDiscrete );
+    ContinuousBehavior cb = lastIndexContinuous < 0 ? null : manager.continuous.get( lastIndexContinuous );
+    ContinuousBehavior midCb = getLatestRunningContinuous();
+
+    if (discreteIsLatest( db, cb, midCb )) {
+      removeLatestDiscrete();
+      return;
+    }
+
+    if (continuousIsLatest( db, cb, midCb )) {
+      removeLatestContinuous();
+      return;
+    }
+
+    if (midContinuousIsLatest( db, cb, midCb )) {
+      removeMidContinuous( midCb );
+      return;
+    }
+  }
+
+  private boolean discreteIsLatest( DiscreteBehavior db,
+                                    ContinuousBehavior cb,
+                                    ContinuousBehavior midCb )
+  {
+    if (db == null) {
+      return false;
+    }
+
+    if (cb != null && db.startTime < cb.startTime + cb.getDuration()) {
+      return false;
+    }
+
+    if (midCb != null && db.startTime < midCb.startTime) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private boolean continuousIsLatest( DiscreteBehavior db,
+                                      ContinuousBehavior cb,
+                                      ContinuousBehavior midCb )
+  {
+    if (cb == null) {
+      return false;
+    }
+
+    int endTime = cb.startTime + cb.getDuration();
+
+    if (db != null && db.startTime > endTime) {
+      return false;
+    }
+
+    if (midCb != null && endTime < midCb.startTime) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private boolean midContinuousIsLatest( DiscreteBehavior db,
+                                         ContinuousBehavior cb,
+                                         ContinuousBehavior midCb )
+  {
+    if (midCb == null) {
+      return false;
+    }
+
+    if (db != null && db.startTime > midCb.startTime) {
+      return false;
+    }
+
+    if (cb != null && cb.startTime + cb.getDuration() > midCb.startTime) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private void removeLatestDiscrete()
+  {
+    int lastIndexDiscrete = manager.discrete.size() - 1;
+    if (lastIndexDiscrete < 0) {
+      return;
+    }
+
+    DiscreteBehavior db = manager.discrete.get( lastIndexDiscrete );
+    manager.discrete.remove( lastIndexDiscrete );
+    SimpleIntegerProperty count = manager.discreteCounts.get( db.key );
+    count.set( count.get() - 1 );
+  }
+
+  private void removeLatestContinuous()
+  {
+    int lastIndexContinuous = manager.continuous.size() - 1;
+    if (lastIndexContinuous < 0) {
+      return;
+    }
+
+    ContinuousBehavior cb = manager.continuous.get( lastIndexContinuous );
+    manager.continuous.remove( lastIndexContinuous );
+
+    ContinuousCounter counter = manager.continuousCounts.get( cb.key );
+    counter.count.set( counter.count.get() - (cb.getDuration() / 1000) );
+  }
+
+  private void removeMidContinuous( ContinuousBehavior midCb )
+  {
+    manager.midContinuous.remove( midCb.key );
+
+    ContinuousCounter counter = manager.continuousCounts.get( midCb.key );
+    counter.timer.stop();
+    int duration = manager.count() - midCb.startTime;
+    counter.count.set( counter.count.get() - (duration / 1000) );
+
+    countBoxes.get( midCb.key ).toggle();
+  }
+
   private void logBehavior( KeyBehaviorMapping mapping )
   {
-    boolean toggledOn = countBoxes.get( mapping.key ).toggle();
+    countBoxes.get( mapping.key ).toggle();
 
     if (mapping.isContinuous) {
-      if (!toggledOn) {
-        ContinuousCountBox ccb = (ContinuousCountBox) countBoxes.get( mapping.key );
-        int duration = manager.count() - ccb.getLastStart();
-        manager.log( new ContinuousBehavior( mapping.key, mapping.behavior, ccb.getLastStart(), duration ) );
-      }
+      logContinuous( mapping );
     } else {
       manager.log( new DiscreteBehavior( mapping.key, mapping.behavior, manager.count() ) );
+      SimpleIntegerProperty count = manager.discreteCounts.get( mapping.key );
+      count.set( count.get() + 1 );
     }
   }
 
   /**
-   * The user just pressed a key that isn't mapped. Add it to the 'unknowns'
-   * map, the 'countBoxes' map, and display it on the screen
+   * Converts the KeyBehaviorMapping to a ContinuousBehavior and registers it
+   * with the manager. If the behavior hasn't been initialized, it gets cached
+   * in manager.midContinuous. If it *has* been initialized, it gets moved into
+   * manager.continuous.
+   */
+  private void logContinuous( KeyBehaviorMapping mapping )
+  {
+    if (manager.midContinuous.containsKey( mapping.key )) {
+      ContinuousBehavior cb = manager.midContinuous.get( mapping.key );
+      int duration = manager.count() - cb.startTime;
+      manager.log( new ContinuousBehavior( cb.key, cb.description, cb.startTime, duration ) );
+      manager.midContinuous.remove( mapping.key );
+      manager.continuousCounts.get( mapping.key ).timer.pause();
+    } else {
+      ContinuousBehavior cb =
+          new ContinuousBehavior( mapping.key, mapping.behavior, manager.count(), null );
+      manager.midContinuous.put( mapping.key, cb );
+      manager.continuousCounts.get( mapping.key ).timer.play();
+    }
+  }
+
+  /**
+   * The user just pressed a key that isn't mapped. Add it to the 'unknowns' map
    */
   private void initUnknown( MappableChar mc, boolean isContinuous )
   {
     KeyBehaviorMapping kbm = new KeyBehaviorMapping( mc, "[unknown]", isContinuous );
+    initializeBehaviorCountBox( kbm );
     manager.unknowns.put( mc, kbm );
-    BehaviorCountBox bcb =
-        kbm.isContinuous
-            ? new ContinuousCountBox( kbm, manager )
-            : new DiscreteCountBox( kbm );
-    VBox target = kbm.isContinuous ? continuousBox : discreteBox;
-
-    target.getChildren().add( bcb );
-    target.getChildren().add( new Separator() );
-
-    countBoxes.put( kbm.key, bcb );
-
-    if (!isContinuous) {
-      logBehavior( kbm );
-    } else {
-      countBoxes.get( mc ).toggle();
-    }
+    logBehavior( kbm );
   }
 
   /**
@@ -308,8 +507,8 @@ public class RecordingController
   {
     KeyCode code = evt.getCode();
 
-    if (isShortcut( code )) {
-      handleShortcut( code );
+    boolean isShortcut = handleShortcut( evt );
+    if (isShortcut) {
       return;
     }
 
@@ -324,7 +523,7 @@ public class RecordingController
       } else if (manager.unknowns.containsKey( mc )) {
         logBehavior( manager.unknowns.get( mc ) );
       } else {
-        initUnknown( mc, evt.isControlDown() );
+        initUnknown( mc, evt.isShiftDown() );
       }
     } );
   }
@@ -355,7 +554,7 @@ public class RecordingController
       alert.showAndWait()
            .ifPresent( r -> {
              if (r == editBtn) {
-               AddKeysController.showAddKeysView( this, manager );
+               AddKeysController.showAddKeysView( manager, this::update );
              } else {
                toScene.run();
              }
@@ -391,7 +590,7 @@ public class RecordingController
 
   @FXML private void onAddNewKeysPress( ActionEvent evt )
   {
-    AddKeysController.showAddKeysView( this, manager );
+    AddKeysController.showAddKeysView( manager, this::update );
   }
 
   @FXML private void onHelpBtnPressed()

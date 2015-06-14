@@ -23,7 +23,6 @@ public class DiscreteCountBox extends BehaviorCountBox
 
   @Override public boolean toggle()
   {
-    incrementCount();
     this.setStyle( TOGGLED_STYLE );
 
     DiscreteCountBox self = this;

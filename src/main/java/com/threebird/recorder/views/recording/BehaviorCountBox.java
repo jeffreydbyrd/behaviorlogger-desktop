@@ -16,8 +16,7 @@ import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 public abstract class BehaviorCountBox extends HBox
 {
   protected static String TOGGLED_STYLE = "-fx-background-color:#7DFF86";
-  
-  protected Integer count = 0;
+
   public final Label keyLabel;
   public final Label behaviorLbl;
   public final Label countLbl;
@@ -37,7 +36,7 @@ public abstract class BehaviorCountBox extends HBox
     HBox.setHgrow( behaviorLbl, Priority.ALWAYS );
     behaviorLbl.setMaxWidth( Double.MAX_VALUE );
 
-    countLbl = new Label( count.toString() );
+    countLbl = new Label( 0 + "" );
     countLbl.setAlignment( Pos.CENTER );
     countLbl.setMinWidth( 60 );
     countLbl.setMaxWidth( 60 );
@@ -50,12 +49,8 @@ public abstract class BehaviorCountBox extends HBox
     this.setSpacing( 5 );
   }
 
-  /**
-   * Increments 'count' and sets it to the countLbl
-   */
-  protected void incrementCount()
+  public void setCount( Integer count )
   {
-    count += 1;
     countLbl.setText( count.toString() );
   }
 

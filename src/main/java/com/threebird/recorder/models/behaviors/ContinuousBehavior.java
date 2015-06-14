@@ -26,6 +26,9 @@ public class ContinuousBehavior extends Behavior
     return true;
   }
 
+  /**
+   * @return the duration of this behavior in milliseconds
+   */
   public int getDuration()
   {
     return duration;
