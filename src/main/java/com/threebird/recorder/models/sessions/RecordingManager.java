@@ -39,11 +39,11 @@ public class RecordingManager
   public final ObservableList< ContinuousBehavior > continuous = FXCollections.observableArrayList();
   public final ObservableMap< MappableChar, KeyBehaviorMapping > unknowns = FXCollections.observableHashMap();
 
-  public final ObservableMap< KeyBehaviorMapping, ContinuousBehavior > midContinuous =
+  public final ObservableMap< MappableChar, ContinuousBehavior > midContinuous =
       FXCollections.observableHashMap();
-  public final ObservableMap< KeyBehaviorMapping, SimpleIntegerProperty > discreteCounts =
+  public final ObservableMap< MappableChar, SimpleIntegerProperty > discreteCounts =
       FXCollections.observableHashMap();
-  public final ObservableMap< KeyBehaviorMapping, ContinuousCounter > continuousCounts =
+  public final ObservableMap< MappableChar, ContinuousCounter > continuousCounts =
       FXCollections.observableHashMap();
 
   public RecordingManager()
