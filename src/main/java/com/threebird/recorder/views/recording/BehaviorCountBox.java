@@ -49,10 +49,7 @@ public abstract class BehaviorCountBox extends HBox
     this.setSpacing( 5 );
   }
 
-  public void setCount( Integer count )
-  {
-    countLbl.setText( count.toString() );
-  }
+  public abstract void setCount( Integer count );
 
   /**
    * Call this method when the user presses a key that maps to this behavior. If

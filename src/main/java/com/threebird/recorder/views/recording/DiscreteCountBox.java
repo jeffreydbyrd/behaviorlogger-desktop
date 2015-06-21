@@ -1,16 +1,14 @@
 package com.threebird.recorder.views.recording;
 
+import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.animation.Animation.Status;
 import javafx.util.Duration;
 
-import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 
 /**
- * A {@link BehaviorCountBox} that counts {@link DiscreteBehavior}s. When
- * toggled, it simply increments the counter by 1
+ * When toggled, the background flashes green for 100 milliseconds
  */
 public class DiscreteCountBox extends BehaviorCountBox
 {
@@ -41,5 +39,10 @@ public class DiscreteCountBox extends BehaviorCountBox
     timer.play();
 
     return true;
+  }
+
+  @Override public void setCount( Integer count )
+  {
+    countLbl.setText( count.toString() );
   }
 }

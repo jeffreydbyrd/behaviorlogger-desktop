@@ -208,7 +208,7 @@ public class RecordingController
     Timeline timer = new Timeline();
 
     timer.setCycleCount( Animation.INDEFINITE );
-    KeyFrame kf = new KeyFrame( Duration.seconds( 1 ), evt -> {
+    KeyFrame kf = new KeyFrame( Duration.millis( 1 ), evt -> {
       count.set( count.get() + 1 );
     } );
     timer.getKeyFrames().add( kf );
@@ -438,7 +438,7 @@ public class RecordingController
     manager.continuous.remove( lastIndexContinuous );
 
     ContinuousCounter counter = manager.continuousCounts.get( cb.key );
-    counter.count.set( counter.count.get() - (cb.getDuration() / 1000) );
+    counter.count.set( counter.count.get() - cb.getDuration() );
   }
 
   private void removeMidContinuous( ContinuousBehavior midCb )
@@ -448,7 +448,7 @@ public class RecordingController
     ContinuousCounter counter = manager.continuousCounts.get( midCb.key );
     counter.timer.stop();
     int duration = manager.count() - midCb.startTime;
-    counter.count.set( counter.count.get() - (duration / 1000) );
+    counter.count.set( counter.count.get() - duration );
 
     countBoxes.get( midCb.key ).toggle();
   }

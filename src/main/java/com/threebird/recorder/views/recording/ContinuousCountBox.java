@@ -5,9 +5,8 @@ import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 
 /**
  * A {@link BehaviorCountBox} used for keeping track of a
- * {@link ContinuousBehavior}. Whenever you toggle the counter on, it records
- * the time and begins counting up. When you toggle if off, it stops
- * incrementing
+ * {@link ContinuousBehavior}. Whenever you toggle the counter on, it turns
+ * green. When you toggle if off, the green is removed
  */
 public class ContinuousCountBox extends BehaviorCountBox
 {
@@ -28,5 +27,15 @@ public class ContinuousCountBox extends BehaviorCountBox
     }
 
     return toggled;
+  }
+
+  @Override public void setCount( Integer millis )
+  {
+    int seconds = millis / 1000;
+    if (seconds < 0) {
+      seconds = 0;
+    }
+
+    this.countLbl.setText( "" + seconds );
   }
 }
