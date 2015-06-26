@@ -3,7 +3,9 @@
 
 <h1>Introduction</h1>
 
-<p>The 3Bird Behavior Logger is a data collection tool for applied behavior analysis. The interface was designed for researchers conducting treatment while one or more data-collectors record behaviors. We recognize that every lab has different preferences on methods and so Behavior Logger allows for substantial customization. This manual details each of the screens and how to achieve some of the most common use-cases.</p>
+<p>The 3Bird Behavior Logger is a data collection tool for applied behavior analysis. 
+The interface was designed for researchers conducting treatment while one or more 
+data-collectors record behaviors.</p>
 
 <hr />
 
@@ -69,9 +71,8 @@
 <li><em>Key</em> - A single character to represent the behavior. Accepted character include lower-case letters, digits, and some symbols ( ` '  - = [ ] ; , . \ / )</li>
 <li><em>Behavior</em> - A description of the target behavior.</li>
 </ul></li>
-<li><strong>Add Row</strong> - Adds a new row to the Mappings section.</li>
-<li><strong>Delete Schema</strong> - Deletes the current schema. Prompts the user for confirmation.</li>
-<li><strong>Save Session Data To</strong> - The directory session data-files will get saved to.</li>
+<li><p><strong>Add Row</strong> - Adds a new row to the Mappings section.</p></li>
+<li><p><strong>Save Session Data To</strong> - The directory session data-files will get saved to.</p></li>
 <li><strong>Session Duration</strong>
 <ul>
 <li><em>infinite</em> - If checked, sessions will never end.</li>
@@ -80,6 +81,7 @@
 </ul></li>
 <li><strong>Cancel</strong> - Discard all changes and return to Start Menu.</li>
 <li><strong>Save</strong> - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.</li>
+<li><strong>Delete Schema</strong> - Deletes the current schema. Prompts the user for confirmation.</li>
 </ol>
 
 <hr />
@@ -125,9 +127,20 @@
 <p>You can also log new behaviors on the fly while recording.</p>
 
 <p><strong>Discrete</strong> - press an unmapped key. <br />
-<strong>Continuous</strong> - press an unmapped key while holding <code>ctrl</code>. Once the new continuous key is added, you don't have to hold <code>ctrl</code> to toggle it.</p>
+<strong>Continuous</strong> - press an unmapped key while holding <code>shift</code>. Once the new continuous key is added, you don't have to hold <code>shift</code> to toggle it again.</p>
 
 <p>When you pause the session, you can click <em>Edit Unknown Behaviors</em> to assign values to any unknowns you might have logged. If you logged an unknown by mistake, you can ignore it.</p>
+
+<p><a name="undoing-behaviors"></a></p>
+
+<h2>Undoing Behaviors</h2>
+
+<p>You can undo behaviors using <code>ctrl</code>+<code>z</code> for Windows and <code>cmd</code>+<code>z</code> for Macs. There is no "redo" funcationality yet.</p>
+
+<p><em>Undo</em> works differently depending on what the latest behavior was. <br />
+For discrete behaviors it simply removes the behavior and decrements the counter by 1. <br />
+For a continuous behavior that has been <em>started</em> but hasn't <em>ended</em>, it reverts the counter back to its position before it started. <br />
+For a continuous behavior that has ended, it decrements the counter by whatever the duration was.</p>
 
 <p><a name="session-output"></a></p>
 

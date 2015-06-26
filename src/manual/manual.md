@@ -2,7 +2,9 @@
 <a name="introduction"></a>
 # Introduction
 
-The 3Bird Behavior Logger is a data collection tool for applied behavior analysis. The interface was designed for researchers conducting treatment while one or more data-collectors record behaviors. We recognize that every lab has different preferences on methods and so Behavior Logger allows for substantial customization. This manual details each of the screens and how to achieve some of the most common use-cases.
+The 3Bird Behavior Logger is a data collection tool for applied behavior analysis. 
+The interface was designed for researchers conducting treatment while one or more 
+data-collectors record behaviors.
 
 ---
 
@@ -57,14 +59,15 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
   - *Key* - A single character to represent the behavior. Accepted character include lower-case letters, digits, and some symbols ( ` '  - = [ ] ; , . \ / )
   - *Behavior* - A description of the target behavior.
 4. **Add Row** - Adds a new row to the Mappings section.
-5. **Delete Schema** - Deletes the current schema. Prompts the user for confirmation.
-6. **Save Session Data To** - The directory session data-files will get saved to.
-7. **Session Duration**
+
+5. **Save Session Data To** - The directory session data-files will get saved to.
+6. **Session Duration**
   - *infinite* - If checked, sessions will never end.
   - *timed* - If checked, sessions will be considered "finished" when they reach the set duration. If this field is set to zero, or left empty, it's the same as checking *infinite*.
   - *When timer finishes* - Check the actions you would like to happen when a session is over.
-8. **Cancel** - Discard all changes and return to Start Menu.
-9. **Save** - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.
+7. **Cancel** - Discard all changes and return to Start Menu.
+8. **Save** - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.
+9. **Delete Schema** - Deletes the current schema. Prompts the user for confirmation.
 
 ---
 
@@ -100,9 +103,19 @@ While a session is playing, press any of the mapped keys to log a behavior. **Di
 You can also log new behaviors on the fly while recording.
 
 **Discrete** - press an unmapped key.  
-**Continuous** - press an unmapped key while holding `ctrl`. Once the new continuous key is added, you don't have to hold `ctrl` to toggle it.
+**Continuous** - press an unmapped key while holding `shift`. Once the new continuous key is added, you don't have to hold `shift` to toggle it again.
 
 When you pause the session, you can click *Edit Unknown Behaviors* to assign values to any unknowns you might have logged. If you logged an unknown by mistake, you can ignore it.
+
+<a name="undoing-behaviors"></a>
+## Undoing Behaviors
+
+You can undo behaviors using `ctrl`+`z` for Windows and `cmd`+`z` for Macs. There is no "redo" funcationality yet.
+
+*Undo* works differently depending on what the latest behavior was.  
+For discrete behaviors it simply removes the behavior and decrements the counter by 1.  
+For a continuous behavior that has been *started* but hasn't *ended*, it reverts the counter back to its position before it started.  
+For a continuous behavior that has ended, it decrements the counter by whatever the duration was.
 
 <a name="session-output"></a>
 ## Session Output
