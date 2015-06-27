@@ -31,16 +31,16 @@ data-collectors record behaviors.</p>
 
 <h1>Start Menu</h1>
 
-<p><em>insert image of start menu</em></p>
+<p><img src="start-menu.png" alt="start-menu" title="" /></p>
 
 <ol>
 <li><strong>Schema List</strong> - A list of current schemas saved on your computer.</li>
-<li><strong>Create</strong> - Opens a menu for creating a new schema.</li>
-<li><strong>Edit</strong> - Opens the selected schema into an edit menu.</li>
+<li><strong>Create</strong> - Opens a new <a href="#edit-schema">Edit Schema</a> menu for creating a new schema.</li>
+<li><strong>Edit</strong> - Opens the selected schema into an <a href="#edit-schema">Edit Schema</a> menu.</li>
 <li><strong>Import</strong> - Allows the user to import a new schema by selecting a ".schema" file.</li>
 <li><strong>Export</strong> - Allows the user to export a schema into a ".schema" file, to be shared with other users.</li>
-<li><strong>Preferences</strong> - Opens a menu for customizing default values.</li>
-<li><strong>IOA Calculator</strong> - Opens a menu for calculating IOA between two data files.</li>
+<li><strong>Preferences</strong> - Opens the <a href="#preferences">Preferences</a> menu for setting default schema values.</li>
+<li><strong>IOA Calculator</strong> - Opens the <a href="#ioa-calculator">IOA Calculator</a>.</li>
 <li><strong>Key-Behavior Mappings</strong> - A summary of the selected schema's key-behavior mappings.</li>
 <li><strong>New Session Summary</strong> - The details to be applied to the upcoming session.
 <ul>
@@ -52,6 +52,7 @@ data-collectors record behaviors.</p>
 <li><em>Session #</em> - The number of the next session. This number will increment automatically between sessions.</li>
 <li><em>Data File</em> - The name of the data-file the next session will generate. Users can configure this in <a href="#preferences">Preferences</a>. The app will warn the user if this file will overwrite an existing one of the same name.</li>
 </ul></li>
+<li><strong>Start New Session</strong> - Starts a new session in the <a href="#recording">Recording</a> menu.</li>
 </ol>
 
 <hr />
@@ -60,7 +61,7 @@ data-collectors record behaviors.</p>
 
 <h1>Edit Schema</h1>
 
-<p><em>insert image of edit schema menu</em></p>
+<p><img src="edit-menu.png" alt="edit-menu" title="" /></p>
 
 <ol>
 <li><strong>Client</strong> - The identifier of the client.</li>
@@ -71,14 +72,14 @@ data-collectors record behaviors.</p>
 <li><em>Key</em> - A single character to represent the behavior. Accepted character include lower-case letters, digits, and some symbols ( ` '  - = [ ] ; , . \ / )</li>
 <li><em>Behavior</em> - A description of the target behavior.</li>
 </ul></li>
-<li><p><strong>Add Row</strong> - Adds a new row to the Mappings section.</p></li>
-<li><p><strong>Save Session Data To</strong> - The directory session data-files will get saved to.</p></li>
+<li><strong>Session Data Directory</strong> - The directory session data-files will get saved to.</li>
 <li><strong>Session Duration</strong>
 <ul>
 <li><em>infinite</em> - If checked, sessions will never end.</li>
 <li><em>timed</em> - If checked, sessions will be considered "finished" when they reach the set duration. If this field is set to zero, or left empty, it's the same as checking <em>infinite</em>.</li>
 <li><em>When timer finishes</em> - Check the actions you would like to happen when a session is over.</li>
 </ul></li>
+<li><strong>Add Row</strong> - Adds a new row to the Mappings section.</li>
 <li><strong>Cancel</strong> - Discard all changes and return to Start Menu.</li>
 <li><strong>Save</strong> - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.</li>
 <li><strong>Delete Schema</strong> - Deletes the current schema. Prompts the user for confirmation.</li>
@@ -90,7 +91,7 @@ data-collectors record behaviors.</p>
 
 <h1>Preferences</h1>
 
-<p><em>insert image of preferences menu</em></p>
+<p><img src="preferences.png" alt="preferences" title="" /></p>
 
 <ol>
 <li><strong>Default Save Location</strong> - New schemas will start with this directory.</li>
@@ -104,12 +105,12 @@ data-collectors record behaviors.</p>
 
 <h1>Recording</h1>
 
-<p><em>insert image of the recording view</em></p>
+<p><img src="recording.png" alt="recording" title="" /></p>
 
 <ol>
 <li><strong>Behavior Summary</strong> - Each row keeps track of the count/duration of each behavior.</li>
-<li><strong>Start Session</strong> - When pressed, it will start the session timer. You can also press <code>spacebar</code> as a shortcut. You can only record behaviors while the timer is active.</li>
 <li><strong>Timer</strong> - The timer will increase while recording. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the <a href="#edit-schema">edit-schema menu</a>.</li>
+<li><strong>Start Session/Continue</strong> - When pressed, it will start the session timer. You can also press <code>spacebar</code> as a shortcut. You can only record behaviors while the timer is active.</li>
 <li><strong>Start New Session</strong> - Starts a new session with the same schema and same session-detais. The session #, however, will increment.</li>
 <li><strong>Edit Uknown Behaviors</strong> - Becomes visible if you have logged an unknown behavior. When clicked, it opens a new menu for assigning values to unknown behaviors.</li>
 </ol>
@@ -161,15 +162,17 @@ For a continuous behavior that has ended, it decrements the counter by whatever 
 
 <h1>IOA Calculator</h1>
 
-<p><em>insert image of IOA calculator</em></p>
+<p><img src="ioa.png" alt="ioa" title="" /></p>
 
 <ol>
 <li><strong>File 1 / File 2</strong> - Paths to the .csv data-files you wish to compare. You should upload the data output from your behavior recording sessions.</li>
 <li><strong>Method</strong> - The type of calculation to be done. See <a href="#ioa-methods">IOA Methods</a>.</li>
-<li><strong>Block Size</strong> - The number of seconds designated to each partition in partial/exact agreement.</li>
-<li><strong>Threshold</strong> - The number of seconds of leniency in time-window analysis.</li>
-<li><strong>Close</strong> - Closes the calculator window.</li>
-<li><strong>Generate IOA File</strong> - Calculates IOA between File 1 and File 2 and prompts the user save the result in an Excel file.</li>
+<li><strong>Block Size/Threshold</strong>
+<ul>
+<li><em>Block Size</em> - The number of seconds designated to each partition in partial/exact agreement.</li>
+<li><em>Threshold</em> - The number of seconds of leniency in time-window analysis.</li>
+</ul></li>
+<li><strong>Generate IOA File</strong> - Calculates IOA between File 1 and File 2 and prompts the user to save the result in an Excel file.</li>
 </ol>
 
 <hr />

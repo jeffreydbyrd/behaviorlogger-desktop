@@ -26,15 +26,15 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 <a name="start-menu"></a>
 # Start Menu
 
-*insert image of start menu*
+![start-menu](start-menu.png)
 
 1. **Schema List** - A list of current schemas saved on your computer.
-2. **Create** - Opens a menu for creating a new schema.
-3. **Edit** - Opens the selected schema into an edit menu.
+2. **Create** - Opens a new [Edit Schema](#edit-schema) menu for creating a new schema.
+3. **Edit** - Opens the selected schema into an [Edit Schema](#edit-schema) menu.
 4. **Import** - Allows the user to import a new schema by selecting a ".schema" file.
 5. **Export** - Allows the user to export a schema into a ".schema" file, to be shared with other users.
-6. **Preferences** - Opens a menu for customizing default values.
-7. **IOA Calculator** - Opens a menu for calculating IOA between two data files.
+6. **Preferences** - Opens the [Preferences](#preferences) menu for setting default schema values.
+7. **IOA Calculator** - Opens the [IOA Calculator](#ioa-calculator).
 8. **Key-Behavior Mappings** - A summary of the selected schema's key-behavior mappings.
 9. **New Session Summary** - The details to be applied to the upcoming session.
   - *Duration* - The duration of the session (set by the schema).
@@ -44,13 +44,14 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
   - *Location* - The location where the session is taking place.
   - *Session #* - The number of the next session. This number will increment automatically between sessions.
   - *Data File* - The name of the data-file the next session will generate. Users can configure this in [Preferences](#preferences). The app will warn the user if this file will overwrite an existing one of the same name.
+10. **Start New Session** - Starts a new session in the [Recording](#recording) menu.
 
 ---
 
 <a name="edit-schema"></a>
 # Edit Schema
 
-*insert image of edit schema menu*
+![edit-menu](edit-menu.png)
 
 1. **Client** - The identifier of the client.
 2. **Project** - The research project this schema is for.
@@ -58,13 +59,12 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
   - *Cont.* - Check if this is a *continuous behavior* (ie. it has a duration rather than a count).
   - *Key* - A single character to represent the behavior. Accepted character include lower-case letters, digits, and some symbols ( ` '  - = [ ] ; , . \ / )
   - *Behavior* - A description of the target behavior.
-4. **Add Row** - Adds a new row to the Mappings section.
-
-5. **Save Session Data To** - The directory session data-files will get saved to.
-6. **Session Duration**
+4. **Session Data Directory** - The directory session data-files will get saved to.
+5. **Session Duration**
   - *infinite* - If checked, sessions will never end.
   - *timed* - If checked, sessions will be considered "finished" when they reach the set duration. If this field is set to zero, or left empty, it's the same as checking *infinite*.
   - *When timer finishes* - Check the actions you would like to happen when a session is over.
+6. **Add Row** - Adds a new row to the Mappings section.
 7. **Cancel** - Discard all changes and return to Start Menu.
 8. **Save** - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.
 9. **Delete Schema** - Deletes the current schema. Prompts the user for confirmation.
@@ -74,7 +74,7 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 <a name="preferences"></a>
 # Preferences
 
-*insert image of preferences menu*
+![preferences](preferences.png)
 
 1. **Default Save Location** - New schemas will start with this directory.
 2. **Filename Format** - Since most researchers have a preferred naming structure for their data-files, we allow users to customize them. Check each component that you want to include in the filename. You can also drag-and-drop components to reorder them.
@@ -85,11 +85,11 @@ After downloading the installer (3Bird Behavior Logger.dmg), double-click the fi
 <a name="recording"></a>
 # Recording
 
-*insert image of the recording view*
+![recording](recording.png)
 
 1. **Behavior Summary** - Each row keeps track of the count/duration of each behavior.
-2. **Start Session** - When pressed, it will start the session timer. You can also press `spacebar` as a shortcut. You can only record behaviors while the timer is active.
-3. **Timer** - The timer will increase while recording. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the [edit-schema menu](#edit-schema).
+2. **Timer** - The timer will increase while recording. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the [edit-schema menu](#edit-schema).
+3. **Start Session/Continue** - When pressed, it will start the session timer. You can also press `spacebar` as a shortcut. You can only record behaviors while the timer is active.
 4. **Start New Session** - Starts a new session with the same schema and same session-detais. The session #, however, will increment.
 5. **Edit Uknown Behaviors** - Becomes visible if you have logged an unknown behavior. When clicked, it opens a new menu for assigning values to unknown behaviors.
 
@@ -132,14 +132,14 @@ The names of these files can be configured in [Preferences](#preferences).
 <a name="ioa-calculator"></a>
 # IOA Calculator
 
-*insert image of IOA calculator*
+![ioa](ioa.png)
 
 1. **File 1 / File 2** - Paths to the .csv data-files you wish to compare. You should upload the data output from your behavior recording sessions.
 2. **Method** - The type of calculation to be done. See [IOA Methods](#ioa-methods).
-3. **Block Size** - The number of seconds designated to each partition in partial/exact agreement.
-4. **Threshold** - The number of seconds of leniency in time-window analysis.
-5. **Close** - Closes the calculator window.
-6. **Generate IOA File** - Calculates IOA between File 1 and File 2 and prompts the user save the result in an Excel file.
+3. **Block Size/Threshold**
+  - *Block Size* - The number of seconds designated to each partition in partial/exact agreement.
+  - *Threshold* - The number of seconds of leniency in time-window analysis.
+4. **Generate IOA File** - Calculates IOA between File 1 and File 2 and prompts the user to save the result in an Excel file.
 
 ---
 
