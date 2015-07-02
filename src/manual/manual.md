@@ -14,12 +14,16 @@ data-collectors record behaviors.
 <a name="windows"></a>
 ## Windows
 
-After downloading the installer (3Bird Behavior Logger.exe), double-click the file. ...
+After downloading the installer (3Bird Behavior Logger.exe), double-click the file.  
+![win](win.png)  
+Click "install". When finished, you should be able to open the application from Start Menu > All Programs.
 
 <a name="mac"></a>
 ## Mac
 
-After downloading the installer (3Bird Behavior Logger.dmg), double-click the file. ...
+After downloading the installer (3Bird Behavior Logger.dmg), double-click the file.  
+![mac](mac.png)  
+Drag the icon over the Applications folder.
 
 ---
 
