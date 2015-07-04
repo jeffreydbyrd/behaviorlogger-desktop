@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.threebird.recorder.EventRecorder;
@@ -158,7 +159,7 @@ public class EventRecorderUtil
 
   public static int strToInt( String s )
   {
-    return Integer.valueOf( s.isEmpty() ? "0" : s );
+    return Integer.valueOf( Strings.isNullOrEmpty( s ) ? "0" : s );
   }
 
   public static String intToStr( int i )

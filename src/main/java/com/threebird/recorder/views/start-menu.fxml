@@ -24,16 +24,20 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <HBox spacing="10.0">
+                  <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="createSchemaButton" mnemonicParsing="false" onAction="#onCreateSchemaClicked" text="Create" textAlignment="CENTER" />
-                        <Button fx:id="importSchemaButton" mnemonicParsing="false" onAction="#onImportSchemaPressed" text="Import" />
-                     </children>
-                  </HBox>
-                  <HBox spacing="26.0">
-                     <children>
-                        <Button fx:id="editSchemaBtn" mnemonicParsing="false" onAction="#onEditSchemaClicked" text="Edit" />
-                        <Button fx:id="exportSchemaButton" mnemonicParsing="false" onAction="#onExportBtnPressed" text="Export" />
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                           <children>
+                              <Button fx:id="createSchemaButton" mnemonicParsing="false" onAction="#onCreateSchemaClicked" prefWidth="80.0" text="Create" textAlignment="CENTER" />
+                              <Button fx:id="editSchemaBtn" mnemonicParsing="false" onAction="#onEditSchemaClicked" prefWidth="80.0" text="Edit" />
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                           <children>
+                              <Button fx:id="exportSchemaButton" mnemonicParsing="false" onAction="#onExportBtnPressed" prefWidth="80.0" text="Export" />
+                              <Button fx:id="importSchemaButton" mnemonicParsing="false" onAction="#onImportSchemaPressed" prefWidth="80.0" text="Import" />
+                           </children>
+                        </VBox>
                      </children>
                   </HBox>
                </children>

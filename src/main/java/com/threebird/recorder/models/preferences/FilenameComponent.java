@@ -9,7 +9,7 @@ public enum FilenameComponent
 {
   Client("Client", "client", true, ( ) -> SchemasManager.getSelected().client),
   Project("Project", "project", true, ( ) -> SchemasManager.getSelected().project),
-  Observer("Observer", "observer", false, ( ) -> SessionManager.getObserver()),
+  Observer("Observer", "observer", true, ( ) -> SessionManager.getObserver()),
   Therapist("Therapist", "therapist", false, ( ) -> SessionManager.getTherapist()),
   Condition("Condition", "condition", false, ( ) -> SessionManager.getCondition()),
   Location("Location", "location", false, ( ) -> SessionManager.getLocation()),

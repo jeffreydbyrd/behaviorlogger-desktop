@@ -24,6 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
@@ -158,7 +159,7 @@ public class StartMenuController
     sessionField.setOnKeyTyped( limiter );
     sessionField.textProperty().addListener( ( o, old, newV ) -> {
       String text = sessionField.getText().trim();
-      if (text.isEmpty()) {
+      if (Strings.isNullOrEmpty( text )) {
         SessionManager.setSessionNumber( 0 );
       } else {
         SessionManager.setSessionNumber( Integer.valueOf( text.trim() ) );
@@ -260,6 +261,15 @@ public class StartMenuController
     FileChooser fileChooser = new FileChooser();
     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
     fileChooser.getExtensionFilters().add( extFilter );
+
+    if (Strings.isNullOrEmpty( selected.client )) {
+      fileChooser.setInitialFileName( selected.project );
+    } else if (Strings.isNullOrEmpty( selected.project )) {
+      fileChooser.setInitialFileName( selected.client );
+    } else {
+      fileChooser.setInitialFileName( selected.client + "-" + selected.project );
+    }
+
     File result = fileChooser.showSaveDialog( EventRecorder.STAGE );
 
     if (result != null) {
@@ -290,7 +300,7 @@ public class StartMenuController
     for (Entry< FilenameComponent, TextField > entry : compToField.entrySet()) {
       FilenameComponent comp = entry.getKey();
       TextField field = entry.getValue();
-      if (comp.enabled && field.getText().isEmpty()) {
+      if (comp.enabled && Strings.isNullOrEmpty( field.getText() )) {
         field.setStyle( cssRed );
         Label lbl = new Label( "- " + comp.name + " is required for your data file's name." );
         lbl.setTextFill( Color.RED );

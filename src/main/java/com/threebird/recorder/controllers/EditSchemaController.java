@@ -211,6 +211,8 @@ public class EditSchemaController
     keyMsg.setFill( Color.RED );
     Text duplicateMsg = new Text( "- Each key must be unique." );
     duplicateMsg.setFill( Color.RED );
+    Text clientProjectMsg = new Text( "- You must fill either Client or Project (or both)." );
+    clientProjectMsg.setFill( Color.RED );
 
     ImmutableMap< String, FilenameComponent > displayToComp =
         Maps.uniqueIndex( PreferencesManager.filenameComponents(), c -> c.name );
@@ -222,7 +224,7 @@ public class EditSchemaController
     for (Entry< FilenameComponent, TextField > entry : compToField.entrySet()) {
       FilenameComponent comp = entry.getKey();
       TextField field = entry.getValue();
-      if (comp.enabled && field.getText().isEmpty()) {
+      if (comp.enabled && Strings.isNullOrEmpty( field.getText() )) {
         field.setStyle( cssRed );
         Label lbl = new Label( "- " + comp.name + " is required for your data file's name." );
         lbl.setTextFill( Color.RED );
@@ -246,7 +248,7 @@ public class EditSchemaController
     Map< String, List< TextField >> keyToField =
         mappingsBox.getChildren().stream()
                    .map( node -> ((MappingBox) node).keyField )
-                   .filter( textField -> !textField.getText().isEmpty() )
+                   .filter( textField -> !Strings.isNullOrEmpty( textField.getText() ) )
                    .collect( Collectors.groupingBy( keyField -> keyField.getText() ) );
 
     // make sure at least one field was non-empty
@@ -271,6 +273,16 @@ public class EditSchemaController
     if (foundDups) {
       isValid = false;
       errorMsgBox.getChildren().add( duplicateMsg );
+    }
+
+    if (Strings.isNullOrEmpty( clientField.getText() ) && Strings.isNullOrEmpty( projectField.getText() )) {
+      isValid = false;
+      errorMsgBox.getChildren().add( clientProjectMsg );
+      clientField.setStyle( cssRed );
+      projectField.setStyle( cssRed );
+    } else {
+      clientField.setStyle( "" );
+      projectField.setStyle( "" );
     }
 
     return isValid;
