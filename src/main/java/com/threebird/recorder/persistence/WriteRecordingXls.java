@@ -24,6 +24,7 @@ public class WriteRecordingXls
   public static void write( SaveDetails details ) throws IOException
   {
     if (!details.f.exists()) {
+      details.f.getParentFile().mkdirs();
       details.f.createNewFile();
     }
 

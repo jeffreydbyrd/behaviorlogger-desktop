@@ -160,6 +160,7 @@ public class Recordings
   {
     try {
       if (!details.f.exists()) {
+        details.f.getParentFile().mkdirs();
         details.f.createNewFile();
       }
 
