@@ -175,7 +175,7 @@
                   <Button fx:id="addNewKeysButton" focusTraversable="false" mnemonicParsing="false" onAction="#onAddNewKeysPress" text="Edit Unknown Behaviors" visible="false" />
                   <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button fx:id="helpButton" focusTraversable="false" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
+                        <Button fx:id="helpButton" focusTraversable="false" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" visible="false" />
                      </children>
                   </Pane>
                </children>

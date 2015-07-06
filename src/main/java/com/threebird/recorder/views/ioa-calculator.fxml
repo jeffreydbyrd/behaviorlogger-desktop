@@ -73,7 +73,7 @@
             <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generateBtnPressed" text="Generate IOA File" />
             <HBox nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?">
+                  <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" visible="false">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
