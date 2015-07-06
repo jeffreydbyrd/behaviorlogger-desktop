@@ -1,6 +1,7 @@
 package com.threebird.recorder.models.preferences;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.resources.ResourceUtils;
@@ -193,6 +196,13 @@ public class PreferencesManager
         FilenameComponent comp = FilenameComponent.valueOf( bean.name );
         comp.enabled = bean.enabled;
         comp.order = beans.indexOf( bean ) + 1;
+        filenameComponents.add( comp );
+      }
+
+      HashSet< FilenameComponent > enums = Sets.newHashSet( FilenameComponent.values() );
+      SetView< FilenameComponent > missed = Sets.difference( enums, Sets.newHashSet( filenameComponents ) );
+      for(FilenameComponent comp : missed) {
+        comp.order = filenameComponents.size() + 1;
         filenameComponents.add( comp );
       }
     }
