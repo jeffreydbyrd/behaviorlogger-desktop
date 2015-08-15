@@ -4,7 +4,6 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.utils.resources.ResourceUtils;
 
 /**
  * A collection of helpful functions used throughout the app
@@ -229,15 +229,12 @@ public class EventRecorderUtil
 
   public static void openManual( String section )
   {
-    String filepath = "views/manual/manual.html";
-    URL resource = EventRecorder.class.getResource( filepath );
-    String addrFmt = "file://%s#%s";
-    String address = String.format( addrFmt, resource.getPath(), section );
+    String filepath = ResourceUtils.getManual().getAbsolutePath();
     try {
-      URI uri = new URI( address );
+      URI uri = new URI( "file", null, filepath, section );
       Desktop.getDesktop().browse( uri );
     } catch (Exception e) {
-      Alerts.error( "Error Loading Resource", "There was a problem loading a resource: " + address, e );
+      Alerts.error( "Error Loading Resource", "There was a problem loading a resource: " + filepath, e );
     }
   }
 }

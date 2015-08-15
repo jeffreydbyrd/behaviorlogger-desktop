@@ -13,4 +13,6 @@ interface ResourceService
   File getSessionDetails();
 
   File getIoaDetails();
+  
+  File getManual();
 }

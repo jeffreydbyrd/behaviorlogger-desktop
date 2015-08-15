@@ -29,10 +29,16 @@ public class WinResourceService implements ResourceService
     String path = resources.getAbsolutePath() + "\\session-details.json";
     return new File( path );
   }
-  
+
   @Override public File getIoaDetails()
   {
     String path = resources.getAbsolutePath() + "\\ioa-details.json";
+    return new File( path );
+  }
+
+  @Override public File getManual()
+  {
+    String path = resources.getAbsolutePath() + "\\manual\\manual.html";
     return new File( path );
   }
 }

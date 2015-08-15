@@ -111,7 +111,7 @@ public class RecordingManager
     }
     String directory = SchemasManager.getSelected().sessionDirectory.getPath();
     String filename = getFileName();
-    return String.format( "%s/%s", directory, filename );
+    return String.format( "%s%s%s", directory, File.separator, filename );
   }
 
   public void togglePlayingProperty()

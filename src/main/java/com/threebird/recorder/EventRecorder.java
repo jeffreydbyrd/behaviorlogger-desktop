@@ -6,7 +6,6 @@ import javafx.stage.Stage;
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.Recordings;
-import com.threebird.recorder.utils.resources.ResourceUtils;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The
@@ -33,8 +32,6 @@ public class EventRecorder extends Application
 
   @Override public void start( Stage primaryStage ) throws Exception
   {
-    ResourceUtils.getResources().mkdirs();
-
     STAGE = primaryStage;
     StartMenuController.toStartMenuView();
   }
