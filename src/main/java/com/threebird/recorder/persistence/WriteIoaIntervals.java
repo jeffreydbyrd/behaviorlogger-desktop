@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -30,14 +29,6 @@ public class WriteIoaIntervals
 
     Row row;
     int r = 0;
-
-    Double total = intervals.values().stream().collect( Collectors.averagingDouble( calcs -> calcs.avg ) );
-
-    // __Behavior Summary__
-    row = s.createRow( r++ );
-    Cell totalCell = row.createCell( 0 );
-    totalCell.setCellValue( "Overall" );
-    row.createCell( 1 ).setCellValue( total.doubleValue() );
 
     for (Entry< Character, IntervalCalculations > entry : intervals.entrySet()) {
       Character c = entry.getKey();
