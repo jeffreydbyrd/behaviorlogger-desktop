@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javafx.scene.layout.VBox;
+
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -21,6 +23,8 @@ import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
 import com.threebird.recorder.persistence.WriteIoaTimeWindows;
+import com.threebird.recorder.views.ioa.IoaTimeBlockSummary;
+import com.threebird.recorder.views.ioa.IoaTimeWindowSummary;
 
 public class IoaUtils
 {
@@ -73,7 +77,7 @@ public class IoaUtils
     }
   }
 
-  private static void processTimeBlock( IoaMethod method,
+  private static VBox processTimeBlock( IoaMethod method,
                                         int blockSize,
                                         File out,
                                         List< BehaviorLogRow > rows1,
@@ -88,9 +92,10 @@ public class IoaUtils
             ? IoaCalculations.exactAgreement( data1, data2 )
             : IoaCalculations.partialAgreement( data1, data2 );
     WriteIoaIntervals.write( intervals, out );
+    return new IoaTimeBlockSummary( intervals );
   }
 
-  private static void processTimeWindow( String file1,
+  private static VBox processTimeWindow( String file1,
                                          String file2,
                                          File out,
                                          int threshold,
@@ -112,9 +117,11 @@ public class IoaUtils
                                file1,
                                file2,
                                out );
+
+    return new IoaTimeWindowSummary( ioaDiscrete, ioaContinuous );
   }
 
-  public static void process( File f1,
+  public static VBox process( File f1,
                               File f2,
                               IoaMethod method,
                               int blockSize,
@@ -124,9 +131,9 @@ public class IoaUtils
     List< BehaviorLogRow > rows2 = deserialize( f2 );
 
     if (method != IoaMethod.Time_Window) {
-      processTimeBlock( method, blockSize, out, rows1, rows2 );
+      return processTimeBlock( method, blockSize, out, rows1, rows2 );
     } else {
-      processTimeWindow( f1.getName(), f2.getName(), out, blockSize, rows1, rows2 );
+      return processTimeWindow( f1.getName(), f2.getName(), out, blockSize, rows1, rows2 );
     }
   }
 }

@@ -30,6 +30,7 @@ public class WriteIoaIntervals
     Row row;
     int r = 0;
 
+    // __Summary__
     for (Entry< Character, IntervalCalculations > entry : intervals.entrySet()) {
       Character c = entry.getKey();
       IntervalCalculations calcs = entry.getValue();

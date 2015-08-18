@@ -7,7 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -29,10 +31,11 @@ public class IoaCalculatorController
   @FXML private Button generateBtn;
   @FXML private Label file1NotFoundLbl;
   @FXML private Label file2NotFoundLbl;
+  @FXML private ScrollPane summaryBox;
 
   public static void showIoaCalculator()
   {
-    String fxmlPath = "views/ioa-calculator.fxml";
+    String fxmlPath = "views/ioa/ioa-calculator.fxml";
     EventRecorderUtil.showScene( fxmlPath, "IOA Calculator" );
   }
 
@@ -162,13 +165,14 @@ public class IoaCalculatorController
     }
 
     try {
-      IoaUtils.process( getFile1(),
-                        getFile2(),
-                        IoaManager.getSelectedMethod(),
-                        IoaManager.thresholdProperty().get(),
-                        result );
+      VBox summary = IoaUtils.process( getFile1(),
+                                       getFile2(),
+                                       IoaManager.getSelectedMethod(),
+                                       IoaManager.thresholdProperty().get(),
+                                       result );
+      summaryBox.setContent( summary );
     } catch (Exception e) {
-      Alerts.error( null, "IOA Calculator encountered a problem.", e, ( ) -> System.out.println( "TEST" ) );
+      Alerts.error( null, "IOA Calculator encountered a problem.", e );
       e.printStackTrace();
     }
   }

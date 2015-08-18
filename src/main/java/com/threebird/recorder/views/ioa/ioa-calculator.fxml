@@ -71,7 +71,13 @@
          <children>
             <Button mnemonicParsing="false" onAction="#onCloseBtnPressed" text="Close" />
             <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generateBtnPressed" text="Generate IOA File" />
-            <HBox nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+         </children>
+      </HBox>
+      <Separator prefWidth="200.0" />
+      <HBox>
+         <children>
+            <ScrollPane fx:id="summaryBox" HBox.hgrow="ALWAYS" />
+            <HBox alignment="BOTTOM_RIGHT" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                <children>
                   <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?">
                      <HBox.margin>
