@@ -121,6 +121,22 @@ public class IoaUtils
     return new IoaTimeWindowSummary( ioaDiscrete, ioaContinuous );
   }
 
+  /**
+   * Calculates IOA and writes the output to 'out'
+   * 
+   * @param f1
+   *          the first CSV input file
+   * @param f2
+   *          the second CSV input file
+   * @param method
+   *          the {@link IoaMethod} used
+   * @param blockSize
+   *          the blocksize of intervals used
+   * @param out
+   *          the output file
+   * @return a JavaFX pane giving a summary of the output file
+   * @throws IOException
+   */
   public static VBox process( File f1,
                               File f2,
                               IoaMethod method,

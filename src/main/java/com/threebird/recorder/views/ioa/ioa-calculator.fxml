@@ -74,7 +74,8 @@
          </children>
       </HBox>
       <Separator prefWidth="200.0" />
-      <HBox>
+      <Label text="IOA Summary:" />
+      <HBox spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
             <ScrollPane fx:id="summaryBox" HBox.hgrow="ALWAYS" />
             <HBox alignment="BOTTOM_RIGHT" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">

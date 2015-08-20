@@ -3,6 +3,8 @@ package com.threebird.recorder.views.ioa;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -23,11 +25,16 @@ public class IoaTimeWindowSummary extends VBox
       Character key = entry.getKey();
       TimeWindowCalculations calc = entry.getValue();
 
-      Text left = new Text( "" + key );
-      Text mid = new Text( "" + calc.result1 );
-      Text right = new Text( "" + calc.result2 );
+      Label left = new Label( "" + key );
+      left.setMinWidth( 25 );
+      left.setAlignment( Pos.TOP_RIGHT );
+
+      Label mid = new Label( " - " + calc.result1 );
+      Label right = new Label( ", " + calc.result1 );
+
       HBox row = new HBox( left, mid, right );
-      
+      row.setSpacing( 5 );
+
       this.getChildren().add( row );
     }
   }
