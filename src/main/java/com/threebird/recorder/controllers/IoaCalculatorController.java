@@ -9,7 +9,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -165,7 +165,7 @@ public class IoaCalculatorController
     }
 
     try {
-      VBox summary = IoaUtils.process( getFile1(),
+      Pane summary = IoaUtils.process( getFile1(),
                                        getFile2(),
                                        IoaManager.getSelectedMethod(),
                                        IoaManager.thresholdProperty().get(),
