@@ -67,18 +67,14 @@
             </HBox>
          </children>
       </HBox>
+      <Label text="IOA Summary:" />
+      <ScrollPane fx:id="summaryBox" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+      <Separator prefWidth="200.0" />
       <HBox spacing="10.0">
          <children>
             <Button mnemonicParsing="false" onAction="#onCloseBtnPressed" text="Close" />
             <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generateBtnPressed" text="Generate IOA File" />
-         </children>
-      </HBox>
-      <Separator prefWidth="200.0" />
-      <Label text="IOA Summary:" />
-      <HBox spacing="5.0" VBox.vgrow="ALWAYS">
-         <children>
-            <ScrollPane fx:id="summaryBox" HBox.hgrow="ALWAYS" />
-            <HBox alignment="BOTTOM_RIGHT" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+            <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?">
                      <HBox.margin>
@@ -86,7 +82,7 @@
                      </HBox.margin>
                   </Button>
                </children>
-            </HBox>
+            </Pane>
          </children>
       </HBox>
    </children>
