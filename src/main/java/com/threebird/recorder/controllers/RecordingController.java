@@ -242,6 +242,7 @@ public class RecordingController
   {
     Schema schema = SchemasManager.getSelected();
     timeBox.setText( EventRecorderUtil.millisToTimestamp( millis ) );
+    manager.midContinuous.values().forEach( cb -> cb.setDuration( cb.getDuration() + 1 ) );
 
     if (millis == schema.duration * 1000) {
       if (schema.color) {
@@ -475,15 +476,13 @@ public class RecordingController
   private void logContinuous( KeyBehaviorMapping mapping )
   {
     if (manager.midContinuous.containsKey( mapping.key )) {
-      ContinuousBehavior cb = manager.midContinuous.get( mapping.key );
-      int duration = manager.count() - cb.startTime;
-      manager.log( new ContinuousBehavior( cb.key, cb.description, cb.startTime, duration ) );
       manager.midContinuous.remove( mapping.key );
       manager.continuousCounts.get( mapping.key ).timer.pause();
     } else {
       ContinuousBehavior cb =
-          new ContinuousBehavior( mapping.key, mapping.behavior, manager.count(), null );
+          new ContinuousBehavior( mapping.key, mapping.behavior, manager.count() );
       manager.midContinuous.put( mapping.key, cb );
+      manager.log( cb );
       manager.continuousCounts.get( mapping.key ).timer.play();
     }
   }

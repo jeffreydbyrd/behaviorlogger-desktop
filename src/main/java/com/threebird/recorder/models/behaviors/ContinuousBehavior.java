@@ -21,9 +21,19 @@ public class ContinuousBehavior extends Behavior
     this.duration = duration;
   }
 
+  public ContinuousBehavior( MappableChar key, String description, Integer start )
+  {
+    this( key, description, start, 0 );
+  }
+
   @Override public boolean isContinuous()
   {
     return true;
+  }
+
+  public void setDuration( int duration )
+  {
+    this.duration = duration;
   }
 
   /**
