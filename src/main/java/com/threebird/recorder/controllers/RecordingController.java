@@ -271,6 +271,11 @@ public class RecordingController
       manager.timer.pause();
       failedLabel.setVisible( !manager.saveSuccessfulProperty.get() );
       savedLabel.setVisible( manager.saveSuccessfulProperty.get() );
+      
+      for (Entry< MappableChar, ContinuousBehavior > e : manager.midContinuous.entrySet()) {
+        KeyBehaviorMapping kbm = new KeyBehaviorMapping( e.getKey(), e.getValue().description, true );
+        logBehavior( kbm );
+      }
     }
 
     behaviorGrid.setDisable( !behaviorGrid.isDisabled() );
