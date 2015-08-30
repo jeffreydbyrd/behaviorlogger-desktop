@@ -64,6 +64,10 @@ public class WriteRecordingXls
     r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Condition" );
     r.createCell( 1 ).setCellValue( details.condition );
+    
+    r = s.createRow(rownum++);
+    r.createCell( 0 ).setCellValue( "Location" );
+    r.createCell( 1 ).setCellValue( details.location );
 
     // Session Number
     r = s.createRow( rownum++ );

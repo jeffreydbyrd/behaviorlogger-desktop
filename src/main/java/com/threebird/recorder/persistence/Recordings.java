@@ -34,6 +34,7 @@ public class Recordings
     public String observer;
     public String therapist;
     public String condition;
+    public String location; 
     public Integer sessionNumber;
     public Integer totalTimeMillis;
   }
@@ -99,6 +100,7 @@ public class Recordings
     sd.observer = SessionManager.getObserver();
     sd.therapist = SessionManager.getTherapist();
     sd.condition = SessionManager.getCondition();
+    sd.location = SessionManager.getLocation();
     sd.sessionNumber = SessionManager.getSessionNumber();
     sd.totalTimeMillis = totalTime;
     return sd;
