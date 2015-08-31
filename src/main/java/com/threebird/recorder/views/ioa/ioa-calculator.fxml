@@ -67,6 +67,24 @@
             </HBox>
          </children>
       </HBox>
+      <Label text="Save Options:" />
+      <HBox spacing="10.0">
+         <children>
+            <RadioButton fx:id="newFileRadio" mnemonicParsing="false" text="New File" />
+            <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="Append to Existing:" />
+            <VBox fx:id="appendBox" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <TextField fx:id="appendField" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="appendBrowseBtn" mnemonicParsing="false" onAction="#appendBtnPressed" text="Browse" HBox.hgrow="NEVER" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="appendFileNotFoundLbl" text="That file does not exist" textFill="RED" visible="false" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
       <Label text="IOA Summary:" />
       <ScrollPane fx:id="summaryBox" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
       <Separator prefWidth="200.0" />

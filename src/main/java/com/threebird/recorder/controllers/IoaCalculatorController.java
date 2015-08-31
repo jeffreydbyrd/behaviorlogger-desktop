@@ -7,9 +7,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -28,9 +31,15 @@ public class IoaCalculatorController
   @FXML private Button browse2Btn;
   @FXML private ChoiceBox< IoaMethod > methodChoiceBox;
   @FXML private TextField thresholdField;
+  @FXML private RadioButton newFileRadio;
+  @FXML private RadioButton appendRadio;
+  @FXML private VBox appendBox;
+  @FXML private TextField appendField;
+  @FXML private Button appendBrowseBtn;
   @FXML private Button generateBtn;
   @FXML private Label file1NotFoundLbl;
   @FXML private Label file2NotFoundLbl;
+  @FXML private Label appendFileNotFoundLbl;
   @FXML private ScrollPane summaryBox;
 
   public static void showIoaCalculator()
@@ -41,7 +50,6 @@ public class IoaCalculatorController
 
   @FXML private void initialize()
   {
-
     file1Field.setText( IoaManager.file1Property().get() );
     file2Field.setText( IoaManager.file2Property().get() );
     thresholdField.setText( IoaManager.thresholdProperty().get() + "" );
@@ -70,6 +78,29 @@ public class IoaCalculatorController
         }
       }
     } );
+
+    initSaveOptions();
+  }
+
+  private void initSaveOptions()
+  {
+    ToggleGroup group = new ToggleGroup();
+    newFileRadio.setToggleGroup( group );
+    appendRadio.setToggleGroup( group );
+    appendRadio.selectedProperty().addListener( ( observable,
+                                                  oldValue,
+                                                  selected ) -> {
+      IoaManager.appendSelectedProperty().setValue( selected );
+      appendBox.setDisable( !selected );
+    } );
+
+    boolean appendFileSelected = IoaManager.appendSelectedProperty().getValue();
+    appendBox.setDisable( !appendFileSelected );
+    newFileRadio.setSelected( !appendFileSelected );
+    appendRadio.setSelected( appendFileSelected );
+
+    IoaManager.getAppendFile().ifPresent( appendField::setText );
+    appendField.textProperty().addListener( ( o, old, newV ) -> IoaManager.appendFileProperty().set( newV ) );
   }
 
   private File getFile( TextField fileField )
@@ -88,7 +119,14 @@ public class IoaCalculatorController
     return getFile( file2Field );
   }
 
-  private void browseBtnPressed( TextField fileField )
+  private File getAppendFile()
+  {
+    return getFile( appendField );
+  }
+
+  private void browseBtnPressed( TextField fileField,
+                                 String filterDescription,
+                                 String filterExtension )
   {
     File f = getFile( fileField );
     if (!f.exists()) {
@@ -101,7 +139,7 @@ public class IoaCalculatorController
 
     FileChooser fileChooser = new FileChooser();
     fileChooser.setInitialDirectory( f );
-    ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "CSV files (*.csv)", "*.csv" );
+    ExtensionFilter extFilter = new FileChooser.ExtensionFilter( filterDescription, filterExtension );
     fileChooser.getExtensionFilters().add( extFilter );
     File newFile = fileChooser.showOpenDialog( EventRecorderUtil.dialogStage.get() );
 
@@ -117,6 +155,7 @@ public class IoaCalculatorController
 
     File f1 = getFile1();
     File f2 = getFile2();
+    File f3 = getAppendFile();
 
     if (!f1.exists()) {
       file1Field.setStyle( cssRed );
@@ -136,17 +175,31 @@ public class IoaCalculatorController
       file2NotFoundLbl.setVisible( false );
     }
 
+    if (!f3.exists()) {
+      appendField.setStyle( cssRed );
+      appendFileNotFoundLbl.setVisible( true );
+      valid = false;
+    } else {
+      appendField.setStyle( "" );
+      appendFileNotFoundLbl.setVisible( false );
+    }
+
     return valid;
   }
 
   @FXML private void browse1BtnPressed()
   {
-    browseBtnPressed( file1Field );
+    browseBtnPressed( file1Field, "CSV files (*.csv)", "*.csv" );
   }
 
   @FXML private void browse2BtnPressed()
   {
-    browseBtnPressed( file2Field );
+    browseBtnPressed( file2Field, "CSV files (*.csv)", "*.csv" );
+  }
+
+  @FXML private void appendBtnPressed()
+  {
+    browseBtnPressed( appendField, "XLS files (*.xls)", "*.xls" );
   }
 
   @FXML private void generateBtnPressed()
@@ -155,10 +208,16 @@ public class IoaCalculatorController
       return;
     }
 
-    FileChooser fileChooser = new FileChooser();
-    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "XLS files (*.xls)", "*.xls" );
-    fileChooser.getExtensionFilters().add( extFilter );
-    File result = fileChooser.showSaveDialog( EventRecorderUtil.dialogStage.get() );
+    File result;
+    boolean appendToFile = IoaManager.appendSelectedProperty().get();
+    if (appendToFile) {
+      result = getAppendFile();
+    } else {
+      FileChooser fileChooser = new FileChooser();
+      FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "XLS files (*.xls)", "*.xls" );
+      fileChooser.getExtensionFilters().add( extFilter );
+      result = fileChooser.showSaveDialog( EventRecorderUtil.dialogStage.get() );
+    }
 
     if (result == null) {
       return;
@@ -169,6 +228,7 @@ public class IoaCalculatorController
                                        getFile2(),
                                        IoaManager.getSelectedMethod(),
                                        IoaManager.thresholdProperty().get(),
+                                       appendToFile,
                                        result );
       summaryBox.setContent( summary );
     } catch (Exception e) {

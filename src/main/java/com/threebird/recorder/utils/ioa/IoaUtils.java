@@ -79,9 +79,10 @@ public class IoaUtils
 
   private static VBox processTimeBlock( IoaMethod method,
                                         int blockSize,
+                                        boolean appendToFile,
                                         File out,
                                         List< BehaviorLogRow > rows1,
-                                        List< BehaviorLogRow > rows2 ) throws IOException
+                                        List< BehaviorLogRow > rows2 ) throws Exception
   {
     int size = blockSize < 1 ? 1 : blockSize;
 
@@ -91,12 +92,13 @@ public class IoaUtils
         method == IoaMethod.Exact_Agreement
             ? IoaCalculations.exactAgreement( data1, data2 )
             : IoaCalculations.partialAgreement( data1, data2 );
-    WriteIoaIntervals.write( intervals, out );
+    WriteIoaIntervals.write( intervals, appendToFile, out );
     return new IoaTimeBlockSummary( intervals );
   }
 
   private static VBox processTimeWindow( String file1,
                                          String file2,
+                                         boolean appendToFile,
                                          File out,
                                          int threshold,
                                          List< BehaviorLogRow > rows1,
@@ -141,15 +143,16 @@ public class IoaUtils
                               File f2,
                               IoaMethod method,
                               int blockSize,
-                              File out ) throws IOException
+                              boolean appendToFile,
+                              File out ) throws Exception
   {
     List< BehaviorLogRow > rows1 = deserialize( f1 );
     List< BehaviorLogRow > rows2 = deserialize( f2 );
 
     if (method != IoaMethod.Time_Window) {
-      return processTimeBlock( method, blockSize, out, rows1, rows2 );
+      return processTimeBlock( method, blockSize, appendToFile, out, rows1, rows2 );
     } else {
-      return processTimeWindow( f1.getName(), f2.getName(), out, blockSize, rows1, rows2 );
+      return processTimeWindow( f1.getName(), f2.getName(), appendToFile, out, blockSize, rows1, rows2 );
     }
   }
 }
