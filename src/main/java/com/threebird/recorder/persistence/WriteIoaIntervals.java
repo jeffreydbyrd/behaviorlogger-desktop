@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import com.google.common.io.Files;
 import com.threebird.recorder.utils.ioa.IntervalCalculations;
 
 public class WriteIoaIntervals
@@ -24,14 +25,15 @@ public class WriteIoaIntervals
       f.createNewFile();
     }
 
-    FileOutputStream out = new FileOutputStream( f );
-
     Workbook wb;
     if (appendToFile) {
-      wb = WorkbookFactory.create( f );
+      File tmp = File.createTempFile( f.getName(), "" );
+      Files.copy( f, tmp );
+      wb = WorkbookFactory.create( tmp );
     } else {
       wb = new HSSFWorkbook();
     }
+
     Sheet s = wb.createSheet();
 
     Row row;
@@ -82,6 +84,7 @@ public class WriteIoaIntervals
       col++;
     }
 
+    FileOutputStream out = new FileOutputStream( f );
     wb.write( out );
     out.flush();
     wb.close();

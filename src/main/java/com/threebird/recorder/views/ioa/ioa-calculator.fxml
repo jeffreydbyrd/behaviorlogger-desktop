@@ -87,11 +87,12 @@
       </HBox>
       <Label text="IOA Summary:" />
       <ScrollPane fx:id="summaryBox" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+      <Label fx:id="saveStatusLbl" wrapText="true" />
       <Separator prefWidth="200.0" />
       <HBox spacing="10.0">
          <children>
             <Button mnemonicParsing="false" onAction="#onCloseBtnPressed" text="Close" />
-            <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generateBtnPressed" text="Generate IOA File" />
+            <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generateBtnPressed" text="Generate IOA" />
             <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?">

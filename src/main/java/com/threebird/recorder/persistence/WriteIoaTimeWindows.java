@@ -2,7 +2,6 @@ package com.threebird.recorder.persistence;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -10,7 +9,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import com.google.common.io.Files;
 import com.threebird.recorder.utils.ioa.TimeWindowCalculations;
 
 public class WriteIoaTimeWindows
@@ -19,15 +20,22 @@ public class WriteIoaTimeWindows
                             Map< Character, Double > ioaContinuous,
                             String file1,
                             String file2,
-                            File f ) throws IOException
+                            boolean appendToFile,
+                            File f ) throws Exception
   {
     if (!f.exists()) {
       f.createNewFile();
     }
 
-    FileOutputStream out = new FileOutputStream( f );
+    Workbook wb;
+    if (appendToFile) {
+      File tmp = File.createTempFile( f.getName(), "" );
+      Files.copy( f, tmp );
+      wb = WorkbookFactory.create( tmp );
+    } else {
+      wb = new HSSFWorkbook();
+    }
 
-    Workbook wb = new HSSFWorkbook();
     Sheet s = wb.createSheet();
 
     Row row;
@@ -70,6 +78,7 @@ public class WriteIoaTimeWindows
       row.createCell( 1 ).setCellValue( v );
     }
 
+    FileOutputStream out = new FileOutputStream( f );
     wb.write( out );
     out.flush();
     wb.close();

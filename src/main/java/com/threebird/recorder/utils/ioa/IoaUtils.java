@@ -102,7 +102,7 @@ public class IoaUtils
                                          File out,
                                          int threshold,
                                          List< BehaviorLogRow > rows1,
-                                         List< BehaviorLogRow > rows2 ) throws IOException
+                                         List< BehaviorLogRow > rows2 ) throws Exception
   {
     KeyToInterval discrete1 = mapKeysToInterval( Lists.transform( rows1, r -> r.discrete ), 1 );
     KeyToInterval discrete2 = mapKeysToInterval( Lists.transform( rows2, r -> r.discrete ), 1 );
@@ -118,6 +118,7 @@ public class IoaUtils
                                ioaContinuous,
                                file1,
                                file2,
+                               appendToFile,
                                out );
 
     return new IoaTimeWindowSummary( ioaDiscrete, ioaContinuous );

@@ -28,8 +28,6 @@ public class WriteRecordingXls
       details.f.createNewFile();
     }
 
-    FileOutputStream out = new FileOutputStream( details.f );
-
     Workbook wb = new HSSFWorkbook();
     Sheet s = wb.createSheet();
 
@@ -64,8 +62,8 @@ public class WriteRecordingXls
     r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Condition" );
     r.createCell( 1 ).setCellValue( details.condition );
-    
-    r = s.createRow(rownum++);
+
+    r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Location" );
     r.createCell( 1 ).setCellValue( details.location );
 
@@ -110,7 +108,7 @@ public class WriteRecordingXls
 
       double mins = EventRecorderUtil.millisToMinutes( details.totalTimeMillis );
       r.createCell( 3 ).setCellValue( ((double) dbs.size()) / mins );
-      
+
       r = s.createRow( rownum++ );
     }
 
@@ -145,7 +143,7 @@ public class WriteRecordingXls
 
       double percent = sum / details.totalTimeMillis;
       r.createCell( 3 ).setCellValue( percent );
-      
+
       r = s.createRow( rownum++ );
     }
 
@@ -165,6 +163,7 @@ public class WriteRecordingXls
       r.createCell( 2 ).setCellValue( b.description );
     }
 
+    FileOutputStream out = new FileOutputStream( details.f );
     wb.write( out );
     wb.close();
     out.close();

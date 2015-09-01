@@ -41,6 +41,7 @@ public class IoaCalculatorController
   @FXML private Label file2NotFoundLbl;
   @FXML private Label appendFileNotFoundLbl;
   @FXML private ScrollPane summaryBox;
+  @FXML private Label saveStatusLbl;
 
   public static void showIoaCalculator()
   {
@@ -126,7 +127,7 @@ public class IoaCalculatorController
 
   private void browseBtnPressed( TextField fileField,
                                  String filterDescription,
-                                 String filterExtension )
+                                 String... filterExtension )
   {
     File f = getFile( fileField );
     if (!f.exists()) {
@@ -175,7 +176,7 @@ public class IoaCalculatorController
       file2NotFoundLbl.setVisible( false );
     }
 
-    if (!f3.exists()) {
+    if (appendRadio.isSelected() && !f3.exists()) {
       appendField.setStyle( cssRed );
       appendFileNotFoundLbl.setVisible( true );
       valid = false;
@@ -199,7 +200,7 @@ public class IoaCalculatorController
 
   @FXML private void appendBtnPressed()
   {
-    browseBtnPressed( appendField, "XLS files (*.xls)", "*.xls" );
+    browseBtnPressed( appendField, "Excel files (*.xls, *.xlsx)", "*.xls", "*.xlsx" );
   }
 
   @FXML private void generateBtnPressed()
@@ -231,8 +232,15 @@ public class IoaCalculatorController
                                        appendToFile,
                                        result );
       summaryBox.setContent( summary );
+
+      if (appendToFile) {
+        saveStatusLbl.setText( "IOA results appended to: " + result.getAbsolutePath() );
+      } else {
+        saveStatusLbl.setText( "IOA results saved to new file: " + result.getAbsolutePath() );
+      }
     } catch (Exception e) {
       Alerts.error( null, "IOA Calculator encountered a problem.", e );
+      saveStatusLbl.setText( "Your IOA results have not been saved." );
       e.printStackTrace();
     }
   }

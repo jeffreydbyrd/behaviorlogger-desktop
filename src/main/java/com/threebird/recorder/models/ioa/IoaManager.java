@@ -51,6 +51,7 @@ public class IoaManager
     model.file2 = file2Property().get();
     model.method = methodProperty().get();
     model.threshold = thresholdProperty().get();
+    model.appendSelected = appendSelectedProperty().get();
     model.appendFile = appendFileProperty().get();
 
     try {
