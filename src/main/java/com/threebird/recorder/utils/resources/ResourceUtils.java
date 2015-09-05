@@ -60,4 +60,10 @@ public class ResourceUtils
     String path = currentDir + "/resources/manual/manual.html";
     return new File( path );
   }
+
+  public static File getNotesDetails()
+  {
+    String path = resources().getAbsolutePath() + "/notes-details.json";
+    return new File( path );
+  }
 }
