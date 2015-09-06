@@ -2,7 +2,7 @@ package com.threebird.recorder.models.sessions;
 
 import java.io.File;
 
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -16,10 +16,12 @@ public class NotesManager
 {
   private static class GsonBean
   {
-    boolean notesOpen;
+    double xPos;
+    double yPos;
   }
 
-  private static SimpleBooleanProperty notesOpenProperty;
+  private static SimpleDoubleProperty xPosProperty;
+  private static SimpleDoubleProperty yPosProperty;
 
   private static File file = ResourceUtils.getNotesDetails();
   private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> {
@@ -35,7 +37,9 @@ public class NotesManager
   private static void persist()
   {
     GsonBean model = new GsonBean();
-    model.notesOpen = isNotesOpen();
+    model.xPos = xPosProperty().get();
+    model.yPos = yPosProperty().get();
+
     try {
       GsonUtils.save( file, model );
     } catch (Exception e) {
@@ -43,19 +47,23 @@ public class NotesManager
     }
   }
 
-  public static SimpleBooleanProperty notesOpenProperty()
+  public static SimpleDoubleProperty xPosProperty()
   {
-    if (notesOpenProperty == null) {
-      notesOpenProperty = new SimpleBooleanProperty( defaultModel.get().notesOpen );
-      notesOpenProperty.addListener( ( obs, old, newV ) -> persist() );
+    if (xPosProperty == null) {
+      xPosProperty = new SimpleDoubleProperty( defaultModel.get().xPos );
+      xPosProperty.addListener( ( obs, old, newV ) -> persist() );
     }
 
-    return notesOpenProperty;
+    return xPosProperty;
   }
 
-  public static boolean isNotesOpen()
+  public static SimpleDoubleProperty yPosProperty()
   {
-    return notesOpenProperty().get();
-  }
+    if (yPosProperty == null) {
+      yPosProperty = new SimpleDoubleProperty( defaultModel.get().yPos );
+      yPosProperty.addListener( ( obs, old, newV ) -> persist() );
+    }
 
+    return yPosProperty;
+  }
 }

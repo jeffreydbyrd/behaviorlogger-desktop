@@ -29,7 +29,7 @@ public class WriteRecordingXls
     }
 
     Workbook wb = new HSSFWorkbook();
-    Sheet s = wb.createSheet();
+    Sheet s = wb.createSheet( "Summary" );
 
     Row r;
     int rownum = 0;
@@ -147,8 +147,9 @@ public class WriteRecordingXls
       r = s.createRow( rownum++ );
     }
 
-    // __Behavior Log__
-    rownum++; // skip a row
+    // __Behavior Log and Breakdown__
+    s = wb.createSheet( "Breakdown" );
+    rownum = 0;
 
     // Headers:
     r = s.createRow( rownum++ );
@@ -162,6 +163,13 @@ public class WriteRecordingXls
       r.createCell( 1 ).setCellValue( b.timeDisplay() );
       r.createCell( 2 ).setCellValue( b.description );
     }
+
+    // __Notes__
+    s = wb.createSheet( "Session Notes" );
+    rownum = 0;
+
+    r = s.createRow( rownum );
+    r.createCell( 0 ).setCellValue( details.notes );
 
     FileOutputStream out = new FileOutputStream( details.f );
     wb.write( out );

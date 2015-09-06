@@ -38,7 +38,6 @@ import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.ContinuousCounter;
-import com.threebird.recorder.models.sessions.NotesManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -547,8 +546,7 @@ public class RecordingController
   {
     if (notesStage == null) {
       notesStage = new Stage();
-      NotesManager.notesOpenProperty().set( true );
-      NotesController.bindNotesToStage( notesStage );
+      NotesController.bindNotesToStage( notesStage, manager );
     }
 
     if (!notesStage.isShowing()) {
