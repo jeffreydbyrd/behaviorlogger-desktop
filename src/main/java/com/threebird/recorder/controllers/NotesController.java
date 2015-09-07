@@ -12,6 +12,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -19,12 +21,15 @@ import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.PositionManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.utils.Alerts;
+import com.threebird.recorder.utils.EventRecorderUtil;
 
 public class NotesController
 {
   @FXML private TextArea textArea;
   @FXML private Label savedLabel;
   @FXML private Label failedLabel;
+  private Stage stage;
+  private RecordingManager manager;
 
   public static void bindNotesToStage( Stage stage, RecordingManager manager )
   {
@@ -68,11 +73,14 @@ public class NotesController
     };
     EventRecorder.STAGE.getScene().rootProperty().addListener( onViewChange );
 
-    fxmlLoader.< NotesController > getController().init( manager );
+    fxmlLoader.< NotesController > getController().init( stage, manager );
   }
 
-  private void init( RecordingManager manager )
+  private void init( Stage stage, RecordingManager manager )
   {
+    this.stage = stage;
+    this.manager = manager;
+
     textArea.requestFocus();
     textArea.textProperty().addListener( ( obs, old, newV ) -> manager.notes.set( newV ) );
 
@@ -95,5 +103,26 @@ public class NotesController
 
     savedLabel.setText( "Saved notes to " + RecordingManager.getFullFileName() + ".xls" );
     savedLabel.setVisible( false );
+  }
+
+  @FXML private void onKeyPressed( KeyEvent evt )
+  {
+    KeyCode code = evt.getCode();
+
+    // The ESCAPE keyboard shortcut will simply close the notes stage
+    if (code == KeyCode.ESCAPE) {
+      this.stage.close();
+      return;
+    }
+
+    // Ctrl/cmd+T inserts the current session timestamp
+    if (evt.isShortcutDown() && code == KeyCode.T) {
+      int index = textArea.getCaretPosition();
+      int count = manager.count();
+      String timestamp = EventRecorderUtil.millisToTimestamp( count );
+      String msg = String.format( "[%s] ", timestamp );
+      textArea.insertText( index, msg );
+      return;
+    }
   }
 }

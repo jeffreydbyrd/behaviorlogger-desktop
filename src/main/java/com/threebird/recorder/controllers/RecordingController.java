@@ -314,6 +314,11 @@ public class RecordingController
       return true;
     }
 
+    if (KeyCode.N.equals( c ) && evt.isShortcutDown()) {
+      onNotesPress();
+      return true;
+    }
+
     return false;
   }
 
@@ -514,8 +519,6 @@ public class RecordingController
    */
   @FXML private void onKeyPressed( KeyEvent evt )
   {
-    KeyCode code = evt.getCode();
-
     boolean isShortcut = handleShortcut( evt );
     if (isShortcut) {
       return;
@@ -525,6 +528,7 @@ public class RecordingController
       return;
     }
 
+    KeyCode code = evt.getCode();
     MappableChar.getForKeyCode( code ).ifPresent( mc -> {
       Schema schema = SchemasManager.getSelected();
       if (schema.mappings.containsKey( mc )) {
