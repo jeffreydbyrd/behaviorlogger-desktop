@@ -61,9 +61,9 @@ public class ResourceUtils
     return new File( path );
   }
 
-  public static File getNotesDetails()
+  public static File getPositionDetails()
   {
-    String path = resources().getAbsolutePath() + "/notes-details.json";
+    String path = resources().getAbsolutePath() + "/positions.json";
     return new File( path );
   }
 }

@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.text.*?>
 
 
-<TextArea fx:id="textArea" prefHeight="297.0" prefWidth="394.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.NotesController" />
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.NotesController">
+   <children>
+      <TextArea fx:id="textArea" prefHeight="297.0" prefWidth="394.0" VBox.vgrow="ALWAYS" />
+      <StackPane VBox.vgrow="NEVER">
+         <children>
+            <Label fx:id="failedLabel" text="Warning: failed to save most recent notes" textFill="#ff8800" visible="false" />
+            <Label fx:id="savedLabel" text="Data saved to" textFill="#00ab00" />
+         </children>
+      </StackPane>
+   </children>
+   <padding>
+      <Insets bottom="3.0" left="3.0" right="3.0" />
+   </padding>
+</VBox>
