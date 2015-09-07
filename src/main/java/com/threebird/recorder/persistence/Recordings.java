@@ -34,9 +34,10 @@ public class Recordings
     public String observer;
     public String therapist;
     public String condition;
-    public String location; 
+    public String location;
     public Integer sessionNumber;
     public Integer totalTimeMillis;
+    public String notes;
   }
 
   public static enum Writer
@@ -88,7 +89,10 @@ public class Recordings
     }
   }
 
-  private static SaveDetails createSaveDetails( File f, List< Behavior > behaviors, int totalTime )
+  private static SaveDetails createSaveDetails( File f,
+                                                List< Behavior > behaviors,
+                                                int totalTime,
+                                                String notes )
   {
     SaveDetails sd = new SaveDetails();
 
@@ -103,19 +107,24 @@ public class Recordings
     sd.location = SessionManager.getLocation();
     sd.sessionNumber = SessionManager.getSessionNumber();
     sd.totalTimeMillis = totalTime;
+    sd.notes = notes;
+
     return sd;
   }
 
   public static CompletableFuture< Long > saveCsv( File f, List< Behavior > behaviors, int count )
   {
-    SaveDetails saveDetails = createSaveDetails( f, behaviors, count );
+    SaveDetails saveDetails = createSaveDetails( f, behaviors, count, "" );
     Writer.CSV.schedule( saveDetails );
     return saveDetails.fResult;
   }
 
-  public static CompletableFuture< Long > saveXls( File f, List< Behavior > behaviors, int count )
+  public static CompletableFuture< Long > saveXls( File f,
+                                                   List< Behavior > behaviors,
+                                                   int count,
+                                                   String notes )
   {
-    SaveDetails saveDetails = createSaveDetails( f, behaviors, count );
+    SaveDetails saveDetails = createSaveDetails( f, behaviors, count, notes );
     Writer.XLS.schedule( saveDetails );
     return saveDetails.fResult;
   }

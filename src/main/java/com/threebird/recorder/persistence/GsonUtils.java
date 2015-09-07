@@ -16,12 +16,7 @@ import com.google.gson.GsonBuilder;
 public class GsonUtils
 {
   private static Gson gson =
-      new GsonBuilder().setPrettyPrinting()
-                       // .registerTypeAdapter( MappableChar.class,
-                       // MappableChar.gsonSerializer )
-                       // .registerTypeAdapter( MappableChar.class,
-                       // MappableChar.gsonDeserializer )
-                       .create();
+      new GsonBuilder().setPrettyPrinting().create();
 
   public static ExecutorService es = Executors.newSingleThreadExecutor();
 

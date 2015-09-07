@@ -24,6 +24,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import com.google.common.base.Strings;
@@ -69,9 +70,12 @@ public class RecordingController
   @FXML private Label savedLabel;
 
   @FXML private Button playButton;
+  @FXML private Button notesButton;
   @FXML private Button goBackButton;
   @FXML private Button newSessionButton;
   @FXML private Button addNewKeysButton;
+
+  private Stage notesStage;
 
   /**
    * Sets the stage to the Recording view
@@ -271,7 +275,7 @@ public class RecordingController
       manager.timer.pause();
       failedLabel.setVisible( !manager.saveSuccessfulProperty.get() );
       savedLabel.setVisible( manager.saveSuccessfulProperty.get() );
-      
+
       for (Entry< MappableChar, ContinuousBehavior > e : manager.midContinuous.entrySet()) {
         KeyBehaviorMapping kbm = new KeyBehaviorMapping( e.getKey(), e.getValue().description, true );
         logBehavior( kbm );
@@ -307,6 +311,11 @@ public class RecordingController
 
     if (KeyCode.Z.equals( c ) && evt.isShortcutDown()) {
       undo();
+      return true;
+    }
+
+    if (KeyCode.N.equals( c ) && evt.isShortcutDown()) {
+      onNotesPress();
       return true;
     }
 
@@ -510,8 +519,6 @@ public class RecordingController
    */
   @FXML private void onKeyPressed( KeyEvent evt )
   {
-    KeyCode code = evt.getCode();
-
     boolean isShortcut = handleShortcut( evt );
     if (isShortcut) {
       return;
@@ -521,6 +528,7 @@ public class RecordingController
       return;
     }
 
+    KeyCode code = evt.getCode();
     MappableChar.getForKeyCode( code ).ifPresent( mc -> {
       Schema schema = SchemasManager.getSelected();
       if (schema.mappings.containsKey( mc )) {
@@ -536,6 +544,18 @@ public class RecordingController
   @FXML private void onPlayPress( ActionEvent evt )
   {
     manager.togglePlayingProperty();
+  }
+
+  @FXML private void onNotesPress()
+  {
+    if (notesStage == null) {
+      notesStage = new Stage();
+      NotesController.bindNotesToStage( notesStage, manager );
+    }
+
+    if (!notesStage.isShowing()) {
+      notesStage.show();
+    }
   }
 
   /**

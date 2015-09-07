@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -35,6 +37,7 @@ public class RecordingManager
   public final SimpleBooleanProperty saveSuccessfulProperty = new SimpleBooleanProperty( true );
   public final SimpleBooleanProperty playingProperty = new SimpleBooleanProperty( false );
   public final SimpleIntegerProperty counter = new SimpleIntegerProperty( 0 );
+  public final SimpleStringProperty notes = new SimpleStringProperty();
   public final ObservableList< DiscreteBehavior > discrete = FXCollections.observableArrayList();
   public final ObservableList< ContinuousBehavior > continuous = FXCollections.observableArrayList();
   public final ObservableMap< MappableChar, KeyBehaviorMapping > unknowns = FXCollections.observableHashMap();
@@ -62,17 +65,22 @@ public class RecordingManager
         persist();
       }
     } );
+
+    notes.addListener( ( obs, old, newV ) -> {
+      persist();
+    } );
   }
 
   private void persist()
   {
     String fullFileName = getFullFileName();
     List< Behavior > behaviors = allBehaviors();
+    String _notes = Optional.ofNullable( notes.get() ).orElse( "" );
 
     CompletableFuture< Long > fCsv =
         Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors, count() );
     CompletableFuture< Long > fXls =
-        Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count() );
+        Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count(), _notes );
 
     CompletableFuture.allOf( fCsv, fXls ).handleAsync( ( v, t ) -> {
       Platform.runLater( ( ) -> saveSuccessfulProperty.set( t == null ) );

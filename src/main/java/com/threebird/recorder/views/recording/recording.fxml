@@ -170,6 +170,7 @@
             <HBox layoutY="71.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
                   <Button fx:id="playButton" focusTraversable="false" layoutX="10.0" layoutY="433.0" mnemonicParsing="false" onAction="#onPlayPress" text="Start Session" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+                  <Button fx:id="notesButton" focusTraversable="false" mnemonicParsing="false" onAction="#onNotesPress" text="Add Notes" />
                   <Button fx:id="goBackButton" focusTraversable="false" layoutX="20.0" layoutY="443.0" mnemonicParsing="false" onAction="#onGoBackPress" text="Go Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" />
                   <Button fx:id="newSessionButton" focusTraversable="false" layoutX="230.0" layoutY="453.0" mnemonicParsing="false" onAction="#onNewSessionPress" text="Start New Session" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="125.0" />
                   <Button fx:id="addNewKeysButton" focusTraversable="false" mnemonicParsing="false" onAction="#onAddNewKeysPress" text="Edit Unknown Behaviors" visible="false" />
