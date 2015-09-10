@@ -3,8 +3,8 @@
 
 <h1>Introduction</h1>
 
-<p>The 3Bird Behavior Logger is a data collection tool for applied behavior analysis. 
-The interface was designed for researchers conducting treatment while one or more 
+<p>The 3Bird Behavior Logger is a data collection tool for applied behavior analysis.
+The interface was designed for researchers conducting treatment while one or more
 data-collectors record behaviors.</p>
 
 <hr />
@@ -41,8 +41,8 @@ Drag the icon over the Applications folder.</p>
 <li><strong>Schema List</strong> - A list of current schemas saved on your computer.</li>
 <li><strong>Create</strong> - Opens a new <a href="#edit-schema">Edit Schema</a> menu for creating a new schema.</li>
 <li><strong>Edit</strong> - Opens the selected schema into an <a href="#edit-schema">Edit Schema</a> menu.</li>
-<li><strong>Import</strong> - Allows the user to import a new schema by selecting a ".schema" file.</li>
 <li><strong>Export</strong> - Allows the user to export a schema into a ".schema" file, to be shared with other users.</li>
+<li><strong>Import</strong> - Allows the user to import a new schema by selecting a ".schema" file.</li>
 <li><strong>Preferences</strong> - Opens the <a href="#preferences">Preferences</a> menu for setting default schema values.</li>
 <li><strong>IOA Calculator</strong> - Opens the <a href="#ioa-calculator">IOA Calculator</a>.</li>
 <li><strong>Key-Behavior Mappings</strong> - A summary of the selected schema's key-behavior mappings.</li>
@@ -114,7 +114,8 @@ Drag the icon over the Applications folder.</p>
 <ol>
 <li><strong>Behavior Summary</strong> - Each row keeps track of the count/duration of each behavior.</li>
 <li><strong>Timer</strong> - The timer will increase while recording. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the <a href="#edit-schema">edit-schema menu</a>.</li>
-<li><strong>Start Session/Continue</strong> - When pressed, it will start the session timer. You can also press <code>spacebar</code> as a shortcut. You can only record behaviors while the timer is active.</li>
+<li><strong>Start Session/Continue</strong> - When pressed, it will start the session timer. You can also press <code>spacebar</code> as a shortcut (see <a href="keyboard-shortcuts">Keyboard Shortcuts</a>). You can only record behaviors while the timer is active.</li>
+<li><strong>Add Notes</strong> - Displays a window where you can attach notes to the session.</li>
 <li><strong>Start New Session</strong> - Starts a new session with the same schema and same session-detais. The session #, however, will increment.</li>
 <li><strong>Edit Uknown Behaviors</strong> - Becomes visible if you have logged an unknown behavior. When clicked, it opens a new menu for assigning values to unknown behaviors.</li>
 </ol>
@@ -140,12 +141,18 @@ Drag the icon over the Applications folder.</p>
 
 <h2>Undoing Behaviors</h2>
 
-<p>You can undo behaviors using <code>ctrl</code>+<code>z</code> for Windows and <code>cmd</code>+<code>z</code> for Macs. There is no "redo" funcationality yet.</p>
+<p>You can undo behaviors using <code>ctrl</code>+<code>z</code> for Windows and <code>cmd</code>+<code>z</code> for Macs (see <a href="#keyboard-shortcuts">Keyboard Shortcuts</a> for a full list of shortcuts). There is no "redo" funcationality yet.</p>
 
 <p><em>Undo</em> works differently depending on what the latest behavior was. <br />
 For discrete behaviors it simply removes the behavior and decrements the counter by 1. <br />
 For a continuous behavior that has been <em>started</em> but hasn't <em>ended</em>, it reverts the counter back to its position before it started. <br />
 For a continuous behavior that has ended, it decrements the counter by whatever the duration was.</p>
+
+<p><a name="notes"></a></p>
+
+<h2>Adding Notes to a Session</h2>
+
+<p>At any time, you can attach notes to a session. Open the Notes menu by pressing the "Add Notes" button or by using the keyboard shortcut <code>ctrl</code>+<code>n</code> for Windows or <code>cmd</code>+<code>n</code> for Mac (see <a href="#keyboard-shortcuts">Keyboard Shortcuts</a>). You can type anything into the text area and your notes will be automatically saved in the <a href="#session-output">session output</a> along with the session's data stream.</p>
 
 <p><a name="session-output"></a></p>
 
@@ -159,6 +166,27 @@ For a continuous behavior that has ended, it decrements the counter by whatever 
 </ul>
 
 <p>The names of these files can be configured in <a href="#preferences">Preferences</a>.</p>
+
+<p><a name="keyboard-shortcuts"></a></p>
+
+<h2>Keyboard Shortcuts</h2>
+
+<h3>Recording Menu</h3>
+
+<ul>
+<li><code>spacebar</code> - start/stop the session</li>
+<li><code>ctrl</code>+<code>z</code> / <code>cmd</code>+<code>z</code> - undo</li>
+<li><em>any unmapped key</em> - log an unknown discrete behavior</li>
+<li><code>shift</code>+<em>any unmapped key</em> - log an unknown continuous behavior</li>
+</ul>
+
+<h3>Session Notes</h3>
+
+<ul>
+<li><code>ctrl</code>+<code>n</code> / <code>cmd</code>+<code>n</code> - open Notes</li>
+<li><code>esc</code> - close Notes (if open)</li>
+<li><code>ctrl</code>+<code>t</code> / <code>cmd</code>+<code>t</code> - insert current session timestamp</li>
+</ul>
 
 <hr />
 
@@ -176,7 +204,13 @@ For a continuous behavior that has ended, it decrements the counter by whatever 
 <li><em>Block Size</em> - The number of seconds designated to each partition in partial/exact agreement.</li>
 <li><em>Threshold</em> - The number of seconds of leniency in time-window analysis.</li>
 </ul></li>
-<li><strong>Generate IOA File</strong> - Calculates IOA between File 1 and File 2 and prompts the user to save the result in an Excel file.</li>
+<li><strong>Save Options</strong>
+<ul>
+<li><em>New File</em> - Will prompt you to specify a file name and location and will create a new file (or overwrite an existing one)</li>
+<li><em>Append to Existing</em> - Requires you to enter a path to an existing Excel file. This option will append a new Excel Sheet to the existing workbook.</li>
+</ul></li>
+<li><strong>IOA Summary</strong> - After generating IOA results, this box displays the summary of IOA for each key.</li>
+<li><strong>Generate IOA File</strong> - Calculates IOA between File 1 and File 2 and, if <em>New File</em> is selected, prompts the user to save the result in an Excel file.</li>
 </ol>
 
 <hr />
@@ -185,7 +219,7 @@ For a continuous behavior that has ended, it decrements the counter by whatever 
 
 <h1>IOA Methods</h1>
 
-<p>Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from two papers (see <a href="#references">References</a>). </p>
+<p>Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from two papers (see <a href="#references">References</a>).</p>
 
 <p><a name="exact-aggrement"></a></p>
 

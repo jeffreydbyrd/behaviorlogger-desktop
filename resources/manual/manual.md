@@ -2,8 +2,8 @@
 <a name="introduction"></a>
 # Introduction
 
-The 3Bird Behavior Logger is a data collection tool for applied behavior analysis. 
-The interface was designed for researchers conducting treatment while one or more 
+The 3Bird Behavior Logger is a data collection tool for applied behavior analysis.
+The interface was designed for researchers conducting treatment while one or more
 data-collectors record behaviors.
 
 ---
@@ -35,8 +35,8 @@ Drag the icon over the Applications folder.
 1. **Schema List** - A list of current schemas saved on your computer.
 2. **Create** - Opens a new [Edit Schema](#edit-schema) menu for creating a new schema.
 3. **Edit** - Opens the selected schema into an [Edit Schema](#edit-schema) menu.
-4. **Import** - Allows the user to import a new schema by selecting a ".schema" file.
-5. **Export** - Allows the user to export a schema into a ".schema" file, to be shared with other users.
+4. **Export** - Allows the user to export a schema into a ".schema" file, to be shared with other users.
+5. **Import** - Allows the user to import a new schema by selecting a ".schema" file.
 6. **Preferences** - Opens the [Preferences](#preferences) menu for setting default schema values.
 7. **IOA Calculator** - Opens the [IOA Calculator](#ioa-calculator).
 8. **Key-Behavior Mappings** - A summary of the selected schema's key-behavior mappings.
@@ -93,9 +93,10 @@ Drag the icon over the Applications folder.
 
 1. **Behavior Summary** - Each row keeps track of the count/duration of each behavior.
 2. **Timer** - The timer will increase while recording. If the current schema has a set duration and the timer reaches it, it performs the checked actions as specified in the [edit-schema menu](#edit-schema).
-3. **Start Session/Continue** - When pressed, it will start the session timer. You can also press `spacebar` as a shortcut. You can only record behaviors while the timer is active.
-4. **Start New Session** - Starts a new session with the same schema and same session-detais. The session #, however, will increment.
-5. **Edit Uknown Behaviors** - Becomes visible if you have logged an unknown behavior. When clicked, it opens a new menu for assigning values to unknown behaviors.
+3. **Start Session/Continue** - When pressed, it will start the session timer. You can also press `spacebar` as a shortcut (see [Keyboard Shortcuts](keyboard-shortcuts)). You can only record behaviors while the timer is active.
+4. **Add Notes** - Displays a window where you can attach notes to the session.
+5. **Start New Session** - Starts a new session with the same schema and same session-detais. The session #, however, will increment.
+6. **Edit Uknown Behaviors** - Becomes visible if you have logged an unknown behavior. When clicked, it opens a new menu for assigning values to unknown behaviors.
 
 <a name="logging-behaviors"></a>
 ## Logging Behaviors
@@ -114,12 +115,17 @@ When you pause the session, you can click *Edit Unknown Behaviors* to assign val
 <a name="undoing-behaviors"></a>
 ## Undoing Behaviors
 
-You can undo behaviors using `ctrl`+`z` for Windows and `cmd`+`z` for Macs. There is no "redo" funcationality yet.
+You can undo behaviors using `ctrl`+`z` for Windows and `cmd`+`z` for Macs (see [Keyboard Shortcuts](#keyboard-shortcuts) for a full list of shortcuts). There is no "redo" funcationality yet.
 
 *Undo* works differently depending on what the latest behavior was.  
 For discrete behaviors it simply removes the behavior and decrements the counter by 1.  
 For a continuous behavior that has been *started* but hasn't *ended*, it reverts the counter back to its position before it started.  
 For a continuous behavior that has ended, it decrements the counter by whatever the duration was.
+
+<a name="notes"></a>
+## Adding Notes to a Session
+
+At any time, you can attach notes to a session. Open the Notes menu by pressing the "Add Notes" button or by using the keyboard shortcut `ctrl`+`n` for Windows or `cmd`+`n` for Mac (see [Keyboard Shortcuts](#keyboard-shortcuts)). You can type anything into the text area and your notes will be automatically saved in the [session output](#session-output) along with the session's data stream.
 
 <a name="session-output"></a>
 ## Session Output
@@ -130,6 +136,20 @@ The app saves logged behaviors in the directory specified by the Schema (see [Ed
 - a *CSV* file meant for the [IOA Calculator](#ioa-calculator)
 
 The names of these files can be configured in [Preferences](#preferences).
+
+<a name="keyboard-shortcuts"></a>
+## Keyboard Shortcuts
+
+### Recording Menu
+- `spacebar` - start/stop the session
+- `ctrl`+`z` / `cmd`+`z` - undo
+- *any unmapped key* - log an unknown discrete behavior
+- `shift`+*any unmapped key* - log an unknown continuous behavior
+
+### Session Notes
+- `ctrl`+`n` / `cmd`+`n` - open Notes
+- `esc` - close Notes (if open)
+- `ctrl`+`t` / `cmd`+`t` - insert current session timestamp
 
 ---
 
@@ -143,14 +163,18 @@ The names of these files can be configured in [Preferences](#preferences).
 3. **Block Size/Threshold**
   - *Block Size* - The number of seconds designated to each partition in partial/exact agreement.
   - *Threshold* - The number of seconds of leniency in time-window analysis.
-4. **Generate IOA File** - Calculates IOA between File 1 and File 2 and prompts the user to save the result in an Excel file.
+4. **Save Options**
+  - *New File* - Will prompt you to specify a file name and location and will create a new file (or overwrite an existing one)
+  - *Append to Existing* - Requires you to enter a path to an existing Excel file. This option will append a new Excel Sheet to the existing workbook.
+5. **IOA Summary** - After generating IOA results, this box displays the summary of IOA for each key.
+6. **Generate IOA File** - Calculates IOA between File 1 and File 2 and, if *New File* is selected, prompts the user to save the result in an Excel file.
 
 ---
 
 <a name="ioa-methods"></a>
 # IOA Methods
 
-Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from two papers (see [References](#references)). 
+Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from two papers (see [References](#references)).
 
 <a name="exact-aggrement"></a>
 ## Exact Agreement
