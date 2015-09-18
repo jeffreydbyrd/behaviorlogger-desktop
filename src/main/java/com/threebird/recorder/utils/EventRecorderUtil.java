@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -230,10 +231,15 @@ public class EventRecorderUtil
   public static void openManual( String section )
   {
     String filepath = ResourceUtils.getManual().getAbsolutePath();
+    if (System.getProperty( "os.name" ).contains( "Win" )) {
+      filepath = "/" + filepath.replaceAll( "\\\\", "/" );
+    }
+    
     try {
       URI uri = new URI( "file", null, filepath, section );
       Desktop.getDesktop().browse( uri );
     } catch (Exception e) {
+      e.printStackTrace();
       Alerts.error( "Error Loading Resource", "There was a problem loading a resource: " + filepath, e );
     }
   }
