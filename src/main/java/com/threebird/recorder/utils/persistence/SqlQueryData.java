@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.google.common.collect.Lists;
+
 /**
  * Defines the information needed to create a PreparedStatement and how to
  * handle its ResultSet. Use the
@@ -29,6 +31,22 @@ public interface SqlQueryData
    * @throws Exception
    */
   void handle( ResultSet rs ) throws Exception;
+
+  /**
+   * Equivalent to calling create(sql, Lists.newArrayList(), callback);
+   */
+  public static SqlQueryData create( final String sql )
+  {
+    return create( sql, Lists.newArrayList(), SqlCallback.NOOP );
+  }
+
+  /**
+   * Equivalent to calling create(sql, Lists.newArrayList(), callback);
+   */
+  public static SqlQueryData create( final String sql, final SqlCallback callback )
+  {
+    return create( sql, Lists.newArrayList(), callback );
+  }
 
   /**
    * @return a new instance of {@link SqlQueryData} where getSql() returns

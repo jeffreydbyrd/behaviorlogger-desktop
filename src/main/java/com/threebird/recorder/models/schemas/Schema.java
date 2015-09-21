@@ -13,7 +13,7 @@ import com.threebird.recorder.models.MappableChar;
  */
 public class Schema
 {
-  public Integer id;
+  public String uuid;
   public String client;
   public String project;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
@@ -42,7 +42,7 @@ public class Schema
   {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
     return result;
   }
 
@@ -55,16 +55,16 @@ public class Schema
     if (getClass() != obj.getClass())
       return false;
     Schema other = (Schema) obj;
-    if (id == null) {
-      if (other.id != null)
+    if (uuid == null) {
+      if (other.uuid != null)
         return false;
-    } else if (!id.equals( other.id ))
+    } else if (!uuid.equals( other.uuid ))
       return false;
     return true;
   }
 
   @Override public String toString()
   {
-    return "Schema [id=" + id + ", client=" + client + ", project=" + project + "]";
+    return "Schema [id=" + uuid + ", client=" + client + ", project=" + project + "]";
   }
 }

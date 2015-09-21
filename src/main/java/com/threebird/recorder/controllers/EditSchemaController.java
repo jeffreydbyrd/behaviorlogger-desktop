@@ -341,12 +341,13 @@ public class EditSchemaController
     model.pause = pauseCheckBox.isSelected();
     model.sound = beepCheckBox.isSelected();
 
-    if (model.id == null) {
+    if (model.uuid == null) {
       SchemasManager.schemas().add( model );
     } else {
       try {
-        Schemas.save( model );
+        Schemas.update( model );
       } catch (Exception e) {
+        e.printStackTrace();
         Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
       }
     }

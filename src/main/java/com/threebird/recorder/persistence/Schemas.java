@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -21,27 +22,12 @@ import com.threebird.recorder.utils.persistence.SqliteDao;
 public class Schemas
 {
   /**
-   * If schema.id is null, creates a new schema in the database. Otherwise, it
-   * updates the row that matches schema.id
-   * 
-   * @throws Exception
-   */
-  public static void save( Schema schema ) throws Exception
-  {
-    if (schema.id == null) {
-      create( schema );
-    } else {
-      update( schema );
-    }
-  }
-
-  /**
    * Updates all the values of the given schema in the 'schemas' and
    * 'key_behaviors' table
    * 
    * @throws Exception
    */
-  private static void update( Schema schema ) throws Exception
+  public static void update( Schema schema ) throws Exception
   {
     String sql =
         "UPDATE schemas SET "
@@ -52,7 +38,7 @@ public class Schemas
             + "pause_on_end = ?,"
             + "color_on_end = ?,"
             + "sound_on_end = ? "
-            + "WHERE id = ?";
+            + "WHERE uuid = ?";
 
     List< Object > params = Lists.newArrayList( schema.client,
                                                 schema.project,
@@ -61,21 +47,21 @@ public class Schemas
                                                 schema.pause,
                                                 schema.color,
                                                 schema.sound,
-                                                schema.id );
+                                                schema.uuid );
 
     SqlCallback handle = ( ResultSet rs ) -> {
-      Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.id );
+      Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.uuid );
       Set< KeyBehaviorMapping > newSet = Sets.newHashSet( schema.mappings.values() );
 
       SetView< KeyBehaviorMapping > delete = Sets.difference( oldSet, newSet );
       SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
 
       for (KeyBehaviorMapping mapping : delete) {
-        KeyBehaviors.delete( schema.id, mapping.key );
+        KeyBehaviors.delete( schema.uuid, mapping.key );
       }
 
       for (KeyBehaviorMapping mapping : create) {
-        KeyBehaviors.create( schema.id, mapping );
+        KeyBehaviors.create( schema.uuid, mapping );
       }
     };
 
@@ -88,13 +74,18 @@ public class Schemas
    * 
    * @throws Exception
    */
-  private static void create( Schema schema ) throws Exception
+  public static void create( Schema schema ) throws Exception
   {
+    if (schema.uuid == null) {
+      schema.uuid = UUID.randomUUID().toString();
+    }
+
     String sql =
         "INSERT INTO schemas "
-            + "(client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
-            + "VALUES (?,?,?,?,?,?,?)";
-    List< Object > params = Lists.newArrayList( schema.client,
+            + "(uuid, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
+            + "VALUES (?,?,?,?,?,?,?,?)";
+    List< Object > params = Lists.newArrayList( schema.uuid,
+                                                schema.client,
                                                 schema.project,
                                                 schema.duration,
                                                 schema.sessionDirectory.getPath(),
@@ -102,12 +93,8 @@ public class Schemas
                                                 schema.color,
                                                 schema.sound );
 
-    SqlCallback callback = rs -> {
-      schema.id = rs.getInt( 1 );
-      KeyBehaviors.addAll( schema.id, schema.mappings.values() );
-    };
-
-    SqliteDao.update( SqlQueryData.create( sql, params, callback ) );
+    SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
+    KeyBehaviors.addAll( schema.uuid, schema.mappings.values() );
   }
 
   /**
@@ -118,11 +105,11 @@ public class Schemas
   public static void delete( Schema schema ) throws Exception
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      KeyBehaviors.delete( schema.id, kbm.key );
+      KeyBehaviors.delete( schema.uuid, kbm.key );
     }
 
-    String sql = "DELETE FROM schemas WHERE id = ?";
-    List< Object > params = Lists.newArrayList( schema.id );
+    String sql = "DELETE FROM schemas WHERE uuid = ?";
+    List< Object > params = Lists.newArrayList( schema.uuid );
     SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
   }
 
@@ -139,7 +126,7 @@ public class Schemas
     SqlCallback callback = rs -> {
       while (rs.next()) {
         Schema s = new Schema();
-        s.id = rs.getInt( "id" );
+        s.uuid = rs.getString( "uuid" );
         s.client = rs.getString( "client" );
         s.project = rs.getString( "project" );
         s.sessionDirectory = new File( rs.getString( "session_directory" ) );
@@ -148,14 +135,14 @@ public class Schemas
         s.pause = rs.getBoolean( "pause_on_end" );
         s.sound = rs.getBoolean( "sound_on_end" );
 
-        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.id );
+        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
         s.mappings = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
 
         result.add( s );
       }
     };
 
-    SqliteDao.query( SqlQueryData.create( sql, Lists.newArrayList(), callback ) );
+    SqliteDao.query( SqlQueryData.create( sql, callback ) );
 
     return result;
   }

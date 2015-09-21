@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.models.PositionManager;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.InitSQLiteTables;
 import com.threebird.recorder.persistence.Recordings;
 
 /**
@@ -33,6 +34,8 @@ public class EventRecorder extends Application
 
   @Override public void start( Stage primaryStage ) throws Exception
   {
+    InitSQLiteTables.init();
+
     STAGE = primaryStage;
 
     STAGE.setX( PositionManager.mainXProperty().doubleValue() );
