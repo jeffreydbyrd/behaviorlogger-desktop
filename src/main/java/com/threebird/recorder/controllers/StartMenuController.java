@@ -250,8 +250,6 @@ public class StartMenuController
       return;
     }
 
-    System.out.println( schema );
-
     try {
       if (SchemasManager.schemas().contains( schema )) {
         SchemasManager.schemas().remove( schema );
