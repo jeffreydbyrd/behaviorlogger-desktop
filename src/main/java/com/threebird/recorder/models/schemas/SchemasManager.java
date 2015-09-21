@@ -39,7 +39,7 @@ public class SchemasManager
     while (c.next()) {
       for (Schema schema : c.getAddedSubList()) {
         try {
-          Schemas.save( schema );
+          Schemas.create( schema );
         } catch (Exception e) {
           Alerts.error( "Failed to add Schema", "There was a problem while trying to save a schema.", e );
           e.printStackTrace();

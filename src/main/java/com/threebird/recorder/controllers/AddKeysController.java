@@ -130,7 +130,7 @@ public class AddKeysController
     } );
 
     try {
-      Schemas.save( schema );
+      Schemas.update( schema );
     } catch (Exception e) {
       Alerts.error( "Failed to Save Schema",
                     "The application encountered a problem while trying to save the schema.",

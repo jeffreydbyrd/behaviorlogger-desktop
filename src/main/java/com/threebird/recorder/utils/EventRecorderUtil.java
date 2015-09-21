@@ -4,7 +4,6 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;

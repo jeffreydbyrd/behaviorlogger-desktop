@@ -1,13 +1,9 @@
 package com.threebird.recorder.utils.persistence;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
-import com.google.common.collect.Lists;
 import com.threebird.recorder.utils.resources.ResourceUtils;
 
 /**
@@ -17,42 +13,16 @@ import com.threebird.recorder.utils.resources.ResourceUtils;
  */
 public class SqliteDao
 {
+  @FunctionalInterface
+  public interface SqlTask
+  {
+    public void run() throws Exception;
+  }
+
   private static String DATABASE =
       String.format( "jdbc:sqlite:%s", ResourceUtils.getDb().getAbsolutePath() );
 
   private static Connection conn;
-
-  private interface ExecuteStatement
-  {
-    ResultSet execute( PreparedStatement stmt ) throws SQLException;
-  }
-
-  private static void initTables() throws Exception
-  {
-    String createSchemas =
-        "CREATE TABLE IF NOT EXISTS schemas (" +
-            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "client TEXT NOT NULL," +
-            "project TEXT NOT NULL," +
-            "session_directory TEXT NOT NULL," +
-            "duration INTEGER NOT NULL," +
-            "pause_on_end INTEGER NOT NULL," +
-            "color_on_end INTEGER NOT NULL," +
-            "sound_on_end INTEGER NOT NULL );";
-
-    String createBehaviors =
-        "CREATE TABLE IF NOT EXISTS key_behaviors (" +
-            "schema_id INTEGER NOT NULL," +
-            "key CHAR(1) NOT NULL," +
-            "behavior TEXT NOT NULL," +
-            "is_continuous INTEGER NOT NULL," +
-
-            "FOREIGN KEY (schema_id) REFERENCES schemas(id)," +
-            "PRIMARY KEY(schema_id, key) );";
-
-    update( SqlQueryData.create( createSchemas, Lists.newArrayList(), rs -> {} ) );
-    update( SqlQueryData.create( createBehaviors, Lists.newArrayList(), rs -> {} ) );
-  }
 
   /**
    * @return false if a Connection is already open, or true if a new Connection
@@ -63,18 +33,9 @@ public class SqliteDao
   private static boolean open() throws Exception
   {
     if (conn == null) {
-      File dbFile = ResourceUtils.getDb();
-      boolean created = dbFile.createNewFile();
-
       DriverManager.registerDriver( new org.sqlite.JDBC() );
       conn = DriverManager.getConnection( DATABASE );
-
-      if (created) {
-        initTables();
-      }
-    }
-
-    if (!conn.isClosed()) {
+    } else if (!conn.isClosed()) {
       return false;
     }
 
@@ -83,13 +44,11 @@ public class SqliteDao
   }
 
   /**
-   * Makes a PreparedStatement, executes it with 'executeStatement', and handles
-   * the returned ResultSet
+   * Makes a PreparedStatement, executes it, and handles the returned ResultSet
    * 
    * @throws Exception
    */
-  private static void execute( SqlQueryData sqd,
-                               ExecuteStatement executeStatement ) throws Exception
+  private static void execute( SqlQueryData sqd, boolean isDML ) throws Exception
   {
     boolean topLevel = open();
     PreparedStatement stmt = conn.prepareStatement( sqd.getSql() );
@@ -99,7 +58,12 @@ public class SqliteDao
       stmt.setObject( i++, o );
     }
 
-    sqd.handle( executeStatement.execute( stmt ) );
+    if (isDML) {
+      stmt.executeUpdate();
+      sqd.handle( stmt.getGeneratedKeys() );
+    } else {
+      sqd.handle( stmt.executeQuery() );
+    }
     stmt.close();
 
     if (topLevel) {
@@ -110,28 +74,42 @@ public class SqliteDao
   /**
    * Executes a SQL Query (ie. a select statment) according to the data provided
    * by a {@link SqlQueryData}. The ResultSet given to the 'handle' function
-   * consists of each column specified in the query
+   * consists of each column specified in the query. Any calls to
+   * {@link SqliteDao#query(SqlQueryData)} or
+   * {@link SqliteDao#update(SqlQueryData)} within
+   * {@link SqlQueryData#handle(java.sql.ResultSet)} will occur within the same
+   * transaction.
    * 
    * @throws Exception
    */
-  public static void query( final SqlQueryData sqc ) throws Exception
+  synchronized public static void query( final SqlQueryData sqc ) throws Exception
   {
-    execute( sqc, stmt -> stmt.executeQuery() );
+    execute( sqc, false );
   }
 
   /**
    * Executes a DML statment (insert, update, delete) with the data provided by
    * a {@link SqlQueryData}. The ResultSet given to the 'handle' function
-   * consists of the statement's generated keys.
+   * consists of the statement's generated keys. Any calls to
+   * {@link SqliteDao#query(SqlQueryData)} or
+   * {@link SqliteDao#update(SqlQueryData)} within
+   * {@link SqlQueryData#handle(java.sql.ResultSet)} will occur within the same
+   * transaction.
    * 
    * @throws Exception
    */
-  public static void update( final SqlQueryData sqc ) throws Exception
+  synchronized public static void update( final SqlQueryData sqc ) throws Exception
   {
-    execute( sqc, stmt -> {
-      stmt.executeUpdate();
-      return stmt.getGeneratedKeys();
-    } );
+    execute( sqc, true );
   }
 
+  /**
+   * Same as calling SqliteDao.update( SqlQueryData.create( sql ) );
+   * 
+   * @throws Exception
+   */
+  synchronized public static void update( final String sql ) throws Exception
+  {
+    update( SqlQueryData.create( sql ) );
+  }
 }

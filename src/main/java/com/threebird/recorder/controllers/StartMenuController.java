@@ -249,10 +249,18 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-    schema.id = null;
 
-    SchemasManager.schemas().add( schema );
-    schemaTable.getSelectionModel().select( schema );
+    try {
+      if (SchemasManager.schemas().contains( schema )) {
+        SchemasManager.schemas().remove( schema );
+      }
+
+      SchemasManager.schemas().add( schema );
+      schemaTable.getSelectionModel().select( schema );
+    } catch (Exception e) {
+      e.printStackTrace();
+      Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
+    }
   }
 
   @FXML private void onExportBtnPressed()
