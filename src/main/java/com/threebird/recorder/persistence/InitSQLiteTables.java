@@ -1,6 +1,8 @@
 package com.threebird.recorder.persistence;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -105,8 +107,7 @@ public class InitSQLiteTables
             + "is_continuous INTEGER NOT NULL,"
             + "FOREIGN KEY (schema_uuid) REFERENCES schemas(uuid),"
             + "UNIQUE(schema_uuid, key),"
-            + "UNIQUE(schema_uuid, name) );"; // this last constraint needs to
-                                              // be checked
+            + "UNIQUE(schema_uuid, name) );";
 
     SqliteDao.update( SqlQueryData.create( createNewSchemas ) );
     SqliteDao.update( SqlQueryData.create( createNewBehaviors ) );
@@ -123,13 +124,22 @@ public class InitSQLiteTables
                                              rs.getInt( "duration" ), rs.getInt( "pause_on_end" ),
                                              rs.getInt( "color_on_end" ), rs.getInt( "sound_on_end" ) );
         SqliteDao.update( SqlQueryData.create( insertSchema ) );
+
         int originalId = rs.getInt( 1 );
         String getBehaviors = String.format( getBehaviorsFmt, originalId );
+
         SqliteDao.query( SqlQueryData.create( getBehaviors, rs2 -> {
+          Set< String > seenNames = new HashSet< String >();
           while (rs2.next()) {
-            String insertBehavior = String.format( insertBehaviorFmt, uuid, rs2.getString( "key" ),
-                                                   rs2.getString( "behavior" ), rs2.getInt( "is_continuous" ) );
-            SqliteDao.update( SqlQueryData.create( insertBehavior ) );
+            String name = rs2.getString( "behavior" );
+            boolean isUniq = seenNames.add( name );
+
+            if (isUniq) {
+              String insertBehavior =
+                  String.format( insertBehaviorFmt, uuid, rs2.getString( "key" ),
+                                 name, rs2.getInt( "is_continuous" ) );
+              SqliteDao.update( SqlQueryData.create( insertBehavior ) );
+            }
           }
         } ) );
       }
