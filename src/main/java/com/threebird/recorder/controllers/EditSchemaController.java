@@ -1,14 +1,17 @@
 package com.threebird.recorder.controllers;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -20,8 +23,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.preferences.FilenameComponent;
@@ -189,6 +195,8 @@ public class EditSchemaController
     }
   }
 
+  private static String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+
   /**
    * Runs through the scene and makes sure the nameField and projectField are
    * filled in (if required), and that there are no duplicate keys. Any
@@ -202,18 +210,17 @@ public class EditSchemaController
     boolean isValid = true;
     errorMsgBox.getChildren().clear();
 
-    String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
-
     // Make some red error messages:
     Text dirMsg = new Text( "- That folder does not exist." );
-    dirMsg.setFill( Color.RED );
-    Text keyMsg = new Text( "- You must have at least one key mapped." );
-    keyMsg.setFill( Color.RED );
-    Text duplicateMsg = new Text( "- Each key must be unique." );
-    duplicateMsg.setFill( Color.RED );
     Text clientProjectMsg = new Text( "- You must fill either Client or Project (or both)." );
-    clientProjectMsg.setFill( Color.RED );
+    Text duplicateKeyMsg = new Text( "- Each key must be unique." );
+    Text duplicateNameMsg = new Text( "- Each name must be unique." );
+    Text emptyKeyMsg = new Text( "- You must have at least one key mapped." );
+    Text emptyNameMsg = new Text( "- You must have at least one event mapped." );
+    Lists.newArrayList( dirMsg, clientProjectMsg, duplicateKeyMsg, duplicateNameMsg, emptyKeyMsg, emptyNameMsg )
+         .forEach( txt -> txt.setFill( Color.RED ) );
 
+    // Verify that all the required fields for the file-name are filled
     ImmutableMap< String, FilenameComponent > displayToComp =
         Maps.uniqueIndex( PreferencesManager.filenameComponents(), c -> c.name );
 
@@ -244,37 +251,14 @@ public class EditSchemaController
       directoryField.setStyle( "" );
     }
 
-    // Collect all the key-fields into an easier collection
-    Map< String, List< TextField >> keyToField =
-        mappingsBox.getChildren().stream()
-                   .map( node -> ((MappingBox) node).keyField )
-                   .filter( textField -> !Strings.isNullOrEmpty( textField.getText() ) )
-                   .collect( Collectors.groupingBy( keyField -> keyField.getText() ) );
-
-    // make sure at least one field was non-empty
-    if (keyToField.isEmpty()) {
-      errorMsgBox.getChildren().add( keyMsg );
-      return false;
-    }
-
-    // check for duplicates
-    boolean foundDups = false;
-    for (Entry< String, List< TextField >> entry : keyToField.entrySet()) {
-      List< TextField > keyFields = entry.getValue();
-
-      if (keyFields.size() > 1) {
-        foundDups = true;
-        keyFields.forEach( field -> field.setStyle( cssRed ) );
-      } else {
-        keyFields.forEach( field -> field.setStyle( "" ) );
-      }
-    }
-
-    if (foundDups) {
+    // Validate behavior mappings
+    boolean keysValid = validateBehaviors( duplicateKeyMsg, emptyKeyMsg, box -> box.keyField );
+    boolean namesValid = validateBehaviors( duplicateNameMsg, emptyNameMsg, box -> box.behaviorField );
+    if (!keysValid || !namesValid) {
       isValid = false;
-      errorMsgBox.getChildren().add( duplicateMsg );
     }
 
+    // Make sure either the Client or Project field are filled
     if (Strings.isNullOrEmpty( clientField.getText() ) && Strings.isNullOrEmpty( projectField.getText() )) {
       isValid = false;
       errorMsgBox.getChildren().add( clientProjectMsg );
@@ -286,6 +270,51 @@ public class EditSchemaController
     }
 
     return isValid;
+  }
+
+  /**
+   * Ensures that all of the given fields returned by 'toTextField' don't
+   * contain duplicates and at least one is non-empty
+   */
+  private boolean validateBehaviors( Text dupeMsg,
+                                     Text emptyMsg,
+                                     Function< MappingBox, TextField > toTextField )
+  {
+    // Collect all the fields into an easier collection
+    Multimap< String, TextField > textToField = HashMultimap.create();
+    for (Node n : mappingsBox.getChildren()) {
+      TextField field = toTextField.apply( (MappingBox) n );
+      String txt = field.getText().trim();
+      if (!Strings.isNullOrEmpty( txt )) {
+        textToField.put( txt, field );
+      }
+    }
+
+    // Make sure not all empty
+    if (textToField.isEmpty()) {
+      errorMsgBox.getChildren().add( emptyMsg );
+      return false;
+    }
+
+    // Check for duplicates
+    boolean foundDups = false;
+    for (String txt : textToField.keys()) {
+      Collection< TextField > keyFields = textToField.get( txt );
+
+      if (keyFields.size() > 1) {
+        foundDups = true;
+        keyFields.forEach( field -> field.setStyle( cssRed ) );
+      } else {
+        keyFields.forEach( field -> field.setStyle( "" ) );
+      }
+    }
+
+    if (foundDups) {
+      errorMsgBox.getChildren().add( dupeMsg );
+      return false;
+    }
+
+    return true;
   }
 
   /**

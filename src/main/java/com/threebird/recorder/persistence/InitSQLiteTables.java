@@ -105,7 +105,8 @@ public class InitSQLiteTables
             + "is_continuous INTEGER NOT NULL,"
             + "FOREIGN KEY (schema_uuid) REFERENCES schemas(uuid),"
             + "UNIQUE(schema_uuid, key),"
-            + "UNIQUE(schema_uuid, name) );";
+            + "UNIQUE(schema_uuid, name) );"; // this last constraint needs to
+                                              // be checked
 
     SqliteDao.update( SqlQueryData.create( createNewSchemas ) );
     SqliteDao.update( SqlQueryData.create( createNewBehaviors ) );
