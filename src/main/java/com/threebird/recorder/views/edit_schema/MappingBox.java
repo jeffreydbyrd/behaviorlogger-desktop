@@ -54,6 +54,11 @@ public class MappingBox extends HBox
     boolean isContinuous = checkbox.isSelected();
     String key = Strings.nullToEmpty( keyField.getText() ).trim();
     String behavior = behaviorField.getText().trim();
-    return Strings.isNullOrEmpty( key ) ? null : new KeyBehaviorMapping( key, behavior, isContinuous );
+
+    if (Strings.isNullOrEmpty( key ) || Strings.isNullOrEmpty( behavior )) {
+      return null;
+    }
+
+    return new KeyBehaviorMapping( key, behavior, isContinuous );
   }
 }

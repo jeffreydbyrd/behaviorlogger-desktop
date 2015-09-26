@@ -1,17 +1,15 @@
 package com.threebird.recorder.controllers;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -21,13 +19,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Pair;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.preferences.FilenameComponent;
@@ -216,8 +213,7 @@ public class EditSchemaController
     Text duplicateKeyMsg = new Text( "- Each key must be unique." );
     Text duplicateNameMsg = new Text( "- Each name must be unique." );
     Text emptyKeyMsg = new Text( "- You must have at least one key mapped." );
-    Text emptyNameMsg = new Text( "- You must have at least one event mapped." );
-    Lists.newArrayList( dirMsg, clientProjectMsg, duplicateKeyMsg, duplicateNameMsg, emptyKeyMsg, emptyNameMsg )
+    Lists.newArrayList( dirMsg, clientProjectMsg, duplicateKeyMsg, duplicateNameMsg, emptyKeyMsg )
          .forEach( txt -> txt.setFill( Color.RED ) );
 
     // Verify that all the required fields for the file-name are filled
@@ -252,9 +248,7 @@ public class EditSchemaController
     }
 
     // Validate behavior mappings
-    boolean keysValid = validateBehaviors( duplicateKeyMsg, emptyKeyMsg, box -> box.keyField );
-    boolean namesValid = validateBehaviors( duplicateNameMsg, emptyNameMsg, box -> box.behaviorField );
-    if (!keysValid || !namesValid) {
+    if (!validateBehaviors()) {
       isValid = false;
     }
 
@@ -273,48 +267,56 @@ public class EditSchemaController
   }
 
   /**
-   * Ensures that all of the given fields returned by 'toTextField' don't
-   * contain duplicates and at least one is non-empty
+   * Validates the fields in the the behavior mapping box:
+   * 
+   * no duplicate keys, no duplicate names
    */
-  private boolean validateBehaviors( Text dupeMsg,
-                                     Text emptyMsg,
-                                     Function< MappingBox, TextField > toTextField )
+  private boolean validateBehaviors()
   {
-    // Collect all the fields into an easier collection
-    Multimap< String, TextField > textToField = HashMultimap.create();
-    for (Node n : mappingsBox.getChildren()) {
-      TextField field = toTextField.apply( (MappingBox) n );
-      String txt = field.getText().trim();
-      if (!Strings.isNullOrEmpty( txt )) {
-        textToField.put( txt, field );
+    AtomicBoolean valid = new AtomicBoolean( true );
+
+    Text duplicateKeyMsg = new Text( "- Each key must be unique." );
+    Text duplicateNameMsg = new Text( "- Each name must be unique." );
+    duplicateKeyMsg.setFill( Color.RED );
+    duplicateNameMsg.setFill( Color.RED );
+
+    // Collect all the fields into a list that we can analyze better
+    List< Pair< KeyBehaviorMapping, MappingBox >> behaviors =
+        mappingsBox.getChildren().stream()
+                   .map( node -> (MappingBox) node )
+                   .map( box -> new Pair< KeyBehaviorMapping, MappingBox >( box.translate(), box ) )
+                   .filter( pair -> pair.getKey() != null )
+                   .collect( Collectors.toList() );
+
+    // Check for duplicate keys
+    Map< MappableChar, List< Pair< KeyBehaviorMapping, MappingBox >>> byKeys =
+        behaviors.stream().collect( Collectors.groupingBy( pair -> pair.getKey().key ) );
+    byKeys.forEach( ( key, list ) -> {
+      if (list.size() > 1) {
+        errorMsgBox.getChildren().add( duplicateKeyMsg );
+        valid.set( false );
       }
-    }
+      String style = list.size() > 1 ? cssRed : "";
+      list.stream()
+          .map( pair -> pair.getValue().keyField )
+          .forEach( field -> field.setStyle( style ) );
+    } );
 
-    // Make sure not all empty
-    if (textToField.isEmpty()) {
-      errorMsgBox.getChildren().add( emptyMsg );
-      return false;
-    }
-
-    // Check for duplicates
-    boolean foundDups = false;
-    for (String txt : textToField.keys()) {
-      Collection< TextField > keyFields = textToField.get( txt );
-
-      if (keyFields.size() > 1) {
-        foundDups = true;
-        keyFields.forEach( field -> field.setStyle( cssRed ) );
-      } else {
-        keyFields.forEach( field -> field.setStyle( "" ) );
+    // Check for duplicate names
+    Map< String, List< Pair< KeyBehaviorMapping, MappingBox >>> byName =
+        behaviors.stream().collect( Collectors.groupingBy( pair -> pair.getKey().behavior ) );
+    byName.forEach( ( key, list ) -> {
+      if (list.size() > 1) {
+        errorMsgBox.getChildren().add( duplicateNameMsg );
+        valid.set( false );
       }
-    }
+      String style = list.size() > 1 ? cssRed : "";
+      list.stream()
+          .map( pair -> pair.getValue().behaviorField )
+          .forEach( field -> field.setStyle( style ) );
+    } );
 
-    if (foundDups) {
-      errorMsgBox.getChildren().add( dupeMsg );
-      return false;
-    }
-
-    return true;
+    return valid.get();
   }
 
   /**
