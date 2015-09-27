@@ -13,7 +13,7 @@ public abstract class Behavior
 
   public final int startTime;
   public final MappableChar key;
-  public final String description;
+  public final String name;
 
   /**
    * @param key
@@ -24,7 +24,7 @@ public abstract class Behavior
   Behavior( MappableChar key, String description, int startTime )
   {
     this.key = key;
-    this.description = description;
+    this.name = description;
     this.startTime = startTime;
   }
 

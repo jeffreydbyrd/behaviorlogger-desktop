@@ -123,7 +123,7 @@ public class RecordingController
       sessionDetailsBox.getChildren().add( new Label( session ) );
     }
 
-    savedLabel.setText( "Saved data to " + RecordingManager.getFullFileName() + "(.csv/.xls)" );
+    savedLabel.setText( "Saved data to " + RecordingManager.getFullFileName() + "(.raw/.xls)" );
     savedLabel.setVisible( false );
 
     initializeTimer();
@@ -172,8 +172,7 @@ public class RecordingController
   }
 
   /**
-   * Populates 'discreteBox' and the 'continuousBox' with the selected Schema's
-   * mappings
+   * Populates 'discreteBox' and the 'continuousBox' with the selected Schema's mappings
    */
   private void initializeBehaviorCountBoxes()
   {
@@ -239,8 +238,7 @@ public class RecordingController
   }
 
   /**
-   * Every millisecond, update the counter. When the counter reaches the
-   * duration, try to signal the user
+   * Every millisecond, update the counter. When the counter reaches the duration, try to signal the user
    */
   private void onTick( int millis )
   {
@@ -277,7 +275,7 @@ public class RecordingController
       savedLabel.setVisible( manager.saveSuccessfulProperty.get() );
 
       for (Entry< MappableChar, ContinuousBehavior > e : manager.midContinuous.entrySet()) {
-        KeyBehaviorMapping kbm = new KeyBehaviorMapping( e.getKey(), e.getValue().description, true );
+        KeyBehaviorMapping kbm = new KeyBehaviorMapping( e.getKey(), e.getValue().name, true );
         logBehavior( kbm );
       }
     }
@@ -297,8 +295,7 @@ public class RecordingController
   }
 
   /**
-   * If the event is executing a shortcut, then execute the shortcut and return
-   * true, else return false.
+   * If the event is executing a shortcut, then execute the shortcut and return true, else return false.
    */
   private boolean handleShortcut( KeyEvent evt )
   {
@@ -323,8 +320,7 @@ public class RecordingController
   }
 
   /**
-   * Returns the latest, actively running, ContinuousBehavior or null if there
-   * are none running
+   * Returns the latest, actively running, ContinuousBehavior or null if there are none running
    */
   private ContinuousBehavior getLatestRunningContinuous()
   {
@@ -341,8 +337,7 @@ public class RecordingController
   }
 
   /**
-   * Removes the latest logged behavior from either the Discrete or Continuous
-   * list (whichever is latest)
+   * Removes the latest logged behavior from either the Discrete or Continuous list (whichever is latest)
    */
   private void undo()
   {
@@ -481,9 +476,8 @@ public class RecordingController
   }
 
   /**
-   * Converts the KeyBehaviorMapping to a ContinuousBehavior and registers it
-   * with the manager. If the behavior hasn't been initialized, it gets cached
-   * in manager.midContinuous. If it *has* been initialized, it gets moved into
+   * Converts the KeyBehaviorMapping to a ContinuousBehavior and registers it with the manager. If the behavior hasn't
+   * been initialized, it gets cached in manager.midContinuous. If it *has* been initialized, it gets moved into
    * manager.continuous.
    */
   private void logContinuous( KeyBehaviorMapping mapping )
@@ -491,7 +485,7 @@ public class RecordingController
     if (manager.midContinuous.containsKey( mapping.key )) {
       ContinuousBehavior cb = manager.midContinuous.get( mapping.key );
       int duration = manager.count() - cb.startTime;
-      manager.log( new ContinuousBehavior( cb.key, cb.description, cb.startTime, duration ) );
+      manager.log( new ContinuousBehavior( cb.key, cb.name, cb.startTime, duration ) );
       manager.midContinuous.remove( mapping.key );
       manager.continuousCounts.get( mapping.key ).timer.pause();
     } else {
@@ -514,8 +508,7 @@ public class RecordingController
   }
 
   /**
-   * Attached to the root pane, onKeyPressed should fire when the user types a
-   * key, no matter what is selected
+   * Attached to the root pane, onKeyPressed should fire when the user types a key, no matter what is selected
    */
   @FXML private void onKeyPressed( KeyEvent evt )
   {
@@ -559,8 +552,8 @@ public class RecordingController
   }
 
   /**
-   * If unknown behaviors exist, prompt the user to edit them. If user declines,
-   * run 'toScene'. If user accepts, go to add-keys view
+   * If unknown behaviors exist, prompt the user to edit them. If user declines, run 'toScene'. If user accepts, go to
+   * add-keys view
    * 
    * @param toScene
    *          - a void function that should change scenes

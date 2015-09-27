@@ -190,12 +190,12 @@ public class IoaCalculatorController
 
   @FXML private void browse1BtnPressed()
   {
-    browseBtnPressed( file1Field, "CSV files (*.csv)", "*.csv" );
+    browseBtnPressed( file1Field, "Raw data files (*.raw)", "*.raw" );
   }
 
   @FXML private void browse2BtnPressed()
   {
-    browseBtnPressed( file2Field, "CSV files (*.csv)", "*.csv" );
+    browseBtnPressed( file2Field, "Raw data files (*.raw)", "*.raw" );
   }
 
   @FXML private void appendBtnPressed()

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -49,8 +50,12 @@ public class RecordingManager
   public final ObservableMap< MappableChar, ContinuousCounter > continuousCounts =
       FXCollections.observableHashMap();
 
+  private final String uuid;
+
   public RecordingManager()
   {
+    uuid = UUID.randomUUID().toString();
+
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
     KeyFrame kf = new KeyFrame( Duration.millis( 1 ), evt -> {
@@ -78,9 +83,9 @@ public class RecordingManager
     String _notes = Optional.ofNullable( notes.get() ).orElse( "" );
 
     CompletableFuture< Long > fCsv =
-        Recordings.saveCsv( new File( fullFileName + ".csv" ), behaviors, count() );
+        Recordings.saveJson( new File( fullFileName + ".raw" ), uuid, behaviors, count(), _notes );
     CompletableFuture< Long > fXls =
-        Recordings.saveXls( new File( fullFileName + ".xls" ), behaviors, count(), _notes );
+        Recordings.saveXls( new File( fullFileName + ".xls" ), uuid, behaviors, count(), _notes );
 
     CompletableFuture.allOf( fCsv, fXls ).handleAsync( ( v, t ) -> {
       Platform.runLater( ( ) -> saveSuccessfulProperty.set( t == null ) );

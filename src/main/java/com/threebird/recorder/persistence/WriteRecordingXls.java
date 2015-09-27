@@ -41,12 +41,12 @@ public class WriteRecordingXls
     // Client
     r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Client" );
-    r.createCell( 1 ).setCellValue( details.client );
+    r.createCell( 1 ).setCellValue( details.schema.client );
 
     // Project
     r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Project" );
-    r.createCell( 1 ).setCellValue( details.project );
+    r.createCell( 1 ).setCellValue( details.schema.project );
 
     // Observer
     r = s.createRow( rownum++ );
@@ -103,7 +103,7 @@ public class WriteRecordingXls
       List< DiscreteBehavior > dbs = e.getValue();
 
       r.createCell( 0 ).setCellValue( ch.c + "" );
-      r.createCell( 1 ).setCellValue( dbs.get( 0 ).description );
+      r.createCell( 1 ).setCellValue( dbs.get( 0 ).name );
       r.createCell( 2 ).setCellValue( dbs.size() );
 
       double mins = EventRecorderUtil.millisToMinutes( details.totalTimeMillis );
@@ -133,7 +133,7 @@ public class WriteRecordingXls
       List< ContinuousBehavior > cbs = e.getValue();
 
       r.createCell( 0 ).setCellValue( ch.c + "" );
-      r.createCell( 1 ).setCellValue( cbs.get( 0 ).description );
+      r.createCell( 1 ).setCellValue( cbs.get( 0 ).name );
 
       double sum = 0.0;
       for (ContinuousBehavior cb : cbs) {
@@ -161,7 +161,7 @@ public class WriteRecordingXls
       r = s.createRow( rownum++ );
       r.createCell( 0 ).setCellValue( b.key.c + "" );
       r.createCell( 1 ).setCellValue( b.timeDisplay() );
-      r.createCell( 2 ).setCellValue( b.description );
+      r.createCell( 2 ).setCellValue( b.name );
     }
 
     // __Notes__

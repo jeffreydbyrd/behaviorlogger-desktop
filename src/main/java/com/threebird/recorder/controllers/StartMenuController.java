@@ -183,7 +183,7 @@ public class StartMenuController
       return;
     }
 
-    String text = String.format( "%s (.csv/.xls)", RecordingManager.getFileName() );
+    String text = String.format( "%s (.raw/.xls)", RecordingManager.getFileName() );
     filenameLbl.setText( text );
 
     boolean isConflicting = dataFilenameHasConflict();
@@ -194,8 +194,8 @@ public class StartMenuController
   private boolean dataFilenameHasConflict()
   {
     String fullFileName = RecordingManager.getFullFileName();
-    File fCsv = new File( fullFileName + ".csv" );
-    File fXls = new File( fullFileName + ".xlsx" );
+    File fCsv = new File( fullFileName + ".raw" );
+    File fXls = new File( fullFileName + ".xls" );
 
     boolean isConflicting = fCsv.exists() || fXls.exists();
     return isConflicting;

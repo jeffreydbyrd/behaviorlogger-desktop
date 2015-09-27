@@ -8,17 +8,16 @@ import com.threebird.recorder.models.PositionManager;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.InitSQLiteTables;
 import com.threebird.recorder.persistence.Recordings;
+import com.threebird.recorder.persistence.Recordings.Writer;
 
 /**
- * This is considered the main entry point by extending {@link Application}. The
- * one method we must override is start(Stage stage), which we invoke by calling
- * the launch(...) method.
+ * This is considered the main entry point by extending {@link Application}. The one method we must override is
+ * start(Stage stage), which we invoke by calling the launch(...) method.
  */
 public class EventRecorder extends Application
 {
   /**
-   * A static variable for the Stage so that it's easily accessible later when
-   * we want to switch scenes
+   * A static variable for the Stage so that it's easily accessible later when we want to switch scenes
    */
   public static Stage STAGE;
 
@@ -28,8 +27,9 @@ public class EventRecorder extends Application
 
     // Cleanup background threads
     GsonUtils.es.shutdown();
-    Recordings.Writer.CSV.shutdown();
-    Recordings.Writer.XLS.shutdown();
+    for (Writer writer : Recordings.Writer.values()) {
+      writer.shutdown();
+    }
   }
 
   @Override public void start( Stage primaryStage ) throws Exception
