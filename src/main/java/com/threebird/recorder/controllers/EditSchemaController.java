@@ -273,7 +273,8 @@ public class EditSchemaController
    */
   private boolean validateBehaviors()
   {
-    AtomicBoolean valid = new AtomicBoolean( true );
+    AtomicBoolean keysValid = new AtomicBoolean( true );
+    AtomicBoolean namesValid = new AtomicBoolean( true );
 
     Text duplicateKeyMsg = new Text( "- Each key must be unique." );
     Text duplicateNameMsg = new Text( "- Each name must be unique." );
@@ -293,8 +294,7 @@ public class EditSchemaController
         behaviors.stream().collect( Collectors.groupingBy( pair -> pair.getKey().key ) );
     byKeys.forEach( ( key, list ) -> {
       if (list.size() > 1) {
-        errorMsgBox.getChildren().add( duplicateKeyMsg );
-        valid.set( false );
+        keysValid.set( false );
       }
       String style = list.size() > 1 ? cssRed : "";
       list.stream()
@@ -307,8 +307,7 @@ public class EditSchemaController
         behaviors.stream().collect( Collectors.groupingBy( pair -> pair.getKey().behavior ) );
     byName.forEach( ( key, list ) -> {
       if (list.size() > 1) {
-        errorMsgBox.getChildren().add( duplicateNameMsg );
-        valid.set( false );
+        namesValid.set( false );
       }
       String style = list.size() > 1 ? cssRed : "";
       list.stream()
@@ -316,7 +315,15 @@ public class EditSchemaController
           .forEach( field -> field.setStyle( style ) );
     } );
 
-    return valid.get();
+    if (!keysValid.get()) {
+      errorMsgBox.getChildren().add( duplicateKeyMsg );
+    }
+
+    if (!namesValid.get()) {
+      errorMsgBox.getChildren().add( duplicateNameMsg );
+    }
+
+    return keysValid.get() && namesValid.get();
   }
 
   /**

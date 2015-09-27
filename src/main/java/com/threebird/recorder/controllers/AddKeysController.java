@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
@@ -16,7 +17,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.MappableChar;
@@ -41,6 +45,7 @@ public class AddKeysController
   private Runnable onSave;
 
   @FXML private VBox mappingsBox;
+  @FXML private VBox errMsgBox;
   private RecordingManager manager;
 
   public static void showAddKeysView( RecordingManager manager, Runnable onSave )
@@ -123,6 +128,10 @@ public class AddKeysController
   {
     Schema schema = SchemasManager.getSelected();
 
+    if (!validate()) {
+      return;
+    }
+
     // Modify the Schema and save it
     behaviorFields.forEach( ( field, kbm ) -> {
       String behavior = field.getText().trim();
@@ -197,5 +206,50 @@ public class AddKeysController
 
     manager.unknowns.clear();
     EventRecorderUtil.dialogStage.get().close();
+  }
+
+  private boolean validate()
+  {
+    errMsgBox.getChildren().clear();
+
+    String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+    Text emptyMsg = new Text( "Selected items should have a value." );
+    emptyMsg.setFill( Color.RED );
+    Text dupMsg = new Text( "Each name must be unique." );
+    dupMsg.setFill( Color.RED );
+
+    AtomicBoolean nonEmptyValid = new AtomicBoolean( true );
+    AtomicBoolean noDuplicatesValid = new AtomicBoolean( true );
+
+    behaviorFields.forEach( ( field, kbm ) -> {
+      String name = field.getText().trim();
+      if (Strings.isNullOrEmpty( name )) {
+        nonEmptyValid.set( false );
+        field.setStyle( cssRed );
+      } else {
+        field.setStyle( "" );
+      }
+    } );
+
+    Map< String, List< TextField >> byName =
+        behaviorFields.keySet().stream().collect( Collectors.groupingBy( field -> field.getText().trim() ) );
+
+    byName.forEach( ( name, fields ) -> {
+      if (fields.size() > 1) {
+        noDuplicatesValid.set( false );
+      }
+      String style = fields.size() > 1 ? cssRed : "";
+      fields.forEach( field -> field.setStyle( style ) );
+    } );
+
+    if (!nonEmptyValid.get()) {
+      errMsgBox.getChildren().add( emptyMsg );
+    }
+
+    if (!noDuplicatesValid.get()) {
+      errMsgBox.getChildren().add( dupMsg );
+    }
+
+    return nonEmptyValid.get() && noDuplicatesValid.get();
   }
 }
