@@ -240,7 +240,7 @@ public class IoaCalculatorController
       }
     } catch (Exception e) {
       Alerts.error( null, "IOA Calculator encountered a problem.", e );
-      saveStatusLbl.setText( "Your IOA results have not been saved." );
+      saveStatusLbl.setText( "Your IOA results may not have been saved." );
       e.printStackTrace();
     }
   }

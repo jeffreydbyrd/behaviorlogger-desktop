@@ -13,10 +13,9 @@ import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.persistence.Recordings.SaveDetails;
 
-public class WriteRecordingJson
+public class RecordingRawJson
 {
-  @SuppressWarnings("unused")
-  private static class BehaviorBean
+  public static class BehaviorBean
   {
     Character key;
     String name;
@@ -30,8 +29,7 @@ public class WriteRecordingJson
     }
   }
 
-  @SuppressWarnings("unused")
-  private static class SchemaBean
+  public static class SchemaBean
   {
     public String uuid;
     public String client;
@@ -44,8 +42,7 @@ public class WriteRecordingJson
     public Boolean sound;
   }
 
-  @SuppressWarnings("unused")
-  private static class SessionBean
+  public static class SessionBean
   {
     String uuid;
     SchemaBean schema;
@@ -54,11 +51,12 @@ public class WriteRecordingJson
     String condition;
     String location;
     Integer sessionNumber;
-    Integer totalTimeMillis;
+    public Integer totalTimeMillis;
     String notes;
 
-    // maps behavior name to times (in seconds) it occurred
-    HashMap< Character, ArrayList< Integer >> times;
+    // maps behavior key to times (in seconds) it occurred
+    public HashMap< Character, ArrayList< Integer >> discretes;
+    public HashMap< Character, ArrayList< Integer >> continuous;
   }
 
   public static void write( SaveDetails details ) throws Exception
@@ -70,7 +68,7 @@ public class WriteRecordingJson
 
     SessionBean bean = new SessionBean();
     bean.schema = new SchemaBean();
-    bean.times = Maps.newHashMap();
+    bean.discretes = Maps.newHashMap();
 
     bean.uuid = details.uuid;
 
@@ -85,23 +83,26 @@ public class WriteRecordingJson
     bean.notes = details.notes;
 
     for (Behavior b : details.behaviors) {
-      Character c = new Character( b.key.c );
-      
-      if (!bean.times.containsKey( c )) {
-        bean.times.put( c, Lists.newArrayList() );
-      }
+      char c = b.key.c;
 
       if (b.isContinuous()) {
+        if (!bean.continuous.containsKey( c )) {
+          bean.continuous.put( c, Lists.newArrayList() );
+        }
+
         Integer start = b.startTime / 1000; // start-time in seconds
         Integer end = start + (((ContinuousBehavior) b).getDuration() / 1000); // end-time in seconds
 
         for (int i = start; i <= end; i++) {
-          if (!bean.times.get( c ).contains( i )) { // make sure there are no overlaps
-            bean.times.get( c ).add( i );
+          if (!bean.continuous.get( c ).contains( i )) { // make sure there are no overlaps
+            bean.continuous.get( c ).add( i );
           }
         }
       } else {
-        bean.times.get( c ).add( b.startTime / 1000 );
+        if (!bean.discretes.containsKey( c )) {
+          bean.discretes.put( c, Lists.newArrayList() );
+        }
+        bean.discretes.get( c ).add( b.startTime / 1000 );
       }
     }
 

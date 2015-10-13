@@ -21,13 +21,33 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.io.Files;
+import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
 import com.threebird.recorder.persistence.WriteIoaTimeWindows;
+import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
 import com.threebird.recorder.views.ioa.IoaTimeBlockSummary;
 import com.threebird.recorder.views.ioa.IoaTimeWindowSummary;
 
 public class IoaUtils
 {
+  private static KeyToInterval partition( HashMap< Character, ArrayList< Integer >> stream,
+                                          int totalTimeMilles,
+                                          int size )
+  {
+    HashMap< Character, Multiset< Integer >> charToIntervals = Maps.newHashMap();
+
+    stream.forEach( ( c, ints ) -> {
+      HashMultiset< Integer > times = HashMultiset.create();
+      charToIntervals.put( c, times );
+      ints.forEach( t -> {
+        times.add( t / size );
+      } );
+    } );
+
+    int numIntervals = (int) Math.ceil( (totalTimeMilles / 1000.0) / size );
+    return new KeyToInterval( charToIntervals, numIntervals );
+  }
+
   /**
    * @param timeTokeys
    *          - a list of rows, representing each second of the session in order
@@ -81,13 +101,19 @@ public class IoaUtils
                                         int blockSize,
                                         boolean appendToFile,
                                         File out,
-                                        List< BehaviorLogRow > rows1,
-                                        List< BehaviorLogRow > rows2 ) throws Exception
+                                        SessionBean stream1,
+                                        SessionBean stream2 ) throws Exception
   {
     int size = blockSize < 1 ? 1 : blockSize;
 
-    KeyToInterval data1 = mapRowsToInterval( rows1, size );
-    KeyToInterval data2 = mapRowsToInterval( rows2, size );
+    HashMap< Character, ArrayList< Integer >> map1 = Maps.newHashMap( stream1.discretes );
+    HashMap< Character, ArrayList< Integer >> map2 = Maps.newHashMap( stream2.discretes );
+    map1.putAll( stream1.continuous );
+    map2.putAll( stream2.continuous );
+
+    KeyToInterval data1 = partition( map1, stream1.totalTimeMillis, size );
+    KeyToInterval data2 = partition( map2, stream2.totalTimeMillis, size );
+
     Map< Character, IntervalCalculations > intervals =
         method == IoaMethod.Exact_Agreement
             ? IoaCalculations.exactAgreement( data1, data2 )
@@ -101,13 +127,13 @@ public class IoaUtils
                                          boolean appendToFile,
                                          File out,
                                          int threshold,
-                                         List< BehaviorLogRow > rows1,
-                                         List< BehaviorLogRow > rows2 ) throws Exception
+                                         SessionBean stream1,
+                                         SessionBean stream2 ) throws Exception
   {
-    KeyToInterval discrete1 = mapKeysToInterval( Lists.transform( rows1, r -> r.discrete ), 1 );
-    KeyToInterval discrete2 = mapKeysToInterval( Lists.transform( rows2, r -> r.discrete ), 1 );
-    KeyToInterval continuous1 = mapKeysToInterval( Lists.transform( rows1, r -> r.continuous ), 1 );
-    KeyToInterval continuous2 = mapKeysToInterval( Lists.transform( rows2, r -> r.continuous ), 1 );
+    KeyToInterval discrete1 = partition( stream1.discretes, stream1.totalTimeMillis, 1 );
+    KeyToInterval discrete2 = partition( stream2.discretes, stream2.totalTimeMillis, 1 );
+    KeyToInterval continuous1 = partition( stream1.continuous, stream1.totalTimeMillis, 1 );
+    KeyToInterval continuous2 = partition( stream2.continuous, stream2.totalTimeMillis, 1 );
 
     Map< Character, TimeWindowCalculations > ioaDiscrete =
         IoaCalculations.windowAgreementDiscrete( discrete1, discrete2, threshold );
@@ -147,13 +173,13 @@ public class IoaUtils
                               boolean appendToFile,
                               File out ) throws Exception
   {
-    List< BehaviorLogRow > rows1 = deserialize( f1 );
-    List< BehaviorLogRow > rows2 = deserialize( f2 );
+    SessionBean stream1 = GsonUtils.get( f1, new SessionBean() );
+    SessionBean stream2 = GsonUtils.get( f2, new SessionBean() );
 
     if (method != IoaMethod.Time_Window) {
-      return processTimeBlock( method, blockSize, appendToFile, out, rows1, rows2 );
+      return processTimeBlock( method, blockSize, appendToFile, out, stream1, stream2 );
     } else {
-      return processTimeWindow( f1.getName(), f2.getName(), appendToFile, out, blockSize, rows1, rows2 );
+      return processTimeWindow( f1.getName(), f2.getName(), appendToFile, out, blockSize, stream1, stream2 );
     }
   }
 }

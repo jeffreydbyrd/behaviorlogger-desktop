@@ -132,7 +132,7 @@ public class Recordings
   private static void writeJson( SaveDetails details )
   {
     try {
-      WriteRecordingJson.write( details );
+      RecordingRawJson.write( details );
       details.fResult.complete( details.f.length() );
     } catch (Exception e) {
       details.fResult.completeExceptionally( e );
