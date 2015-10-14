@@ -1,38 +1,28 @@
 package com.threebird.recorder.utils.ioa;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javafx.scene.layout.VBox;
 
-import org.apache.commons.codec.Charsets;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
-
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
-import com.google.common.io.Files;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
 import com.threebird.recorder.persistence.WriteIoaTimeWindows;
-import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
 import com.threebird.recorder.views.ioa.IoaTimeBlockSummary;
 import com.threebird.recorder.views.ioa.IoaTimeWindowSummary;
 
 public class IoaUtils
 {
-  private static KeyToInterval partition( HashMap< Character, ArrayList< Integer >> stream,
-                                          int totalTimeMilles,
-                                          int size )
+  static KeyToInterval partition( HashMap< Character, ArrayList< Integer >> stream,
+                                  int totalTimeMilles,
+                                  int size )
   {
     HashMap< Character, Multiset< Integer >> charToIntervals = Maps.newHashMap();
 
@@ -46,55 +36,6 @@ public class IoaUtils
 
     int numIntervals = (int) Math.ceil( (totalTimeMilles / 1000.0) / size );
     return new KeyToInterval( charToIntervals, numIntervals );
-  }
-
-  /**
-   * @param timeTokeys
-   *          - a list of rows, representing each second of the session in order
-   * @param blockSize
-   *          - the partition size of intervals
-   * @return a map of keys to the times they occurred in
-   */
-  static KeyToInterval mapKeysToInterval( List< String > timeToKeys, int blockSize )
-  {
-    HashMap< Character, Multiset< Integer >> charToIntervals = Maps.newHashMap();
-
-    for (int s = 0; s < timeToKeys.size(); s++) {
-      String keys = timeToKeys.get( s );
-      for (char ch : keys.toCharArray()) {
-        if (!charToIntervals.containsKey( ch )) {
-          charToIntervals.put( ch, HashMultiset.create() );
-        }
-        charToIntervals.get( ch ).add( s / blockSize );
-      }
-    }
-
-    return new KeyToInterval( charToIntervals, (int) Math.ceil( (double) timeToKeys.size() / blockSize ) );
-  }
-
-  static KeyToInterval mapRowsToInterval( List< BehaviorLogRow > rows, int blockSize )
-  {
-    return mapKeysToInterval( Lists.transform( rows, r -> r.continuous + r.discrete ), blockSize );
-  }
-
-  static List< BehaviorLogRow > deserialize( File f ) throws IOException
-  {
-    try {
-      BufferedReader reader;
-      reader = Files.newReader( f, Charsets.UTF_8 );
-      Iterator< CSVRecord > recsItor = CSVFormat.DEFAULT.parse( reader ).iterator();
-      recsItor.next(); // skip header
-      Iterator< BehaviorLogRow > keyItor =
-          Iterators.transform( recsItor, rec -> new BehaviorLogRow( rec.get( 1 ), rec.get( 2 ) ) );
-      ArrayList< BehaviorLogRow > rows = Lists.newArrayList( keyItor );
-      reader.close();
-      return rows;
-    } catch (RuntimeException e) {
-      String msg =
-          String.format( "A problem occurred while processing %s. Please consult the manual for the file format IOA Calculator uses.",
-                         f.getName() );
-      throw new RuntimeException( msg, e );
-    }
   }
 
   private static VBox processTimeBlock( IoaMethod method,

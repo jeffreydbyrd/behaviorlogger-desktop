@@ -1,0 +1,49 @@
+{
+  "uuid": "bec7236a-7b24-43ba-be1a-46b49b62ab39",
+  "schema": {
+    "uuid": "5640ec5b-1293-4c05-b096-381c80c1c19c",
+    "client": "JB",
+    "project": "Functional Analysis",
+    "behaviors": [
+      {
+        "key": "a",
+        "name": "a",
+        "isContinuous": false
+      },
+      {
+        "key": "b",
+        "name": "b",
+        "isContinuous": false
+      },
+      {
+        "key": "c",
+        "name": "c",
+        "isContinuous": true
+      },
+      {
+        "key": "d",
+        "name": "d",
+        "isContinuous": true
+      }
+    ],
+    "sessionDirectory": "/tmp",
+    "duration": 300,
+    "pause": false,
+    "color": true,
+    "sound": false
+  },
+  "observer": "SP",
+  "therapist": "CSP",
+  "condition": "Escape",
+  "sessionNumber": 0,
+  "totalTimeMillis": 10000,
+  "notes": "",
+  "discretes": {
+    "a": [0,1,1,3,3,7,8],
+    "b": [2, 2, 4, 9]
+  },
+  "continuous": {
+    "c": [3, 4, 5, 6],
+    "d": [5, 6, 7, 8]
+  }
+}

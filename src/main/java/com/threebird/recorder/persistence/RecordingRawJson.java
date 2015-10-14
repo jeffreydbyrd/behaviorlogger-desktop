@@ -69,6 +69,7 @@ public class RecordingRawJson
     SessionBean bean = new SessionBean();
     bean.schema = new SchemaBean();
     bean.discretes = Maps.newHashMap();
+    bean.continuous = Maps.newHashMap();
 
     bean.uuid = details.uuid;
 
@@ -81,7 +82,7 @@ public class RecordingRawJson
     bean.sessionNumber = details.sessionNumber;
     bean.totalTimeMillis = details.totalTimeMillis;
     bean.notes = details.notes;
-
+    
     for (Behavior b : details.behaviors) {
       char c = b.key.c;
 
