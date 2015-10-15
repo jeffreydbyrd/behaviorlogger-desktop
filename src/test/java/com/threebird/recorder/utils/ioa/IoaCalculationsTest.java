@@ -15,7 +15,7 @@ public class IoaCalculationsTest
 {
   static SessionBean input1 = new SessionBean();
   static {
-    input1.totalTimeMillis = 2000;
+    input1.totalTimeMillis = 1700;
     input1.discretes = Maps.newHashMap();
     input1.continuous = Maps.newHashMap();
     input1.discretes.put( 'd', Lists.newArrayList( 0, 1, 1 ) );
@@ -24,7 +24,7 @@ public class IoaCalculationsTest
 
   static SessionBean input2 = new SessionBean();
   static {
-    input2.totalTimeMillis = 3000;
+    input2.totalTimeMillis = 2700;
     input2.discretes = Maps.newHashMap();
     input2.continuous = Maps.newHashMap();
     input2.discretes.put( 'd', Lists.newArrayList( 0, 1 ) );
