@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javafx.animation.Animation;
@@ -21,6 +22,8 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.util.Duration;
+
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.threebird.recorder.models.MappableChar;
@@ -51,6 +54,7 @@ public class RecordingManager
       FXCollections.observableHashMap();
 
   private final String uuid;
+  private DateTime startTime;
 
   public RecordingManager()
   {
@@ -71,9 +75,18 @@ public class RecordingManager
       }
     } );
 
+    AtomicBoolean started = new AtomicBoolean( false );
+    playingProperty.addListener( ( o, oldV, playing ) -> {
+      if (playing && !started.get()) {
+        this.startTime = DateTime.now();
+        started.set( true );
+      }
+    } );
+
     notes.addListener( ( obs, old, newV ) -> {
       persist();
     } );
+
   }
 
   private void persist()
@@ -82,10 +95,12 @@ public class RecordingManager
     List< Behavior > behaviors = allBehaviors();
     String _notes = Optional.ofNullable( notes.get() ).orElse( "" );
 
+    DateTime stopTime = DateTime.now();
+
     CompletableFuture< Long > fCsv =
-        Recordings.saveJson( new File( fullFileName + ".raw" ), uuid, behaviors, count(), _notes );
+        Recordings.saveJson( new File( fullFileName + ".raw" ), uuid, behaviors, count(), _notes, startTime, stopTime );
     CompletableFuture< Long > fXls =
-        Recordings.saveXls( new File( fullFileName + ".xls" ), uuid, behaviors, count(), _notes );
+        Recordings.saveXls( new File( fullFileName + ".xls" ), uuid, behaviors, count(), _notes, startTime, stopTime );
 
     CompletableFuture.allOf( fCsv, fXls ).handleAsync( ( v, t ) -> {
       Platform.runLater( ( ) -> saveSuccessfulProperty.set( t == null ) );
