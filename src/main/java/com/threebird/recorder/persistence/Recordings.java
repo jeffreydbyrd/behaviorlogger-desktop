@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.Preconditions;
 import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.schemas.Schema;
@@ -32,6 +34,8 @@ public class Recordings
     public Integer totalTimeMillis;
     public String notes;
     public String uuid;
+    public DateTime startTime;
+    public DateTime stopTime;
   }
 
   public static enum Writer
@@ -87,7 +91,9 @@ public class Recordings
                                                 String uuid,
                                                 List< Behavior > behaviors,
                                                 int totalTime,
-                                                String notes )
+                                                String notes,
+                                                DateTime startTime,
+                                                DateTime stopTime )
   {
     SaveDetails sd = new SaveDetails();
 
@@ -103,6 +109,8 @@ public class Recordings
     sd.sessionNumber = SessionManager.getSessionNumber();
     sd.totalTimeMillis = totalTime;
     sd.notes = notes;
+    sd.startTime = startTime;
+    sd.stopTime = stopTime;
 
     return sd;
   }
@@ -111,9 +119,11 @@ public class Recordings
                                                     String uuid,
                                                     List< Behavior > behaviors,
                                                     int count,
-                                                    String notes )
+                                                    String notes,
+                                                    DateTime startTime,
+                                                    DateTime stopTime )
   {
-    SaveDetails saveDetails = createSaveDetails( f, uuid, behaviors, count, notes );
+    SaveDetails saveDetails = createSaveDetails( f, uuid, behaviors, count, notes, startTime, stopTime );
     Writer.JSON.schedule( saveDetails );
     return saveDetails.fResult;
   }
@@ -122,9 +132,11 @@ public class Recordings
                                                    String uuid,
                                                    List< Behavior > behaviors,
                                                    int count,
-                                                   String notes )
+                                                   String notes,
+                                                   DateTime startTime,
+                                                   DateTime stopTime )
   {
-    SaveDetails saveDetails = createSaveDetails( f, uuid, behaviors, count, notes );
+    SaveDetails saveDetails = createSaveDetails( f, uuid, behaviors, count, notes, startTime, stopTime );
     Writer.XLS.schedule( saveDetails );
     return saveDetails.fResult;
   }

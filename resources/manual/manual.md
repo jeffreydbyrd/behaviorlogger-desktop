@@ -133,7 +133,7 @@ At any time, you can attach notes to a session. Open the Notes menu by pressing 
 The app saves logged behaviors in the directory specified by the Schema (see [Edit Schema](#edit-schema)). It outputs two files per session:
 
 - a human-readable *Excel* file summarizing the session
-- a *CSV* file meant for the [IOA Calculator](#ioa-calculator)
+- a *RAW* file meant to be read by other programs, such as the [IOA Calculator](#ioa-calculator)
 
 The names of these files can be configured in [Preferences](#preferences).
 
@@ -158,7 +158,7 @@ The names of these files can be configured in [Preferences](#preferences).
 
 ![ioa](ioa.png)
 
-1. **File 1 / File 2** - Paths to the .csv data-files you wish to compare. You should upload the data output from your behavior recording sessions.
+1. **File 1 / File 2** - Paths to the *.raw* data-files you wish to compare. You should upload the data output from your behavior recording sessions.
 2. **Method** - The type of calculation to be done. See [IOA Methods](#ioa-methods).
 3. **Block Size/Threshold**
   - *Block Size* - The number of seconds designated to each partition in partial/exact agreement.

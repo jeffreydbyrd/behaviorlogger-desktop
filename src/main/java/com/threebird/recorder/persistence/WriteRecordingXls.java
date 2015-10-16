@@ -72,11 +72,22 @@ public class WriteRecordingXls
     r.createCell( 0 ).setCellValue( "Session Number" );
     r.createCell( 1 ).setCellValue( details.sessionNumber );
 
+    // Start-Time
+    r = s.createRow(rownum++);
+    r.createCell( 0 ).setCellValue( "Start Time" );
+    r.createCell( 1 ).setCellValue( details.startTime.toString( "yyyy-MM-dd HH:mm:ss" ) );
+    
+    // End-Time
+    r = s.createRow(rownum++);
+    r.createCell( 0 ).setCellValue( "Stop Time" );
+    r.createCell( 1 ).setCellValue( details.stopTime.toString( "yyyy-MM-dd HH:mm:ss" ) );
+    
     // Session Time
     r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Session Time" );
     r.createCell( 1 ).setCellValue( EventRecorderUtil.millisToTimestamp( details.totalTimeMillis ) );
-
+    
+    
     rownum++; // Skip a row
 
     // __Behavior Summary__

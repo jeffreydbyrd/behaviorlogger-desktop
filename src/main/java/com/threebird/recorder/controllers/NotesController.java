@@ -102,7 +102,7 @@ public class NotesController
       timer.play();
     } );
 
-    savedLabel.setText( "Saved notes to " + RecordingManager.getFullFileName() + ".xls" );
+    savedLabel.setText( "Notes saved!" );
     savedLabel.setVisible( false );
   }
 

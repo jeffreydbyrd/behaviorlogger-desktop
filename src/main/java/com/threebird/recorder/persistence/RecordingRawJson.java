@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.joda.time.DateTime;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.MappableChar;
@@ -53,6 +55,8 @@ public class RecordingRawJson
     Integer sessionNumber;
     public Integer totalTimeMillis;
     String notes;
+    DateTime startTime;
+    DateTime stopTime;
 
     // maps behavior key to times (in seconds) it occurred
     public HashMap< Character, ArrayList< Integer >> discretes;
@@ -82,7 +86,9 @@ public class RecordingRawJson
     bean.sessionNumber = details.sessionNumber;
     bean.totalTimeMillis = details.totalTimeMillis;
     bean.notes = details.notes;
-    
+    bean.startTime = details.startTime;
+    bean.stopTime = details.stopTime;
+
     for (Behavior b : details.behaviors) {
       char c = b.key.c;
 
