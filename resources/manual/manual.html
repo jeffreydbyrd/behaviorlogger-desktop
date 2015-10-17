@@ -1,3 +1,32 @@
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#installation">Installation</a>
+<ul>
+<li><a href="#windows">Windows</a></li>
+<li><a href="#mac">Mac</a></li>
+</ul></li>
+<li><a href="#start-menu">Start Menu</a></li>
+<li><a href="#edit-schema">Edit Schema</a></li>
+<li><a href="#preferences">Preferences</a></li>
+<li><a href="#recording">Recording</a>
+<ul>
+<li><a href="#logging-behaviors">Logging Behaviors</a></li>
+<li><a href="#logging-new-behaviors">Logging New Behaviors</a></li>
+<li><a href="#undoing-behaviors">Undoing Behaviors</a></li>
+<li><a href="#adding-notes-to-a-session">Adding Notes to a Session</a></li>
+<li><a href="#session-output">Session Output</a></li>
+<li><a href="#keyboard-shortcuts">Keyboard Shortcuts</a></li>
+</ul></li>
+<li><a href="#ioa-calculator">IOA Calculator</a></li>
+<li><a href="#ioa-methods">IOA Methods</a>
+<ul>
+<li><a href="#exact-agreement">Exact Agreement</a></li>
+<li><a href="#partial-agreement">Partial Agreement</a></li>
+<li><a href="#time-window">Time Window</a></li>
+</ul></li>
+<li><a href="#references">References</a></li>
+</ul>
+
 <p><link rel="stylesheet" href="markdown3.css">
 <a name="introduction"></a></p>
 
@@ -148,7 +177,7 @@ For discrete behaviors it simply removes the behavior and decrements the counter
 For a continuous behavior that has been <em>started</em> but hasn't <em>ended</em>, it reverts the counter back to its position before it started. <br />
 For a continuous behavior that has ended, it decrements the counter by whatever the duration was.</p>
 
-<p><a name="notes"></a></p>
+<p><a name="adding-notes-to-a-session"></a></p>
 
 <h2>Adding Notes to a Session</h2>
 
@@ -221,13 +250,13 @@ For a continuous behavior that has ended, it decrements the counter by whatever 
 
 <p>Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from two papers (see <a href="#references">References</a>).</p>
 
-<p><a name="exact-aggrement"></a></p>
+<p><a name="exact-agreement"></a></p>
 
 <h2>Exact Agreement</h2>
 
 <p><em>Exact agreement</em> outputs a single percent agreement for a behavior between both observers. The data-logs from File 1 and File 2 get partitioned into intervals of a size specified by <code>block-size</code>. For each interval, the observers are considered in agreement if they both recorded the same number of occurrences within the interval. A behavior's percent agreement is equal to the number of agreements divided by the total number of intervals and multiplied by 100%.</p>
 
-<p><a name="partial-aggrement"></a></p>
+<p><a name="partial-agreement"></a></p>
 
 <h2>Partial Agreement</h2>
 

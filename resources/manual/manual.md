@@ -1,9 +1,30 @@
+- [Introduction](#introduction)
+- [Installation](#installation)
+  - [Windows](#windows)
+  - [Mac](#mac)
+- [Start Menu](#start-menu)
+- [Edit Schema](#edit-schema)
+- [Preferences](#preferences)
+- [Recording](#recording)
+  - [Logging Behaviors](#logging-behaviors)
+  - [Logging New Behaviors](#logging-new-behaviors)
+  - [Undoing Behaviors](#undoing-behaviors)
+  - [Adding Notes to a Session](#adding-notes-to-a-session)
+  - [Session Output](#session-output)
+  - [Keyboard Shortcuts](#keyboard-shortcuts)
+- [IOA Calculator](#ioa-calculator)
+- [IOA Methods](#ioa-methods)
+  - [Exact Agreement](#exact-agreement)
+  - [Partial Agreement](#partial-agreement)
+  - [Time Window](#time-window)
+- [References](#references)
+
 <link rel="stylesheet" href="markdown3.css">
 <a name="introduction"></a>
 # Introduction
 
 The 3Bird Behavior Logger is a data collection tool for applied behavior analysis.
-The interface was designed for researchers conducting treatment while one or more
+The interface was designed for practitioners conducting treatment while one or more
 data-collectors record behaviors.
 
 ---
@@ -122,7 +143,7 @@ For discrete behaviors it simply removes the behavior and decrements the counter
 For a continuous behavior that has been *started* but hasn't *ended*, it reverts the counter back to its position before it started.  
 For a continuous behavior that has ended, it decrements the counter by whatever the duration was.
 
-<a name="notes"></a>
+<a name="adding-notes-to-a-session"></a>
 ## Adding Notes to a Session
 
 At any time, you can attach notes to a session. Open the Notes menu by pressing the "Add Notes" button or by using the keyboard shortcut `ctrl`+`n` for Windows or `cmd`+`n` for Mac (see [Keyboard Shortcuts](#keyboard-shortcuts)). You can type anything into the text area and your notes will be automatically saved in the [session output](#session-output) along with the session's data stream.
@@ -176,12 +197,12 @@ The names of these files can be configured in [Preferences](#preferences).
 
 Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from two papers (see [References](#references)).
 
-<a name="exact-aggrement"></a>
+<a name="exact-agreement"></a>
 ## Exact Agreement
 
 *Exact agreement* outputs a single percent agreement for a behavior between both observers. The data-logs from File 1 and File 2 get partitioned into intervals of a size specified by `block-size`. For each interval, the observers are considered in agreement if they both recorded the same number of occurrences within the interval. A behavior's percent agreement is equal to the number of agreements divided by the total number of intervals and multiplied by 100%.
 
-<a name="partial-aggrement"></a>
+<a name="partial-agreement"></a>
 ## Partial Agreement
 
 Similar to *exact agreement*, the data-logs from File 1 and File 2 get partitioned according to `block-size`. A score between 0 and 1 is calcuated per interval by dividing the smaller of the two behavior counts by the larger. If both counts are zero, the score equals 1. A behavior's percent agreement is equal to the sum of all scores divided by the number of intervals, multiplied by 100%.
