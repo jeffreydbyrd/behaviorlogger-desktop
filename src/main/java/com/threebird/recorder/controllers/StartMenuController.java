@@ -1,7 +1,9 @@
 package com.threebird.recorder.controllers;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -39,9 +41,8 @@ import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
- * Controls the first view the user sees. All these member variables with the @FXML
- * annotation are physical objects I placed in Scene Builder and applied an
- * 'id'. The 'id' must match the variable name. Methods with an @FXML annotation
+ * Controls the first view the user sees. All these member variables with the @FXML annotation are physical objects I
+ * placed in Scene Builder and applied an 'id'. The 'id' must match the variable name. Methods with an @FXML annotation
  * are triggered by events (again, specified in scene builder)
  */
 public class StartMenuController
@@ -73,8 +74,8 @@ public class StartMenuController
   @FXML private Button helpButton;
 
   /**
-   * load up the FXML file we generated with Scene Builder, "schemas.fxml". This
-   * view is controlled by SchemasController.java
+   * load up the FXML file we generated with Scene Builder, "schemas.fxml". This view is controlled by
+   * SchemasController.java
    */
   public static void toStartMenuView()
   {
@@ -113,8 +114,7 @@ public class StartMenuController
   }
 
   /**
-   * Populates the 'mappingBox' with the currently selected Schema's
-   * key-behavior mappings
+   * Populates the 'mappingBox' with the currently selected Schema's key-behavior mappings
    */
   private void populateMappingsTable( Schema schema )
   {
@@ -202,8 +202,8 @@ public class StartMenuController
   }
 
   /**
-   * On schema-select: if the new value is null, hide right-hand-side.
-   * Otherwise, populate right-hand-side with new schema's data
+   * On schema-select: if the new value is null, hide right-hand-side. Otherwise, populate right-hand-side with new
+   * schema's data
    */
   private void onSchemaSelect( ObservableValue< ? extends Schema > ov,
                                Schema oldV,
@@ -354,6 +354,12 @@ public class StartMenuController
   @FXML private void onIoaBtnPressed()
   {
     IoaCalculatorController.showIoaCalculator();
+  }
+
+  @FXML private void onHyperlinkClick() throws Exception
+  {
+    URI uri = new URI( "http://3birdsoftware.com" );
+    Desktop.getDesktop().browse( uri );
   }
 
   @FXML private void onHelpBtnPressed()

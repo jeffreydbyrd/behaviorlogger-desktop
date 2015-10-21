@@ -43,8 +43,7 @@ public class GsonUtils
   }
 
   private static Gson gson =
-      new GsonBuilder().setPrettyPrinting()
-                       .registerTypeAdapter( DateTime.class, new DateTimeSerializer() )
+      new GsonBuilder().registerTypeAdapter( DateTime.class, new DateTimeSerializer() )
                        .registerTypeAdapter( DateTime.class, new DateTimeDeserializer() )
                        .create();
 

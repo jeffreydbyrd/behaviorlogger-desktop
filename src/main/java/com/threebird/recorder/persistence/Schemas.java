@@ -21,16 +21,17 @@ import com.threebird.recorder.utils.persistence.SqliteDao;
  */
 public class Schemas
 {
+  private static final String TBL_NAME = "schemas_v1_0";
+
   /**
-   * Updates all the values of the given schema in the 'schemas' and
-   * 'key_behaviors' table
+   * Updates all the values of the given schema in the 'schemas' and 'key_behaviors' table
    * 
    * @throws Exception
    */
   public static void update( Schema schema ) throws Exception
   {
     String sql =
-        "UPDATE schemas SET "
+        "UPDATE " + TBL_NAME + " SET "
             + "client = ?,"
             + "project = ?,"
             + "duration = ?,"
@@ -69,8 +70,7 @@ public class Schemas
   }
 
   /**
-   * Creates the given schema in the 'schemas' table. Also adds all related
-   * behaviors to the key_behaviors table
+   * Creates the given schema in the 'schemas' table. Also adds all related behaviors to the key_behaviors table
    * 
    * @throws Exception
    */
@@ -81,9 +81,9 @@ public class Schemas
     }
 
     String sql =
-        "INSERT INTO schemas "
-            + "(uuid, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
-            + "VALUES (?,?,?,?,?,?,?,?)";
+        "INSERT INTO " + TBL_NAME
+            + " (uuid, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
+            + " VALUES (?,?,?,?,?,?,?,?)";
     List< Object > params = Lists.newArrayList( schema.uuid,
                                                 schema.client,
                                                 schema.project,
@@ -108,7 +108,7 @@ public class Schemas
       KeyBehaviors.delete( schema.uuid, kbm.key );
     }
 
-    String sql = "DELETE FROM schemas WHERE uuid = ?";
+    String sql = "DELETE FROM " + TBL_NAME + " WHERE uuid = ?";
     List< Object > params = Lists.newArrayList( schema.uuid );
     SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
   }
@@ -120,7 +120,7 @@ public class Schemas
    */
   public static List< Schema > all() throws Exception
   {
-    String sql = "SELECT * FROM schemas";
+    String sql = "SELECT * FROM " + TBL_NAME;
     List< Schema > result = Lists.newArrayList();
 
     SqlCallback callback = rs -> {

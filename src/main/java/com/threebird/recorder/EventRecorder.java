@@ -21,6 +21,8 @@ public class EventRecorder extends Application
    */
   public static Stage STAGE;
 
+  public static String version = "1.0";
+
   public static void main( String[] args )
   {
     launch( args );

@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.threebird.recorder.EventRecorder;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
@@ -47,6 +48,7 @@ public class RecordingRawJson
   public static class SessionBean
   {
     String uuid;
+    String version;
     SchemaBean schema;
     String observer;
     String therapist;
@@ -72,6 +74,7 @@ public class RecordingRawJson
 
     SessionBean bean = new SessionBean();
     bean.schema = new SchemaBean();
+    bean.version = EventRecorder.version;
     bean.discretes = Maps.newHashMap();
     bean.continuous = Maps.newHashMap();
 

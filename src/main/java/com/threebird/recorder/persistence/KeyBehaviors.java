@@ -16,6 +16,7 @@ import com.threebird.recorder.utils.persistence.SqliteDao;
  */
 public class KeyBehaviors
 {
+  private static final String TBL_NAME = "key_behaviors_v1_0";
 
   /**
    * For a given Schema, return all
@@ -24,7 +25,7 @@ public class KeyBehaviors
    */
   public static Set< KeyBehaviorMapping > getAllForSchema( String schemaId ) throws Exception
   {
-    String sql = "SELECT * FROM key_behaviors WHERE schema_uuid = ?";
+    String sql = "SELECT * FROM " + TBL_NAME + " WHERE schema_uuid = ?";
 
     Set< KeyBehaviorMapping > mappings = Sets.newHashSet();
 
@@ -44,8 +45,7 @@ public class KeyBehaviors
   }
 
   /**
-   * Adds each KeyBehaviorMapping to key_behaviors. This function will explode
-   * if you try to enter a duplicate
+   * Adds each KeyBehaviorMapping to key_behaviors. This function will explode if you try to enter a duplicate
    * 
    * @throws Exception
    */
@@ -64,7 +64,7 @@ public class KeyBehaviors
   public static void create( String schemaId, KeyBehaviorMapping mapping ) throws Exception
   {
     String sql =
-        "INSERT INTO key_behaviors (schema_uuid,key,name,is_continuous) VALUES (?,?,?,?)";
+        "INSERT INTO " + TBL_NAME + " (schema_uuid,key,name,is_continuous) VALUES (?,?,?,?)";
     List< Object > params =
         Lists.newArrayList( schemaId, mapping.key.c + "", mapping.behavior, mapping.isContinuous );
 
@@ -79,7 +79,7 @@ public class KeyBehaviors
   public static void delete( String schemaId, MappableChar key ) throws Exception
   {
     String sql =
-        "DELETE FROM key_behaviors WHERE schema_uuid = ? AND key = ?";
+        "DELETE FROM " + TBL_NAME + " WHERE schema_uuid = ? AND key = ?";
 
     List< Object > params =
         Lists.newArrayList( schemaId, key.c + "" );

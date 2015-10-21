@@ -1,8 +1,6 @@
 package com.threebird.recorder.persistence;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -11,11 +9,9 @@ import com.threebird.recorder.utils.persistence.SqliteDao;
 import com.threebird.recorder.utils.resources.ResourceUtils;
 
 /**
- * A class that provides {@link InitSQLiteTables#init()}, which will migrate the
- * user's local SQLite database to the most up-to-date schema. Each "evolution"
- * is called in {@link InitSQLiteTables#run()}. If you add any more, they must
- * written in an idempotent manner. This means that you must not modify the
- * evolutions after they have been deployed.
+ * A class that provides {@link InitSQLiteTables#init()}, which will migrate the user's local SQLite database to the
+ * most up-to-date schema. Each "evolution" is called in {@link InitSQLiteTables#run()}. If you add any more, they must
+ * written in an idempotent manner. This means that you must not modify the evolutions after they have been deployed.
  */
 public class InitSQLiteTables
 {
@@ -25,7 +21,7 @@ public class InitSQLiteTables
     dbFile.createNewFile();
 
     evo0_create_tables();
-    evo1();
+    evo1_0_add_uuid();
   }
 
   /**
@@ -59,37 +55,30 @@ public class InitSQLiteTables
   }
 
   /**
-   * Restructures the schemas and key_behaviors tables so that schemas have
-   * UUIDs and the behavior names are unique. Beware, SQLite makes it very hard
-   * to restructure tables without losing data. The things I did, I did them for
-   * a greater good.
    * 
    * @throws Exception
    */
-  private static void evo1() throws Exception
+  private static void evo1_0_add_uuid() throws Exception
   {
-    // used to figure out if this evolution has been executed yet
-    String pragmaSchemas = "PRAGMA table_info(schemas)";
-    AtomicBoolean hasUuidCol = new AtomicBoolean( false );
+    // figure out if this evolution has been executed yet
+    String pragmaSchemas = "SELECT name FROM sqlite_master WHERE type='table' AND name='schemas_v1_0'";
+    AtomicBoolean tableExists = new AtomicBoolean( false );
 
     SqliteDao.query( SqlQueryData.create( pragmaSchemas, rs -> {
       while (rs.next()) {
-        String colName = rs.getString( 2 );
-        if (colName.equals( "uuid" )) {
-          hasUuidCol.set( true );
-          return;
-        }
+        tableExists.set( true );
+        return;
       }
     } ) );
 
-    // if we have the Uuid column, then the user has already executed this
-    if (hasUuidCol.get()) {
+    // if the PRAGMA statment returned anything, then don't bother with the rest
+    if (tableExists.get()) {
       return;
     }
 
     // Create the new tables
     String createNewSchemas =
-        "CREATE TABLE new_schemas ("
+        "CREATE TABLE schemas_v1_0 ("
             + "uuid TEXT PRIMARY KEY,"
             + "client TEXT NOT NULL,"
             + "project TEXT NOT NULL,"
@@ -100,21 +89,20 @@ public class InitSQLiteTables
             + "sound_on_end INTEGER NOT NULL );";
 
     String createNewBehaviors =
-        "CREATE TABLE new_key_behaviors ("
+        "CREATE TABLE key_behaviors_v1_0 ("
             + "schema_uuid TEXT NOT NULL,"
             + "key CHAR(1) NOT NULL,"
             + "name TEXT NOT NULL,"
             + "is_continuous INTEGER NOT NULL,"
             + "FOREIGN KEY (schema_uuid) REFERENCES schemas(uuid),"
-            + "UNIQUE(schema_uuid, key),"
-            + "UNIQUE(schema_uuid, name) );";
+            + "UNIQUE(schema_uuid, key) );";
 
     SqliteDao.update( SqlQueryData.create( createNewSchemas ) );
     SqliteDao.update( SqlQueryData.create( createNewBehaviors ) );
 
-    String insertSchemaFmt = "INSERT INTO new_schemas VALUES ('%s','%s','%s','%s',%d,%d,%d,%d);";
+    String insertSchemaFmt = "INSERT INTO schemas_v1_0 VALUES ('%s','%s','%s','%s',%d,%d,%d,%d);";
     String getBehaviorsFmt = "SELECT * FROM key_behaviors WHERE schema_id = %d;";
-    String insertBehaviorFmt = "INSERT INTO new_key_behaviors VALUES ('%s','%s','%s',%d);";
+    String insertBehaviorFmt = "INSERT INTO key_behaviors_v1_0 VALUES ('%s','%s','%s',%d);";
 
     SqliteDao.query( SqlQueryData.create( "SELECT * FROM schemas", rs -> {
       while (rs.next()) {
@@ -129,28 +117,17 @@ public class InitSQLiteTables
         String getBehaviors = String.format( getBehaviorsFmt, originalId );
 
         SqliteDao.query( SqlQueryData.create( getBehaviors, rs2 -> {
-          Set< String > seenNames = new HashSet< String >();
           while (rs2.next()) {
             String name = rs2.getString( "behavior" );
-            boolean isUniq = seenNames.add( name );
-
-            if (isUniq) {
-              String insertBehavior =
-                  String.format( insertBehaviorFmt, uuid, rs2.getString( "key" ),
-                                 name, rs2.getInt( "is_continuous" ) );
-              SqliteDao.update( SqlQueryData.create( insertBehavior ) );
-            }
+            String insertBehavior =
+                String.format( insertBehaviorFmt, uuid, rs2.getString( "key" ),
+                               name, rs2.getInt( "is_continuous" ) );
+            SqliteDao.update( SqlQueryData.create( insertBehavior ) );
           }
         } ) );
       }
     } ) );
 
-    // remove the old tables
-    SqliteDao.update( "DROP TABLE schemas" );
-    SqliteDao.update( "DROP TABLE key_behaviors" );
-
-    // rename the new ones
-    SqliteDao.update( "ALTER TABLE new_schemas RENAME TO schemas" );
-    SqliteDao.update( "ALTER TABLE new_key_behaviors RENAME TO key_behaviors" );
+    // Keep the old tables in case the user goes back to old version
   }
 }
