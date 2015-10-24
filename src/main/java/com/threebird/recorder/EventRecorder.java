@@ -11,9 +11,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import com.google.common.base.Strings;
 import com.threebird.recorder.controllers.NewVersionController;
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.models.PositionManager;
+import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.InitSQLiteTables;
 import com.threebird.recorder.persistence.Recordings;
@@ -30,7 +32,7 @@ public class EventRecorder extends Application
    */
   public static Stage STAGE;
 
-  public static String version = "0.4";
+  public static String version = "0.3";
 
   public static void main( String[] args )
   {
@@ -48,7 +50,6 @@ public class EventRecorder extends Application
     STAGE = primaryStage;
 
     InitSQLiteTables.init();
-    checkVersion();
 
     STAGE.setX( PositionManager.mainXProperty().doubleValue() );
     STAGE.setY( PositionManager.mainYProperty().doubleValue() );
@@ -65,6 +66,9 @@ public class EventRecorder extends Application
 
     StartMenuController.toStartMenuView();
 
+    if (PreferencesManager.getCheckVersion()) {
+      checkVersion();
+    }
   }
 
   private void checkVersion()
@@ -75,7 +79,6 @@ public class EventRecorder extends Application
         try {
           HttpGet httpget = new HttpGet( "http://3birdsoftware.com/bl-version.txt" );
 
-          // Create a custom response handler
           ResponseHandler< String > responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {
@@ -86,15 +89,20 @@ public class EventRecorder extends Application
             return null;
           };
 
-          String v = httpclient.execute( httpget, responseHandler );
+          String v = httpclient.execute( httpget, responseHandler ).trim();
 
-          if (v != null && !version.equals( v )) {
-            Platform.runLater( ( ) -> {
-              if (STAGE.getTitle().equals( StartMenuController.TITLE )) {
-                NewVersionController.show( v );
-              }
-            } );
+          if (Strings.isNullOrEmpty( v )
+              || version.equals( v )
+              || PreferencesManager.lastVersionCheckProperty().get().equals( v )) {
+            return;
           }
+
+          Platform.runLater( ( ) -> {
+            // We only want to interrupt the user if they are on the start-menu
+            if (STAGE.getTitle().equals( StartMenuController.TITLE )) {
+              NewVersionController.show( v );
+            }
+          } );
         } finally {
           httpclient.close();
         }

@@ -7,16 +7,18 @@
 <?import javafx.scene.layout.*?>
 
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="380.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.NewVersionController">
+<VBox prefWidth="380.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.NewVersionController">
    <children>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="A new version is available!">
          <VBox.margin>
-            <Insets top="5.0" />
+            <Insets />
          </VBox.margin>
          <font>
             <Font size="16.0" />
          </font>
       </Text>
+      <Label fx:id="currVersionLbl" text="Current Version: 0.0" />
+      <Label fx:id="newVersionLbl" text="New Version: 0.0" />
       <HBox spacing="3.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Download at">
@@ -24,19 +26,15 @@
                   <Insets top="4.0" />
                </HBox.margin>
                <font>
-                  <Font size="15.0" />
+                  <Font size="12.0" />
                </font>
             </Text>
-            <Hyperlink fx:id="hyperlink" text="3birdsoftware.com">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Hyperlink>
+            <Hyperlink onAction="#onHyperlinkClick" text="3birdsoftware.com" />
          </children>
       </HBox>
-      <HBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <CheckBox mnemonicParsing="false" text="Stop checking for updates" />
+            <CheckBox fx:id="stopChecking" mnemonicParsing="false" text="Stop checking for updates" />
             <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                <children>
                   <Button defaultButton="true" mnemonicParsing="false" onAction="#onClosePressed" text="Got it!" />

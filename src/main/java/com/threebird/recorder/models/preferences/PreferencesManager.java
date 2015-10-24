@@ -42,6 +42,8 @@ public class PreferencesManager
     boolean colorOnEnd = true;
     boolean pauseOnEnd = false;
     boolean soundOnEnd = false;
+    boolean checkVersion = true;
+    String lastVersionCheck = "";
 
     List< GsonFilenameComp > filenameComponents =
         Lists.newArrayList( FilenameComponent.values() )
@@ -56,6 +58,8 @@ public class PreferencesManager
   private static SimpleBooleanProperty colorOnEndProperty;
   private static SimpleBooleanProperty pauseOnEndProperty;
   private static SimpleBooleanProperty soundOnEndProperty;
+  private static SimpleBooleanProperty checkVersionProperty;
+  private static SimpleStringProperty lastVersionCheckProperty;
 
   private static File file = ResourceUtils.getPrefs();
   private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> {
@@ -78,6 +82,8 @@ public class PreferencesManager
     model.colorOnEnd = getColorOnEnd();
     model.pauseOnEnd = getPauseOnEnd();
     model.soundOnEnd = getSoundOnEnd();
+    model.checkVersion = getCheckVersion();
+    model.lastVersionCheck = lastVersionCheckProperty.get();
     model.filenameComponents =
         filenameComponents().stream()
                             .map( c -> new GsonFilenameComp( c.name(), c.enabled ) )
@@ -135,6 +141,24 @@ public class PreferencesManager
     return soundOnEndProperty;
   }
 
+  public static synchronized SimpleBooleanProperty checkVersionProperty()
+  {
+    if (checkVersionProperty == null) {
+      checkVersionProperty = new SimpleBooleanProperty( defaultModel.get().checkVersion );
+      checkVersionProperty.addListener( ( o, old, newV ) -> persist() );
+    }
+    return checkVersionProperty;
+  }
+
+  public static synchronized SimpleStringProperty lastVersionCheckProperty()
+  {
+    if (lastVersionCheckProperty == null) {
+      lastVersionCheckProperty = new SimpleStringProperty( defaultModel.get().lastVersionCheck );
+      lastVersionCheckProperty.addListener( ( o, old, newV ) -> persist() );
+    }
+    return lastVersionCheckProperty;
+  }
+
   public static void saveSessionDirectory( String dir )
   {
     Preconditions.checkNotNull( dir );
@@ -187,6 +211,16 @@ public class PreferencesManager
     return soundOnEndProperty().get();
   }
 
+  public static void setCheckVersion( boolean checkVersion )
+  {
+    checkVersionProperty().set( checkVersion );
+  }
+
+  public static boolean getCheckVersion()
+  {
+    return checkVersionProperty().get();
+  }
+
   public static ObservableList< FilenameComponent > filenameComponents()
   {
     if (filenameComponents == null) {
@@ -201,7 +235,7 @@ public class PreferencesManager
 
       HashSet< FilenameComponent > enums = Sets.newHashSet( FilenameComponent.values() );
       SetView< FilenameComponent > missed = Sets.difference( enums, Sets.newHashSet( filenameComponents ) );
-      for(FilenameComponent comp : missed) {
+      for (FilenameComponent comp : missed) {
         comp.order = filenameComponents.size() + 1;
         filenameComponents.add( comp );
       }
