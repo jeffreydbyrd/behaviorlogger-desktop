@@ -48,6 +48,8 @@ public class PreferencesController
   @FXML private TextField minutesField;
   @FXML private TextField secondsField;
 
+  @FXML private CheckBox checkVersion;
+
   @FXML private VBox errMsgBox;
 
   @FXML private Button saveBtn;
@@ -72,6 +74,8 @@ public class PreferencesController
 
     setupDurationRadioButtons();
     setupDurationTextFields();
+
+    checkVersion.setSelected( PreferencesManager.getCheckVersion() );
   }
 
   private void initComponentsBox()
@@ -269,6 +273,8 @@ public class PreferencesController
                      .collect( Collectors.toList() );
 
     PreferencesManager.saveFilenameComponents( components );
+    
+    PreferencesManager.setCheckVersion( checkVersion.isSelected() );
 
     EventRecorderUtil.dialogStage.get().close();
   }

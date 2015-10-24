@@ -189,7 +189,7 @@
             <HBox alignment="BOTTOM_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
-                  <Hyperlink fx:id="link" onAction="#onHyperlinkClick" text="3birdsoftware.com" />
+                  <Hyperlink fx:id="hyperlink" text="3birdsoftware.com" />
                </children>
             </HBox>
          </children>

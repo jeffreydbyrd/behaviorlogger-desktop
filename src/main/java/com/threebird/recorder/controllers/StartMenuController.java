@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -14,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,10 +28,18 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.NewVersionManager;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.Schema;
@@ -47,6 +57,9 @@ import com.threebird.recorder.utils.EventRecorderUtil;
  */
 public class StartMenuController
 {
+  public static final String TITLE = "Start Menu";
+  private static String homeURL = "http://3birdsoftware.com";
+
   @FXML private TableView< Schema > schemaTable;
   @FXML private TableColumn< Schema, String > clientCol;
   @FXML private TableColumn< Schema, String > projectCol;
@@ -73,6 +86,8 @@ public class StartMenuController
   @FXML private Button startButton;
   @FXML private Button helpButton;
 
+  @FXML private Hyperlink hyperlink;
+
   /**
    * load up the FXML file we generated with Scene Builder, "schemas.fxml". This view is controlled by
    * SchemasController.java
@@ -80,7 +95,7 @@ public class StartMenuController
   public static void toStartMenuView()
   {
     String filepath = "views/start-menu.fxml";
-    StartMenuController controller = EventRecorderUtil.loadScene( filepath, "Start Menu" );
+    StartMenuController controller = EventRecorderUtil.loadScene( filepath, TITLE );
     controller.init();
   }
 
@@ -89,6 +104,25 @@ public class StartMenuController
     setVisibility( false );
     initSchemaListView();
     initSessionDetails();
+
+    if (!NewVersionManager.checked.get() && PreferencesManager.checkVersionProperty().get()) {
+      checkVersion();
+    } else {
+      hyperlink.onActionProperty().set( e -> {
+        setHyperlink( "3birdsoftware.com", homeURL );
+      } );
+    }
+  }
+
+  private void setHyperlink( String text, String url )
+  {
+    hyperlink.setText( text );
+    try {
+      URI uri = new URI( url );
+      Desktop.getDesktop().browse( uri );
+    } catch (Exception e1) {
+      e1.printStackTrace();
+    }
   }
 
   private void setVisibility( boolean visible )
@@ -356,14 +390,62 @@ public class StartMenuController
     IoaCalculatorController.showIoaCalculator();
   }
 
-  @FXML private void onHyperlinkClick() throws Exception
-  {
-    URI uri = new URI( "http://3birdsoftware.com" );
-    Desktop.getDesktop().browse( uri );
-  }
-
   @FXML private void onHelpBtnPressed()
   {
     EventRecorderUtil.openManual( "start-menu" );
+  }
+
+  private void checkVersion()
+  {
+    NewVersionManager.checked.set( true );
+    String version = EventRecorder.version;
+
+    new Thread( ( ) -> {
+      try {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+          HttpGet httpget = new HttpGet( "http://3birdsoftware.com/bl-version.txt" );
+
+          ResponseHandler< String > responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+              HttpEntity entity = response.getEntity();
+              return entity != null ? EntityUtils.toString( entity ) : null;
+            }
+
+            return null;
+          };
+
+          String v = httpclient.execute( httpget, responseHandler ).trim();
+
+          boolean newVersionAvailable = !version.equals( v );
+
+          Platform.runLater( ( ) -> {
+            String text = newVersionAvailable ? "New Version Available!" : "3birdsoftware.com";
+            String url = newVersionAvailable ? NewVersionController.URL : homeURL;
+            hyperlink.setText( text );
+            hyperlink.onActionProperty().set( ( event ) -> {
+              setHyperlink( text, url );
+            } );
+
+            // We only want to interrupt the user if they are on the start-menu and
+            boolean onStartMenu = EventRecorder.STAGE.getTitle().equals( StartMenuController.TITLE );
+            boolean displayDialog = !Strings.isNullOrEmpty( v )
+                && !version.equals( v )
+                && !PreferencesManager.lastVersionCheckProperty().get().equals( v )
+                & onStartMenu;
+
+            if (displayDialog) {
+              NewVersionController.show( v );
+            }
+          } );
+        } finally {
+          httpclient.close();
+        }
+      } catch (Exception e) {
+        // Eat the Exception because this function isn't essential
+        e.printStackTrace();
+      }
+    } ).start();
   }
 }

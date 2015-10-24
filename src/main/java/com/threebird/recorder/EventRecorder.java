@@ -21,7 +21,7 @@ public class EventRecorder extends Application
    */
   public static Stage STAGE;
 
-  public static String version = "1.0";
+  public static String version = "0.4";
 
   public static void main( String[] args )
   {
@@ -36,9 +36,9 @@ public class EventRecorder extends Application
 
   @Override public void start( Stage primaryStage ) throws Exception
   {
-    InitSQLiteTables.init();
-
     STAGE = primaryStage;
+
+    InitSQLiteTables.init();
 
     STAGE.setX( PositionManager.mainXProperty().doubleValue() );
     STAGE.setY( PositionManager.mainYProperty().doubleValue() );
