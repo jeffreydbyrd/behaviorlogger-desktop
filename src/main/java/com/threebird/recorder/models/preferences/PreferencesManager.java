@@ -83,7 +83,7 @@ public class PreferencesManager
     model.pauseOnEnd = getPauseOnEnd();
     model.soundOnEnd = getSoundOnEnd();
     model.checkVersion = getCheckVersion();
-    model.lastVersionCheck = lastVersionCheckProperty.get();
+    model.lastVersionCheck = lastVersionCheckProperty().get();
     model.filenameComponents =
         filenameComponents().stream()
                             .map( c -> new GsonFilenameComp( c.name(), c.enabled ) )

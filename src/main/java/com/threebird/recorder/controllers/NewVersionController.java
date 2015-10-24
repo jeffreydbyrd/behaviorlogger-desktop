@@ -13,6 +13,8 @@ import com.threebird.recorder.utils.EventRecorderUtil;
 
 public class NewVersionController
 {
+  public static final String URL = "http://3birdsoftware.com/html/behaviorlogger.html";
+  
   @FXML Label currVersionLbl;
   @FXML Label newVersionLbl;
   @FXML CheckBox stopChecking;
@@ -39,7 +41,7 @@ public class NewVersionController
 
   @FXML private void onHyperlinkClick() throws Exception
   {
-    URI uri = new URI( "http://3birdsoftware.com/html/behaviorlogger.html" );
+    URI uri = new URI( URL );
     Desktop.getDesktop().browse( uri );
   }
 

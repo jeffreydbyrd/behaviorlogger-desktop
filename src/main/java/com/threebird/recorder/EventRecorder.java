@@ -1,21 +1,10 @@
 package com.threebird.recorder;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
-import com.google.common.base.Strings;
-import com.threebird.recorder.controllers.NewVersionController;
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.models.PositionManager;
-import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.InitSQLiteTables;
 import com.threebird.recorder.persistence.Recordings;
@@ -65,51 +54,5 @@ public class EventRecorder extends Application
     STAGE.widthProperty().addListener( ( obs, old, w ) -> PositionManager.mainWidthProperty().setValue( w ) );
 
     StartMenuController.toStartMenuView();
-
-    if (PreferencesManager.getCheckVersion()) {
-      checkVersion();
-    }
-  }
-
-  private void checkVersion()
-  {
-    new Thread( ( ) -> {
-      try {
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        try {
-          HttpGet httpget = new HttpGet( "http://3birdsoftware.com/bl-version.txt" );
-
-          ResponseHandler< String > responseHandler = response -> {
-            int status = response.getStatusLine().getStatusCode();
-            if (status == 200) {
-              HttpEntity entity = response.getEntity();
-              return entity != null ? EntityUtils.toString( entity ) : null;
-            }
-
-            return null;
-          };
-
-          String v = httpclient.execute( httpget, responseHandler ).trim();
-
-          if (Strings.isNullOrEmpty( v )
-              || version.equals( v )
-              || PreferencesManager.lastVersionCheckProperty().get().equals( v )) {
-            return;
-          }
-
-          Platform.runLater( ( ) -> {
-            // We only want to interrupt the user if they are on the start-menu
-            if (STAGE.getTitle().equals( StartMenuController.TITLE )) {
-              NewVersionController.show( v );
-            }
-          } );
-        } finally {
-          httpclient.close();
-        }
-      } catch (Exception e) {
-        // Eat the Exception because this function isn't essential
-        e.printStackTrace();
-      }
-    } ).start();
   }
 }
