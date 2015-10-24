@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="380.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.threebird.recorder.controllers.NewVersionController">
+   <children>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="A new version is available!">
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Text>
+      <HBox spacing="3.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Download at">
+               <HBox.margin>
+                  <Insets top="4.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Text>
+            <Hyperlink fx:id="hyperlink" text="3birdsoftware.com">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Hyperlink>
+         </children>
+      </HBox>
+      <HBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <CheckBox mnemonicParsing="false" text="Stop checking for updates" />
+            <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button defaultButton="true" mnemonicParsing="false" onAction="#onClosePressed" text="Got it!" />
+               </children>
+            </Pane>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

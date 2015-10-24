@@ -47,6 +47,8 @@ import com.threebird.recorder.utils.EventRecorderUtil;
  */
 public class StartMenuController
 {
+  public static final String TITLE = "Start Menu";
+  
   @FXML private TableView< Schema > schemaTable;
   @FXML private TableColumn< Schema, String > clientCol;
   @FXML private TableColumn< Schema, String > projectCol;
@@ -80,7 +82,7 @@ public class StartMenuController
   public static void toStartMenuView()
   {
     String filepath = "views/start-menu.fxml";
-    StartMenuController controller = EventRecorderUtil.loadScene( filepath, "Start Menu" );
+    StartMenuController controller = EventRecorderUtil.loadScene( filepath, TITLE );
     controller.init();
   }
 

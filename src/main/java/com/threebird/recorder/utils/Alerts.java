@@ -17,8 +17,7 @@ public class Alerts
   }
 
   /**
-   * Displays an Error Alert dialog box that executes the 'onOk' Runnable after
-   * clicking "Ok"
+   * Displays an Error Alert dialog box that executes the 'onOk' Runnable after clicking "Ok"
    */
   public static void error( String title, String header, Exception cause, Runnable onOk )
   {
@@ -34,8 +33,7 @@ public class Alerts
   }
 
   /**
-   * Displays a Confirmation dialog box that executes the 'onOk' Runnable after
-   * clicking "Ok"
+   * Displays a Confirmation dialog box that executes the 'onOk' Runnable after clicking "Ok"
    */
   public static void confirm( String title, String header, String message, Runnable onOk )
   {
@@ -48,5 +46,10 @@ public class Alerts
   public static void warning( String title, String header, String message )
   {
     alert( Alert.AlertType.WARNING, title, header, message, ( ) -> {} );
+  }
+
+  public static void info( String title, String header, String message )
+  {
+    alert( Alert.AlertType.INFORMATION, title, header, message, ( ) -> {} );
   }
 }

@@ -1,8 +1,17 @@
 package com.threebird.recorder;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import com.threebird.recorder.controllers.NewVersionController;
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.models.PositionManager;
 import com.threebird.recorder.persistence.GsonUtils;
@@ -21,7 +30,7 @@ public class EventRecorder extends Application
    */
   public static Stage STAGE;
 
-  public static String version = "1.0";
+  public static String version = "0.4";
 
   public static void main( String[] args )
   {
@@ -36,9 +45,10 @@ public class EventRecorder extends Application
 
   @Override public void start( Stage primaryStage ) throws Exception
   {
-    InitSQLiteTables.init();
-
     STAGE = primaryStage;
+
+    InitSQLiteTables.init();
+    checkVersion();
 
     STAGE.setX( PositionManager.mainXProperty().doubleValue() );
     STAGE.setY( PositionManager.mainYProperty().doubleValue() );
@@ -54,5 +64,44 @@ public class EventRecorder extends Application
     STAGE.widthProperty().addListener( ( obs, old, w ) -> PositionManager.mainWidthProperty().setValue( w ) );
 
     StartMenuController.toStartMenuView();
+
+  }
+
+  private void checkVersion()
+  {
+    new Thread( ( ) -> {
+      try {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+          HttpGet httpget = new HttpGet( "http://3birdsoftware.com/bl-version.txt" );
+
+          // Create a custom response handler
+          ResponseHandler< String > responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+              HttpEntity entity = response.getEntity();
+              return entity != null ? EntityUtils.toString( entity ) : null;
+            }
+
+            return null;
+          };
+
+          String v = httpclient.execute( httpget, responseHandler );
+
+          if (v != null && !version.equals( v )) {
+            Platform.runLater( ( ) -> {
+              if (STAGE.getTitle().equals( StartMenuController.TITLE )) {
+                NewVersionController.show( v );
+              }
+            } );
+          }
+        } finally {
+          httpclient.close();
+        }
+      } catch (Exception e) {
+        // Eat the Exception because this function isn't essential
+        e.printStackTrace();
+      }
+    } ).start();
   }
 }
