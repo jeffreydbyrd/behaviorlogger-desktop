@@ -95,9 +95,9 @@ public class IoaUtils
    * Calculates IOA and writes the output to 'out'
    * 
    * @param f1
-   *          the first CSV input file
+   *          the first raw input file
    * @param f2
-   *          the second CSV input file
+   *          the second raw input file
    * @param method
    *          the {@link IoaMethod} used
    * @param blockSize
