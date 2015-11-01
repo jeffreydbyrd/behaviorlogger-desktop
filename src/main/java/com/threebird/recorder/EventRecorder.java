@@ -1,6 +1,7 @@
 package com.threebird.recorder;
 
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import com.threebird.recorder.controllers.StartMenuController;
@@ -37,7 +38,8 @@ public class EventRecorder extends Application
   @Override public void start( Stage primaryStage ) throws Exception
   {
     STAGE = primaryStage;
-
+    STAGE.getIcons().add( new Image( EventRecorder.class.getResourceAsStream( "3bird-orig.png" ) ) );
+    
     InitSQLiteTables.init();
 
     STAGE.setX( PositionManager.mainXProperty().doubleValue() );
