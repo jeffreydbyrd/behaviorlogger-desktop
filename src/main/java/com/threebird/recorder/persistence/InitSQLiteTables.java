@@ -22,6 +22,7 @@ public class InitSQLiteTables
 
     evo0_create_tables();
     evo1_0_add_uuid();
+    evo1_1_add_versioning();
   }
 
   /**
@@ -55,6 +56,7 @@ public class InitSQLiteTables
   }
 
   /**
+   * Updates the schemas table to have uuid instead of an integer id.
    * 
    * @throws Exception
    */
@@ -107,10 +109,15 @@ public class InitSQLiteTables
     SqliteDao.query( SqlQueryData.create( "SELECT * FROM schemas", rs -> {
       while (rs.next()) {
         String uuid = UUID.randomUUID().toString();
-        String insertSchema = String.format( insertSchemaFmt, uuid, rs.getString( "client" ),
-                                             rs.getString( "project" ), rs.getString( "session_directory" ),
-                                             rs.getInt( "duration" ), rs.getInt( "pause_on_end" ),
-                                             rs.getInt( "color_on_end" ), rs.getInt( "sound_on_end" ) );
+        String insertSchema = String.format( insertSchemaFmt,
+                                             uuid,
+                                             rs.getString( "client" ),
+                                             rs.getString( "project" ),
+                                             rs.getString( "session_directory" ),
+                                             rs.getInt( "duration" ),
+                                             rs.getInt( "pause_on_end" ),
+                                             rs.getInt( "color_on_end" ),
+                                             rs.getInt( "sound_on_end" ) );
         SqliteDao.update( SqlQueryData.create( insertSchema ) );
 
         int originalId = rs.getInt( 1 );
@@ -120,8 +127,11 @@ public class InitSQLiteTables
           while (rs2.next()) {
             String name = rs2.getString( "behavior" );
             String insertBehavior =
-                String.format( insertBehaviorFmt, uuid, rs2.getString( "key" ),
-                               name, rs2.getInt( "is_continuous" ) );
+                String.format( insertBehaviorFmt,
+                               uuid,
+                               rs2.getString( "key" ),
+                               name,
+                               rs2.getInt( "is_continuous" ) );
             SqliteDao.update( SqlQueryData.create( insertBehavior ) );
           }
         } ) );
@@ -129,5 +139,90 @@ public class InitSQLiteTables
     } ) );
 
     // Keep the old tables in case the user goes back to old version
+  }
+
+  private static void evo1_1_add_versioning() throws Exception
+  {
+    // figure out if this evolution has been executed yet
+    String pragmaSchemas = "SELECT name FROM sqlite_master WHERE type='table' AND name='schemas_v1_1'";
+    AtomicBoolean tableExists = new AtomicBoolean( false );
+
+    SqliteDao.query( SqlQueryData.create( pragmaSchemas, rs -> {
+      while (rs.next()) {
+        tableExists.set( true );
+        return;
+      }
+    } ) );
+
+    // if the PRAGMA statment returned anything, then don't bother with the rest
+    if (tableExists.get()) {
+      return;
+    }
+
+    // Create the new tables
+    String createNewSchemas =
+        "CREATE TABLE schemas_v1_1 ("
+            + "uuid TEXT PRIMARY KEY,"
+            + "version INTEGER NOT NULL,"
+            + "client TEXT NOT NULL,"
+            + "project TEXT NOT NULL,"
+            + "session_directory TEXT NOT NULL,"
+            + "duration INTEGER NOT NULL,"
+            + "pause_on_end INTEGER NOT NULL,"
+            + "color_on_end INTEGER NOT NULL,"
+            + "sound_on_end INTEGER NOT NULL);";
+
+    String createNewBehaviors =
+        "CREATE TABLE behaviors_v1_1 ("
+            + "uuid TEXT NOT NULL,"
+            + "schema_uuid TEXT NOT NULL,"
+            + "key CHAR(1) NOT NULL,"
+            + "description TEXT NOT NULL,"
+            + "is_continuous INTEGER NOT NULL,"
+            + "FOREIGN KEY (schema_uuid) REFERENCES schemas(uuid),"
+            + "UNIQUE(schema_uuid, key) );";
+
+    SqliteDao.update( SqlQueryData.create( createNewSchemas ) );
+    SqliteDao.update( SqlQueryData.create( createNewBehaviors ) );
+
+    String insertSchemaFmt = "INSERT INTO schemas_v1_1 VALUES ('%s',%d,'%s','%s','%s',%d,%d,%d,%d);";
+    String getBehaviorsFmt = "SELECT * FROM key_behaviors_v1_0 WHERE schema_uuid = '%s';";
+    String insertBehaviorFmt = "INSERT INTO behaviors_v1_1 VALUES ('%s','%s','%s','%s',%d);";
+
+    SqliteDao.query( SqlQueryData.create( "SELECT * FROM schemas_v1_0", rs -> {
+      String schemaUuid = rs.getString("uuid");
+      while (rs.next()) {
+        String insertSchema = String.format( insertSchemaFmt,
+                                             schemaUuid,
+                                             1,
+                                             rs.getString( "client" ),
+                                             rs.getString( "project" ),
+                                             rs.getString( "session_directory" ),
+                                             rs.getInt( "duration" ),
+                                             rs.getInt( "pause_on_end" ),
+                                             rs.getInt( "color_on_end" ),
+                                             rs.getInt( "sound_on_end" ) );
+        SqliteDao.update( SqlQueryData.create( insertSchema ) );
+
+        String getBehaviors = String.format( getBehaviorsFmt, schemaUuid );
+
+        SqliteDao.query( SqlQueryData.create( getBehaviors, rs2 -> {
+          while (rs2.next()) {
+            String behaviorUuid = UUID.randomUUID().toString();
+            String insertBehavior =
+                String.format( insertBehaviorFmt,
+                               behaviorUuid,
+                               schemaUuid,
+                               rs2.getString( "key" ),
+                               rs2.getString( "name" ),
+                               rs2.getInt( "is_continuous" ) );
+            SqliteDao.update( SqlQueryData.create( insertBehavior ) );
+          }
+        } ) );
+      }
+    } ) );
+
+    // Keep the old tables in case the user goes back to old version
+
   }
 }
