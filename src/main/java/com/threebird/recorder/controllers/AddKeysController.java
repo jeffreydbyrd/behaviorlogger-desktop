@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -135,7 +136,12 @@ public class AddKeysController
     // Modify the Schema and save it
     behaviorFields.forEach( ( field, kbm ) -> {
       String behavior = field.getText().trim();
-      schema.mappings.put( kbm.key, new KeyBehaviorMapping( kbm.key, behavior, kbm.isContinuous ) );
+      String uuid = kbm.uuid;
+      if (uuid == null) {
+        uuid = UUID.randomUUID().toString();
+      }
+      
+      schema.mappings.put( kbm.key, new KeyBehaviorMapping( uuid, kbm.key, behavior, kbm.isContinuous ) );
     } );
 
     try {
@@ -166,7 +172,8 @@ public class AddKeysController
 
     List< DiscreteBehavior > newDiscretes =
         Lists.transform( updatedDiscretes, db ->
-                         new DiscreteBehavior( db.key,
+                         new DiscreteBehavior( db.uuid,
+                                               db.key,
                                                schema.mappings.get( db.key ).behavior,
                                                db.startTime ) );
 
@@ -183,7 +190,8 @@ public class AddKeysController
 
     List< ContinuousBehavior > newContinuous =
         Lists.transform( updatedContinuous, cb ->
-                         new ContinuousBehavior( cb.key,
+                         new ContinuousBehavior( cb.uuid,
+                                                 cb.key,
                                                  schema.mappings.get( cb.key ).behavior,
                                                  cb.startTime,
                                                  cb.getDuration() ) );

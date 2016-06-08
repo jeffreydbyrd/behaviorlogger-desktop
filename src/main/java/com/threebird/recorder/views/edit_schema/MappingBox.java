@@ -6,6 +6,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
+import java.util.UUID;
+
 import com.google.common.base.Strings;
 import com.threebird.recorder.controllers.EditSchemaController;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
@@ -51,6 +53,7 @@ public class MappingBox extends HBox
 
   public KeyBehaviorMapping translate()
   {
+    String uuid = UUID.randomUUID().toString();
     boolean isContinuous = checkbox.isSelected();
     String key = Strings.nullToEmpty( keyField.getText() ).trim();
     String behavior = behaviorField.getText().trim();
@@ -59,6 +62,6 @@ public class MappingBox extends HBox
       return null;
     }
 
-    return new KeyBehaviorMapping( key, behavior, isContinuous );
+    return new KeyBehaviorMapping( uuid, key, behavior, isContinuous );
   }
 }

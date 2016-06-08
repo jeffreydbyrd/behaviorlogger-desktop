@@ -163,7 +163,7 @@ public class InitSQLiteTables
     String createNewSchemas =
         "CREATE TABLE schemas_v1_1 ("
             + "uuid TEXT PRIMARY KEY,"
-            + "version INTEGER NOT NULL,"
+            + "version INTEGER NOT NULL," // new field
             + "client TEXT NOT NULL,"
             + "project TEXT NOT NULL,"
             + "session_directory TEXT NOT NULL,"
@@ -174,10 +174,10 @@ public class InitSQLiteTables
 
     String createNewBehaviors =
         "CREATE TABLE behaviors_v1_1 ("
-            + "uuid TEXT NOT NULL,"
+            + "uuid TEXT NOT NULL," // new field
             + "schema_uuid TEXT NOT NULL,"
             + "key CHAR(1) NOT NULL,"
-            + "description TEXT NOT NULL,"
+            + "description TEXT NOT NULL," // changed names
             + "is_continuous INTEGER NOT NULL,"
             + "FOREIGN KEY (schema_uuid) REFERENCES schemas(uuid),"
             + "UNIQUE(schema_uuid, key) );";

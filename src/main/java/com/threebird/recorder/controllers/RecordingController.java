@@ -275,7 +275,8 @@ public class RecordingController
       savedLabel.setVisible( manager.saveSuccessfulProperty.get() );
 
       for (Entry< MappableChar, ContinuousBehavior > e : manager.midContinuous.entrySet()) {
-        KeyBehaviorMapping kbm = new KeyBehaviorMapping( e.getKey(), e.getValue().name, true );
+        ContinuousBehavior cb = e.getValue();
+        KeyBehaviorMapping kbm = new KeyBehaviorMapping( cb.uuid, e.getKey(), cb.name, true );
         logBehavior( kbm );
       }
     }
@@ -469,7 +470,7 @@ public class RecordingController
     if (mapping.isContinuous) {
       logContinuous( mapping );
     } else {
-      manager.log( new DiscreteBehavior( mapping.key, mapping.behavior, manager.count() ) );
+      manager.log( new DiscreteBehavior( mapping.uuid, mapping.key, mapping.behavior, manager.count() ) );
       SimpleIntegerProperty count = manager.discreteCounts.get( mapping.key );
       count.set( count.get() + 1 );
     }
@@ -485,12 +486,12 @@ public class RecordingController
     if (manager.midContinuous.containsKey( mapping.key )) {
       ContinuousBehavior cb = manager.midContinuous.get( mapping.key );
       int duration = manager.count() - cb.startTime;
-      manager.log( new ContinuousBehavior( cb.key, cb.name, cb.startTime, duration ) );
+      manager.log( new ContinuousBehavior( cb.uuid, cb.key, cb.name, cb.startTime, duration ) );
       manager.midContinuous.remove( mapping.key );
       manager.continuousCounts.get( mapping.key ).timer.pause();
     } else {
       ContinuousBehavior cb =
-          new ContinuousBehavior( mapping.key, mapping.behavior, manager.count(), null );
+          new ContinuousBehavior( mapping.uuid, mapping.key, mapping.behavior, manager.count(), null );
       manager.midContinuous.put( mapping.key, cb );
       manager.continuousCounts.get( mapping.key ).timer.play();
     }
@@ -501,7 +502,7 @@ public class RecordingController
    */
   private void initUnknown( MappableChar mc, boolean isContinuous )
   {
-    KeyBehaviorMapping kbm = new KeyBehaviorMapping( mc, "[unknown]", isContinuous );
+    KeyBehaviorMapping kbm = new KeyBehaviorMapping( null, mc, "[unknown]", isContinuous );
     initializeBehaviorCountBox( kbm );
     manager.unknowns.put( mc, kbm );
     logBehavior( kbm );

@@ -5,9 +5,9 @@ import com.threebird.recorder.utils.EventRecorderUtil;
 
 public class DiscreteBehavior extends Behavior
 {
-  public DiscreteBehavior( MappableChar key, String description, Integer time )
+  public DiscreteBehavior( String uuid, MappableChar key, String description, Integer time )
   {
-    super( key, description, time );
+    super( uuid, key, description, time );
   }
 
   @Override public boolean isContinuous()

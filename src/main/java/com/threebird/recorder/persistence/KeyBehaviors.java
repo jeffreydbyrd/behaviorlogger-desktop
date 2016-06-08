@@ -16,7 +16,7 @@ import com.threebird.recorder.utils.persistence.SqliteDao;
  */
 public class KeyBehaviors
 {
-  private static final String TBL_NAME = "key_behaviors_v1_0";
+  private static final String TBL_NAME = "behaviors_v1_1";
 
   /**
    * For a given Schema, return all
@@ -31,11 +31,12 @@ public class KeyBehaviors
 
     SqlCallback callback = rs -> {
       while (rs.next()) {
+        String uuid = rs.getString( "uuid" );
         String key = rs.getString( "key" );
         MappableChar ch = MappableChar.getForChar( key.charAt( 0 ) ).get();
-        String behavior = rs.getString( "name" );
+        String behavior = rs.getString( "description" );
         boolean isContinuous = rs.getBoolean( "is_continuous" );
-        mappings.add( new KeyBehaviorMapping( ch, behavior, isContinuous ) );
+        mappings.add( new KeyBehaviorMapping( uuid, ch, behavior, isContinuous ) );
       }
     };
 
@@ -64,9 +65,9 @@ public class KeyBehaviors
   public static void create( String schemaId, KeyBehaviorMapping mapping ) throws Exception
   {
     String sql =
-        "INSERT INTO " + TBL_NAME + " (schema_uuid,key,name,is_continuous) VALUES (?,?,?,?)";
+        "INSERT INTO " + TBL_NAME + " (uuid, schema_uuid, key, description, is_continuous) VALUES (?,?,?,?,?)";
     List< Object > params =
-        Lists.newArrayList( schemaId, mapping.key.c + "", mapping.behavior, mapping.isContinuous );
+        Lists.newArrayList( mapping.uuid, schemaId, mapping.key.c + "", mapping.behavior, mapping.isContinuous );
 
     SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
   }
@@ -76,13 +77,13 @@ public class KeyBehaviors
    * 
    * @throws Exception
    */
-  public static void delete( String schemaId, MappableChar key ) throws Exception
+  public static void delete( String behaviorId ) throws Exception
   {
     String sql =
-        "DELETE FROM " + TBL_NAME + " WHERE schema_uuid = ? AND key = ?";
+        "DELETE FROM " + TBL_NAME + " WHERE uuid = ?";
 
     List< Object > params =
-        Lists.newArrayList( schemaId, key.c + "" );
+        Lists.newArrayList( behaviorId );
 
     SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
   }

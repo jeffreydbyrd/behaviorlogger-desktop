@@ -12,8 +12,10 @@ public abstract class Behavior
   public static final Comparator< Behavior > comparator = ( Behavior o1, Behavior o2 ) -> o1.startTime - o2.startTime;
 
   public final int startTime;
+  public final String uuid;
   public final MappableChar key;
   public final String name;
+
 
   /**
    * @param key
@@ -21,8 +23,9 @@ public abstract class Behavior
    * @param startTime
    *          - start-time in millis
    */
-  Behavior( MappableChar key, String description, int startTime )
+  Behavior( String uuid, MappableChar key, String description, int startTime )
   {
+    this.uuid = uuid;
     this.key = key;
     this.name = description;
     this.startTime = startTime;

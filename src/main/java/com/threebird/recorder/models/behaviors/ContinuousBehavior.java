@@ -8,6 +8,7 @@ public class ContinuousBehavior extends Behavior
   private Integer duration;
 
   /**
+   * @param uuid
    * @param key
    * @param description
    * @param start
@@ -15,9 +16,9 @@ public class ContinuousBehavior extends Behavior
    * @param duration
    *          - duration of the behavior in millis
    */
-  public ContinuousBehavior( MappableChar key, String description, Integer start, Integer duration )
+  public ContinuousBehavior( String uuid, MappableChar key, String description, Integer start, Integer duration )
   {
-    super( key, description, start );
+    super( uuid, key, description, start );
     this.duration = duration;
   }
 

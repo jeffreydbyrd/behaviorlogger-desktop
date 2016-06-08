@@ -8,22 +8,31 @@ import com.threebird.recorder.models.MappableChar;
  */
 public class KeyBehaviorMapping
 {
+  public final String uuid;
   public final MappableChar key;
   public final String behavior;
   public final boolean isContinuous;
 
-  public KeyBehaviorMapping( MappableChar key,
+  public KeyBehaviorMapping( String uuid,
+                             MappableChar key,
                              String behavior,
                              boolean isContinuous )
   {
+    this.uuid = uuid;
     this.key = key;
     this.behavior = behavior;
     this.isContinuous = isContinuous;
   }
 
-  public KeyBehaviorMapping( String key, String behavior, boolean isContinuous )
+  public KeyBehaviorMapping( String uuid,
+                             String key, 
+                             String behavior, 
+                             boolean isContinuous )
   {
-    this( MappableChar.getForChar( key.charAt( 0 ) ).get(), behavior, isContinuous );
+    this( uuid, 
+          MappableChar.getForChar( key.charAt( 0 ) ).get(), 
+          behavior, 
+          isContinuous );
   }
 
   @Override public String toString()
@@ -36,9 +45,7 @@ public class KeyBehaviorMapping
   {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((behavior == null) ? 0 : behavior.hashCode());
-    result = prime * result + (isContinuous ? 1231 : 1237);
-    result = prime * result + ((key == null) ? 0 : key.hashCode());
+    result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
     return result;
   }
 
@@ -51,19 +58,11 @@ public class KeyBehaviorMapping
     if (getClass() != obj.getClass())
       return false;
     KeyBehaviorMapping other = (KeyBehaviorMapping) obj;
-    if (behavior == null) {
-      if (other.behavior != null)
+    if (uuid == null) {
+      if (other.uuid != null)
         return false;
-    } else if (!behavior.equals( other.behavior ))
-      return false;
-    if (isContinuous != other.isContinuous)
-      return false;
-    if (key == null) {
-      if (other.key != null)
-        return false;
-    } else if (!key.equals( other.key ))
+    } else if (!uuid.equals( other.uuid ))
       return false;
     return true;
   }
-
 }

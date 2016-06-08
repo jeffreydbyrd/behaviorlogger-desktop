@@ -14,6 +14,7 @@ import com.threebird.recorder.models.MappableChar;
 public class Schema
 {
   public String uuid;
+  public Integer version;
   public String client;
   public String project;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();

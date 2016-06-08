@@ -21,7 +21,7 @@ import com.threebird.recorder.utils.persistence.SqliteDao;
  */
 public class Schemas
 {
-  private static final String TBL_NAME = "schemas_v1_0";
+  private static final String TBL_NAME = "schemas_v1_1";
 
   /**
    * Updates all the values of the given schema in the 'schemas' and 'key_behaviors' table
@@ -32,6 +32,7 @@ public class Schemas
   {
     String sql =
         "UPDATE " + TBL_NAME + " SET "
+            + "version = ?,"
             + "client = ?,"
             + "project = ?,"
             + "duration = ?,"
@@ -41,7 +42,8 @@ public class Schemas
             + "sound_on_end = ? "
             + "WHERE uuid = ?";
 
-    List< Object > params = Lists.newArrayList( schema.client,
+    List< Object > params = Lists.newArrayList( schema.version,
+                                                schema.client,
                                                 schema.project,
                                                 schema.duration,
                                                 schema.sessionDirectory.getPath(),
@@ -58,7 +60,7 @@ public class Schemas
       SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
 
       for (KeyBehaviorMapping mapping : delete) {
-        KeyBehaviors.delete( schema.uuid, mapping.key );
+        KeyBehaviors.delete( mapping.uuid );
       }
 
       for (KeyBehaviorMapping mapping : create) {
@@ -82,9 +84,10 @@ public class Schemas
 
     String sql =
         "INSERT INTO " + TBL_NAME
-            + " (uuid, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
-            + " VALUES (?,?,?,?,?,?,?,?)";
+            + " (uuid, version, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
+            + " VALUES (?,?,?,?,?,?,?,?,?)";
     List< Object > params = Lists.newArrayList( schema.uuid,
+                                                schema.version,
                                                 schema.client,
                                                 schema.project,
                                                 schema.duration,
@@ -105,7 +108,7 @@ public class Schemas
   public static void delete( Schema schema ) throws Exception
   {
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      KeyBehaviors.delete( schema.uuid, kbm.key );
+      KeyBehaviors.delete( kbm.uuid );
     }
 
     String sql = "DELETE FROM " + TBL_NAME + " WHERE uuid = ?";
@@ -127,6 +130,7 @@ public class Schemas
       while (rs.next()) {
         Schema s = new Schema();
         s.uuid = rs.getString( "uuid" );
+        s.version = rs.getInt( "version" );
         s.client = rs.getString( "client" );
         s.project = rs.getString( "project" );
         s.sessionDirectory = new File( rs.getString( "session_directory" ) );
