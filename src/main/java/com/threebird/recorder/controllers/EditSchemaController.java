@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -38,8 +39,7 @@ import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.views.edit_schema.MappingBox;
 
 /**
- * Corresponds to edit_schema.fxml. The researcher uses this to create or edit a
- * selected schema
+ * Corresponds to edit_schema.fxml. The researcher uses this to create or edit a selected schema
  */
 public class EditSchemaController
 {
@@ -78,8 +78,7 @@ public class EditSchemaController
    * Sets the stage to the EditScema view.
    * 
    * @param schema
-   *          - the currently selected schema if editing, or null if creating a
-   *          new schema
+   *          - the currently selected schema if editing, or null if creating a new schema
    */
   public static void toEditSchemaView( Schema selected )
   {
@@ -164,15 +163,12 @@ public class EditSchemaController
   }
 
   /**
-   * Adds 2 adjacent text fields and a checkbox to 'mappingsBox'. Attaches a
-   * KeyTyped EventHandler to the first field that prevents the user from typing
-   * more than 1 key
+   * Adds 2 adjacent text fields and a checkbox to 'mappingsBox'. Attaches a KeyTyped EventHandler to the first field
+   * that prevents the user from typing more than 1 key
    */
-  private void addMappingBox( boolean isContinuous,
-                              String key,
-                              String behavior )
+  private void addMappingBox( Optional< KeyBehaviorMapping > kbm )
   {
-    mappingsBox.getChildren().add( new MappingBox( isContinuous, key, behavior ) );
+    mappingsBox.getChildren().add( new MappingBox( kbm ) );
   }
 
   /**
@@ -183,22 +179,15 @@ public class EditSchemaController
     mappingsBox.getChildren().clear();
 
     schema.mappings.forEach( ( key, mapping ) -> {
-      addMappingBox( mapping.isContinuous, mapping.key.c + "", mapping.behavior );
+      addMappingBox( Optional.fromNullable( mapping ) );
     } );
-
-    // add some extra boxes at the end to match 'defaultNumBoxes'
-    for (int i = schema.mappings.size(); i < defaultNumBoxes; i++) {
-      addMappingBox( false, "", "" );
-    }
   }
 
   private static String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
 
   /**
-   * Runs through the scene and makes sure the nameField and projectField are
-   * filled in (if required), and that there are no duplicate keys. Any
-   * validation errors will get highlighted red, and a message gets put in the
-   * 'errorMsgBox'
+   * Runs through the scene and makes sure the nameField and projectField are filled in (if required), and that there
+   * are no duplicate keys. Any validation errors will get highlighted red, and a message gets put in the 'errorMsgBox'
    * 
    * @return true if all inputs are valid, or false if a single input fails
    */
@@ -282,7 +271,7 @@ public class EditSchemaController
     duplicateNameMsg.setFill( Color.RED );
 
     // Collect all the fields into a list that we can analyze better
-    List< Pair< KeyBehaviorMapping, MappingBox >> behaviors =
+    List< Pair< KeyBehaviorMapping, MappingBox > > behaviors =
         mappingsBox.getChildren().stream()
                    .map( node -> (MappingBox) node )
                    .map( box -> new Pair< KeyBehaviorMapping, MappingBox >( box.translate(), box ) )
@@ -290,7 +279,7 @@ public class EditSchemaController
                    .collect( Collectors.toList() );
 
     // Check for duplicate keys
-    Map< MappableChar, List< Pair< KeyBehaviorMapping, MappingBox >>> byKeys =
+    Map< MappableChar, List< Pair< KeyBehaviorMapping, MappingBox > > > byKeys =
         behaviors.stream().collect( Collectors.groupingBy( pair -> pair.getKey().key ) );
     byKeys.forEach( ( key, list ) -> {
       if (list.size() > 1) {
@@ -303,7 +292,7 @@ public class EditSchemaController
     } );
 
     // Check for duplicate names
-    Map< String, List< Pair< KeyBehaviorMapping, MappingBox >>> byName =
+    Map< String, List< Pair< KeyBehaviorMapping, MappingBox > > > byName =
         behaviors.stream().collect( Collectors.groupingBy( pair -> pair.getKey().behavior ) );
     byName.forEach( ( key, list ) -> {
       if (list.size() > 1) {
@@ -331,7 +320,7 @@ public class EditSchemaController
    */
   @FXML private void onAddRowClicked( ActionEvent evt )
   {
-    addMappingBox( false, "", "" );
+    addMappingBox( Optional.absent() );
   }
 
   @FXML void onBrowseButtonPressed( ActionEvent evt )
@@ -348,8 +337,7 @@ public class EditSchemaController
   }
 
   /**
-   * Run through the nameField and mappingsBox and update the 'model'. Then
-   * persist the new model
+   * Run through the nameField and mappingsBox and update the 'model'. Then persist the new model
    */
   @FXML void onSaveSchemaClicked( ActionEvent evt )
   {
@@ -394,14 +382,13 @@ public class EditSchemaController
   }
 
   /**
-   * When the user clicks delete, display a confirmation box and only delete
-   * Schema if they click "yes"
+   * When the user clicks delete, display a confirmation box and only delete Schema if they click "yes"
    */
   @FXML void onDeleteSchemaClicked( ActionEvent actionEvent )
   {
     String msg = "Are you sure you want to delete this schema?\nYou can't undo this action.";
 
-    Alerts.confirm( "Confirm deletion", null, msg, ( ) -> {
+    Alerts.confirm( "Confirm deletion", null, msg, () -> {
       SchemasManager.schemas().remove( model );
       StartMenuController.toStartMenuView();
     } );
