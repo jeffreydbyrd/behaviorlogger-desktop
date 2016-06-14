@@ -2,26 +2,11 @@ package com.threebird.recorder.controllers;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.util.Pair;
-
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -36,7 +21,26 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
-import com.threebird.recorder.views.edit_schema.MappingBox;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 /**
  * Corresponds to edit_schema.fxml. The researcher uses this to create or edit a selected schema
@@ -45,9 +49,6 @@ public class EditSchemaController
 {
   @FXML private TextField clientField;
   @FXML private TextField projectField;
-
-  @FXML private VBox mappingsBox;
-  @FXML private Button addRowButton;
 
   @FXML private TextField directoryField;
   @FXML private Button browseButton;
@@ -65,14 +66,38 @@ public class EditSchemaController
   @FXML private CheckBox pauseCheckBox;
   @FXML private CheckBox beepCheckBox;
 
+  @FXML private TableView< KeyBehaviorMapping > behaviorTable;
+  @FXML private TableColumn< KeyBehaviorMapping, String > contCol;
+  @FXML private TableColumn< KeyBehaviorMapping, String > keyCol;
+  @FXML private TableColumn< KeyBehaviorMapping, String > descriptionCol;
+  @FXML private TableColumn< KeyBehaviorMapping, String > actionCol;
+
+  @FXML private TextField keyField;
+  @FXML private TextField descriptionField;
+  @FXML private CheckBox contCheckbox;
+  @FXML private Button addButton;
+  @FXML private Text mappingErrorText;
+
   @FXML private VBox errorMsgBox;
 
   @FXML private Button deleteSchemaButton;
 
   protected static int defaultNumBoxes = 10;
   private static char[] digits = "0123456789".toCharArray();
+  private static String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+
+  private static char[] acceptableKeys;
+  static {
+    MappableChar[] values = MappableChar.values();
+    acceptableKeys = new char[values.length];
+    for (int i = 0; i < values.length; i++) {
+      MappableChar mappableChar = values[i];
+      acceptableKeys[i] = mappableChar.c;
+    }
+  }
 
   private Schema model;
+  private ObservableList< KeyBehaviorMapping > mappings;
 
   /**
    * Sets the stage to the EditScema view.
@@ -97,7 +122,6 @@ public class EditSchemaController
     model = selected == null ? new Schema() : selected;
 
     clientField.setText( Strings.nullToEmpty( model.client ) );
-    populateMappingsBox( model );
     projectField.setText( Strings.nullToEmpty( model.project ) );
 
     String dir =
@@ -109,6 +133,8 @@ public class EditSchemaController
 
     setupDurationRadioButtons();
     setupDurationTextFields();
+
+    initBehaviorSection( model );
 
     clientField.requestFocus();
   }
@@ -163,27 +189,50 @@ public class EditSchemaController
   }
 
   /**
-   * Adds 2 adjacent text fields and a checkbox to 'mappingsBox'. Attaches a KeyTyped EventHandler to the first field
-   * that prevents the user from typing more than 1 key
+   * Configures {@link #behaviorTable} to represent the schema's list of KeyBehaviorsMappings
    */
-  private void addMappingBox( Optional< KeyBehaviorMapping > kbm )
+  private void initBehaviorSection( Schema schema )
   {
-    mappingsBox.getChildren().add( new MappingBox( kbm ) );
-  }
+    mappings = FXCollections.observableArrayList( schema.mappings.values() );
 
-  /**
-   * Runs through the key-behavior pairs in schema and populates the mappingsBox
-   */
-  private void populateMappingsBox( Schema schema )
-  {
-    mappingsBox.getChildren().clear();
+    contCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().isContinuous ? "✔" : "" ) );
+    keyCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().key.c + "" ) );
+    descriptionCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().behavior ) );
 
-    schema.mappings.forEach( ( key, mapping ) -> {
-      addMappingBox( Optional.fromNullable( mapping ) );
+    behaviorTable.setItems( mappings );
+
+    // Prevent user from duplicating keys and limit to 1 character
+    EventHandler< ? super KeyEvent > limitText = EventRecorderUtil.createFieldLimiter( keyField, acceptableKeys, 1 );
+    keyField.setOnKeyTyped( new EventHandler< KeyEvent >() {
+      @Override public void handle( KeyEvent evt )
+      {
+        limitText.handle( evt );
+        if (evt.isConsumed()) {
+          return;
+        }
+
+        String ch = evt.getCharacter();
+        boolean isTaken = mappings.stream().anyMatch( kbm -> ch.equals( kbm.key.c + "" ) );
+        if (isTaken) {
+          evt.consume();
+          mappingErrorText.setText( "That key is already taken." );
+        } else {
+          mappingErrorText.setText( "" );
+        }
+      }
     } );
-  }
 
-  private static String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+    // If user hits ENTER, then click "Add" button
+    EventHandler< ? super KeyEvent > onEnter = evt -> {
+      if (evt.getCode().equals( KeyCode.ENTER )) {
+        onAddClicked();
+      }
+    };
+    keyField.setOnKeyPressed( onEnter );
+    descriptionField.setOnKeyPressed( onEnter );
+    contCheckbox.setOnKeyPressed( onEnter );
+    addButton.setOnKeyPressed( onEnter );
+  }
 
   /**
    * Runs through the scene and makes sure the nameField and projectField are filled in (if required), and that there
@@ -270,40 +319,6 @@ public class EditSchemaController
     duplicateKeyMsg.setFill( Color.RED );
     duplicateNameMsg.setFill( Color.RED );
 
-    // Collect all the fields into a list that we can analyze better
-    List< Pair< KeyBehaviorMapping, MappingBox > > behaviors =
-        mappingsBox.getChildren().stream()
-                   .map( node -> (MappingBox) node )
-                   .map( box -> new Pair< KeyBehaviorMapping, MappingBox >( box.translate(), box ) )
-                   .filter( pair -> pair.getKey() != null )
-                   .collect( Collectors.toList() );
-
-    // Check for duplicate keys
-    Map< MappableChar, List< Pair< KeyBehaviorMapping, MappingBox > > > byKeys =
-        behaviors.stream().collect( Collectors.groupingBy( pair -> pair.getKey().key ) );
-    byKeys.forEach( ( key, list ) -> {
-      if (list.size() > 1) {
-        keysValid.set( false );
-      }
-      String style = list.size() > 1 ? cssRed : "";
-      list.stream()
-          .map( pair -> pair.getValue().keyField )
-          .forEach( field -> field.setStyle( style ) );
-    } );
-
-    // Check for duplicate names
-    Map< String, List< Pair< KeyBehaviorMapping, MappingBox > > > byName =
-        behaviors.stream().collect( Collectors.groupingBy( pair -> pair.getKey().behavior ) );
-    byName.forEach( ( key, list ) -> {
-      if (list.size() > 1) {
-        namesValid.set( false );
-      }
-      String style = list.size() > 1 ? cssRed : "";
-      list.stream()
-          .map( pair -> pair.getValue().behaviorField )
-          .forEach( field -> field.setStyle( style ) );
-    } );
-
     if (!keysValid.get()) {
       errorMsgBox.getChildren().add( duplicateKeyMsg );
     }
@@ -316,11 +331,41 @@ public class EditSchemaController
   }
 
   /**
-   * When user clicks "Add Row" under the key-behavior mappingsBox
+   * When user clicks the "Add" button
    */
-  @FXML private void onAddRowClicked( ActionEvent evt )
+  @FXML private void onAddClicked()
   {
-    addMappingBox( Optional.absent() );
+    // Check if key is empty
+    if (keyField.getText().isEmpty()) {
+      keyField.setStyle( cssRed );
+      mappingErrorText.setText( "Key is required." );
+      return;
+    } else {
+      keyField.setStyle( "" );
+    }
+
+    // Check if description is empty
+    if (descriptionField.getText().isEmpty()) {
+      descriptionField.setStyle( cssRed );
+      mappingErrorText.setText( "Behavior description is required." );
+      return;
+    } else {
+      descriptionField.setStyle( "" );
+    }
+
+    String uuid = UUID.randomUUID().toString();
+    String key = keyField.getText();
+    String behavior = descriptionField.getText();
+    boolean isCont = contCheckbox.isSelected();
+    KeyBehaviorMapping newMapping = new KeyBehaviorMapping( uuid, key, behavior, isCont );
+    mappings.add( newMapping );
+
+    mappingErrorText.setText( "" );
+    keyField.setText( "" );
+    descriptionField.setText( "" );
+    contCheckbox.setSelected( false );
+
+    keyField.requestFocus();
   }
 
   @FXML void onBrowseButtonPressed( ActionEvent evt )
@@ -346,14 +391,7 @@ public class EditSchemaController
     }
 
     HashMap< MappableChar, KeyBehaviorMapping > temp = Maps.newHashMap();
-
-    List< KeyBehaviorMapping > keyBehaviors =
-        mappingsBox.getChildren().stream()
-                   .map( node -> ((MappingBox) node).translate() )
-                   .filter( bhvr -> bhvr != null )
-                   .collect( Collectors.toList() );
-
-    for (KeyBehaviorMapping behavior : keyBehaviors) {
+    for (KeyBehaviorMapping behavior : mappings) {
       temp.put( behavior.key, behavior );
     }
 
