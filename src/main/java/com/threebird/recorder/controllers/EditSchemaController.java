@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -22,6 +23,7 @@ import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,9 +35,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -47,6 +53,26 @@ import javafx.scene.text.Text;
  */
 public class EditSchemaController
 {
+  /**
+   * Used for keeping track of and editing the mappings on the page without modifying the underlying schema (until the
+   * user clicks "save")
+   */
+  private static class MutableMapping
+  {
+    String uuid;
+    MappableChar key;
+    String behavior;
+    boolean isContinuous;
+
+    public MutableMapping( KeyBehaviorMapping kbm )
+    {
+      this.uuid = kbm.uuid;
+      this.key = kbm.key;
+      this.behavior = kbm.behavior;
+      this.isContinuous = kbm.isContinuous;
+    }
+  }
+
   @FXML private TextField clientField;
   @FXML private TextField projectField;
 
@@ -66,11 +92,11 @@ public class EditSchemaController
   @FXML private CheckBox pauseCheckBox;
   @FXML private CheckBox beepCheckBox;
 
-  @FXML private TableView< KeyBehaviorMapping > behaviorTable;
-  @FXML private TableColumn< KeyBehaviorMapping, String > contCol;
-  @FXML private TableColumn< KeyBehaviorMapping, String > keyCol;
-  @FXML private TableColumn< KeyBehaviorMapping, String > descriptionCol;
-  @FXML private TableColumn< KeyBehaviorMapping, String > actionCol;
+  @FXML private TableView< MutableMapping > behaviorTable;
+  @FXML private TableColumn< MutableMapping, Boolean > contCol;
+  @FXML private TableColumn< MutableMapping, String > keyCol;
+  @FXML private TableColumn< MutableMapping, String > descriptionCol;
+  @FXML private TableColumn< MutableMapping, String > actionCol;
 
   @FXML private TextField keyField;
   @FXML private TextField descriptionField;
@@ -97,7 +123,7 @@ public class EditSchemaController
   }
 
   private Schema model;
-  private ObservableList< KeyBehaviorMapping > mappings;
+  private ObservableList< MutableMapping > mappings;
 
   /**
    * Sets the stage to the EditScema view.
@@ -193,32 +219,55 @@ public class EditSchemaController
    */
   private void initBehaviorSection( Schema schema )
   {
-    mappings = FXCollections.observableArrayList( schema.mappings.values() );
+    // Setup the Behavior Table
+    mappings = FXCollections.observableArrayList( schema.mappings.values().stream().map( MutableMapping::new )
+                                                                 .collect( Collectors.toList() ) );
+    contCol.setCellValueFactory( p -> {
+      SimpleBooleanProperty property = new SimpleBooleanProperty( p.getValue().isContinuous );
+      property.addListener( ( observable, oldValue, newValue ) -> p.getValue().isContinuous = newValue );
+      return property;
+    } );
+    contCol.setCellFactory( CheckBoxTableCell.forTableColumn( contCol ) );
 
-    contCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().isContinuous ? "✔" : "" ) );
     keyCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().key.c + "" ) );
+    keyCol.setCellFactory( TextFieldTableCell.forTableColumn() );
+    keyCol.setOnEditCommit( new EventHandler< TableColumn.CellEditEvent< MutableMapping, String > >() {
+      @Override public void handle( CellEditEvent< MutableMapping, String > evt )
+      {
+        MutableMapping mm = evt.getRowValue();
+        String newValue = evt.getNewValue();
+
+        if (newValue.length() != 1) {
+          evt.consume();
+          mappingErrorText.setText( "Must be one character." );
+        } else if (!validateBehaviorKey( newValue )) {
+          
+        } else {
+          MappableChar.getForString( newValue ).map( c -> mm.key = c );
+        }
+
+        // A stupid hack to re-render the column because the cell doesn't get updated properly
+        evt.getTableColumn().setVisible( false );
+        evt.getTableColumn().setVisible( true );
+      }
+    } );
+
     descriptionCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().behavior ) );
 
     behaviorTable.setItems( mappings );
 
+    // Setup the Add-Behavior widget
     // Prevent user from duplicating keys and limit to 1 character
     EventHandler< ? super KeyEvent > limitText = EventRecorderUtil.createFieldLimiter( keyField, acceptableKeys, 1 );
-    keyField.setOnKeyTyped( new EventHandler< KeyEvent >() {
-      @Override public void handle( KeyEvent evt )
-      {
-        limitText.handle( evt );
-        if (evt.isConsumed()) {
-          return;
-        }
+    keyField.setOnKeyTyped( evt -> {
+      limitText.handle( evt );
+      if (evt.isConsumed()) {
+        return;
+      }
 
-        String ch = evt.getCharacter();
-        boolean isTaken = mappings.stream().anyMatch( kbm -> ch.equals( kbm.key.c + "" ) );
-        if (isTaken) {
-          evt.consume();
-          mappingErrorText.setText( "That key is already taken." );
-        } else {
-          mappingErrorText.setText( "" );
-        }
+      String ch = evt.getCharacter();
+      if (!validateBehaviorKey( ch )) {
+        evt.consume();
       }
     } );
 
@@ -232,6 +281,19 @@ public class EditSchemaController
     descriptionField.setOnKeyPressed( onEnter );
     contCheckbox.setOnKeyPressed( onEnter );
     addButton.setOnKeyPressed( onEnter );
+  }
+
+  private boolean validateBehaviorKey( String ch )
+  {
+    boolean isTaken = mappings.stream().anyMatch( kbm -> ch.equals( kbm.key.c + "" ) );
+    
+    if (isTaken) {
+      mappingErrorText.setText( "That key is already taken." );
+    } else {
+      mappingErrorText.setText( "" );
+    }
+
+    return !isTaken;
   }
 
   /**
@@ -285,11 +347,6 @@ public class EditSchemaController
       directoryField.setStyle( "" );
     }
 
-    // Validate behavior mappings
-    if (!validateBehaviors()) {
-      isValid = false;
-    }
-
     // Make sure either the Client or Project field are filled
     if (Strings.isNullOrEmpty( clientField.getText() ) && Strings.isNullOrEmpty( projectField.getText() )) {
       isValid = false;
@@ -302,32 +359,6 @@ public class EditSchemaController
     }
 
     return isValid;
-  }
-
-  /**
-   * Validates the fields in the the behavior mapping box:
-   * 
-   * no duplicate keys, no duplicate names
-   */
-  private boolean validateBehaviors()
-  {
-    AtomicBoolean keysValid = new AtomicBoolean( true );
-    AtomicBoolean namesValid = new AtomicBoolean( true );
-
-    Text duplicateKeyMsg = new Text( "- Each key must be unique." );
-    Text duplicateNameMsg = new Text( "- Each name must be unique." );
-    duplicateKeyMsg.setFill( Color.RED );
-    duplicateNameMsg.setFill( Color.RED );
-
-    if (!keysValid.get()) {
-      errorMsgBox.getChildren().add( duplicateKeyMsg );
-    }
-
-    if (!namesValid.get()) {
-      errorMsgBox.getChildren().add( duplicateNameMsg );
-    }
-
-    return keysValid.get() && namesValid.get();
   }
 
   /**
@@ -358,7 +389,7 @@ public class EditSchemaController
     String behavior = descriptionField.getText();
     boolean isCont = contCheckbox.isSelected();
     KeyBehaviorMapping newMapping = new KeyBehaviorMapping( uuid, key, behavior, isCont );
-    mappings.add( newMapping );
+    mappings.add( new MutableMapping( newMapping ) );
 
     mappingErrorText.setText( "" );
     keyField.setText( "" );
@@ -391,8 +422,8 @@ public class EditSchemaController
     }
 
     HashMap< MappableChar, KeyBehaviorMapping > temp = Maps.newHashMap();
-    for (KeyBehaviorMapping behavior : mappings) {
-      temp.put( behavior.key, behavior );
+    for (MutableMapping m : mappings) {
+      temp.put( m.key, new KeyBehaviorMapping( m.uuid, m.key, m.behavior, m.isContinuous ) );
     }
 
     model.client = clientField.getText().trim();

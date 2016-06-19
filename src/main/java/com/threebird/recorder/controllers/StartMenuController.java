@@ -39,6 +39,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.NewVersionManager;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
@@ -400,7 +401,7 @@ public class StartMenuController
     NewVersionManager.checked.set( true );
     String version = EventRecorder.version;
 
-    new Thread( ( ) -> {
+    new Thread( () -> {
       try {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
@@ -420,7 +421,7 @@ public class StartMenuController
 
           boolean newVersionAvailable = !version.equals( v );
 
-          Platform.runLater( ( ) -> {
+          Platform.runLater( () -> {
             String text = newVersionAvailable ? "New Version Available!" : "3birdsoftware.com";
             String url = newVersionAvailable ? NewVersionController.URL : homeURL;
             hyperlink.setText( text );
@@ -433,7 +434,7 @@ public class StartMenuController
             boolean displayDialog = !Strings.isNullOrEmpty( v )
                 && !version.equals( v )
                 && !PreferencesManager.lastVersionCheckProperty().get().equals( v )
-                & onStartMenu;
+                    & onStartMenu;
 
             if (displayDialog) {
               NewVersionController.show( v );

@@ -11,8 +11,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 
 /**
- * All the possible chars that a user is allowed to map to a behavior in a
- * Schema
+ * All the possible chars that a user is allowed to map to a behavior in a Schema
  */
 public enum MappableChar
 {
@@ -108,5 +107,14 @@ public enum MappableChar
   public static Optional< MappableChar > getForChar( char c )
   {
     return Optional.ofNullable( chars.get( c ) );
+  }
+
+  public static Optional< MappableChar > getForString( String s )
+  {
+    if (s.isEmpty()) {
+      return Optional.empty();
+    }
+    
+    return getForChar( s.charAt( 0 ) );
   }
 }

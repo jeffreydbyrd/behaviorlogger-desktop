@@ -62,10 +62,10 @@
                   <VBox>
                      <children>
                         <Label text="Behaviors:" />
-                        <TableView fx:id="behaviorTable" prefHeight="324.0" prefWidth="264.0">
+                        <TableView fx:id="behaviorTable" editable="true" fixedCellSize="35.0" prefHeight="324.0" prefWidth="264.0">
                           <columns>
                               <TableColumn fx:id="contCol" maxWidth="2000.0" prefWidth="50.0" text="Cont." />
-                            <TableColumn fx:id="keyCol" editable="false" prefWidth="50.0" resizable="false" sortable="false" text="Key" />
+                            <TableColumn fx:id="keyCol" prefWidth="50.0" resizable="false" sortable="false" text="Key" />
                               <TableColumn fx:id="descriptionCol" maxWidth="242.0" prefWidth="102.20596313476562" resizable="false" sortable="false" text="Description" />
                               <TableColumn fx:id="actionCol" prefWidth="104.03024291992188" text="Actions" />
                           </columns>

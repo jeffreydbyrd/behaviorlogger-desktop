@@ -1,15 +1,15 @@
 package com.threebird.recorder;
 
-import javafx.application.Application;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.models.PositionManager;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.InitSQLiteTables;
 import com.threebird.recorder.persistence.Recordings;
 import com.threebird.recorder.persistence.Recordings.Writer;
+
+import javafx.application.Application;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 /**
  * This is considered the main entry point by extending {@link Application}. The one method we must override is

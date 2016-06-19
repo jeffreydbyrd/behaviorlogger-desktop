@@ -78,6 +78,7 @@ public class Schemas
    */
   public static void create( Schema schema ) throws Exception
   {
+    schema.version = 1;
     if (schema.uuid == null) {
       schema.uuid = UUID.randomUUID().toString();
     }

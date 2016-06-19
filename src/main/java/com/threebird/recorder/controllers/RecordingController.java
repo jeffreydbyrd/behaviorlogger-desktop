@@ -5,6 +5,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
+import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.ContinuousCounter;
+import com.threebird.recorder.models.sessions.RecordingManager;
+import com.threebird.recorder.models.sessions.SessionManager;
+import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.views.recording.BehaviorCountBox;
+import com.threebird.recorder.views.recording.ContinuousCountBox;
+import com.threebird.recorder.views.recording.DiscreteCountBox;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -26,24 +44,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
-import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.models.behaviors.ContinuousBehavior;
-import com.threebird.recorder.models.behaviors.DiscreteBehavior;
-import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
-import com.threebird.recorder.models.schemas.Schema;
-import com.threebird.recorder.models.schemas.SchemasManager;
-import com.threebird.recorder.models.sessions.ContinuousCounter;
-import com.threebird.recorder.models.sessions.RecordingManager;
-import com.threebird.recorder.models.sessions.SessionManager;
-import com.threebird.recorder.utils.EventRecorderUtil;
-import com.threebird.recorder.views.recording.BehaviorCountBox;
-import com.threebird.recorder.views.recording.ContinuousCountBox;
-import com.threebird.recorder.views.recording.DiscreteCountBox;
 
 /**
  * Controls recording.fxml
