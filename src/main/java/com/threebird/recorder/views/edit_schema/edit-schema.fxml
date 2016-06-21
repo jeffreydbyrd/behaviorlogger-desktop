@@ -62,26 +62,17 @@
                   <VBox>
                      <children>
                         <Label text="Behaviors:" />
-                        <TableView fx:id="behaviorTable" editable="true" fixedCellSize="35.0" prefHeight="324.0" prefWidth="264.0">
-                          <columns>
-                              <TableColumn fx:id="contCol" maxWidth="2000.0" prefWidth="50.0" text="Cont." />
-                            <TableColumn fx:id="keyCol" prefWidth="50.0" resizable="false" sortable="false" text="Key" />
-                              <TableColumn fx:id="descriptionCol" maxWidth="242.0" prefWidth="102.20596313476562" resizable="false" sortable="false" text="Description" />
-                              <TableColumn fx:id="actionCol" prefWidth="104.03024291992188" text="Actions" />
-                          </columns>
-                           <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
-                        </TableView>
                      </children>
                   </VBox>
+                  <VBox fx:id="behaviorBoxes" />
+                  <Separator prefWidth="200.0" />
                   <VBox>
                      <children>
                         <HBox spacing="5.0">
                            <children>
+                              <CheckBox fx:id="contCheckbox" mnemonicParsing="false" />
                               <TextField fx:id="keyField" prefHeight="27.0" prefWidth="44.0" promptText="Key" />
                               <TextField fx:id="descriptionField" prefHeight="27.0" prefWidth="118.0" promptText="Behavior" HBox.hgrow="ALWAYS" />
-                              <CheckBox fx:id="contCheckbox" mnemonicParsing="false" text="Continuous" />
                               <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddClicked" text="Add" />
                            </children>
                         </HBox>

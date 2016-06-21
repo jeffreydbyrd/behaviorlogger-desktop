@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -22,26 +20,18 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.views.edit_schema.BehaviorBox;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -53,26 +43,6 @@ import javafx.scene.text.Text;
  */
 public class EditSchemaController
 {
-  /**
-   * Used for keeping track of and editing the mappings on the page without modifying the underlying schema (until the
-   * user clicks "save")
-   */
-  private static class MutableMapping
-  {
-    String uuid;
-    MappableChar key;
-    String behavior;
-    boolean isContinuous;
-
-    public MutableMapping( KeyBehaviorMapping kbm )
-    {
-      this.uuid = kbm.uuid;
-      this.key = kbm.key;
-      this.behavior = kbm.behavior;
-      this.isContinuous = kbm.isContinuous;
-    }
-  }
-
   @FXML private TextField clientField;
   @FXML private TextField projectField;
 
@@ -92,18 +62,13 @@ public class EditSchemaController
   @FXML private CheckBox pauseCheckBox;
   @FXML private CheckBox beepCheckBox;
 
-  @FXML private TableView< MutableMapping > behaviorTable;
-  @FXML private TableColumn< MutableMapping, Boolean > contCol;
-  @FXML private TableColumn< MutableMapping, String > keyCol;
-  @FXML private TableColumn< MutableMapping, String > descriptionCol;
-  @FXML private TableColumn< MutableMapping, String > actionCol;
-
   @FXML private TextField keyField;
   @FXML private TextField descriptionField;
   @FXML private CheckBox contCheckbox;
   @FXML private Button addButton;
   @FXML private Text mappingErrorText;
 
+  @FXML private VBox behaviorBoxes;
   @FXML private VBox errorMsgBox;
 
   @FXML private Button deleteSchemaButton;
@@ -123,7 +88,6 @@ public class EditSchemaController
   }
 
   private Schema model;
-  private ObservableList< MutableMapping > mappings;
 
   /**
    * Sets the stage to the EditScema view.
@@ -219,55 +183,37 @@ public class EditSchemaController
    */
   private void initBehaviorSection( Schema schema )
   {
-    // Setup the Behavior Table
-    mappings = FXCollections.observableArrayList( schema.mappings.values().stream().map( MutableMapping::new )
-                                                                 .collect( Collectors.toList() ) );
-    contCol.setCellValueFactory( p -> {
-      SimpleBooleanProperty property = new SimpleBooleanProperty( p.getValue().isContinuous );
-      property.addListener( ( observable, oldValue, newValue ) -> p.getValue().isContinuous = newValue );
-      return property;
-    } );
-    contCol.setCellFactory( CheckBoxTableCell.forTableColumn( contCol ) );
-
-    keyCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().key.c + "" ) );
-    keyCol.setCellFactory( TextFieldTableCell.forTableColumn() );
-    keyCol.setOnEditCommit( new EventHandler< TableColumn.CellEditEvent< MutableMapping, String > >() {
-      @Override public void handle( CellEditEvent< MutableMapping, String > evt )
-      {
-        MutableMapping mm = evt.getRowValue();
-        String newValue = evt.getNewValue();
-
-        if (newValue.length() != 1) {
-          evt.consume();
-          mappingErrorText.setText( "Must be one character." );
-        } else if (!validateBehaviorKey( newValue )) {
-          
-        } else {
-          MappableChar.getForString( newValue ).map( c -> mm.key = c );
-        }
-
-        // A stupid hack to re-render the column because the cell doesn't get updated properly
-        evt.getTableColumn().setVisible( false );
-        evt.getTableColumn().setVisible( true );
-      }
-    } );
-
-    descriptionCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().behavior ) );
-
-    behaviorTable.setItems( mappings );
+    // Add BehaviorBoxes for existing behavior-mappings
+    for (KeyBehaviorMapping kbm : schema.mappings.values()) {
+      this.behaviorBoxes.getChildren().add( new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior ) );
+    }
 
     // Setup the Add-Behavior widget
     // Prevent user from duplicating keys and limit to 1 character
     EventHandler< ? super KeyEvent > limitText = EventRecorderUtil.createFieldLimiter( keyField, acceptableKeys, 1 );
     keyField.setOnKeyTyped( evt -> {
+      // limit to 1 char
       limitText.handle( evt );
       if (evt.isConsumed()) {
         return;
       }
 
-      String ch = evt.getCharacter();
-      if (!validateBehaviorKey( ch )) {
+      String text = keyField.getText();
+      if (text.length() != 1) {
+        return;
+      }
+
+      MappableChar mappableChar = MappableChar.getForString( text ).get();
+      boolean isTaken = behaviorBoxes.getChildren()
+                                     .stream()
+                                     .map( node -> (BehaviorBox) node )
+                                     .anyMatch( bbox -> bbox.getKey().equals( mappableChar ) );
+
+      if (isTaken) {
         evt.consume();
+        mappingErrorText.setText( "That key is already taken." );
+      } else {
+        mappingErrorText.setText( "" );
       }
     } );
 
@@ -281,19 +227,6 @@ public class EditSchemaController
     descriptionField.setOnKeyPressed( onEnter );
     contCheckbox.setOnKeyPressed( onEnter );
     addButton.setOnKeyPressed( onEnter );
-  }
-
-  private boolean validateBehaviorKey( String ch )
-  {
-    boolean isTaken = mappings.stream().anyMatch( kbm -> ch.equals( kbm.key.c + "" ) );
-    
-    if (isTaken) {
-      mappingErrorText.setText( "That key is already taken." );
-    } else {
-      mappingErrorText.setText( "" );
-    }
-
-    return !isTaken;
   }
 
   /**
@@ -385,11 +318,10 @@ public class EditSchemaController
     }
 
     String uuid = UUID.randomUUID().toString();
-    String key = keyField.getText();
+    MappableChar key = MappableChar.getForString( keyField.getText() ).get(); // This shouldn't be empty
     String behavior = descriptionField.getText();
     boolean isCont = contCheckbox.isSelected();
-    KeyBehaviorMapping newMapping = new KeyBehaviorMapping( uuid, key, behavior, isCont );
-    mappings.add( new MutableMapping( newMapping ) );
+    this.behaviorBoxes.getChildren().add( new BehaviorBox( uuid, isCont, key, behavior ) );
 
     mappingErrorText.setText( "" );
     keyField.setText( "" );
@@ -422,8 +354,13 @@ public class EditSchemaController
     }
 
     HashMap< MappableChar, KeyBehaviorMapping > temp = Maps.newHashMap();
-    for (MutableMapping m : mappings) {
-      temp.put( m.key, new KeyBehaviorMapping( m.uuid, m.key, m.behavior, m.isContinuous ) );
+    for (Node node : behaviorBoxes.getChildren()) {
+      BehaviorBox bb = (BehaviorBox) node;
+      MappableChar key = bb.getKey();
+      String description = bb.getDescription();
+      boolean isContinuous = bb.isContinuous();
+      String uuid = bb.uuid;
+      temp.put( key, new KeyBehaviorMapping( uuid, key, description, isContinuous ) );
     }
 
     model.client = clientField.getText().trim();

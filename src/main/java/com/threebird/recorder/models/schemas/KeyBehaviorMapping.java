@@ -2,7 +2,6 @@ package com.threebird.recorder.models.schemas;
 
 import com.threebird.recorder.models.MappableChar;
 
-
 /**
  * Maps a key to a behavior. We use this in configuring a {@link Schema}
  */
@@ -25,13 +24,13 @@ public class KeyBehaviorMapping
   }
 
   public KeyBehaviorMapping( String uuid,
-                             String key, 
-                             String behavior, 
+                             String key,
+                             String behavior,
                              boolean isContinuous )
   {
-    this( uuid, 
-          MappableChar.getForChar( key.charAt( 0 ) ).get(), 
-          behavior, 
+    this( uuid,
+          MappableChar.getForChar( key.charAt( 0 ) ).get(),
+          behavior,
           isContinuous );
   }
 
