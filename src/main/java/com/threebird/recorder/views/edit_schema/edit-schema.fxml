@@ -65,7 +65,6 @@
                      </children>
                   </VBox>
                   <VBox fx:id="behaviorBoxes" />
-                  <Separator prefWidth="200.0" />
                   <VBox>
                      <children>
                         <HBox spacing="5.0">

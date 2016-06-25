@@ -4,30 +4,44 @@ import com.threebird.recorder.models.MappableChar;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Orientation;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
-public class BehaviorBox extends HBox
+public class BehaviorBox extends VBox
 {
   public final String uuid;
   private SimpleBooleanProperty isContinuousProp;
   private SimpleStringProperty keyProp;
   private SimpleStringProperty descriptionProp;
 
-  public CheckBox checkbox;
-  public Text keyText;
-  public Text descText;
+  private HBox hbox;
 
-  public TextField keyField;
-  public TextField descField;
+  private CheckBox checkbox;
+  private Label keyText;
+  private Label descText;
+  private Label keyTakenLbl;
+  private Label descEmptyLbl;
+
+  private TextField keyField;
+  private TextField descField;
+
+  private HBox actionBox;
+  private Button deleteBtn;
+  private Button editBtn;
 
   public BehaviorBox( String uuid, boolean isContinuous, MappableChar key, String description )
   {
     super();
+
     this.uuid = uuid;
     this.isContinuousProp = new SimpleBooleanProperty();
     this.keyProp = new SimpleStringProperty();
@@ -37,8 +51,17 @@ public class BehaviorBox extends HBox
     checkbox.setSelected( isContinuous );
     checkbox.setOnAction( e -> isContinuousProp.set( checkbox.isSelected() ) );
 
-    keyText = new Text( key.c + "" );
-    descText = new Text( description );
+    keyText = new Label( key.c + "" );
+    descText = new Label( description );
+
+    keyTakenLbl = new Label( "That key is taken." );
+    keyTakenLbl.setTextFill( Color.RED );
+    descEmptyLbl = new Label( "Behavior description is required." );
+    descEmptyLbl.setTextFill( Color.RED );
+
+    keyField = new TextField( key.c + "" );
+    descField = new TextField( description );
+    HBox.setHgrow( descField, Priority.ALWAYS );
 
     keyField.textProperty().addListener( ( observable, oldValue, newValue ) -> keyProp.setValue( newValue ) );
     descField.textProperty().addListener( ( observable, oldValue, newValue ) -> descriptionProp.setValue( newValue ) );
@@ -49,7 +72,20 @@ public class BehaviorBox extends HBox
     Separator sep1 = new Separator( Orientation.VERTICAL );
     Separator sep2 = new Separator( Orientation.VERTICAL );
 
-    this.getChildren().addAll( checkbox, sep1, keyText, sep2, descText );
+    deleteBtn = new Button( "delete" );
+    editBtn = new Button( "edit" );
+    actionBox = new HBox( deleteBtn, editBtn );
+    actionBox.setNodeOrientation( NodeOrientation.RIGHT_TO_LEFT );
+    HBox.setHgrow( actionBox, Priority.ALWAYS );
+
+    hbox = new HBox();
+    hbox.setPrefHeight( 30 );
+    hbox.setMinHeight( USE_PREF_SIZE );
+    hbox.setOnMouseEntered( evt -> hbox.setStyle( "-fx-background-color:#e0e0e0;" ) );
+    hbox.setOnMouseExited( evt -> hbox.setStyle( "" ) );
+    hbox.getChildren().addAll( checkbox, sep1, keyText, sep2, descText, actionBox );
+
+    this.getChildren().addAll( hbox );
   }
 
   public String getUuid()

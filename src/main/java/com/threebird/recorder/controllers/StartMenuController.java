@@ -7,6 +7,28 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.models.NewVersionManager;
+import com.threebird.recorder.models.preferences.FilenameComponent;
+import com.threebird.recorder.models.preferences.PreferencesManager;
+import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.RecordingManager;
+import com.threebird.recorder.models.sessions.SessionManager;
+import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.utils.Alerts;
+import com.threebird.recorder.utils.EventRecorderUtil;
+
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -27,29 +49,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.threebird.recorder.EventRecorder;
-import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.models.NewVersionManager;
-import com.threebird.recorder.models.preferences.FilenameComponent;
-import com.threebird.recorder.models.preferences.PreferencesManager;
-import com.threebird.recorder.models.schemas.Schema;
-import com.threebird.recorder.models.schemas.SchemasManager;
-import com.threebird.recorder.models.sessions.RecordingManager;
-import com.threebird.recorder.models.sessions.SessionManager;
-import com.threebird.recorder.persistence.GsonUtils;
-import com.threebird.recorder.utils.Alerts;
-import com.threebird.recorder.utils.EventRecorderUtil;
 
 /**
  * Controls the first view the user sees. All these member variables with the @FXML annotation are physical objects I
