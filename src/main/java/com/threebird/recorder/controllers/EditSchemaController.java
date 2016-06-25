@@ -1,6 +1,7 @@
 package com.threebird.recorder.controllers;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,7 +69,8 @@ public class EditSchemaController
   @FXML private Button addButton;
   @FXML private Text mappingErrorText;
 
-  @FXML private VBox behaviorBoxes;
+  @FXML private VBox discreteBoxes;
+  @FXML private VBox continuousBoxes;
   @FXML private VBox errorMsgBox;
 
   @FXML private Button deleteSchemaButton;
@@ -185,7 +187,11 @@ public class EditSchemaController
   {
     // Add BehaviorBoxes for existing behavior-mappings
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      this.behaviorBoxes.getChildren().add( new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior ) );
+      if (kbm.isContinuous) {
+        this.continuousBoxes.getChildren().add( new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior ) );
+      } else {
+        this.discreteBoxes.getChildren().add( new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior ) );
+      }
     }
 
     // Setup the Add-Behavior widget
@@ -204,12 +210,16 @@ public class EditSchemaController
       }
 
       MappableChar mappableChar = MappableChar.getForString( text ).get();
-      boolean isTaken = behaviorBoxes.getChildren()
-                                     .stream()
-                                     .map( node -> (BehaviorBox) node )
-                                     .anyMatch( bbox -> bbox.getKey().equals( mappableChar ) );
+      boolean isTakenD = discreteBoxes.getChildren()
+                                      .stream()
+                                      .map( node -> (BehaviorBox) node )
+                                      .anyMatch( bbox -> bbox.getKey().equals( mappableChar ) );
+      boolean isTakenC = continuousBoxes.getChildren()
+                                        .stream()
+                                        .map( node -> (BehaviorBox) node )
+                                        .anyMatch( bbox -> bbox.getKey().equals( mappableChar ) );
 
-      if (isTaken) {
+      if (isTakenD || isTakenC) {
         evt.consume();
         mappingErrorText.setText( "That key is already taken." );
       } else {
@@ -321,7 +331,11 @@ public class EditSchemaController
     MappableChar key = MappableChar.getForString( keyField.getText() ).get(); // This shouldn't be empty
     String behavior = descriptionField.getText();
     boolean isCont = contCheckbox.isSelected();
-    this.behaviorBoxes.getChildren().add( new BehaviorBox( uuid, isCont, key, behavior ) );
+    if (contCheckbox.isSelected()) {
+      this.continuousBoxes.getChildren().add( new BehaviorBox( uuid, isCont, key, behavior ) );
+    } else {
+      this.discreteBoxes.getChildren().add( new BehaviorBox( uuid, isCont, key, behavior ) );
+    }
 
     mappingErrorText.setText( "" );
     keyField.setText( "" );
@@ -354,7 +368,9 @@ public class EditSchemaController
     }
 
     HashMap< MappableChar, KeyBehaviorMapping > temp = Maps.newHashMap();
-    for (Node node : behaviorBoxes.getChildren()) {
+    ArrayList< Node > behaviorBoxes = Lists.newArrayList( discreteBoxes.getChildren() );
+    behaviorBoxes.addAll( continuousBoxes.getChildren() );
+    for (Node node : behaviorBoxes) {
       BehaviorBox bb = (BehaviorBox) node;
       MappableChar key = bb.getKey();
       String description = bb.getDescription();
