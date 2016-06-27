@@ -79,16 +79,6 @@ public class EditSchemaController
   private static char[] digits = "0123456789".toCharArray();
   private static String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
 
-  private static char[] acceptableKeys;
-  static {
-    MappableChar[] values = MappableChar.values();
-    acceptableKeys = new char[values.length];
-    for (int i = 0; i < values.length; i++) {
-      MappableChar mappableChar = values[i];
-      acceptableKeys[i] = mappableChar.c;
-    }
-  }
-
   private Schema model;
 
   /**
@@ -187,39 +177,30 @@ public class EditSchemaController
   {
     // Add BehaviorBoxes for existing behavior-mappings
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
+      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior, this::isTaken );
       if (kbm.isContinuous) {
-        this.continuousBoxes.getChildren().add( new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior ) );
+        this.continuousBoxes.getChildren().add( bb );
       } else {
-        this.discreteBoxes.getChildren().add( new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior ) );
+        this.discreteBoxes.getChildren().add( bb );
       }
     }
 
     // Setup the Add-Behavior widget
     // Prevent user from duplicating keys and limit to 1 character
-    EventHandler< ? super KeyEvent > limitText = EventRecorderUtil.createFieldLimiter( keyField, acceptableKeys, 1 );
+    EventHandler< ? super KeyEvent > limitText =
+        EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
     keyField.setOnKeyTyped( evt -> {
+      String text = keyField.getText() + evt.getCharacter();
+
       // limit to 1 char
       limitText.handle( evt );
-      if (evt.isConsumed()) {
+      if (evt.isConsumed() || text.length() != 1) {
         return;
       }
 
-      String text = keyField.getText();
-      if (text.length() != 1) {
-        return;
-      }
+      boolean isTaken = isTaken( MappableChar.getForString( text ).get() );
 
-      MappableChar mappableChar = MappableChar.getForString( text ).get();
-      boolean isTakenD = discreteBoxes.getChildren()
-                                      .stream()
-                                      .map( node -> (BehaviorBox) node )
-                                      .anyMatch( bbox -> bbox.getKey().equals( mappableChar ) );
-      boolean isTakenC = continuousBoxes.getChildren()
-                                        .stream()
-                                        .map( node -> (BehaviorBox) node )
-                                        .anyMatch( bbox -> bbox.getKey().equals( mappableChar ) );
-
-      if (isTakenD || isTakenC) {
+      if (isTaken) {
         evt.consume();
         mappingErrorText.setText( "That key is already taken." );
       } else {
@@ -237,6 +218,22 @@ public class EditSchemaController
     descriptionField.setOnKeyPressed( onEnter );
     contCheckbox.setOnKeyPressed( onEnter );
     addButton.setOnKeyPressed( onEnter );
+  }
+
+  /**
+   * Returns true if the given character is taken by a BehaviorBox
+   */
+  private Boolean isTaken( MappableChar c )
+  {
+    boolean isTakenD = discreteBoxes.getChildren()
+                                    .stream()
+                                    .map( node -> (BehaviorBox) node )
+                                    .anyMatch( bbox -> bbox.getKey().equals( c ) );
+    boolean isTakenC = continuousBoxes.getChildren()
+                                      .stream()
+                                      .map( node -> (BehaviorBox) node )
+                                      .anyMatch( bbox -> bbox.getKey().equals( c ) );
+    return isTakenD || isTakenC;
   }
 
   /**
@@ -331,10 +328,12 @@ public class EditSchemaController
     MappableChar key = MappableChar.getForString( keyField.getText() ).get(); // This shouldn't be empty
     String behavior = descriptionField.getText();
     boolean isCont = contCheckbox.isSelected();
+
+    BehaviorBox bb = new BehaviorBox( uuid, isCont, key, behavior, this::isTaken );
     if (contCheckbox.isSelected()) {
-      this.continuousBoxes.getChildren().add( new BehaviorBox( uuid, isCont, key, behavior ) );
+      this.continuousBoxes.getChildren().add( bb );
     } else {
-      this.discreteBoxes.getChildren().add( new BehaviorBox( uuid, isCont, key, behavior ) );
+      this.discreteBoxes.getChildren().add( bb );
     }
 
     mappingErrorText.setText( "" );

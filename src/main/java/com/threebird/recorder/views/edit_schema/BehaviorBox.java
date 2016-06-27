@@ -1,6 +1,10 @@
 package com.threebird.recorder.views.edit_schema;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.utils.EventRecorderUtil;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -31,7 +35,6 @@ public class BehaviorBox extends VBox
   private Label keyText;
   private Label descText;
   private Label keyTakenLbl = new Label( "That key is taken." );
-  private Label descEmptyLbl = new Label( "Behavior description is required." );
   private Separator separator = new Separator( Orientation.VERTICAL );
 
   private TextField keyField;
@@ -42,7 +45,11 @@ public class BehaviorBox extends VBox
   private Button undoBtn = new Button( "revive" );
   private HBox actionBox = new HBox( deleteBtn, editBtn );
 
-  public BehaviorBox( String uuid, boolean isContinuous, MappableChar key, String description )
+  public BehaviorBox( String uuid,
+                      boolean isContinuous,
+                      MappableChar key,
+                      String description,
+                      Function< MappableChar, Boolean > isKeyTaken )
   {
     super();
 
@@ -61,11 +68,7 @@ public class BehaviorBox extends VBox
     keyField.setMaxWidth( 44 );
     descField.setMinWidth( 100 );
     keyTakenLbl.setTextFill( Color.RED );
-    descEmptyLbl.setTextFill( Color.RED );
     HBox.setHgrow( descField, Priority.ALWAYS );
-
-    keyField.textProperty().addListener( ( old, ov, nv ) -> keyProp.setValue( nv ) );
-    descField.textProperty().addListener( ( old, ov, nv ) -> descriptionProp.setValue( nv ) );
 
     keyProp.addListener( ( o, ov, nv ) -> keyText.setText( nv ) );
     descriptionProp.addListener( ( o, ov, nv ) -> descText.setText( nv ) );
@@ -103,28 +106,56 @@ public class BehaviorBox extends VBox
 
     // Setup Edit Stuff
     SimpleBooleanProperty editingProp = new SimpleBooleanProperty( false );
+
     editBtn.setOnAction( e -> {
       hbox.getChildren().clear();
       hbox.getChildren().addAll( keyField, descField );
       editingProp.set( true );
       keyField.requestFocus();
     } );
+
     EventHandler< ? super KeyEvent > onEnter = evt -> {
       if (evt.getCode().equals( KeyCode.ENTER ) || evt.getCode().equals( KeyCode.ESCAPE )) {
         save();
         editBtn.requestFocus();
       }
     };
+
     keyField.setOnKeyPressed( onEnter );
     descField.setOnKeyPressed( onEnter );
+
     keyField.focusedProperty().addListener( ( old, ov, isFocused ) -> {
       if (!isFocused && !descField.isFocused()) {
         save();
       }
     } );
+
     descField.focusedProperty().addListener( ( old, ov, isFocused ) -> {
       if (!isFocused && !keyField.isFocused()) {
         save();
+      }
+    } );
+
+    EventHandler< ? super KeyEvent > limitText =
+        EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
+    keyField.setOnKeyTyped( evt -> {
+      String text = keyField.getText() + evt.getCharacter();
+
+      // limit to 1 char
+      limitText.handle( evt );
+      if (evt.isConsumed() || text.length() != 1) {
+        return;
+      }
+
+      Optional< MappableChar > forString = MappableChar.getForString( text );
+      boolean isTaken = isKeyTaken.apply( forString.get() );
+      if (isTaken) {
+        evt.consume();
+        this.getChildren().clear();
+        this.getChildren().addAll( hbox, keyTakenLbl );
+      } else {
+        this.getChildren().clear();
+        this.getChildren().addAll( hbox );
       }
     } );
   }
@@ -133,6 +164,19 @@ public class BehaviorBox extends VBox
   {
     hbox.getChildren().clear();
     hbox.getChildren().addAll( keyText, separator, descText, actionBox );
+
+    if (keyField.getText().isEmpty()) {
+      this.keyField.setText( this.keyProp.get() );
+      return;
+    }
+
+    if (descField.getText().isEmpty()) {
+      this.descField.setText( this.descriptionProp.get() );
+      return;
+    }
+
+    this.keyProp.setValue( keyField.getText() );
+    this.descriptionProp.setValue( descField.getText() );
   }
 
   public String getUuid()

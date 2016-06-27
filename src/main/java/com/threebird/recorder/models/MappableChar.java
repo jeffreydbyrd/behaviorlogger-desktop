@@ -114,7 +114,23 @@ public enum MappableChar
     if (s.isEmpty()) {
       return Optional.empty();
     }
-    
+
     return getForChar( s.charAt( 0 ) );
   }
+
+  private static char[] acceptableKeys;
+  static {
+    MappableChar[] values = MappableChar.values();
+    acceptableKeys = new char[values.length];
+    for (int i = 0; i < values.length; i++) {
+      MappableChar mappableChar = values[i];
+      acceptableKeys[i] = mappableChar.c;
+    }
+  }
+
+  public static char[] acceptableKeys()
+  {
+    return acceptableKeys;
+  }
+
 }
