@@ -3,9 +3,12 @@ package com.threebird.recorder.controllers;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -75,7 +78,8 @@ public class EditSchemaController
 
   @FXML private Button deleteSchemaButton;
 
-  protected static int defaultNumBoxes = 10;
+  private EventHandler< ? super KeyEvent > limitText;
+
   private static char[] digits = "0123456789".toCharArray();
   private static String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
 
@@ -110,6 +114,8 @@ public class EditSchemaController
         model.sessionDirectory == null
             ? PreferencesManager.getSessionDirectory()
             : model.sessionDirectory.getPath();
+
+    limitText = EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
 
     directoryField.setText( dir );
 
@@ -177,7 +183,7 @@ public class EditSchemaController
   {
     // Add BehaviorBoxes for existing behavior-mappings
     for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior, this::isTaken );
+      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior, this::getBehaviorBoxes );
       if (kbm.isContinuous) {
         this.continuousBoxes.getChildren().add( bb );
       } else {
@@ -187,26 +193,7 @@ public class EditSchemaController
 
     // Setup the Add-Behavior widget
     // Prevent user from duplicating keys and limit to 1 character
-    EventHandler< ? super KeyEvent > limitText =
-        EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
-    keyField.setOnKeyTyped( evt -> {
-      String text = keyField.getText() + evt.getCharacter();
-
-      // limit to 1 char
-      limitText.handle( evt );
-      if (evt.isConsumed() || text.length() != 1) {
-        return;
-      }
-
-      boolean isTaken = isTaken( MappableChar.getForString( text ).get() );
-
-      if (isTaken) {
-        evt.consume();
-        mappingErrorText.setText( "That key is already taken." );
-      } else {
-        mappingErrorText.setText( "" );
-      }
-    } );
+    keyField.setOnKeyTyped( this::newBehaviorKeyOnType );
 
     // If user hits ENTER, then click "Add" button
     EventHandler< ? super KeyEvent > onEnter = evt -> {
@@ -220,11 +207,23 @@ public class EditSchemaController
     addButton.setOnKeyPressed( onEnter );
   }
 
-  /**
-   * Returns true if the given character is taken by a BehaviorBox
-   */
-  private Boolean isTaken( MappableChar c )
+  private void newBehaviorKeyOnType( KeyEvent evt )
   {
+    String text = keyField.getText() + evt.getCharacter();
+
+    // limit to 1 char
+    limitText.handle( evt );
+    if (evt.isConsumed() || text.length() != 1) {
+      return;
+    }
+
+    Optional< MappableChar > optChar = MappableChar.getForString( evt.getCharacter() );
+    if (!optChar.isPresent()) {
+      evt.consume();
+      return;
+    }
+
+    MappableChar c = optChar.get();
     boolean isTakenD = discreteBoxes.getChildren()
                                     .stream()
                                     .map( node -> (BehaviorBox) node )
@@ -233,7 +232,14 @@ public class EditSchemaController
                                       .stream()
                                       .map( node -> (BehaviorBox) node )
                                       .anyMatch( bbox -> bbox.getKey().equals( c ) );
-    return isTakenD || isTakenC;
+    boolean isTaken = isTakenD || isTakenC;
+
+    if (isTaken) {
+      evt.consume();
+      mappingErrorText.setText( "That key is already taken." );
+    } else {
+      mappingErrorText.setText( "" );
+    }
   }
 
   /**
@@ -329,7 +335,7 @@ public class EditSchemaController
     String behavior = descriptionField.getText();
     boolean isCont = contCheckbox.isSelected();
 
-    BehaviorBox bb = new BehaviorBox( uuid, isCont, key, behavior, this::isTaken );
+    BehaviorBox bb = new BehaviorBox( uuid, isCont, key, behavior, this::getBehaviorBoxes );
     if (contCheckbox.isSelected()) {
       this.continuousBoxes.getChildren().add( bb );
     } else {
@@ -342,6 +348,17 @@ public class EditSchemaController
     contCheckbox.setSelected( false );
 
     keyField.requestFocus();
+  }
+
+  private List< BehaviorBox > getBehaviorBoxes()
+  {
+    List< BehaviorBox > discretes =
+        discreteBoxes.getChildrenUnmodifiable().stream().map( n -> (BehaviorBox) n ).collect( Collectors.toList() );
+    List< BehaviorBox > continuous =
+        continuousBoxes.getChildrenUnmodifiable().stream().map( n -> (BehaviorBox) n ).collect( Collectors.toList() );
+    discretes.addAll( continuous );
+    
+    return discretes;
   }
 
   @FXML void onBrowseButtonPressed( ActionEvent evt )

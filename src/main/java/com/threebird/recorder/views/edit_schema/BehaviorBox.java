@@ -1,7 +1,8 @@
 package com.threebird.recorder.views.edit_schema;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.utils.EventRecorderUtil;
@@ -19,10 +20,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
-public class BehaviorBox extends VBox
+public class BehaviorBox extends HBox
 {
   public final String uuid;
   private SimpleBooleanProperty isContinuousProp;
@@ -30,11 +29,8 @@ public class BehaviorBox extends VBox
   private SimpleStringProperty descriptionProp;
   private SimpleBooleanProperty deletedProp;
 
-  private HBox hbox = new HBox();
-
   private Label keyText;
   private Label descText;
-  private Label keyTakenLbl = new Label( "That key is taken." );
   private Separator separator = new Separator( Orientation.VERTICAL );
 
   private TextField keyField;
@@ -49,7 +45,7 @@ public class BehaviorBox extends VBox
                       boolean isContinuous,
                       MappableChar key,
                       String description,
-                      Function< MappableChar, Boolean > isKeyTaken )
+                      Supplier< List< BehaviorBox > > getOthers )
   {
     super();
 
@@ -67,7 +63,6 @@ public class BehaviorBox extends VBox
     descText.setMinWidth( 100 );
     keyField.setMaxWidth( 44 );
     descField.setMinWidth( 100 );
-    keyTakenLbl.setTextFill( Color.RED );
     HBox.setHgrow( descField, Priority.ALWAYS );
 
     keyProp.addListener( ( o, ov, nv ) -> keyText.setText( nv ) );
@@ -76,12 +71,11 @@ public class BehaviorBox extends VBox
     actionBox.setNodeOrientation( NodeOrientation.RIGHT_TO_LEFT );
     HBox.setHgrow( actionBox, Priority.ALWAYS );
 
-    hbox.setPrefHeight( 30 );
-    hbox.setMinHeight( USE_PREF_SIZE );
-    hbox.setOnMouseEntered( evt -> hbox.setStyle( "-fx-background-color:#e0e0e0;" ) );
-    hbox.setOnMouseExited( evt -> hbox.setStyle( "" ) );
-    hbox.getChildren().addAll( keyText, separator, descText, actionBox );
-    this.getChildren().addAll( hbox );
+    this.setPrefHeight( 30 );
+    this.setMinHeight( USE_PREF_SIZE );
+    this.setOnMouseEntered( evt -> this.setStyle( "-fx-background-color:#e0e0e0;" ) );
+    this.setOnMouseExited( evt -> this.setStyle( "" ) );
+    this.getChildren().addAll( keyText, separator, descText, actionBox );
 
     // Setup delete button
     deleteBtn.setOnAction( e -> {
@@ -108,8 +102,8 @@ public class BehaviorBox extends VBox
     SimpleBooleanProperty editingProp = new SimpleBooleanProperty( false );
 
     editBtn.setOnAction( e -> {
-      hbox.getChildren().clear();
-      hbox.getChildren().addAll( keyField, descField );
+      this.getChildren().clear();
+      this.getChildren().addAll( keyField, descField );
       editingProp.set( true );
       keyField.requestFocus();
     } );
@@ -138,6 +132,7 @@ public class BehaviorBox extends VBox
 
     EventHandler< ? super KeyEvent > limitText =
         EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
+
     keyField.setOnKeyTyped( evt -> {
       String text = keyField.getText() + evt.getCharacter();
 
@@ -147,23 +142,31 @@ public class BehaviorBox extends VBox
         return;
       }
 
-      Optional< MappableChar > forString = MappableChar.getForString( text );
-      boolean isTaken = isKeyTaken.apply( forString.get() );
-      if (isTaken) {
+      Optional< MappableChar > optChar = MappableChar.getForString( evt.getCharacter() );
+      if (!optChar.isPresent()) {
         evt.consume();
-        this.getChildren().clear();
-        this.getChildren().addAll( hbox, keyTakenLbl );
-      } else {
-        this.getChildren().clear();
-        this.getChildren().addAll( hbox );
+        return;
+      }
+
+      MappableChar c = optChar.get();
+
+      for (BehaviorBox behaviorBox : getOthers.get()) {
+        if (behaviorBox == this) {
+          continue;
+        }
+
+        if (behaviorBox.getKey().equals( c )) {
+          evt.consume();
+          return;
+        }
       }
     } );
   }
 
   private void save()
   {
-    hbox.getChildren().clear();
-    hbox.getChildren().addAll( keyText, separator, descText, actionBox );
+    this.getChildren().clear();
+    this.getChildren().addAll( keyText, separator, descText, actionBox );
 
     if (keyField.getText().isEmpty()) {
       this.keyField.setText( this.keyProp.get() );
