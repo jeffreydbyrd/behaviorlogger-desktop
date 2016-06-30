@@ -20,14 +20,20 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
-public class BehaviorBox extends HBox
+public class BehaviorBox extends VBox
 {
   public final String uuid;
   private SimpleBooleanProperty isContinuousProp;
   private SimpleStringProperty keyProp;
   private SimpleStringProperty descriptionProp;
   private SimpleBooleanProperty deletedProp;
+
+  private HBox hbox = new HBox();
+  private Label keyTakenLbl = new Label( "That key is taken." );
 
   private Label keyText;
   private Label descText;
@@ -38,7 +44,7 @@ public class BehaviorBox extends HBox
 
   private Button deleteBtn = new Button( "delete" );
   private Button editBtn = new Button( "edit" );
-  private Button undoBtn = new Button( "revive" );
+  private Button undoBtn = new Button( "undo" );
   private HBox actionBox = new HBox( deleteBtn, editBtn );
 
   public BehaviorBox( String uuid,
@@ -59,30 +65,38 @@ public class BehaviorBox extends HBox
     keyField = new TextField( key.c + "" );
     descField = new TextField( description );
 
-    keyText.setMinWidth( 44 );
-    descText.setMinWidth( 100 );
-    keyField.setMaxWidth( 44 );
-    descField.setMinWidth( 100 );
-    HBox.setHgrow( descField, Priority.ALWAYS );
-
     keyProp.addListener( ( o, ov, nv ) -> keyText.setText( nv ) );
     descriptionProp.addListener( ( o, ov, nv ) -> descText.setText( nv ) );
 
+    keyText.setMinWidth( 44 );
+    descText.setMinWidth( 80 );
+    keyField.setMaxWidth( 44 );
+    descField.setMinWidth( 80 );
     actionBox.setNodeOrientation( NodeOrientation.RIGHT_TO_LEFT );
+    HBox.setHgrow( descText, Priority.ALWAYS );
+    HBox.setHgrow( descField, Priority.ALWAYS );
     HBox.setHgrow( actionBox, Priority.ALWAYS );
+    keyTakenLbl.setTextFill( Color.RED );
+    hbox.setPrefHeight( 30 );
+    hbox.setMinHeight( USE_PREF_SIZE );
 
-    this.setPrefHeight( 30 );
-    this.setMinHeight( USE_PREF_SIZE );
+    Font font = Font.font( 12 );
+    editBtn.setFont( font );
+    deleteBtn.setFont( font );
+    undoBtn.setFont( font );
+
+    hbox.getChildren().addAll( keyText, separator, descText, actionBox );
+    this.getChildren().addAll( hbox );
+
     this.setOnMouseEntered( evt -> this.setStyle( "-fx-background-color:#e0e0e0;" ) );
     this.setOnMouseExited( evt -> this.setStyle( "" ) );
-    this.getChildren().addAll( keyText, separator, descText, actionBox );
 
     // Setup delete button
     deleteBtn.setOnAction( e -> {
       deletedProp.setValue( true );
       actionBox.getChildren().clear();
       actionBox.getChildren().addAll( undoBtn, editBtn );
-      editBtn.setDisable( true );
+      editBtn.setVisible( false );
       keyText.setDisable( true );
       descText.setDisable( true );
       undoBtn.requestFocus();
@@ -92,7 +106,7 @@ public class BehaviorBox extends HBox
       deletedProp.setValue( false );
       actionBox.getChildren().clear();
       actionBox.getChildren().addAll( deleteBtn, editBtn );
-      editBtn.setDisable( false );
+      editBtn.setVisible( true );
       keyText.setDisable( false );
       descText.setDisable( false );
       deleteBtn.requestFocus();
@@ -102,8 +116,8 @@ public class BehaviorBox extends HBox
     SimpleBooleanProperty editingProp = new SimpleBooleanProperty( false );
 
     editBtn.setOnAction( e -> {
-      this.getChildren().clear();
-      this.getChildren().addAll( keyField, descField );
+      hbox.getChildren().clear();
+      hbox.getChildren().addAll( keyField, descField );
       editingProp.set( true );
       keyField.requestFocus();
     } );
@@ -157,16 +171,21 @@ public class BehaviorBox extends HBox
 
         if (behaviorBox.getKey().equals( c )) {
           evt.consume();
+          this.getChildren().clear();
+          this.getChildren().addAll( hbox, keyTakenLbl );
           return;
         }
       }
+
+      this.getChildren().clear();
+      this.getChildren().addAll( hbox );
     } );
   }
 
   private void save()
   {
-    this.getChildren().clear();
-    this.getChildren().addAll( keyText, separator, descText, actionBox );
+    hbox.getChildren().clear();
+    hbox.getChildren().addAll( keyText, separator, descText, actionBox );
 
     if (keyField.getText().isEmpty()) {
       this.keyField.setText( this.keyProp.get() );
