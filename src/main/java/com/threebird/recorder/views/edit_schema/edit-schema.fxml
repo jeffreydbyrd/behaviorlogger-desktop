@@ -59,18 +59,20 @@
             <Separator orientation="VERTICAL" prefHeight="200.0" />
             <VBox spacing="10.0" GridPane.rowIndex="1" HBox.hgrow="ALWAYS">
                <children>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
-                        <VBox HBox.hgrow="ALWAYS">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="Discrete" />
+                              <Separator prefWidth="200.0" />
                               <VBox fx:id="discreteBoxes" />
                            </children>
                         </VBox>
                         <Separator orientation="VERTICAL" prefHeight="200.0" />
-                        <VBox HBox.hgrow="ALWAYS">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="Continuous" />
+                              <Separator prefWidth="200.0" />
                               <VBox fx:id="continuousBoxes" />
                            </children>
                         </VBox>

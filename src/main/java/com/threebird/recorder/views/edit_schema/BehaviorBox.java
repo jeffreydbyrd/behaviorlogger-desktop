@@ -12,6 +12,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -69,9 +70,13 @@ public class BehaviorBox extends VBox
     descriptionProp.addListener( ( o, ov, nv ) -> descText.setText( nv ) );
 
     keyText.setMinWidth( 44 );
+    keyText.setAlignment( Pos.CENTER );
     descText.setMinWidth( 80 );
     keyField.setMaxWidth( 44 );
     descField.setMinWidth( 80 );
+    editBtn.setMinWidth( 40 );
+    deleteBtn.setMinWidth( 50 );
+    undoBtn.setMinWidth( 40 );
     actionBox.setNodeOrientation( NodeOrientation.RIGHT_TO_LEFT );
     HBox.setHgrow( descText, Priority.ALWAYS );
     HBox.setHgrow( descField, Priority.ALWAYS );
@@ -79,6 +84,8 @@ public class BehaviorBox extends VBox
     keyTakenLbl.setTextFill( Color.RED );
     hbox.setPrefHeight( 30 );
     hbox.setMinHeight( USE_PREF_SIZE );
+    hbox.setAlignment( Pos.CENTER );
+    actionBox.setAlignment( Pos.CENTER );
 
     Font font = Font.font( 12 );
     editBtn.setFont( font );
@@ -184,6 +191,8 @@ public class BehaviorBox extends VBox
 
   private void save()
   {
+    this.getChildren().clear();
+    this.getChildren().addAll( hbox );
     hbox.getChildren().clear();
     hbox.getChildren().addAll( keyText, separator, descText, actionBox );
 
