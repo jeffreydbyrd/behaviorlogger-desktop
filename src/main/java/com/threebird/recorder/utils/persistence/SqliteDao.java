@@ -3,13 +3,14 @@ package com.threebird.recorder.utils.persistence;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.threebird.recorder.utils.resources.ResourceUtils;
 
 /**
- * A small library that handles SQLite Connections and PreparedStatements for
- * you. Use the {@link SqliteDao#query(SqlQueryData)} or
- * {@link SqliteDao#update(SqlQueryData)} methods to interact with the DB.
+ * A small library that handles SQLite Connections and PreparedStatements for you. Use the
+ * {@link SqliteDao#query(SqlQueryData)} or {@link SqliteDao#update(SqlQueryData)} methods to interact with the DB.
  */
 public class SqliteDao
 {
@@ -25,8 +26,7 @@ public class SqliteDao
   private static Connection conn;
 
   /**
-   * @return false if a Connection is already open, or true if a new Connection
-   *         was successfully created
+   * @return false if a Connection is already open, or true if a new Connection was successfully created
    * 
    * @throws Exception
    */
@@ -55,7 +55,8 @@ public class SqliteDao
 
     int i = 1;
     for (Object o : sqd.getSqlParams()) {
-      stmt.setObject( i++, o );
+      stmt.setObject( i, o );
+      i++;
     }
 
     if (isDML) {
@@ -72,35 +73,37 @@ public class SqliteDao
   }
 
   /**
-   * Executes a SQL Query (ie. a select statment) according to the data provided
-   * by a {@link SqlQueryData}. The ResultSet given to the 'handle' function
-   * consists of each column specified in the query. Any calls to
-   * {@link SqliteDao#query(SqlQueryData)} or
-   * {@link SqliteDao#update(SqlQueryData)} within
-   * {@link SqlQueryData#handle(java.sql.ResultSet)} will occur within the same
-   * transaction.
+   * Executes a SQL Query (ie. a select statment) according to the data provided. The ResultSet given to the 'handle'
+   * function consists of each column specified in the query. Any calls to
+   * {@link SqliteDao#query(String, List, SqlCallback)} or {@link SqliteDao#update(String, List, SqlCallback)} within
+   * {@link SqlQueryData#handle(java.sql.ResultSet)} will occur within the same transaction.
    * 
    * @throws Exception
    */
-  synchronized public static void query( final SqlQueryData sqc ) throws Exception
+  synchronized public static void query( final String sql,
+                                         final List< Object > params,
+                                         final SqlCallback callback )
+      throws Exception
   {
-    execute( sqc, false );
+    SqlQueryData sqd = SqlQueryData.create( sql, params, callback );
+    execute( sqd, false );
   }
 
   /**
-   * Executes a DML statment (insert, update, delete) with the data provided by
-   * a {@link SqlQueryData}. The ResultSet given to the 'handle' function
-   * consists of the statement's generated keys. Any calls to
-   * {@link SqliteDao#query(SqlQueryData)} or
-   * {@link SqliteDao#update(SqlQueryData)} within
-   * {@link SqlQueryData#handle(java.sql.ResultSet)} will occur within the same
-   * transaction.
+   * Executes a DML statment (insert, update, delete) with the data provided. The ResultSet given to the 'handle'
+   * function consists of the statement's generated keys. Any calls to
+   * {@link SqliteDao#query(String, List, SqlCallback)} or {@link SqliteDao#update(String, List, SqlCallback)} within
+   * {@link SqlQueryData#handle(java.sql.ResultSet)} will occur within the same transaction.
    * 
    * @throws Exception
    */
-  synchronized public static void update( final SqlQueryData sqc ) throws Exception
+  synchronized public static void update( final String sql,
+                                          final List< Object > params,
+                                          final SqlCallback callback )
+      throws Exception
   {
-    execute( sqc, true );
+    SqlQueryData sqd = SqlQueryData.create( sql, params, callback );
+    execute( sqd, true );
   }
 
   /**
@@ -110,6 +113,6 @@ public class SqliteDao
    */
   synchronized public static void update( final String sql ) throws Exception
   {
-    update( SqlQueryData.create( sql ) );
+    update( sql, Lists.newArrayList(), SqlCallback.NOOP );
   }
 }

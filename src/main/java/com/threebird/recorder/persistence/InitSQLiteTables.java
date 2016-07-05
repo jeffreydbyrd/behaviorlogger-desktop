@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.threebird.recorder.utils.persistence.SqlQueryData;
+import com.google.common.collect.Lists;
 import com.threebird.recorder.utils.persistence.SqliteDao;
 import com.threebird.recorder.utils.resources.ResourceUtils;
 
@@ -51,8 +51,8 @@ public class InitSQLiteTables
             "FOREIGN KEY (schema_id) REFERENCES schemas(id)," +
             "PRIMARY KEY(schema_id, key) );";
 
-    SqliteDao.update( SqlQueryData.create( createSchemas, rs -> {} ) );
-    SqliteDao.update( SqlQueryData.create( createBehaviors, rs -> {} ) );
+    SqliteDao.update( createSchemas );
+    SqliteDao.update( createBehaviors );
   }
 
   /**
@@ -66,12 +66,12 @@ public class InitSQLiteTables
     String pragmaSchemas = "SELECT name FROM sqlite_master WHERE type='table' AND name='schemas_v1_0'";
     AtomicBoolean tableExists = new AtomicBoolean( false );
 
-    SqliteDao.query( SqlQueryData.create( pragmaSchemas, rs -> {
+    SqliteDao.query( pragmaSchemas, Lists.newArrayList(), rs -> {
       while (rs.next()) {
         tableExists.set( true );
         return;
       }
-    } ) );
+    } );
 
     // if the PRAGMA statment returned anything, then don't bother with the rest
     if (tableExists.get()) {
@@ -99,14 +99,14 @@ public class InitSQLiteTables
             + "FOREIGN KEY (schema_uuid) REFERENCES schemas(uuid),"
             + "UNIQUE(schema_uuid, key) );";
 
-    SqliteDao.update( SqlQueryData.create( createNewSchemas ) );
-    SqliteDao.update( SqlQueryData.create( createNewBehaviors ) );
+    SqliteDao.update( createNewSchemas );
+    SqliteDao.update( createNewBehaviors );
 
     String insertSchemaFmt = "INSERT INTO schemas_v1_0 VALUES ('%s','%s','%s','%s',%d,%d,%d,%d);";
     String getBehaviorsFmt = "SELECT * FROM key_behaviors WHERE schema_id = %d;";
     String insertBehaviorFmt = "INSERT INTO key_behaviors_v1_0 VALUES ('%s','%s','%s',%d);";
 
-    SqliteDao.query( SqlQueryData.create( "SELECT * FROM schemas", rs -> {
+    SqliteDao.query( "SELECT * FROM schemas", Lists.newArrayList(), rs -> {
       while (rs.next()) {
         String uuid = UUID.randomUUID().toString();
         String insertSchema = String.format( insertSchemaFmt,
@@ -118,12 +118,12 @@ public class InitSQLiteTables
                                              rs.getInt( "pause_on_end" ),
                                              rs.getInt( "color_on_end" ),
                                              rs.getInt( "sound_on_end" ) );
-        SqliteDao.update( SqlQueryData.create( insertSchema ) );
+        SqliteDao.update( insertSchema );
 
         int originalId = rs.getInt( 1 );
         String getBehaviors = String.format( getBehaviorsFmt, originalId );
 
-        SqliteDao.query( SqlQueryData.create( getBehaviors, rs2 -> {
+        SqliteDao.query( getBehaviors, Lists.newArrayList(), rs2 -> {
           while (rs2.next()) {
             String name = rs2.getString( "behavior" );
             String insertBehavior =
@@ -132,11 +132,11 @@ public class InitSQLiteTables
                                rs2.getString( "key" ),
                                name,
                                rs2.getInt( "is_continuous" ) );
-            SqliteDao.update( SqlQueryData.create( insertBehavior ) );
+            SqliteDao.update( insertBehavior );
           }
-        } ) );
+        } );
       }
-    } ) );
+    } );
 
     // Keep the old tables in case the user goes back to old version
   }
@@ -147,12 +147,12 @@ public class InitSQLiteTables
     String pragmaSchemas = "SELECT name FROM sqlite_master WHERE type='table' AND name='schemas_v1_1'";
     AtomicBoolean tableExists = new AtomicBoolean( false );
 
-    SqliteDao.query( SqlQueryData.create( pragmaSchemas, rs -> {
+    SqliteDao.query( pragmaSchemas, Lists.newArrayList(), rs -> {
       while (rs.next()) {
         tableExists.set( true );
         return;
       }
-    } ) );
+    } );
 
     // if the PRAGMA statment returned anything, then don't bother with the rest
     if (tableExists.get()) {
@@ -182,16 +182,16 @@ public class InitSQLiteTables
             + "FOREIGN KEY (schema_uuid) REFERENCES schemas(uuid),"
             + "UNIQUE(schema_uuid, key) );";
 
-    SqliteDao.update( SqlQueryData.create( createNewSchemas ) );
-    SqliteDao.update( SqlQueryData.create( createNewBehaviors ) );
+    SqliteDao.update( createNewSchemas );
+    SqliteDao.update( createNewBehaviors );
 
     String insertSchemaFmt = "INSERT INTO schemas_v1_1 VALUES ('%s',%d,'%s','%s','%s',%d,%d,%d,%d);";
     String getBehaviorsFmt = "SELECT * FROM key_behaviors_v1_0 WHERE schema_uuid = '%s';";
     String insertBehaviorFmt = "INSERT INTO behaviors_v1_1 VALUES ('%s','%s','%s','%s',%d);";
 
-    SqliteDao.query( SqlQueryData.create( "SELECT * FROM schemas_v1_0", rs -> {
-      String schemaUuid = rs.getString("uuid");
+    SqliteDao.query( "SELECT * FROM schemas_v1_0", Lists.newArrayList(), rs -> {
       while (rs.next()) {
+        String schemaUuid = rs.getString( "uuid" );
         String insertSchema = String.format( insertSchemaFmt,
                                              schemaUuid,
                                              1,
@@ -202,11 +202,11 @@ public class InitSQLiteTables
                                              rs.getInt( "pause_on_end" ),
                                              rs.getInt( "color_on_end" ),
                                              rs.getInt( "sound_on_end" ) );
-        SqliteDao.update( SqlQueryData.create( insertSchema ) );
+        SqliteDao.update( insertSchema );
 
         String getBehaviors = String.format( getBehaviorsFmt, schemaUuid );
 
-        SqliteDao.query( SqlQueryData.create( getBehaviors, rs2 -> {
+        SqliteDao.query( getBehaviors, Lists.newArrayList(), rs2 -> {
           while (rs2.next()) {
             String behaviorUuid = UUID.randomUUID().toString();
             String insertBehavior =
@@ -216,11 +216,11 @@ public class InitSQLiteTables
                                rs2.getString( "key" ),
                                rs2.getString( "name" ),
                                rs2.getInt( "is_continuous" ) );
-            SqliteDao.update( SqlQueryData.create( insertBehavior ) );
+            SqliteDao.update( insertBehavior );
           }
-        } ) );
+        } );
       }
-    } ) );
+    } );
 
     // Keep the old tables in case the user goes back to old version
 

@@ -8,7 +8,6 @@ import com.google.common.collect.Sets;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.utils.persistence.SqlCallback;
-import com.threebird.recorder.utils.persistence.SqlQueryData;
 import com.threebird.recorder.utils.persistence.SqliteDao;
 
 /**
@@ -40,7 +39,7 @@ public class KeyBehaviors
       }
     };
 
-    SqliteDao.query( SqlQueryData.create( sql, Lists.newArrayList( schemaId ), callback ) );
+    SqliteDao.query( sql, Lists.newArrayList( schemaId ), callback );
 
     return mappings;
   }
@@ -69,7 +68,7 @@ public class KeyBehaviors
     List< Object > params =
         Lists.newArrayList( mapping.uuid, schemaId, mapping.key.c + "", mapping.behavior, mapping.isContinuous );
 
-    SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
+    SqliteDao.update( sql, params, SqlCallback.NOOP );
   }
 
   /**
@@ -85,6 +84,17 @@ public class KeyBehaviors
     List< Object > params =
         Lists.newArrayList( behaviorId );
 
-    SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
+    SqliteDao.update( sql, params, SqlCallback.NOOP );
+  }
+
+  public static void update( String uuid, KeyBehaviorMapping mapping ) throws Exception
+  {
+    String sql =
+        "UPDATE " + TBL_NAME + " SET key=?, description=? WHERE uuid=?";
+
+    List< Object > params =
+        Lists.newArrayList( mapping.key.c + "", mapping.behavior, mapping.uuid );
+
+    SqliteDao.update( sql, params, SqlCallback.NOOP );
   }
 }

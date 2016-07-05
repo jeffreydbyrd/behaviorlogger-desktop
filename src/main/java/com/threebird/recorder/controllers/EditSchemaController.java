@@ -227,11 +227,11 @@ public class EditSchemaController
     boolean isTakenD = discreteBoxes.getChildren()
                                     .stream()
                                     .map( node -> (BehaviorBox) node )
-                                    .anyMatch( bbox -> bbox.getKey().equals( c ) );
+                                    .anyMatch( bbox -> !bbox.isDeleted() && bbox.getKey().equals( c ) );
     boolean isTakenC = continuousBoxes.getChildren()
                                       .stream()
                                       .map( node -> (BehaviorBox) node )
-                                      .anyMatch( bbox -> bbox.getKey().equals( c ) );
+                                      .anyMatch( bbox -> !bbox.isDeleted() && bbox.getKey().equals( c ) );
     boolean isTaken = isTakenD || isTakenC;
 
     if (isTaken) {
@@ -357,7 +357,7 @@ public class EditSchemaController
     List< BehaviorBox > continuous =
         continuousBoxes.getChildrenUnmodifiable().stream().map( n -> (BehaviorBox) n ).collect( Collectors.toList() );
     discretes.addAll( continuous );
-    
+
     return discretes;
   }
 
@@ -388,6 +388,9 @@ public class EditSchemaController
     behaviorBoxes.addAll( continuousBoxes.getChildren() );
     for (Node node : behaviorBoxes) {
       BehaviorBox bb = (BehaviorBox) node;
+      if (bb.isDeleted()) {
+        continue;
+      }
       MappableChar key = bb.getKey();
       String description = bb.getDescription();
       boolean isContinuous = bb.isContinuous();

@@ -13,7 +13,6 @@ import com.google.common.collect.Sets.SetView;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.utils.persistence.SqlCallback;
-import com.threebird.recorder.utils.persistence.SqlQueryData;
 import com.threebird.recorder.utils.persistence.SqliteDao;
 
 /**
@@ -58,6 +57,13 @@ public class Schemas
 
       SetView< KeyBehaviorMapping > delete = Sets.difference( oldSet, newSet );
       SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
+      
+      List<KeyBehaviorMapping> update = Lists.newArrayList();
+      for (KeyBehaviorMapping kbm : newSet) {
+        if (oldSet.contains( kbm )) {
+          update.add( kbm );
+        }
+      }
 
       for (KeyBehaviorMapping mapping : delete) {
         KeyBehaviors.delete( mapping.uuid );
@@ -66,9 +72,13 @@ public class Schemas
       for (KeyBehaviorMapping mapping : create) {
         KeyBehaviors.create( schema.uuid, mapping );
       }
+
+      for (KeyBehaviorMapping mapping : update) {
+        KeyBehaviors.update( schema.uuid, mapping );
+      }
     };
 
-    SqliteDao.update( SqlQueryData.create( sql, params, handle ) );
+    SqliteDao.update( sql, params, handle );
   }
 
   /**
@@ -97,7 +107,7 @@ public class Schemas
                                                 schema.color,
                                                 schema.sound );
 
-    SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
+    SqliteDao.update( sql, params, SqlCallback.NOOP );
     KeyBehaviors.addAll( schema.uuid, schema.mappings.values() );
   }
 
@@ -114,7 +124,7 @@ public class Schemas
 
     String sql = "DELETE FROM " + TBL_NAME + " WHERE uuid = ?";
     List< Object > params = Lists.newArrayList( schema.uuid );
-    SqliteDao.update( SqlQueryData.create( sql, params, SqlCallback.NOOP ) );
+    SqliteDao.update( sql, params, SqlCallback.NOOP );
   }
 
   /**
@@ -147,7 +157,7 @@ public class Schemas
       }
     };
 
-    SqliteDao.query( SqlQueryData.create( sql, callback ) );
+    SqliteDao.query( sql, Lists.newArrayList(), callback );
 
     return result;
   }

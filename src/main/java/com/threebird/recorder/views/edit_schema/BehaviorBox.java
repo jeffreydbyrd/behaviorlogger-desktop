@@ -7,6 +7,8 @@ import java.util.function.Supplier;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.EventHandler;
@@ -24,6 +26,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 public class BehaviorBox extends VBox
 {
@@ -110,6 +113,12 @@ public class BehaviorBox extends VBox
     } );
 
     undoBtn.setOnAction( e -> {
+      if (isTaken( getKey(), getOthers.get() )) {
+        e.consume();
+        displayKeyTakenLabel();
+        return;
+      }
+
       deletedProp.setValue( false );
       actionBox.getChildren().clear();
       actionBox.getChildren().addAll( deleteBtn, editBtn );
@@ -171,22 +180,55 @@ public class BehaviorBox extends VBox
 
       MappableChar c = optChar.get();
 
-      for (BehaviorBox behaviorBox : getOthers.get()) {
-        if (behaviorBox == this) {
-          continue;
-        }
-
-        if (behaviorBox.getKey().equals( c )) {
-          evt.consume();
-          this.getChildren().clear();
-          this.getChildren().addAll( hbox, keyTakenLbl );
-          return;
-        }
+      if (isTaken( c, getOthers.get() )) {
+        evt.consume();
+        displayKeyTakenLabel();
+        return;
       }
 
       this.getChildren().clear();
       this.getChildren().addAll( hbox );
     } );
+  }
+
+  Timeline timer;
+
+  private void displayKeyTakenLabel()
+  {
+    this.getChildren().clear();
+    this.getChildren().addAll( hbox, keyTakenLbl );
+
+    if (timer != null) {
+      timer.playFromStart();
+    } else {
+      timer = new Timeline();
+
+      BehaviorBox self = this;
+      timer.setCycleCount( 1 );
+      KeyFrame kf = new KeyFrame( Duration.seconds( 4 ), evt -> {
+        timer.stop();
+        self.getChildren().clear();
+        self.getChildren().addAll( hbox );
+      } );
+
+      timer.getKeyFrames().add( kf );
+      timer.play();
+    }
+  }
+
+  private boolean isTaken( MappableChar c, List< BehaviorBox > boxes )
+  {
+    for (BehaviorBox behaviorBox : boxes) {
+      if (behaviorBox == this) {
+        continue;
+      }
+
+      if (!behaviorBox.isDeleted() && behaviorBox.getKey().equals( c )) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private void save()
