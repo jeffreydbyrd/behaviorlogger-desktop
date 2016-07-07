@@ -41,6 +41,7 @@ public class Schemas
             + "sound_on_end = ? "
             + "WHERE uuid = ?";
 
+    schema.version = schema.version + 1;
     List< Object > params = Lists.newArrayList( schema.version,
                                                 schema.client,
                                                 schema.project,
@@ -57,8 +58,8 @@ public class Schemas
 
       SetView< KeyBehaviorMapping > delete = Sets.difference( oldSet, newSet );
       SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
-      
-      List<KeyBehaviorMapping> update = Lists.newArrayList();
+
+      List< KeyBehaviorMapping > update = Lists.newArrayList();
       for (KeyBehaviorMapping kbm : newSet) {
         if (oldSet.contains( kbm )) {
           update.add( kbm );
