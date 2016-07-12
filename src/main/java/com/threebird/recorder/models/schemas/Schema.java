@@ -8,8 +8,7 @@ import com.google.common.collect.Maps;
 import com.threebird.recorder.models.MappableChar;
 
 /**
- * Contains all session configurations, such as session duration and
- * key-behavior mappings
+ * Contains all session configurations, such as session duration and key-behavior mappings
  */
 public class Schema
 {
@@ -23,11 +22,11 @@ public class Schema
   public Boolean pause;
   public Boolean color;
   public Boolean sound;
+  public Boolean archived;
 
   /**
-   * Returns the KeyBehaviorMapping that corresponds to 'key', wrapped in an
-   * {@link Optional} if found. If the key is not found, it returns an empty
-   * Optional
+   * Returns the KeyBehaviorMapping that corresponds to 'key', wrapped in an {@link Optional} if found. If the key is
+   * not found, it returns an empty Optional
    */
   public Optional< KeyBehaviorMapping > getMapping( Character key )
   {
@@ -66,6 +65,8 @@ public class Schema
 
   @Override public String toString()
   {
-    return "Schema [id=" + uuid + ", client=" + client + ", project=" + project + "]";
+    return "Schema [uuid=" + uuid + ", version=" + version + ", client=" + client + ", project=" + project
+        + ", sessionDirectory=" + sessionDirectory + ", duration=" + duration + ", pause=" + pause + ", color=" + color
+        + ", sound=" + sound + ", archived=" + archived + "]";
   }
 }

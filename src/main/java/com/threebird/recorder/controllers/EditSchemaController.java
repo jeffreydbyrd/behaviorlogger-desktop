@@ -105,7 +105,12 @@ public class EditSchemaController
   private void init( Schema selected )
   {
     deleteSchemaButton.setVisible( selected != null );
-    model = selected == null ? new Schema() : selected;
+    if (selected == null) {
+      model = new Schema();
+      model.archived = false;
+    } else {
+      model = selected;
+    }
 
     clientField.setText( Strings.nullToEmpty( model.client ) );
     projectField.setText( Strings.nullToEmpty( model.project ) );

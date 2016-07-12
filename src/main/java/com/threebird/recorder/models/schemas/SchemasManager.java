@@ -31,8 +31,8 @@ public class SchemasManager
   }
 
   /**
-   * Using JavaFX's fucked up "Change" iterator-like object, we basically delete
-   * any removed schemas and save any new ones
+   * Using JavaFX's fucked up "Change" iterator-like object, we basically delete any removed schemas and save any new
+   * ones
    */
   private static void onSchemasChange( ListChangeListener.Change< ? extends Schema > c )
   {
@@ -48,7 +48,7 @@ public class SchemasManager
 
       for (Schema schema : c.getRemoved()) {
         try {
-          Schemas.delete( schema );
+          Schemas.archive( schema );
         } catch (Exception e) {
           Alerts.error( "Failed to delete Schema", "There was a problem while trying to delete schema.", e );
           e.printStackTrace();
@@ -62,8 +62,8 @@ public class SchemasManager
   }
 
   /**
-   * Returns the selected schema in the Start-Menu. If no schema is selected,
-   * defaults to the first element in schemas(), or null if schemas() is empty.
+   * Returns the selected schema in the Start-Menu. If no schema is selected, defaults to the first element in
+   * schemas(), or null if schemas() is empty.
    */
   public static SimpleObjectProperty< Schema > selectedProperty()
   {

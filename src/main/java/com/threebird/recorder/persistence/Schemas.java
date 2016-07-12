@@ -30,19 +30,13 @@ public class Schemas
   public static void update( Schema schema ) throws Exception
   {
     String sql =
-        "UPDATE " + TBL_NAME + " SET "
-            + "version = ?,"
-            + "client = ?,"
-            + "project = ?,"
-            + "duration = ?,"
-            + "session_directory = ?,"
-            + "pause_on_end = ?,"
-            + "color_on_end = ?,"
-            + "sound_on_end = ? "
-            + "WHERE uuid = ?";
+        "INSERT INTO " + TBL_NAME
+            + " (uuid, version, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end, archived) "
+            + " VALUES (?,?,?,?,?,?,?,?,?,?)";
 
     schema.version = schema.version + 1;
-    List< Object > params = Lists.newArrayList( schema.version,
+    List< Object > params = Lists.newArrayList( schema.uuid,
+                                                schema.version,
                                                 schema.client,
                                                 schema.project,
                                                 schema.duration,
@@ -50,32 +44,29 @@ public class Schemas
                                                 schema.pause,
                                                 schema.color,
                                                 schema.sound,
-                                                schema.uuid );
+                                                schema.archived );
+
+    Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.uuid );
+    Set< KeyBehaviorMapping > newSet = Sets.newHashSet( schema.mappings.values() );
+    SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
+    List< KeyBehaviorMapping > update = Lists.newArrayList();
+    for (KeyBehaviorMapping kbm : newSet) {
+      if (oldSet.contains( kbm )) {
+        update.add( kbm );
+      }
+    }
 
     SqlCallback handle = ( ResultSet rs ) -> {
-      Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.uuid );
-      Set< KeyBehaviorMapping > newSet = Sets.newHashSet( schema.mappings.values() );
-
-      SetView< KeyBehaviorMapping > delete = Sets.difference( oldSet, newSet );
-      SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
-
-      List< KeyBehaviorMapping > update = Lists.newArrayList();
-      for (KeyBehaviorMapping kbm : newSet) {
-        if (oldSet.contains( kbm )) {
-          update.add( kbm );
-        }
-      }
-
-      for (KeyBehaviorMapping mapping : delete) {
-        KeyBehaviors.delete( mapping.uuid );
-      }
-
       for (KeyBehaviorMapping mapping : create) {
-        KeyBehaviors.create( schema.uuid, mapping );
+        KeyBehaviors.create( schema, mapping );
       }
 
       for (KeyBehaviorMapping mapping : update) {
         KeyBehaviors.update( schema.uuid, mapping );
+      }
+
+      for (KeyBehaviorMapping mapping : newSet) {
+        KeyBehaviors.bridge( schema.uuid, schema.version, mapping.uuid );
       }
     };
 
@@ -96,8 +87,8 @@ public class Schemas
 
     String sql =
         "INSERT INTO " + TBL_NAME
-            + " (uuid, version, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end) "
-            + " VALUES (?,?,?,?,?,?,?,?,?)";
+            + " (uuid, version, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end, archived) "
+            + " VALUES (?,?,?,?,?,?,?,?,?,?)";
     List< Object > params = Lists.newArrayList( schema.uuid,
                                                 schema.version,
                                                 schema.client,
@@ -106,27 +97,30 @@ public class Schemas
                                                 schema.sessionDirectory.getPath(),
                                                 schema.pause,
                                                 schema.color,
-                                                schema.sound );
+                                                schema.sound,
+                                                schema.archived );
 
     SqliteDao.update( sql, params, SqlCallback.NOOP );
-    KeyBehaviors.addAll( schema.uuid, schema.mappings.values() );
+    KeyBehaviors.addAll( schema, schema.mappings.values() );
   }
 
-  /**
-   * Deletes the given Schema and all of its KeyBehaviorMappings
-   * 
-   * @throws Exception
-   */
-  public static void delete( Schema schema ) throws Exception
+  public static void archive( Schema schema ) throws Exception
   {
-    for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      KeyBehaviors.delete( kbm.uuid );
-    }
-
-    String sql = "DELETE FROM " + TBL_NAME + " WHERE uuid = ?";
-    List< Object > params = Lists.newArrayList( schema.uuid );
-    SqliteDao.update( sql, params, SqlCallback.NOOP );
+    schema.archived = true;
+    update( schema );
   }
+
+  // /**
+  // * Deletes the given Schema and all of its KeyBehaviorMappings
+  // *
+  // * @throws Exception
+  // */
+  // public static void delete( Schema schema ) throws Exception
+  // {
+  // String sql = "DELETE FROM " + TBL_NAME + " WHERE uuid = ?";
+  // List< Object > params = Lists.newArrayList( schema.uuid );
+  // SqliteDao.update( sql, params, SqlCallback.NOOP );
+  // }
 
   /**
    * Retrieves all Schemas
@@ -135,7 +129,9 @@ public class Schemas
    */
   public static List< Schema > all() throws Exception
   {
-    String sql = "SELECT * FROM " + TBL_NAME;
+    String sql =
+        "SELECT * FROM " + TBL_NAME + " AS outer "
+            + "WHERE version = (SELECT MAX(version) FROM " + TBL_NAME + " WHERE uuid = outer.uuid)";
     List< Schema > result = Lists.newArrayList();
 
     SqlCallback callback = rs -> {
@@ -150,6 +146,7 @@ public class Schemas
         s.color = rs.getBoolean( "color_on_end" );
         s.pause = rs.getBoolean( "pause_on_end" );
         s.sound = rs.getBoolean( "sound_on_end" );
+        s.archived = rs.getBoolean( "archived" );
 
         Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
         s.mappings = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );

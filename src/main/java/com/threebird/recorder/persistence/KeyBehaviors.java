@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.utils.persistence.SqlCallback;
 import com.threebird.recorder.utils.persistence.SqliteDao;
 
@@ -16,6 +17,7 @@ import com.threebird.recorder.utils.persistence.SqliteDao;
 public class KeyBehaviors
 {
   private static final String TBL_NAME = "behaviors_v1_1";
+  private static final String BRIDGE_NAME = "schema_behaviors_v1_1";
 
   /**
    * For a given Schema, return all
@@ -24,7 +26,14 @@ public class KeyBehaviors
    */
   public static Set< KeyBehaviorMapping > getAllForSchema( String schemaId ) throws Exception
   {
-    String sql = "SELECT * FROM " + TBL_NAME + " WHERE schema_uuid = ?";
+    String sql =
+        "SELECT b.uuid, b.key, b.description, b.is_continuous "
+            + "FROM " + TBL_NAME + " AS b"
+            + "  JOIN " + BRIDGE_NAME + " AS sb"
+            + "  ON"
+            + "    b.uuid = sb.behavior_uuid"
+            + "    AND schema_uuid = ?"
+            + "    AND schema_version = (SELECT MAX(version) FROM schemas_v1_1 WHERE uuid = ?)";
 
     Set< KeyBehaviorMapping > mappings = Sets.newHashSet();
 
@@ -39,7 +48,7 @@ public class KeyBehaviors
       }
     };
 
-    SqliteDao.query( sql, Lists.newArrayList( schemaId ), callback );
+    SqliteDao.query( sql, Lists.newArrayList( schemaId, schemaId ), callback );
 
     return mappings;
   }
@@ -49,42 +58,27 @@ public class KeyBehaviors
    * 
    * @throws Exception
    */
-  public static void addAll( String schemaId, Iterable< KeyBehaviorMapping > mappings ) throws Exception
+  public static void addAll( Schema schema, Iterable< KeyBehaviorMapping > mappings ) throws Exception
   {
     for (KeyBehaviorMapping mapping : mappings) {
-      create( schemaId, mapping );
+      create( schema, mapping );
     }
   }
 
   /**
-   * Inserts a new KeyBehaviorMapping into the key_behaviors table
+   * Inserts a new KeyBehaviorMapping into the behaviors table and schema_behaviors brdige table
    * 
    * @throws Exception
    */
-  public static void create( String schemaId, KeyBehaviorMapping mapping ) throws Exception
+  public static void create( Schema schema, KeyBehaviorMapping mapping ) throws Exception
   {
-    String sql =
-        "INSERT INTO " + TBL_NAME + " (uuid, schema_uuid, key, description, is_continuous) VALUES (?,?,?,?,?)";
-    List< Object > params =
-        Lists.newArrayList( mapping.uuid, schemaId, mapping.key.c + "", mapping.behavior, mapping.isContinuous );
+    String insertBehavior =
+        "INSERT INTO " + TBL_NAME + " (uuid, key, description, is_continuous) VALUES (?,?,?,?)";
+    List< Object > params1 =
+        Lists.newArrayList( mapping.uuid, mapping.key.c + "", mapping.behavior, mapping.isContinuous );
+    SqliteDao.update( insertBehavior, params1, SqlCallback.NOOP );
 
-    SqliteDao.update( sql, params, SqlCallback.NOOP );
-  }
-
-  /**
-   * Deletes the KeyBehaviorMapping with a specific schema_id and key
-   * 
-   * @throws Exception
-   */
-  public static void delete( String behaviorId ) throws Exception
-  {
-    String sql =
-        "DELETE FROM " + TBL_NAME + " WHERE uuid = ?";
-
-    List< Object > params =
-        Lists.newArrayList( behaviorId );
-
-    SqliteDao.update( sql, params, SqlCallback.NOOP );
+    bridge( schema.uuid, schema.version, mapping.uuid );
   }
 
   public static void update( String uuid, KeyBehaviorMapping mapping ) throws Exception
@@ -96,5 +90,14 @@ public class KeyBehaviors
         Lists.newArrayList( mapping.key.c + "", mapping.behavior, mapping.uuid );
 
     SqliteDao.update( sql, params, SqlCallback.NOOP );
+  }
+
+  public static void bridge( String schemaUuid, int version, String behaviorUuid ) throws Exception
+  {
+    String insertSchemaBehavior =
+        "INSERT INTO " + BRIDGE_NAME + "(schema_uuid, schema_version, behavior_uuid) VALUES (?,?,?)";
+    List< Object > params2 =
+        Lists.newArrayList( schemaUuid, version, behaviorUuid );
+    SqliteDao.update( insertSchemaBehavior, params2, SqlCallback.NOOP );
   }
 }
