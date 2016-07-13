@@ -129,9 +129,11 @@ public class Schemas
    */
   public static List< Schema > all() throws Exception
   {
-    String sql =
-        "SELECT * FROM " + TBL_NAME + " AS outer "
-            + "WHERE version = (SELECT MAX(version) FROM " + TBL_NAME + " WHERE uuid = outer.uuid)";
+    String sql = "SELECT * "
+        + "FROM " + TBL_NAME + " AS outer "
+        + "WHERE"
+        + "  version = (SELECT MAX(version) FROM " + TBL_NAME + " WHERE uuid = outer.uuid)"
+        + "  AND archived = 0";
     List< Schema > result = Lists.newArrayList();
 
     SqlCallback callback = rs -> {
