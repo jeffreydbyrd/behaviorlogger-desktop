@@ -63,9 +63,6 @@ public class Schemas
 
       for (KeyBehaviorMapping mapping : update) {
         KeyBehaviors.update( schema.uuid, mapping );
-      }
-
-      for (KeyBehaviorMapping mapping : newSet) {
         KeyBehaviors.bridge( schema.uuid, schema.version, mapping.uuid );
       }
     };
