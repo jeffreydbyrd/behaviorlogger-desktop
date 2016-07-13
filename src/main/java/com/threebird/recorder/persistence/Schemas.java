@@ -107,18 +107,6 @@ public class Schemas
     update( schema );
   }
 
-  // /**
-  // * Deletes the given Schema and all of its KeyBehaviorMappings
-  // *
-  // * @throws Exception
-  // */
-  // public static void delete( Schema schema ) throws Exception
-  // {
-  // String sql = "DELETE FROM " + TBL_NAME + " WHERE uuid = ?";
-  // List< Object > params = Lists.newArrayList( schema.uuid );
-  // SqliteDao.update( sql, params, SqlCallback.NOOP );
-  // }
-
   /**
    * Retrieves all Schemas
    * 
