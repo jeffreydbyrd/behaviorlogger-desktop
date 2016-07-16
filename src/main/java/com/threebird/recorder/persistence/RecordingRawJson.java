@@ -20,12 +20,14 @@ public class RecordingRawJson
 {
   public static class BehaviorBean
   {
+    String uuid;
     Character key;
     String name;
     boolean isContinuous;
 
-    public BehaviorBean( Character key, String name, boolean isContinuous )
+    public BehaviorBean( String uuid, Character key, String name, boolean isContinuous )
     {
+      this.uuid = uuid;
       this.key = key;
       this.name = name;
       this.isContinuous = isContinuous;
@@ -37,9 +39,10 @@ public class RecordingRawJson
     public String uuid;
     public String client;
     public String project;
+    public int version;
     public ArrayList< BehaviorBean > behaviors;
     public String sessionDirectory;
-    public Integer duration; // in seconds
+    public Integer duration; // in milliseconds
     public Boolean pause;
     public Boolean color;
     public Boolean sound;
@@ -61,8 +64,8 @@ public class RecordingRawJson
     DateTime stopTime;
 
     // maps behavior key to times (in seconds) it occurred
-    public HashMap< Character, ArrayList< Integer >> discretes;
-    public HashMap< Character, ArrayList< Integer >> continuous;
+    public HashMap< Character, ArrayList< Integer > > discretes;
+    public HashMap< Character, ArrayList< Integer > > continuous;
   }
 
   public static void write( SaveDetails details ) throws Exception
@@ -128,7 +131,7 @@ public class RecordingRawJson
 
     for (Entry< MappableChar, KeyBehaviorMapping > entry : from.mappings.entrySet()) {
       KeyBehaviorMapping b = entry.getValue();
-      to.behaviors.add( new BehaviorBean( b.key.c, b.behavior, b.isContinuous ) );
+      to.behaviors.add( new BehaviorBean( b.uuid, b.key.c, b.behavior, b.isContinuous ) );
     }
 
     to.sessionDirectory = from.sessionDirectory.getAbsolutePath();

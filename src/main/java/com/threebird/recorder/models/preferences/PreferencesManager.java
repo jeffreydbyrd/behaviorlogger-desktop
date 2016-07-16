@@ -38,7 +38,7 @@ public class PreferencesManager
   private static class GsonBean
   {
     String directory = System.getProperty( "user.home" );
-    int duration = 600;
+    int duration = 600000;
     boolean colorOnEnd = true;
     boolean pauseOnEnd = false;
     boolean soundOnEnd = false;
@@ -62,7 +62,7 @@ public class PreferencesManager
   private static SimpleStringProperty lastVersionCheckProperty;
 
   private static File file = ResourceUtils.getPrefs();
-  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> {
+  private static Supplier< GsonBean > defaultModel = Suppliers.memoize( () -> {
     GsonBean bean = new GsonBean();
     try {
       return GsonUtils.get( file, bean );

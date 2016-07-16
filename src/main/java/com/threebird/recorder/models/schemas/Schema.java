@@ -18,7 +18,7 @@ public class Schema
   public String project;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
   public File sessionDirectory;
-  public Integer duration; // in seconds
+  public Integer duration; // in milliseconds
   public Boolean pause;
   public Boolean color;
   public Boolean sound;

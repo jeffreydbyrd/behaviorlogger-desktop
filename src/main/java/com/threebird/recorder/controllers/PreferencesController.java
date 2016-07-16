@@ -260,7 +260,7 @@ public class PreferencesController
 
     PreferencesManager.saveSessionDirectory( directoryField.getText().trim() );
     int duration =
-        EventRecorderUtil.getDuration( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
+        EventRecorderUtil.getDurationInMillis( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
     PreferencesManager.saveDuration( duration );
     PreferencesManager.saveColorOnEnd( colorCheckBox.isSelected() );
     PreferencesManager.savePauseOnEnd( pauseCheckBox.isSelected() );

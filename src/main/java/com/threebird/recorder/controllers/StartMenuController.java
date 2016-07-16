@@ -247,7 +247,7 @@ public class StartMenuController
     if (newV != null) {
       setVisibility( true );
       populateMappingsTable( newV );
-      timeBox.setText( EventRecorderUtil.secondsToTimestamp( newV.duration ) );
+      timeBox.setText( EventRecorderUtil.millisToTimestamp( newV.duration ) );
       updateFilenameLabel();
     } else {
       setVisibility( false );

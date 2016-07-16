@@ -28,7 +28,7 @@ import com.threebird.recorder.utils.resources.ResourceUtils;
 public class EventRecorderUtil
 {
 
-  public static Supplier< Stage > dialogStage = Suppliers.memoize( ( ) -> {
+  public static Supplier< Stage > dialogStage = Suppliers.memoize( () -> {
     Stage s = new Stage();
     s.initModality( Modality.APPLICATION_MODAL );
     s.initStyle( StageStyle.UTILITY );
@@ -40,8 +40,7 @@ public class EventRecorderUtil
    * @param window
    *          - the containing window that will own the FileChooser
    * @param textField
-   *          - the TextField that we will populate after the user chooses a
-   *          file
+   *          - the TextField that we will populate after the user chooses a file
    */
   public static void chooseFile( Stage window, TextField textField )
   {
@@ -65,8 +64,7 @@ public class EventRecorderUtil
    * @param stage
    *          - the stage that will house the new scene
    * @param fxmlPath
-   *          - the file path to the fxml template (relative to
-   *          EventRecorder.java)
+   *          - the file path to the fxml template (relative to EventRecorder.java)
    * @param title
    *          - the title of the scene
    * @return the controller T associated with the fxml resource specified
@@ -99,8 +97,8 @@ public class EventRecorderUtil
    * @param T
    *          - the type of the Controller you want returned to you
    * @param fxmlPath
-   *          - the path (relative to EventRecorder.java's location) to the FXML
-   *          resource from which we will derive this scene
+   *          - the path (relative to EventRecorder.java's location) to the FXML resource from which we will derive this
+   *          scene
    * @param title
    *          - the title of this new scene
    * @return the Controller linked to from the FXML file
@@ -135,9 +133,8 @@ public class EventRecorderUtil
   }
 
   /**
-   * Creates an EventHandler that will prevent a field's text from containing
-   * any characters not in "acceptableKeys" and from exceeding the character
-   * limit
+   * Creates an EventHandler that will prevent a field's text from containing any characters not in "acceptableKeys" and
+   * from exceeding the character limit
    * 
    * @param field
    *          - the input-field that this EventHandler reads
@@ -145,9 +142,8 @@ public class EventRecorderUtil
    *          - a list of characters that the user is allowed to input
    * @param limit
    *          - the max length of the field
-   * @return an EventHandler that consumes a KeyEvent if the typed Char is
-   *         outside 'acceptableKeys' or if the length of 'field' is longer than
-   *         'limit'
+   * @return an EventHandler that consumes a KeyEvent if the typed Char is outside 'acceptableKeys' or if the length of
+   *         'field' is longer than 'limit'
    */
   public static EventHandler< ? super KeyEvent >
     createFieldLimiter( TextField field, char[] acceptableKeys, int limit )
@@ -185,13 +181,13 @@ public class EventRecorderUtil
   }
 
   /**
-   * Converts the contents of hoursField, minutesField, and secondsField into
-   * the equivalent number of seconds. If "isInfinite" is true, then returns 0
+   * Converts the contents of hoursField, minutesField, and secondsField into the equivalent number of milliseconds. If
+   * "isInfinite" is true, then returns 0
    */
-  public static int getDuration( boolean isInfinite,
-                                 TextField hoursField,
-                                 TextField minutesField,
-                                 TextField secondsField )
+  public static int getDurationInMillis( boolean isInfinite,
+                                         TextField hoursField,
+                                         TextField minutesField,
+                                         TextField secondsField )
   {
     if (isInfinite) {
       return 0;
@@ -200,22 +196,18 @@ public class EventRecorderUtil
     Integer hours = strToInt( hoursField.getText() );
     Integer mins = strToInt( minutesField.getText() );
     Integer secs = strToInt( secondsField.getText() );
-    return (hours * 60 * 60) + (mins * 60) + secs;
+    return ((hours * 60 * 60) + (mins * 60) + secs) * 1000;
   }
 
   public static String millisToTimestampNoSpaces( int totalMillis )
   {
-    String withSpaces = secondsToTimestamp( totalMillis / 1000 );
+    String withSpaces = millisToTimestamp( totalMillis );
     return withSpaces.replaceAll( " *", "" );
   }
 
   public static String millisToTimestamp( int totalMillis )
   {
-    return secondsToTimestamp( totalMillis / 1000 );
-  }
-
-  public static String secondsToTimestamp( Integer totalSeconds )
-  {
+    int totalSeconds = (totalMillis / 1000);
     int remaining = totalSeconds % (60 * 60);
     int hours = totalSeconds / (60 * 60);
     int minutes = remaining / 60;
@@ -235,7 +227,7 @@ public class EventRecorderUtil
     if (System.getProperty( "os.name" ).contains( "Win" )) {
       filepath = "/" + filepath.replaceAll( "\\\\", "/" );
     }
-    
+
     try {
       URI uri = new URI( "file", null, filepath, section );
       Desktop.getDesktop().browse( uri );

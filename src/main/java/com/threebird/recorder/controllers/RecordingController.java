@@ -245,7 +245,7 @@ public class RecordingController
     Schema schema = SchemasManager.getSelected();
     timeBox.setText( EventRecorderUtil.millisToTimestamp( millis ) );
 
-    if (millis == schema.duration * 1000) {
+    if (millis == schema.duration) {
       if (schema.color) {
         timeBox.setStyle( "-fx-background-color: #FFC0C0;-fx-border-color:red;-fx-border-radius:2;" );
       }
@@ -587,7 +587,7 @@ public class RecordingController
   {
     Integer sessionNum = SessionManager.getSessionNumber();
 
-    checkUnknownsAndChangeScene( ( ) -> {
+    checkUnknownsAndChangeScene( () -> {
       if (sessionNum != null && manager.timer.getCurrentTime().greaterThan( Duration.ZERO )) {
         SessionManager.setSessionNumber( sessionNum + 1 );
       }
@@ -599,7 +599,7 @@ public class RecordingController
   {
     Integer sessionNum = SessionManager.getSessionNumber();
 
-    checkUnknownsAndChangeScene( ( ) -> {
+    checkUnknownsAndChangeScene( () -> {
       if (sessionNum != null) {
         SessionManager.setSessionNumber( sessionNum + 1 );
       }

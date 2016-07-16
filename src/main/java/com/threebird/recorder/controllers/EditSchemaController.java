@@ -153,7 +153,8 @@ public class EditSchemaController
   private void setupDurationTextFields()
   {
     int duration = model.duration == null ? PreferencesManager.getDuration() : model.duration;
-
+    duration = duration / 1000;
+    
     int hrs = duration / (60 * 60);
     int minDivisor = duration % (60 * 60);
     int mins = minDivisor / 60;
@@ -408,7 +409,7 @@ public class EditSchemaController
     model.mappings = temp;
     model.sessionDirectory = getDirectory();
     model.duration =
-        EventRecorderUtil.getDuration( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
+        EventRecorderUtil.getDurationInMillis( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
     model.color = colorCheckBox.isSelected();
     model.pause = pauseCheckBox.isSelected();
     model.sound = beepCheckBox.isSelected();
