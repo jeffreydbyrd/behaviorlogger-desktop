@@ -33,42 +33,42 @@ public class IoaCalculations
     return (x > y ? _y / _x : _x / _y);
   }
 
-  private static Map< Character, IntervalCalculations >
+  private static Map< String, IntervalCalculations >
     getIntervals( KeyToInterval data1,
                   KeyToInterval data2,
                   BiFunction< Integer, Integer, Double > compare )
   {
-    SetView< Character > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
-    Map< Character, IntervalCalculations > map = Maps.newHashMap();
+    SetView< String > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
+    Map< String, IntervalCalculations > map = Maps.newHashMap();
 
     int numIntervals = Math.max( data1.totalIntervals, data2.totalIntervals );
 
-    for (Character c : common) {
+    for (String buuid : common) {
       int[] intervals1 = new int[numIntervals];
       int[] intervals2 = new int[numIntervals];
       double[] result = new double[numIntervals];
 
       for (Integer i = 0; i < numIntervals; i++) {
-        intervals1[i] += data1.keyToIntervals.get( c ) != null ? data1.keyToIntervals.get( c ).count( i ) : 0;
-        intervals2[i] += data2.keyToIntervals.get( c ) != null ? data2.keyToIntervals.get( c ).count( i ) : 0;
+        intervals1[i] += data1.keyToIntervals.get( buuid ) != null ? data1.keyToIntervals.get( buuid ).count( i ) : 0;
+        intervals2[i] += data2.keyToIntervals.get( buuid ) != null ? data2.keyToIntervals.get( buuid ).count( i ) : 0;
       }
 
       for (int i = 0; i < numIntervals; i++) {
         result[i] = compare.apply( intervals1[i], intervals2[i] );
       }
 
-      map.put( c, new IntervalCalculations( c, intervals1, intervals2, result ) );
+      map.put( buuid, new IntervalCalculations( buuid, intervals1, intervals2, result ) );
     }
 
     return map;
   }
 
-  static Map< Character, IntervalCalculations > exactAgreement( KeyToInterval data1, KeyToInterval data2 )
+  static Map< String, IntervalCalculations > exactAgreement( KeyToInterval data1, KeyToInterval data2 )
   {
     return getIntervals( data1, data2, IoaCalculations::exactComparison );
   }
 
-  static Map< Character, IntervalCalculations > partialAgreement( KeyToInterval data1, KeyToInterval data2 )
+  static Map< String, IntervalCalculations > partialAgreement( KeyToInterval data1, KeyToInterval data2 )
   {
     return getIntervals( data1, data2, IoaCalculations::partialComparison );
   }
@@ -104,37 +104,37 @@ public class IoaCalculations
     return ((double) intersection.size()) / union.size();
   }
 
-  static Map< Character, TimeWindowCalculations >
+  static Map< String, TimeWindowCalculations >
     windowAgreementDiscrete( KeyToInterval data1,
                              KeyToInterval data2,
                              int threshold )
   {
-    SetView< Character > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
-    Map< Character, TimeWindowCalculations > result = Maps.newHashMap();
+    SetView< String > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
+    Map< String, TimeWindowCalculations > result = Maps.newHashMap();
 
-    for (Character c : common) {
-      Multiset< Integer > seconds1 = data1.keyToIntervals.get( c );
-      Multiset< Integer > seconds2 = data2.keyToIntervals.get( c );
+    for (String buuid : common) {
+      Multiset< Integer > seconds1 = data1.keyToIntervals.get( buuid );
+      Multiset< Integer > seconds2 = data2.keyToIntervals.get( buuid );
 
       double result1 = windowAgreementDiscrete( seconds1, seconds2, threshold );
       double result2 = windowAgreementDiscrete( seconds2, seconds1, threshold );
       TimeWindowCalculations calcs = new TimeWindowCalculations( result1, result2 );
-      result.put( c, calcs );
+      result.put( buuid, calcs );
     }
 
     return result;
   }
 
-  static Map< Character, Double > windowAgreementContinuous( KeyToInterval data1, KeyToInterval data2 )
+  static Map< String, Double > windowAgreementContinuous( KeyToInterval data1, KeyToInterval data2 )
   {
-    SetView< Character > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
-    Map< Character, Double > result = Maps.newHashMap();
+    SetView< String > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
+    Map< String, Double > result = Maps.newHashMap();
 
-    for (Character c : common) {
-      Multiset< Integer > seconds1 = data1.keyToIntervals.get( c );
-      Multiset< Integer > seconds2 = data2.keyToIntervals.get( c );
+    for (String buuid : common) {
+      Multiset< Integer > seconds1 = data1.keyToIntervals.get( buuid );
+      Multiset< Integer > seconds2 = data2.keyToIntervals.get( buuid );
 
-      result.put( c, windowAgreementContinuous( seconds1, seconds2 ) );
+      result.put( buuid, windowAgreementContinuous( seconds1, seconds2 ) );
     }
 
     return result;

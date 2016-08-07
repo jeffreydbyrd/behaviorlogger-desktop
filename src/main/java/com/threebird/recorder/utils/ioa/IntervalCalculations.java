@@ -4,15 +4,15 @@ import java.util.Arrays;
 
 public class IntervalCalculations
 {
-  public final Character c;
+  public final String buuid;
   public final int[] intervals1;
   public final int[] intervals2;
   public final double[] result;
   public final double avg;
 
-  public IntervalCalculations( Character c, int[] intervals1, int[] intervals2, double[] result )
+  public IntervalCalculations( String buuid, int[] intervals1, int[] intervals2, double[] result )
   {
-    this.c = c;
+    this.buuid = buuid;
     this.intervals1 = intervals1;
     this.intervals2 = intervals2;
     this.result = result;
@@ -22,7 +22,7 @@ public class IntervalCalculations
   @Override public String toString()
   {
     return "IntervalCalculations [\n"
-        + "  c=" + c + ",\n"
+        + "  buuid=" + buuid + ",\n"
         + "  intervals1=" + Arrays.toString( intervals1 ) + ",\n"
         + "  intervals2=" + Arrays.toString( intervals2 ) + ",\n"
         + "  result=" + Arrays.toString( result ) + ",\n"
@@ -37,7 +37,7 @@ public class IntervalCalculations
     long temp;
     temp = Double.doubleToLongBits( avg );
     result = prime * result + (int) (temp ^ (temp >>> 32));
-    result = prime * result + ((c == null) ? 0 : c.hashCode());
+    result = prime * result + ((buuid == null) ? 0 : buuid.hashCode());
     result = prime * result + Arrays.hashCode( intervals1 );
     result = prime * result + Arrays.hashCode( intervals2 );
     result = prime * result + Arrays.hashCode( this.result );
@@ -55,10 +55,10 @@ public class IntervalCalculations
     IntervalCalculations other = (IntervalCalculations) obj;
     if (Double.doubleToLongBits( avg ) != Double.doubleToLongBits( other.avg ))
       return false;
-    if (c == null) {
-      if (other.c != null)
+    if (buuid == null) {
+      if (other.buuid != null)
         return false;
-    } else if (!c.equals( other.c ))
+    } else if (!buuid.equals( other.buuid ))
       return false;
     if (!Arrays.equals( intervals1, other.intervals1 ))
       return false;

@@ -53,12 +53,12 @@ public class RecordingManager
   public final ObservableMap< MappableChar, ContinuousCounter > continuousCounts =
       FXCollections.observableHashMap();
 
-  private final String uuid;
+  private final String streamUuid;
   private DateTime startTime;
 
   public RecordingManager()
   {
-    uuid = UUID.randomUUID().toString();
+    streamUuid = UUID.randomUUID().toString();
 
     timer = new Timeline();
     timer.setCycleCount( Animation.INDEFINITE );
@@ -98,9 +98,9 @@ public class RecordingManager
     DateTime stopTime = DateTime.now();
 
     CompletableFuture< Long > fCsv =
-        Recordings.saveJson( new File( fullFileName + ".raw" ), uuid, behaviors, count(), _notes, startTime, stopTime );
+        Recordings.saveJson( new File( fullFileName + ".raw" ), streamUuid, behaviors, count(), _notes, startTime, stopTime );
     CompletableFuture< Long > fXls =
-        Recordings.saveXls( new File( fullFileName + ".xls" ), uuid, behaviors, count(), _notes, startTime, stopTime );
+        Recordings.saveXls( new File( fullFileName + ".xls" ), streamUuid, behaviors, count(), _notes, startTime, stopTime );
 
     CompletableFuture.allOf( fCsv, fXls ).handleAsync( ( v, t ) -> {
       Platform.runLater( ( ) -> saveSuccessfulProperty.set( t == null ) );

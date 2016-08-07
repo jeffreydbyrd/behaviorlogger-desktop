@@ -20,8 +20,8 @@ public class IoaTimeWindowSummary extends VBox
   private int colWidth = 35;
   private Font boldVerdana = Font.font( "Verdana", FontWeight.BOLD, 12 );
 
-  public IoaTimeWindowSummary( Map< Character, TimeWindowCalculations > ioaDiscrete,
-                               Map< Character, Double > ioaContinuous )
+  public IoaTimeWindowSummary( Map< String, TimeWindowCalculations > ioaDiscrete,
+                               Map< String, Double > ioaContinuous )
   {
     this.setSpacing( 5 );
 
@@ -46,8 +46,8 @@ public class IoaTimeWindowSummary extends VBox
     this.getChildren().add( header );
 
     // Discrete Key | Average Summaries
-    for (Entry< Character, TimeWindowCalculations > entry : ioaDiscrete.entrySet()) {
-      Character key = entry.getKey();
+    for (Entry< String, TimeWindowCalculations > entry : ioaDiscrete.entrySet()) {
+      String key = entry.getKey();
       TimeWindowCalculations calc = entry.getValue();
 
       Label left = new Label( "" + key );
@@ -88,8 +88,8 @@ public class IoaTimeWindowSummary extends VBox
     this.getChildren().add( header );
 
     // Continuous Key
-    for (Entry< Character, Double > entry : ioaContinuous.entrySet()) {
-      Character key = entry.getKey();
+    for (Entry< String, Double > entry : ioaContinuous.entrySet()) {
+      String key = entry.getKey();
       Double avg = entry.getValue();
 
       Label left = new Label( "" + key );

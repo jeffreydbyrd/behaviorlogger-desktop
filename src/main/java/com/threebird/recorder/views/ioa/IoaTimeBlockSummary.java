@@ -20,7 +20,7 @@ public class IoaTimeBlockSummary extends VBox
   private int colWidth = 35;
   private Font boldVerdana = Font.font( "Verdana", FontWeight.BOLD, 12 );
 
-  public IoaTimeBlockSummary( Map< Character, IntervalCalculations > intervals )
+  public IoaTimeBlockSummary( Map< String, IntervalCalculations > intervals )
   {
     this.setSpacing( 5 );
 
@@ -41,11 +41,11 @@ public class IoaTimeBlockSummary extends VBox
     this.getChildren().add( header );
 
     // Key | Average summaries
-    for (Entry< Character, IntervalCalculations > entry : intervals.entrySet()) {
-      Character key = entry.getKey();
+    for (Entry< String, IntervalCalculations > entry : intervals.entrySet()) {
+      String buuid = entry.getKey();
       IntervalCalculations calc = entry.getValue();
 
-      Label left = new Label( "" + key );
+      Label left = new Label( "" + buuid );
       left.setMinWidth( colWidth );
       left.setAlignment( Pos.TOP_RIGHT );
 

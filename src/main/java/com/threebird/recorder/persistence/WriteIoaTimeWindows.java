@@ -16,12 +16,13 @@ import com.threebird.recorder.utils.ioa.TimeWindowCalculations;
 
 public class WriteIoaTimeWindows
 {
-  public static void write( Map< Character, TimeWindowCalculations > ioaDiscrete,
-                            Map< Character, Double > ioaContinuous,
+  public static void write( Map< String, TimeWindowCalculations > ioaDiscrete,
+                            Map< String, Double > ioaContinuous,
                             String file1,
                             String file2,
                             boolean appendToFile,
-                            File f ) throws Exception
+                            File f )
+      throws Exception
   {
     if (!f.exists()) {
       f.createNewFile();
@@ -50,8 +51,8 @@ public class WriteIoaTimeWindows
     row.createCell( 1 ).setCellValue( file1 );
     row.createCell( 2 ).setCellValue( file1 );
 
-    for (Entry< Character, TimeWindowCalculations > e : ioaDiscrete.entrySet()) {
-      Character c = e.getKey();
+    for (Entry< String, TimeWindowCalculations > e : ioaDiscrete.entrySet()) {
+      String c = e.getKey();
       TimeWindowCalculations calcs = e.getValue();
 
       row = s.createRow( r++ );
@@ -69,8 +70,8 @@ public class WriteIoaTimeWindows
     row.createCell( 0 ).setCellValue( "Key" );
     row.createCell( 1 ).setCellValue( "IOA Coefficient" );
 
-    for (Entry< Character, Double > e : ioaContinuous.entrySet()) {
-      Character c = e.getKey();
+    for (Entry< String, Double > e : ioaContinuous.entrySet()) {
+      String c = e.getKey();
       double v = e.getValue();
 
       row = s.createRow( r++ );

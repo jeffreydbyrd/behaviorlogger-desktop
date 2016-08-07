@@ -5,17 +5,17 @@ import java.util.HashMap;
 import com.google.common.collect.Multiset;
 
 /**
- * Maps each key to all the intervals that they occurred in. It also contains a
- * reference to the total number of intervals
+ * Maps each key to all the intervals that they occurred in. It also contains a reference to the total number of
+ * intervals
  */
 public class KeyToInterval
 {
-  public final HashMap< Character, Multiset< Integer >> keyToIntervals;
+  public final HashMap< String, Multiset< Integer > > keyToIntervals;
   public final int totalIntervals;
 
-  public KeyToInterval( HashMap< Character, Multiset< Integer >> charToIntervals, int totalIntervals )
+  public KeyToInterval( HashMap< String, Multiset< Integer > > idToIntervals, int totalIntervals )
   {
-    this.keyToIntervals = charToIntervals;
+    this.keyToIntervals = idToIntervals;
     this.totalIntervals = totalIntervals;
   }
 

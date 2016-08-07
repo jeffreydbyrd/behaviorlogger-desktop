@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -14,34 +15,37 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
+import com.threebird.recorder.persistence.StartEndTimes;
 
 public class IoaUtilsTest
 {
   static SessionBean standard = new SessionBean();
   static {
     standard.totalTimeMillis = 6000;
-    standard.discretes = Maps.newHashMap();
-    standard.continuous = Maps.newHashMap();
-    standard.discretes.put( 'd', Lists.newArrayList( 0, 1, 1, 3, 3 ) );
-    standard.continuous.put( 'c', Lists.newArrayList( 0, 1, 3 ) );
+    standard.discreteEvents = Maps.newHashMap();
+    standard.continuousEvents = Maps.newHashMap();
+    standard.discreteEvents.put( "d", Lists.newArrayList( 0, 1000, 1100, 3000, 3100 ) );
+    standard.continuousEvents.put( "c",
+                                   Lists.newArrayList( new StartEndTimes( 0, 1100 ),
+                                                       new StartEndTimes( 3100, 3900 ) ) );
   }
 
   static SessionBean empty = new SessionBean();
   static {
     empty.totalTimeMillis = 6000;
-    empty.discretes = Maps.newHashMap();
-    empty.continuous = Maps.newHashMap();
+    empty.discreteEvents = Maps.newHashMap();
+    empty.continuousEvents = Maps.newHashMap();
   }
 
   static SessionBean multi = new SessionBean();
   static {
     multi.totalTimeMillis = 10000;
-    multi.discretes = Maps.newHashMap();
-    multi.continuous = Maps.newHashMap();
-    multi.discretes.put( 'a', Lists.newArrayList( 0, 1, 1, 3, 3, 7, 8 ) );
-    multi.discretes.put( 'b', Lists.newArrayList( 2, 2, 4, 9 ) );
-    multi.continuous.put( 'c', Lists.newArrayList( 3, 4, 5, 6 ) );
-    multi.continuous.put( 'd', Lists.newArrayList( 5, 6, 7, 8 ) );
+    multi.discreteEvents = Maps.newHashMap();
+    multi.continuousEvents = Maps.newHashMap();
+    multi.discreteEvents.put( "a", Lists.newArrayList( 0, 1000, 1100, 3000, 3100, 7000, 8000 ) );
+    multi.discreteEvents.put( "b", Lists.newArrayList( 2000, 2100, 4000, 9000 ) );
+    multi.continuousEvents.put( "c", Lists.newArrayList( new StartEndTimes( 3000, 6100 ) ) );
+    multi.continuousEvents.put( "d", Lists.newArrayList( new StartEndTimes( 5000, 8100 ) ) );
   }
 
   @Test public void deserialize_standard() throws Exception
@@ -51,8 +55,8 @@ public class IoaUtilsTest
     SessionBean bean = GsonUtils.get( f, new SessionBean() );
 
     assertEquals( standard.totalTimeMillis, bean.totalTimeMillis );
-    assertEquals( standard.discretes, bean.discretes );
-    assertEquals( standard.continuous, bean.continuous );
+    assertEquals( standard.discreteEvents, bean.discreteEvents );
+    assertEquals( standard.continuousEvents, bean.continuousEvents );
   }
 
   @Test public void deserialize_empty() throws Exception
@@ -62,34 +66,40 @@ public class IoaUtilsTest
     SessionBean bean = GsonUtils.get( f, new SessionBean() );
 
     assertEquals( empty.totalTimeMillis, bean.totalTimeMillis );
-    assertEquals( empty.discretes, bean.discretes );
-    assertEquals( empty.continuous, bean.continuous );
+    assertEquals( empty.discreteEvents, bean.discreteEvents );
+    assertEquals( empty.continuousEvents, bean.continuousEvents );
   }
-  
+
   @Test public void deserialize_multi() throws Exception
   {
     URL url = IoaUtilsTest.class.getResource( "test-1.raw" );
     File f = new File( url.toURI() );
     SessionBean bean = GsonUtils.get( f, new SessionBean() );
-    
+
     assertEquals( multi.totalTimeMillis, bean.totalTimeMillis );
-    assertEquals( multi.discretes, bean.discretes );
-    assertEquals( multi.continuous, bean.continuous );
+    assertEquals( multi.discreteEvents, bean.discreteEvents );
+    assertEquals( multi.continuousEvents, bean.continuousEvents );
   }
 
   @Test public void partition_standard_blockSize_1()
   {
     int blockSize = 1;
-    KeyToInterval actualDiscrete =
-        IoaUtils.partition( standard.discretes, standard.totalTimeMillis, blockSize );
-    KeyToInterval actualContinuous =
-        IoaUtils.partition( standard.continuous, standard.totalTimeMillis, blockSize );
 
-    HashMap< Character, Multiset< Integer >> expectedDMap = Maps.newHashMap();
-    HashMap< Character, Multiset< Integer >> expectedCMap = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
+    IoaUtils.populateDiscrete( standard, mapD );
+    IoaUtils.populateContinuous( standard, mapC );
+
+    KeyToInterval actualDiscrete =
+        IoaUtils.partition( mapD, standard.totalTimeMillis, blockSize );
+    KeyToInterval actualContinuous =
+        IoaUtils.partition( mapC, standard.totalTimeMillis, blockSize );
+
+    HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
+    HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
 
     HashMultiset< Integer > expectedDTimes = HashMultiset.create();
-    expectedDMap.put( 'd', expectedDTimes );
+    expectedDMap.put( "d", expectedDTimes );
     expectedDTimes.add( 0 );
     expectedDTimes.add( 1 );
     expectedDTimes.add( 1 );
@@ -97,7 +107,7 @@ public class IoaUtilsTest
     expectedDTimes.add( 3 );
 
     HashMultiset< Integer > expectedCTimes = HashMultiset.create();
-    expectedCMap.put( 'c', expectedCTimes );
+    expectedCMap.put( "c", expectedCTimes );
     expectedCTimes.add( 0 );
     expectedCTimes.add( 1 );
     expectedCTimes.add( 3 );
@@ -112,19 +122,25 @@ public class IoaUtilsTest
   @Test public void partition_standard_blockSize_2()
   {
     int blockSize = 2;
-    KeyToInterval actualDiscrete =
-        IoaUtils.partition( standard.discretes, standard.totalTimeMillis, blockSize );
-    KeyToInterval actualContinuous =
-        IoaUtils.partition( standard.continuous, standard.totalTimeMillis, blockSize );
 
-    HashMap< Character, Multiset< Integer >> expectedDMap = Maps.newHashMap();
-    HashMap< Character, Multiset< Integer >> expectedCMap = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
+    IoaUtils.populateDiscrete( standard, mapD );
+    IoaUtils.populateContinuous( standard, mapC );
+
+    KeyToInterval actualDiscrete =
+        IoaUtils.partition( mapD, standard.totalTimeMillis, blockSize );
+    KeyToInterval actualContinuous =
+        IoaUtils.partition( mapC, standard.totalTimeMillis, blockSize );
+
+    HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
+    HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
 
     // 0,1,2,3,4,5
     // 0,0,1,1,2,2
 
     HashMultiset< Integer > expectedDTimes = HashMultiset.create();
-    expectedDMap.put( 'd', expectedDTimes );
+    expectedDMap.put( "d", expectedDTimes );
     expectedDTimes.add( 0 );
     expectedDTimes.add( 0 );
     expectedDTimes.add( 0 );
@@ -132,7 +148,7 @@ public class IoaUtilsTest
     expectedDTimes.add( 1 );
 
     HashMultiset< Integer > expectedCTimes = HashMultiset.create();
-    expectedCMap.put( 'c', expectedCTimes );
+    expectedCMap.put( "c", expectedCTimes );
     expectedCTimes.add( 0 );
     expectedCTimes.add( 0 );
     expectedCTimes.add( 1 );
@@ -147,19 +163,25 @@ public class IoaUtilsTest
   @Test public void partition_standard_blockSize_4()
   {
     int blockSize = 4;
-    KeyToInterval actualDiscrete =
-        IoaUtils.partition( standard.discretes, standard.totalTimeMillis, blockSize );
-    KeyToInterval actualContinuous =
-        IoaUtils.partition( standard.continuous, standard.totalTimeMillis, blockSize );
 
-    HashMap< Character, Multiset< Integer >> expectedDMap = Maps.newHashMap();
-    HashMap< Character, Multiset< Integer >> expectedCMap = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
+    IoaUtils.populateDiscrete( standard, mapD );
+    IoaUtils.populateContinuous( standard, mapC );
+
+    KeyToInterval actualDiscrete =
+        IoaUtils.partition( mapD, standard.totalTimeMillis, blockSize );
+    KeyToInterval actualContinuous =
+        IoaUtils.partition( mapC, standard.totalTimeMillis, blockSize );
+
+    HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
+    HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
 
     // 0,1,2,3,4,5
     // 0,0,0,0,1,1
 
     HashMultiset< Integer > expectedDTimes = HashMultiset.create();
-    expectedDMap.put( 'd', expectedDTimes );
+    expectedDMap.put( "d", expectedDTimes );
     expectedDTimes.add( 0 );
     expectedDTimes.add( 0 );
     expectedDTimes.add( 0 );
@@ -167,7 +189,7 @@ public class IoaUtilsTest
     expectedDTimes.add( 0 );
 
     HashMultiset< Integer > expectedCTimes = HashMultiset.create();
-    expectedCMap.put( 'c', expectedCTimes );
+    expectedCMap.put( "c", expectedCTimes );
     expectedCTimes.add( 0 );
     expectedCTimes.add( 0 );
     expectedCTimes.add( 0 );
@@ -182,28 +204,34 @@ public class IoaUtilsTest
   @Test public void partition_multi_blockSize_3()
   {
     int blockSize = 3;
-    KeyToInterval actualDiscrete =
-        IoaUtils.partition( multi.discretes, multi.totalTimeMillis, blockSize );
-    KeyToInterval actualContinuous =
-        IoaUtils.partition( multi.continuous, multi.totalTimeMillis, blockSize );
 
-    HashMap< Character, Multiset< Integer >> expectedDMap = Maps.newHashMap();
-    HashMap< Character, Multiset< Integer >> expectedCMap = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
+    IoaUtils.populateDiscrete( standard, mapD );
+    IoaUtils.populateContinuous( standard, mapC );
+
+    KeyToInterval actualDiscrete =
+        IoaUtils.partition( mapD, standard.totalTimeMillis, blockSize );
+    KeyToInterval actualContinuous =
+        IoaUtils.partition( mapC, standard.totalTimeMillis, blockSize );
+
+    HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
+    HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
 
     // 0,1,2,3,4,5,6,7,8,9
     // 0,0,0,1,1,1,2,2,2,3
-    
+
     HashMultiset< Integer > expectedATimes = HashMultiset.create();
     HashMultiset< Integer > expectedBTimes = HashMultiset.create();
-    expectedDMap.put( 'a', expectedATimes );
-    expectedDMap.put( 'b', expectedBTimes );
+    expectedDMap.put( "a", expectedATimes );
+    expectedDMap.put( "b", expectedBTimes );
     expectedATimes.addAll( Lists.newArrayList( 0, 0, 0, 1, 1, 2, 2 ) );
     expectedBTimes.addAll( Lists.newArrayList( 0, 0, 1, 3 ) );
 
     HashMultiset< Integer > expectedCTimes = HashMultiset.create();
     HashMultiset< Integer > expectedDTimes = HashMultiset.create();
-    expectedCMap.put( 'c', expectedCTimes );
-    expectedCMap.put( 'd', expectedDTimes );
+    expectedCMap.put( "c", expectedCTimes );
+    expectedCMap.put( "d", expectedDTimes );
     expectedCTimes.addAll( Lists.newArrayList( 1, 1, 1, 2 ) );
     expectedDTimes.addAll( Lists.newArrayList( 1, 2, 2, 2 ) );
 

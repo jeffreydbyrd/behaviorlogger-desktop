@@ -17,7 +17,7 @@ import com.threebird.recorder.utils.ioa.IntervalCalculations;
 
 public class WriteIoaIntervals
 {
-  public static void write( Map< Character, IntervalCalculations > intervals,
+  public static void write( Map< String, IntervalCalculations > intervals,
                             boolean appendToFile,
                             File f ) throws Exception
   {
@@ -40,8 +40,8 @@ public class WriteIoaIntervals
     int r = 0;
 
     // __Summary__
-    for (Entry< Character, IntervalCalculations > entry : intervals.entrySet()) {
-      Character c = entry.getKey();
+    for (Entry< String, IntervalCalculations > entry : intervals.entrySet()) {
+      String c = entry.getKey();
       IntervalCalculations calcs = entry.getValue();
 
       row = s.createRow( r++ );
@@ -70,8 +70,8 @@ public class WriteIoaIntervals
     }
 
     int col = 1;
-    for (Entry< Character, IntervalCalculations > e : intervals.entrySet()) {
-      Character ch = e.getKey();
+    for (Entry< String, IntervalCalculations > e : intervals.entrySet()) {
+      String ch = e.getKey();
       IntervalCalculations calcs = e.getValue();
       headers.createCell( col ).setCellValue( ch.toString() );
       for (int i = 0; i < rows.length; i++) {
