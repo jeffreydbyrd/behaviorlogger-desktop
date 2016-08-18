@@ -1,23 +1,26 @@
 {
-  "uuid": "bec7236a-7b24-43ba-be1a-46b49b62ab39",
+  "streamUuid": "bec7236a-7b24-43ba-be1a-46b49b62ab39",
+  "blVersion":1,
   "schema": {
     "uuid": "5640ec5b-1293-4c05-b096-381c80c1c19c",
     "client": "JB",
     "project": "Functional Analysis",
     "behaviors": [
       {
-        "key": "d",
-        "name": "discrete",
-        "isContinuous": false
-      },
-      {
+      	"uuid": "c",
         "key": "c",
         "name": "continuous",
         "isContinuous": true
+      },
+      {
+      	"uuid": "d",
+        "key": "d",
+        "name": "discrete",
+        "isContinuous": false
       }
     ],
     "sessionDirectory": "/tmp",
-    "duration": 300,
+    "duration": 300000,
     "pause": false,
     "color": true,
     "sound": false
@@ -28,6 +31,6 @@
   "sessionNumber": 0,
   "totalTimeMillis": 6000,
   "notes": "",
-  "discretes": {},
-  "continuous": {}
+  "discreteEvents": {},
+  "continuousEvents": {}
 }

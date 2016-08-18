@@ -75,6 +75,10 @@ public class IoaCalculations
 
   static double windowAgreementDiscrete( Multiset< Integer > seconds, Multiset< Integer > comparison, int threshold )
   {
+    if (seconds == null || seconds.isEmpty() || comparison == null || comparison.isEmpty()) {
+      return 0;
+    }
+
     List< Integer > _seconds = Lists.newArrayList( seconds );
     List< Integer > _comparison = Lists.newArrayList( comparison );
     int numMatched = 0;
@@ -96,6 +100,10 @@ public class IoaCalculations
 
   static double windowAgreementContinuous( Multiset< Integer > seconds1, Multiset< Integer > seconds2 )
   {
+    if (seconds1 == null || seconds1.isEmpty() || seconds2 == null || seconds2.isEmpty()) {
+      return 0;
+    }
+
     Set< Integer > set1 = seconds1.elementSet();
     Set< Integer > set2 = seconds2.elementSet();
     SetView< Integer > intersection = Sets.intersection( set1, set2 );

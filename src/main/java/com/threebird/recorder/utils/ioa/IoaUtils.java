@@ -79,7 +79,7 @@ public class IoaUtils
   {
     for (Entry< String, ArrayList< StartEndTimes > > entry : stream1.continuousEvents.entrySet()) {
       String buuid = entry.getKey();
-      if (map1.containsKey( buuid )) {
+      if (!map1.containsKey( buuid )) {
         map1.put( buuid, Lists.newArrayList() );
       }
       for (StartEndTimes startEndTimes : entry.getValue()) {

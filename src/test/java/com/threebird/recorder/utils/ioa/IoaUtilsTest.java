@@ -207,13 +207,13 @@ public class IoaUtilsTest
 
     HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
     HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
-    IoaUtils.populateDiscrete( standard, mapD );
-    IoaUtils.populateContinuous( standard, mapC );
+    IoaUtils.populateDiscrete( multi, mapD );
+    IoaUtils.populateContinuous( multi, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils.partition( mapD, standard.totalTimeMillis, blockSize );
+        IoaUtils.partition( mapD, multi.totalTimeMillis, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils.partition( mapC, standard.totalTimeMillis, blockSize );
+        IoaUtils.partition( mapC, multi.totalTimeMillis, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
