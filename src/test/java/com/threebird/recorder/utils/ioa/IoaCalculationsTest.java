@@ -268,7 +268,7 @@ public class IoaCalculationsTest
     Assert.assertEquals( expectedContinuous, actualContinuous );
   }
 
-  @Test public void timeWindow_nonempty_empty()
+  @Test public void timeWindow_empty()
   {
     int thresh = 1;
 
