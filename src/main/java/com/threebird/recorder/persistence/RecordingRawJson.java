@@ -53,6 +53,8 @@ public class RecordingRawJson
     String streamUuid;
     String blVersion;
     SchemaBean schema;
+    String schemaUuid;
+    Integer schemaVersion;
     String observer;
     String therapist;
     String condition;
@@ -87,6 +89,8 @@ public class RecordingRawJson
 
     copySchema( details.schema, bean.schema );
 
+    bean.schemaUuid = details.schema.uuid;
+    bean.schemaVersion = details.schema.version;
     bean.observer = details.observer;
     bean.therapist = details.therapist;
     bean.condition = details.condition;
