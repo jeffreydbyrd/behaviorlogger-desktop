@@ -10,10 +10,12 @@ import java.util.Map.Entry;
 import javafx.scene.layout.VBox;
 
 import com.google.common.collect.HashMultiset;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.RecordingRawJson.BehaviorBean;
 import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
 import com.threebird.recorder.persistence.StartEndTimes;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
@@ -77,16 +79,20 @@ public class IoaUtils
    */
   public static void populateContinuous( SessionBean stream1, HashMap< String, ArrayList< Integer > > map1 )
   {
+    ImmutableMap< String, BehaviorBean > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
+    
     for (Entry< String, ArrayList< StartEndTimes > > entry : stream1.continuousEvents.entrySet()) {
       String buuid = entry.getKey();
-      if (!map1.containsKey( buuid )) {
-        map1.put( buuid, Lists.newArrayList() );
+      String key = behaviors.get( buuid ).key.toString();
+      
+      if (!map1.containsKey( key )) {
+        map1.put( key, Lists.newArrayList() );
       }
       for (StartEndTimes startEndTimes : entry.getValue()) {
         int start = startEndTimes.start / 1000;
         int end = startEndTimes.end / 1000;
         for (int t = start; t <= end; t += 1) {
-          map1.get( buuid ).add( t );
+          map1.get( key ).add( t );
         }
       }
     }
@@ -97,14 +103,18 @@ public class IoaUtils
    */
   public static void populateDiscrete( SessionBean stream1, HashMap< String, ArrayList< Integer > > map1 )
   {
+    ImmutableMap< String, BehaviorBean > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
+
     for (Entry< String, ArrayList< Integer > > entry : stream1.discreteEvents.entrySet()) {
       String buuid = entry.getKey();
-      if (!map1.containsKey( buuid )) {
-        map1.put( buuid, Lists.newArrayList() );
+      String key = behaviors.get( buuid ).key.toString();
+
+      if (!map1.containsKey( key )) {
+        map1.put( key, Lists.newArrayList() );
       }
       for (Integer t : entry.getValue()) {
         int seconds = t / 1000;
-        map1.get( buuid ).add( seconds );
+        map1.get( key ).add( seconds );
       }
     }
   }

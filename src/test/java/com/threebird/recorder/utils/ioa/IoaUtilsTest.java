@@ -14,6 +14,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.RecordingRawJson.BehaviorBean;
+import com.threebird.recorder.persistence.RecordingRawJson.SchemaBean;
 import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
 import com.threebird.recorder.persistence.StartEndTimes;
 
@@ -28,6 +30,11 @@ public class IoaUtilsTest
     standard.continuousEvents.put( "c",
                                    Lists.newArrayList( new StartEndTimes( 0, 1100 ),
                                                        new StartEndTimes( 3100, 3900 ) ) );
+
+    standard.schema = new SchemaBean();
+    standard.schema.behaviors = Lists.newArrayList();
+    standard.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
+    standard.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
   }
 
   static SessionBean empty = new SessionBean();
@@ -35,6 +42,11 @@ public class IoaUtilsTest
     empty.totalTimeMillis = 6000;
     empty.discreteEvents = Maps.newHashMap();
     empty.continuousEvents = Maps.newHashMap();
+    
+    empty.schema = new SchemaBean();
+    empty.schema.behaviors = Lists.newArrayList();
+    empty.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
+    empty.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
   }
 
   static SessionBean multi = new SessionBean();
@@ -46,6 +58,13 @@ public class IoaUtilsTest
     multi.discreteEvents.put( "b", Lists.newArrayList( 2000, 2100, 4000, 9000 ) );
     multi.continuousEvents.put( "c", Lists.newArrayList( new StartEndTimes( 3000, 6100 ) ) );
     multi.continuousEvents.put( "d", Lists.newArrayList( new StartEndTimes( 5000, 8100 ) ) );
+    
+    multi.schema = new SchemaBean();
+    multi.schema.behaviors = Lists.newArrayList();
+    multi.schema.behaviors.add( new BehaviorBean( "a", 'a', "apple", false ) );
+    multi.schema.behaviors.add( new BehaviorBean( "b", 'b', "banana", false ) );
+    multi.schema.behaviors.add( new BehaviorBean( "c", 'c', "cucumber", true ) );
+    multi.schema.behaviors.add( new BehaviorBean( "d", 'd', "date", true ) );
   }
 
   @Test public void deserialize_standard() throws Exception

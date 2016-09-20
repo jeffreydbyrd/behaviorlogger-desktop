@@ -20,10 +20,10 @@ public class RecordingRawJson
 {
   public static class BehaviorBean
   {
-    String uuid;
-    Character key;
-    String name;
-    boolean isContinuous;
+    public String uuid;
+    public Character key;
+    public String name;
+    public boolean isContinuous;
 
     public BehaviorBean( String uuid, Character key, String name, boolean isContinuous )
     {
@@ -52,7 +52,7 @@ public class RecordingRawJson
   {
     String streamUuid;
     String blVersion;
-    SchemaBean schema;
+    public SchemaBean schema;
     String schemaUuid;
     Integer schemaVersion;
     String observer;

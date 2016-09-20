@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.threebird.recorder.persistence.RecordingRawJson.BehaviorBean;
+import com.threebird.recorder.persistence.RecordingRawJson.SchemaBean;
 import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
 import com.threebird.recorder.persistence.StartEndTimes;
 
@@ -21,6 +23,11 @@ public class IoaCalculationsTest
     input1.continuousEvents = Maps.newHashMap();
     input1.discreteEvents.put( "d", Lists.newArrayList( 0, 1100, 1700 ) ); // 0,1,1
     input1.continuousEvents.put( "c", Lists.newArrayList( new StartEndTimes( 0, 1000 ) ) ); // 0,1
+
+    input1.schema = new SchemaBean();
+    input1.schema.behaviors = Lists.newArrayList();
+    input1.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
+    input1.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
   }
 
   static SessionBean input2 = new SessionBean();
@@ -30,6 +37,11 @@ public class IoaCalculationsTest
     input2.continuousEvents = Maps.newHashMap();
     input2.discreteEvents.put( "d", Lists.newArrayList( 0, 1100 ) ); // 0,1
     input2.continuousEvents.put( "c", Lists.newArrayList( new StartEndTimes( 0, 2000 ) ) ); // 0,1,2
+
+    input2.schema = new SchemaBean();
+    input2.schema.behaviors = Lists.newArrayList();
+    input2.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
+    input2.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
   }
 
   static SessionBean empty = new SessionBean();
@@ -37,6 +49,11 @@ public class IoaCalculationsTest
     empty.totalTimeMillis = 2700;
     empty.discreteEvents = Maps.newHashMap();
     empty.continuousEvents = Maps.newHashMap();
+
+    empty.schema = new SchemaBean();
+    empty.schema.behaviors = Lists.newArrayList();
+    empty.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
+    empty.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
   }
 
   @Test public void partialAgreement_blocksize_1()
