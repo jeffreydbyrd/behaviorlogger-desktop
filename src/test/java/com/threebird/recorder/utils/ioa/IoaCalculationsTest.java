@@ -318,4 +318,63 @@ public class IoaCalculationsTest
     Assert.assertEquals( expectedDiscrete, actualDiscrete );
     Assert.assertEquals( expectedContinuous, actualContinuous );
   }
+
+  @Test public void compare_Mismatched()
+  {
+    SessionBean input1 = new SessionBean();
+    input1.totalTimeMillis = 1700;
+    input1.discreteEvents = Maps.newHashMap();
+    input1.continuousEvents = Maps.newHashMap();
+    input1.discreteEvents.put( "a", Lists.newArrayList( 0 ) ); // 0
+    input1.continuousEvents.put( "b", Lists.newArrayList( new StartEndTimes( 0, 1000 ) ) ); // 0,1
+
+    input1.schema = new SchemaBean();
+    input1.schema.behaviors = Lists.newArrayList();
+    input1.schema.behaviors.add( new BehaviorBean( "a", 'a', "discrete", false ) );
+    input1.schema.behaviors.add( new BehaviorBean( "b", 'b', "continuous", true ) );
+
+    SessionBean input2 = new SessionBean();
+    input2.totalTimeMillis = 2700;
+    input2.discreteEvents = Maps.newHashMap();
+    input2.continuousEvents = Maps.newHashMap();
+    input2.discreteEvents.put( "c", Lists.newArrayList( 0 ) ); // 0
+    input2.continuousEvents.put( "d", Lists.newArrayList( new StartEndTimes( 0, 2000 ) ) ); // 0,1,2
+
+    input2.schema = new SchemaBean();
+    input2.schema.behaviors = Lists.newArrayList();
+    input2.schema.behaviors.add( new BehaviorBean( "c", 'c', "discrete", false ) );
+    input2.schema.behaviors.add( new BehaviorBean( "d", 'd', "continuous", true ) );
+
+    int blockSize = 1;
+
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils.createIoaMap( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils.createIoaMap( input2 );
+    KeyToInterval data1 = IoaUtils.partition( stream1, input1.totalTimeMillis, blockSize );
+    KeyToInterval data2 = IoaUtils.partition( stream2, input2.totalTimeMillis, blockSize );
+
+    Map< String, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
+    Map< String, IntervalCalculations > expected = Maps.newHashMap();
+
+    // . . . . . . . . . . 0, 1, 2
+    int[] intervals1_a = { 1, 0, 0 };
+    int[] intervals2_a = { 0, 0, 0 };
+    double[] result_a = { 0, 1, 1 };
+    int[] intervals1_b = { 1, 1, 0 };
+    int[] intervals2_b = { 0, 0, 0 };
+    double[] result_b = { 0, 0, 1 };
+    int[] intervals1_c = { 0, 0, 0 };
+    int[] intervals2_c = { 1, 0, 0 };
+    double[] result_c = { 0, 1, 1 };
+    int[] intervals1_d = { 0, 0, 0 };
+    int[] intervals2_d = { 1, 1, 1 };
+    double[] result_d = { 0, 0, 0 };
+
+    expected.put( "a", new IntervalCalculations( "a", intervals1_a, intervals2_a, result_a ) );
+    expected.put( "b", new IntervalCalculations( "b", intervals1_b, intervals2_b, result_b ) );
+    expected.put( "c", new IntervalCalculations( "c", intervals1_c, intervals2_c, result_c ) );
+    expected.put( "d", new IntervalCalculations( "d", intervals1_d, intervals2_d, result_d ) );
+
+    Assert.assertEquals( expected, actual );
+
+  }
 }
