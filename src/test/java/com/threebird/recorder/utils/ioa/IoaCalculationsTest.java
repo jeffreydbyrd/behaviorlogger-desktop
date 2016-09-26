@@ -375,6 +375,5 @@ public class IoaCalculationsTest
     expected.put( "d", new IntervalCalculations( "d", intervals1_d, intervals2_d, result_d ) );
 
     Assert.assertEquals( expected, actual );
-
   }
 }

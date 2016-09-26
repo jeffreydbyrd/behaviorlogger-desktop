@@ -40,6 +40,7 @@ public class IoaUtils
     } );
 
     int numIntervals = (int) Math.ceil( (totalTimeMilles / 1000.0) / size );
+    
     return new KeyToInterval( idToIntervals, numIntervals );
   }
 
@@ -62,6 +63,7 @@ public class IoaUtils
         method == IoaMethod.Exact_Agreement
             ? IoaCalculations.exactAgreement( data1, data2 )
             : IoaCalculations.partialAgreement( data1, data2 );
+            
     WriteIoaIntervals.write( intervals, appendToFile, out );
     return new IoaTimeBlockSummary( intervals );
   }
@@ -80,11 +82,11 @@ public class IoaUtils
   public static void populateContinuous( SessionBean stream1, HashMap< String, ArrayList< Integer > > map1 )
   {
     ImmutableMap< String, BehaviorBean > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
-    
+
     for (Entry< String, ArrayList< StartEndTimes > > entry : stream1.continuousEvents.entrySet()) {
       String buuid = entry.getKey();
       String key = behaviors.get( buuid ).key.toString();
-      
+
       if (!map1.containsKey( key )) {
         map1.put( key, Lists.newArrayList() );
       }

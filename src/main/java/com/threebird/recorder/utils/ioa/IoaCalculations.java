@@ -73,20 +73,20 @@ public class IoaCalculations
     return getIntervals( data1, data2, IoaCalculations::partialComparison );
   }
 
-  static double windowAgreementDiscrete( Multiset< Integer > seconds, Multiset< Integer > comparison, int threshold )
+  static double windowAgreementDiscrete( Multiset< Integer > target, Multiset< Integer > comparison, int threshold )
   {
-    if (seconds == null || seconds.isEmpty() || comparison == null || comparison.isEmpty()) {
+    if (target == null || target.isEmpty() || comparison == null || comparison.isEmpty()) {
       return 0;
     }
 
-    List< Integer > _seconds = Lists.newArrayList( seconds );
+    List< Integer > _target = Lists.newArrayList( target );
     List< Integer > _comparison = Lists.newArrayList( comparison );
     int numMatched = 0;
 
-    for (int k = 0; k < _seconds.size(); k++) {
-      int s = _seconds.get( k );
-      int min = s - threshold;
-      int max = s + threshold;
+    for (int k = 0; k < _target.size(); k++) {
+      int sec = _target.get( k );
+      int min = sec - threshold;
+      int max = sec + threshold;
 
       Optional< Integer > optMatch = Iterables.tryFind( _comparison, i -> i >= min && i <= max );
       for (Integer match : optMatch.asSet()) {
@@ -95,7 +95,7 @@ public class IoaCalculations
       }
     }
 
-    return ((double) numMatched) / _seconds.size();
+    return ((double) numMatched) / _target.size();
   }
 
   static double windowAgreementContinuous( Multiset< Integer > seconds1, Multiset< Integer > seconds2 )

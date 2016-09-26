@@ -66,6 +66,16 @@ public class IoaUtilsTest
     multi.schema.behaviors.add( new BehaviorBean( "c", 'c', "cucumber", true ) );
     multi.schema.behaviors.add( new BehaviorBean( "d", 'd', "date", true ) );
   }
+  
+  static SessionBean zero_len = new SessionBean();
+  static {
+    zero_len.totalTimeMillis = 0;
+    zero_len.discreteEvents = Maps.newHashMap();
+    zero_len.continuousEvents = Maps.newHashMap();
+    zero_len.schema = new SchemaBean();
+    zero_len.schema.behaviors = Lists.newArrayList();
+    zero_len.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
+  }
 
   @Test public void deserialize_standard() throws Exception
   {
@@ -260,4 +270,28 @@ public class IoaUtilsTest
     assertEquals( expected1, actualDiscrete );
     assertEquals( expected2, actualContinuous );
   }
+  
+  @Test public void partition_zero_length_blockSize_1()
+  {
+    int blockSize = 1;
+
+    HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
+    HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
+    IoaUtils.populateDiscrete( zero_len, mapD );
+    IoaUtils.populateContinuous( zero_len, mapC );
+
+    KeyToInterval actualDiscrete =
+        IoaUtils.partition( mapD, zero_len.totalTimeMillis, blockSize );
+    KeyToInterval actualContinuous =
+        IoaUtils.partition( mapC, zero_len.totalTimeMillis, blockSize );
+
+    HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
+    HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
+    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 0 );
+    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 0 );
+
+    assertEquals( expected1, actualDiscrete );
+    assertEquals( expected2, actualContinuous );
+  }
+
 }

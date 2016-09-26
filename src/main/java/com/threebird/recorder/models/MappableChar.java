@@ -67,14 +67,12 @@ public enum MappableChar
       ( json, typeOfT, context ) -> {
         String str = json.getAsJsonPrimitive().getAsString();
         MappableChar mc = MappableChar.valueOf( str );
-        System.out.println( mc.name() );
         return mc;
       };
 
   public static final JsonSerializer< MappableChar > gsonSerializer =
       ( src, typeOfSrc, context ) -> {
         JsonElement el = new JsonPrimitive( src.name() );
-        System.out.println( el );
         return el;
       };
 

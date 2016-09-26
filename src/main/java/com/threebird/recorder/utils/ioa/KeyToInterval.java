@@ -13,9 +13,9 @@ public class KeyToInterval
   public final HashMap< String, Multiset< Integer > > keyToIntervals;
   public final int totalIntervals;
 
-  public KeyToInterval( HashMap< String, Multiset< Integer > > idToIntervals, int totalIntervals )
+  public KeyToInterval( HashMap< String, Multiset< Integer > > keyToIntervals, int totalIntervals )
   {
-    this.keyToIntervals = idToIntervals;
+    this.keyToIntervals = keyToIntervals;
     this.totalIntervals = totalIntervals;
   }
 

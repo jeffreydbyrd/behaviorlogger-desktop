@@ -4,15 +4,15 @@ import java.util.Arrays;
 
 public class IntervalCalculations
 {
-  public final String buuid;
+  public final String key;
   public final int[] intervals1;
   public final int[] intervals2;
   public final double[] result;
   public final double avg;
 
-  public IntervalCalculations( String buuid, int[] intervals1, int[] intervals2, double[] result )
+  public IntervalCalculations( String key, int[] intervals1, int[] intervals2, double[] result )
   {
-    this.buuid = buuid;
+    this.key = key;
     this.intervals1 = intervals1;
     this.intervals2 = intervals2;
     this.result = result;
@@ -22,7 +22,7 @@ public class IntervalCalculations
   @Override public String toString()
   {
     return "IntervalCalculations [\n"
-        + "  buuid=" + buuid + ",\n"
+        + "  key=" + key + ",\n"
         + "  intervals1=" + Arrays.toString( intervals1 ) + ",\n"
         + "  intervals2=" + Arrays.toString( intervals2 ) + ",\n"
         + "  result=" + Arrays.toString( result ) + ",\n"
@@ -37,7 +37,7 @@ public class IntervalCalculations
     long temp;
     temp = Double.doubleToLongBits( avg );
     result = prime * result + (int) (temp ^ (temp >>> 32));
-    result = prime * result + ((buuid == null) ? 0 : buuid.hashCode());
+    result = prime * result + ((key == null) ? 0 : key.hashCode());
     result = prime * result + Arrays.hashCode( intervals1 );
     result = prime * result + Arrays.hashCode( intervals2 );
     result = prime * result + Arrays.hashCode( this.result );
@@ -55,10 +55,10 @@ public class IntervalCalculations
     IntervalCalculations other = (IntervalCalculations) obj;
     if (Double.doubleToLongBits( avg ) != Double.doubleToLongBits( other.avg ))
       return false;
-    if (buuid == null) {
-      if (other.buuid != null)
+    if (key == null) {
+      if (other.key != null)
         return false;
-    } else if (!buuid.equals( other.buuid ))
+    } else if (!key.equals( other.key ))
       return false;
     if (!Arrays.equals( intervals1, other.intervals1 ))
       return false;
