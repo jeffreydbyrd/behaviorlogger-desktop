@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="markdown3.css">
+
 - [Introduction](#introduction)
 - [Installation](#installation)
   - [Windows](#windows)
@@ -19,7 +21,6 @@
   - [Time Window](#time-window)
 - [References](#references)
 
-<link rel="stylesheet" href="markdown3.css">
 <a name="introduction"></a>
 # Introduction
 
