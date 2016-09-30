@@ -154,9 +154,9 @@ public class PreferencesController
 
   private void setupDurationTextFields()
   {
-    int duration = PreferencesManager.getDuration();
-    int hrs = duration / (60 * 60);
-    int minDivisor = duration % (60 * 60);
+    int totalSeconds = PreferencesManager.getDuration() / 1000;
+    int hrs = totalSeconds / (60 * 60);
+    int minDivisor = totalSeconds % (60 * 60);
     int mins = minDivisor / 60;
     int secs = minDivisor % 60;
 
