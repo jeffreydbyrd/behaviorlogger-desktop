@@ -36,15 +36,15 @@ data-collectors record behaviors.
 <a name="windows"></a>
 ## Windows
 
-After downloading the installer (3Bird Behavior Logger.exe), double-click the file.  
-![win](win.png)  
+After downloading the installer (3Bird Behavior Logger.exe), double-click the file.
+![win](win.png)
 Click "install". When finished, you should be able to open the application from Start Menu > All Programs.
 
 <a name="mac"></a>
 ## Mac
 
-After downloading the installer (3Bird Behavior Logger.dmg), double-click the file.  
-![mac](mac.png)  
+After downloading the installer (3Bird Behavior Logger.dmg), double-click the file.
+![mac](mac.png)
 Drag the icon over the Applications folder.
 
 ---
@@ -79,20 +79,20 @@ Drag the icon over the Applications folder.
 
 ![edit-menu](edit-menu.png)
 
-1. **Client** - The identifier of the client.
+1. **Client** - An identifier for the client.
 2. **Project** - The research project this schema is for.
-3. **Key-Behavior Mappings** - The keys used to record target behaviors.
-  - *Cont.* - Check if this is a *continuous behavior* (ie. it has a duration rather than a count).
-  - *Key* - A single character to represent the behavior. Accepted character include lower-case letters, digits, and some symbols ( ` '  - = [ ] ; , . \ / )
-  - *Behavior* - A description of the target behavior.
-4. **Session Data Directory** - The directory session data-files will get saved to.
-5. **Session Duration**
+3. **Session Data Directory** - The directory session data-files will get saved to.
+4. **Session Duration**
   - *infinite* - If checked, sessions will never end.
   - *timed* - If checked, sessions will be considered "finished" when they reach the set duration. If this field is set to zero, or left empty, it's the same as checking *infinite*.
   - *When timer finishes* - Check the actions you would like to happen when a session is over.
-6. **Add Row** - Adds a new row to the Mappings section.
-7. **Cancel** - Discard all changes and return to Start Menu.
-8. **Save** - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.
+5. **Key-Behavior Mappings** - The keys used to record target behaviors. They are divided between *Discrete* and *Continuous* behaviors. You can *edit* or *delete* each behavior listed.
+6. **Add Behavior** - Adds a new row to the Mappings section.
+  - *Cont.* - Check if this is a *continuous behavior* (ie. it has a duration rather than a count).
+  - *Key* - A single character to represent the behavior. Accepted character include lower-case letters, digits, and some symbols ( ` '  - = [ ] ; , . \ / )
+  - *Behavior* - A description of the target behavior.
+7. **Save** - Saves changes and returns to Start Menu. If this is a new schema, it will show up in the schema list.
+8. **Cancel** - Discard all changes and return to Start Menu.
 9. **Delete Schema** - Deletes the current schema. Prompts the user for confirmation.
 
 ---
@@ -129,7 +129,7 @@ While a session is playing, press any of the mapped keys to log a behavior. **Di
 
 You can also log new behaviors on the fly while recording.
 
-**Discrete** - press an unmapped key.  
+**Discrete** - press an unmapped key.
 **Continuous** - press an unmapped key while holding `shift`. Once the new continuous key is added, you don't have to hold `shift` to toggle it again.
 
 When you pause the session, you can click *Edit Unknown Behaviors* to assign values to any unknowns you might have logged. If you logged an unknown by mistake, you can ignore it.
@@ -139,9 +139,9 @@ When you pause the session, you can click *Edit Unknown Behaviors* to assign val
 
 You can undo behaviors using `ctrl`+`z` for Windows and `cmd`+`z` for Macs (see [Keyboard Shortcuts](#keyboard-shortcuts) for a full list of shortcuts). There is no "redo" funcationality yet.
 
-*Undo* works differently depending on what the latest behavior was.  
-For discrete behaviors it simply removes the behavior and decrements the counter by 1.  
-For a continuous behavior that has been *started* but hasn't *ended*, it reverts the counter back to its position before it started.  
+*Undo* works differently depending on what the latest behavior was.
+For discrete behaviors it simply removes the behavior and decrements the counter by 1.
+For a continuous behavior that has been *started* but hasn't *ended*, it reverts the counter back to its position before it started.
 For a continuous behavior that has ended, it decrements the counter by whatever the duration was.
 
 <a name="adding-notes-to-a-session"></a>

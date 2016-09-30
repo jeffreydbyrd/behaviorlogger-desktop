@@ -82,6 +82,7 @@
                      <children>
                         <HBox spacing="5.0">
                            <children>
+                              <Label text="Cont." />
                               <CheckBox fx:id="contCheckbox" mnemonicParsing="false" />
                               <TextField fx:id="keyField" prefHeight="27.0" prefWidth="44.0" promptText="Key" />
                               <TextField fx:id="descriptionField" prefHeight="27.0" prefWidth="118.0" promptText="Behavior" HBox.hgrow="ALWAYS" />
