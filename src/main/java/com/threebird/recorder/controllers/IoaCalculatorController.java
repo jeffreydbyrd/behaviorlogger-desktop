@@ -55,7 +55,7 @@ public class IoaCalculatorController
     file2Field.setText( IoaManager.file2Property().get() );
     thresholdField.setText( IoaManager.thresholdProperty().get() + "" );
     char[] digits = "0123456789".toCharArray();
-    thresholdField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( thresholdField, digits, 5 ) );
+    thresholdField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( digits, 5 ) );
 
     methodChoiceBox.setItems( FXCollections.observableArrayList( IoaMethod.values() ) );
     methodChoiceBox.getSelectionModel().select( IoaManager.getSelectedMethod() );

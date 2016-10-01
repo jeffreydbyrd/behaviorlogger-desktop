@@ -186,11 +186,17 @@ public class StartMenuController
     conditionField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setCondition( newV ) );
     locationField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setLocation( newV ) );
 
+    EventHandler< ? super KeyEvent > limitLenth100 = EventRecorderUtil.createFieldLimiter( 100 );
+    observerField.setOnKeyTyped( limitLenth100 );
+    therapistField.setOnKeyTyped( limitLenth100 );
+    conditionField.setOnKeyTyped( limitLenth100 );
+    locationField.setOnKeyTyped( limitLenth100 );
+
     // Put in some idiot-proof logic for the session # (limit to just digits,
     // prevent exceeding max_value)
-    EventHandler< ? super KeyEvent > limiter =
-        EventRecorderUtil.createFieldLimiter( sessionField, "0123456789".toCharArray(), 9 );
-    sessionField.setOnKeyTyped( limiter );
+    EventHandler< ? super KeyEvent > limitSessionField =
+        EventRecorderUtil.createFieldLimiter( "0123456789".toCharArray(), 9 );
+    sessionField.setOnKeyTyped( limitSessionField );
     sessionField.textProperty().addListener( ( o, old, newV ) -> {
       String text = sessionField.getText().trim();
       if (Strings.isNullOrEmpty( text )) {

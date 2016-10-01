@@ -142,11 +142,13 @@ public class BehaviorBox extends VBox
       if (evt.getCode().equals( KeyCode.ENTER ) || evt.getCode().equals( KeyCode.ESCAPE )) {
         save();
         editBtn.requestFocus();
+        return;
       }
     };
 
     keyField.setOnKeyPressed( onEnter );
     descField.setOnKeyPressed( onEnter );
+    descField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( 100 ) );
 
     keyField.focusedProperty().addListener( ( old, ov, isFocused ) -> {
       if (!isFocused && !descField.isFocused()) {
@@ -161,7 +163,7 @@ public class BehaviorBox extends VBox
     } );
 
     EventHandler< ? super KeyEvent > limitText =
-        EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
+        EventRecorderUtil.createFieldLimiter( MappableChar.acceptableKeys(), 1 );
 
     keyField.setOnKeyTyped( evt -> {
       String text = keyField.getText() + evt.getCharacter();

@@ -13,7 +13,7 @@
       <HBox spacing="10.0" VBox.vgrow="NEVER" />
       <HBox spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox spacing="10.0" GridPane.columnIndex="1" HBox.hgrow="ALWAYS">
+            <VBox maxWidth="230.0" minWidth="230.0" spacing="10.0" GridPane.columnIndex="1" HBox.hgrow="ALWAYS">
                <children>
                   <TextField fx:id="clientField" prefColumnCount="0" promptText="Client" />
                   <TextField fx:id="projectField" prefColumnCount="0" promptText="Project" />

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -16,6 +17,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -165,9 +167,10 @@ public class PreferencesController
     secondsField.setText( EventRecorderUtil.intToStr( secs ) );
 
     char[] digits = "0123456789".toCharArray();
-    hoursField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( hoursField, digits, 2 ) );
-    minutesField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( minutesField, digits, 2 ) );
-    secondsField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( secondsField, digits, 2 ) );
+    EventHandler< ? super KeyEvent > limit2Digits = EventRecorderUtil.createFieldLimiter( digits, 2 );
+    hoursField.setOnKeyTyped( limit2Digits );
+    minutesField.setOnKeyTyped( limit2Digits );
+    secondsField.setOnKeyTyped( limit2Digits );
 
     boolean colorOnEnd = PreferencesManager.getColorOnEnd();
     boolean pauseOnEnd = PreferencesManager.getPauseOnEnd();
@@ -273,7 +276,7 @@ public class PreferencesController
                      .collect( Collectors.toList() );
 
     PreferencesManager.saveFilenameComponents( components );
-    
+
     PreferencesManager.setCheckVersion( checkVersion.isSelected() );
 
     EventRecorderUtil.dialogStage.get().close();

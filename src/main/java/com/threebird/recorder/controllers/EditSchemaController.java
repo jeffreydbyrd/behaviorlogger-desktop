@@ -47,6 +47,12 @@ import javafx.scene.text.Text;
  */
 public class EditSchemaController
 {
+  private static final EventHandler< ? super KeyEvent > LIMIT_FIELD_100 = EventRecorderUtil.createFieldLimiter( 100 );
+  private static EventHandler< ? super KeyEvent > LIMIT_FIELD_1 =
+      EventRecorderUtil.createFieldLimiter( MappableChar.acceptableKeys(), 1 );
+  private static char[] DIGITS = "0123456789".toCharArray();
+  private static String CSS_RED = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
+
   @FXML private TextField clientField;
   @FXML private TextField projectField;
 
@@ -78,11 +84,6 @@ public class EditSchemaController
 
   @FXML private Button deleteSchemaButton;
 
-  private EventHandler< ? super KeyEvent > limitKeyField;
-
-  private static char[] digits = "0123456789".toCharArray();
-  private static String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
-
   private Schema model;
 
   /**
@@ -113,17 +114,16 @@ public class EditSchemaController
     }
 
     clientField.setText( Strings.nullToEmpty( model.client ) );
-    clientField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( clientField, 50 ) );
-
     projectField.setText( Strings.nullToEmpty( model.project ) );
-    projectField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( projectField, 50 ) );
+
+    EventHandler< ? super KeyEvent > limitLength100 = LIMIT_FIELD_100;
+    clientField.setOnKeyTyped( limitLength100 );
+    projectField.setOnKeyTyped( limitLength100 );
 
     String dir =
         model.sessionDirectory == null
             ? PreferencesManager.getSessionDirectory()
             : model.sessionDirectory.getPath();
-
-    limitKeyField = EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
 
     directoryField.setText( dir );
 
@@ -167,9 +167,10 @@ public class EditSchemaController
     minutesField.setText( EventRecorderUtil.intToStr( mins ) );
     secondsField.setText( EventRecorderUtil.intToStr( secs ) );
 
-    hoursField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( hoursField, digits, 2 ) );
-    minutesField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( minutesField, digits, 2 ) );
-    secondsField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( secondsField, digits, 2 ) );
+    EventHandler< ? super KeyEvent > limit2Digits = EventRecorderUtil.createFieldLimiter( DIGITS, 2 );
+    hoursField.setOnKeyTyped( limit2Digits );
+    minutesField.setOnKeyTyped( limit2Digits );
+    secondsField.setOnKeyTyped( limit2Digits );
 
     boolean color = model.color == null ? PreferencesManager.getColorOnEnd() : model.color;
     boolean pause = model.pause == null ? PreferencesManager.getPauseOnEnd() : model.pause;
@@ -214,6 +215,8 @@ public class EditSchemaController
     descriptionField.setOnKeyPressed( onEnter );
     contCheckbox.setOnKeyPressed( onEnter );
     addButton.setOnKeyPressed( onEnter );
+
+    descriptionField.setOnKeyTyped( LIMIT_FIELD_100 );
   }
 
   private void newBehaviorKeyOnType( KeyEvent evt )
@@ -221,7 +224,7 @@ public class EditSchemaController
     String text = keyField.getText() + evt.getCharacter();
 
     // limit to 1 char
-    limitKeyField.handle( evt );
+    LIMIT_FIELD_1.handle( evt );
     if (evt.isConsumed() || text.length() != 1) {
       return;
     }
@@ -283,7 +286,7 @@ public class EditSchemaController
       FilenameComponent comp = entry.getKey();
       TextField field = entry.getValue();
       if (comp.enabled && Strings.isNullOrEmpty( field.getText() )) {
-        field.setStyle( cssRed );
+        field.setStyle( CSS_RED );
         Label lbl = new Label( "- " + comp.name + " is required for your data file's name." );
         lbl.setTextFill( Color.RED );
         errorMsgBox.getChildren().add( lbl );
@@ -296,7 +299,7 @@ public class EditSchemaController
     // Validate Directory field
     if (!getDirectory().exists()) {
       isValid = false;
-      directoryField.setStyle( cssRed );
+      directoryField.setStyle( CSS_RED );
       errorMsgBox.getChildren().add( dirMsg );
     } else {
       directoryField.setStyle( "" );
@@ -306,8 +309,8 @@ public class EditSchemaController
     if (Strings.isNullOrEmpty( clientField.getText() ) && Strings.isNullOrEmpty( projectField.getText() )) {
       isValid = false;
       errorMsgBox.getChildren().add( clientProjectMsg );
-      clientField.setStyle( cssRed );
-      projectField.setStyle( cssRed );
+      clientField.setStyle( CSS_RED );
+      projectField.setStyle( CSS_RED );
     } else {
       clientField.setStyle( "" );
       projectField.setStyle( "" );
@@ -323,7 +326,7 @@ public class EditSchemaController
   {
     // Check if key is empty
     if (keyField.getText().isEmpty()) {
-      keyField.setStyle( cssRed );
+      keyField.setStyle( CSS_RED );
       mappingErrorText.setText( "Key is required." );
       return;
     } else {
@@ -332,7 +335,7 @@ public class EditSchemaController
 
     // Check if description is empty
     if (descriptionField.getText().isEmpty()) {
-      descriptionField.setStyle( cssRed );
+      descriptionField.setStyle( CSS_RED );
       mappingErrorText.setText( "Behavior description is required." );
       return;
     } else {
