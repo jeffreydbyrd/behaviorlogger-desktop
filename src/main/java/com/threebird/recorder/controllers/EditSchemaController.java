@@ -78,7 +78,7 @@ public class EditSchemaController
 
   @FXML private Button deleteSchemaButton;
 
-  private EventHandler< ? super KeyEvent > limitText;
+  private EventHandler< ? super KeyEvent > limitKeyField;
 
   private static char[] digits = "0123456789".toCharArray();
   private static String cssRed = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
@@ -113,14 +113,17 @@ public class EditSchemaController
     }
 
     clientField.setText( Strings.nullToEmpty( model.client ) );
+    clientField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( clientField, 50 ) );
+
     projectField.setText( Strings.nullToEmpty( model.project ) );
+    projectField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( projectField, 50 ) );
 
     String dir =
         model.sessionDirectory == null
             ? PreferencesManager.getSessionDirectory()
             : model.sessionDirectory.getPath();
 
-    limitText = EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
+    limitKeyField = EventRecorderUtil.createFieldLimiter( keyField, MappableChar.acceptableKeys(), 1 );
 
     directoryField.setText( dir );
 
@@ -154,7 +157,7 @@ public class EditSchemaController
   {
     int duration = model.duration == null ? PreferencesManager.getDuration() : model.duration;
     duration = duration / 1000;
-    
+
     int hrs = duration / (60 * 60);
     int minDivisor = duration % (60 * 60);
     int mins = minDivisor / 60;
@@ -218,7 +221,7 @@ public class EditSchemaController
     String text = keyField.getText() + evt.getCharacter();
 
     // limit to 1 char
-    limitText.handle( evt );
+    limitKeyField.handle( evt );
     if (evt.isConsumed() || text.length() != 1) {
       return;
     }
