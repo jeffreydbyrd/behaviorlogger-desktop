@@ -43,21 +43,21 @@ public class IoaCalculations
 
     int numIntervals = Math.max( data1.totalIntervals, data2.totalIntervals );
 
-    for (String buuid : common) {
+    for (String key : common) {
       int[] intervals1 = new int[numIntervals];
       int[] intervals2 = new int[numIntervals];
       double[] result = new double[numIntervals];
 
       for (Integer i = 0; i < numIntervals; i++) {
-        intervals1[i] += data1.keyToIntervals.get( buuid ) != null ? data1.keyToIntervals.get( buuid ).count( i ) : 0;
-        intervals2[i] += data2.keyToIntervals.get( buuid ) != null ? data2.keyToIntervals.get( buuid ).count( i ) : 0;
+        intervals1[i] += data1.keyToIntervals.get( key ) != null ? data1.keyToIntervals.get( key ).count( i ) : 0;
+        intervals2[i] += data2.keyToIntervals.get( key ) != null ? data2.keyToIntervals.get( key ).count( i ) : 0;
       }
 
       for (int i = 0; i < numIntervals; i++) {
         result[i] = compare.apply( intervals1[i], intervals2[i] );
       }
 
-      map.put( buuid, new IntervalCalculations( buuid, intervals1, intervals2, result ) );
+      map.put( key, new IntervalCalculations( key, intervals1, intervals2, result ) );
     }
 
     return map;
@@ -120,14 +120,14 @@ public class IoaCalculations
     SetView< String > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
     Map< String, TimeWindowCalculations > result = Maps.newHashMap();
 
-    for (String buuid : common) {
-      Multiset< Integer > seconds1 = data1.keyToIntervals.get( buuid );
-      Multiset< Integer > seconds2 = data2.keyToIntervals.get( buuid );
+    for (String key : common) {
+      Multiset< Integer > seconds1 = data1.keyToIntervals.get( key );
+      Multiset< Integer > seconds2 = data2.keyToIntervals.get( key );
 
       double result1 = windowAgreementDiscrete( seconds1, seconds2, threshold );
       double result2 = windowAgreementDiscrete( seconds2, seconds1, threshold );
       TimeWindowCalculations calcs = new TimeWindowCalculations( result1, result2 );
-      result.put( buuid, calcs );
+      result.put( key, calcs );
     }
 
     return result;
@@ -138,11 +138,11 @@ public class IoaCalculations
     SetView< String > common = Sets.union( data1.keyToIntervals.keySet(), data2.keyToIntervals.keySet() );
     Map< String, Double > result = Maps.newHashMap();
 
-    for (String buuid : common) {
-      Multiset< Integer > seconds1 = data1.keyToIntervals.get( buuid );
-      Multiset< Integer > seconds2 = data2.keyToIntervals.get( buuid );
+    for (String key : common) {
+      Multiset< Integer > seconds1 = data1.keyToIntervals.get( key );
+      Multiset< Integer > seconds2 = data2.keyToIntervals.get( key );
 
-      result.put( buuid, windowAgreementContinuous( seconds1, seconds2 ) );
+      result.put( key, windowAgreementContinuous( seconds1, seconds2 ) );
     }
 
     return result;
