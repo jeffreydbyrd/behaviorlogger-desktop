@@ -1,4 +1,4 @@
-package com.threebird.recorder.persistence;
+package com.threebird.recorder.persistence.recordings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,20 +14,19 @@ import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
-import com.threebird.recorder.persistence.Recordings.SaveDetails;
+import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.recordings.Recordings.SaveDetails;
 
-public class RecordingRawJson
+public class RecordingRawJson1_0
 {
   public static class BehaviorBean
   {
-    public String uuid;
-    public Character key;
-    public String name;
-    public boolean isContinuous;
+    Character key;
+    String name;
+    boolean isContinuous;
 
-    public BehaviorBean( String uuid, Character key, String name, boolean isContinuous )
+    public BehaviorBean( Character key, String name, boolean isContinuous )
     {
-      this.uuid = uuid;
       this.key = key;
       this.name = name;
       this.isContinuous = isContinuous;
@@ -39,10 +38,9 @@ public class RecordingRawJson
     public String uuid;
     public String client;
     public String project;
-    public int version;
     public ArrayList< BehaviorBean > behaviors;
     public String sessionDirectory;
-    public Integer duration; // in milliseconds
+    public Integer duration; // in seconds
     public Boolean pause;
     public Boolean color;
     public Boolean sound;
@@ -50,11 +48,9 @@ public class RecordingRawJson
 
   public static class SessionBean
   {
-    String streamUuid;
-    String blVersion;
-    public SchemaBean schema;
-    String schemaUuid;
-    Integer schemaVersion;
+    String uuid;
+    String version;
+    SchemaBean schema;
     String observer;
     String therapist;
     String condition;
@@ -65,11 +61,9 @@ public class RecordingRawJson
     DateTime startTime;
     DateTime stopTime;
 
-    // maps behavior key to times (in millis) it occurred
-    public HashMap< String, ArrayList< Integer > > discreteEvents;
-
-    // maps behavior key to start and end-times in millis
-    public HashMap< String, ArrayList< StartEndTimes > > continuousEvents;
+    // maps behavior key to times (in seconds) it occurred
+    public HashMap< Character, ArrayList< Integer > > discretes;
+    public HashMap< Character, ArrayList< Integer > > continuous;
   }
 
   public static void write( SaveDetails details ) throws Exception
@@ -81,16 +75,14 @@ public class RecordingRawJson
 
     SessionBean bean = new SessionBean();
     bean.schema = new SchemaBean();
-    bean.blVersion = EventRecorder.version;
-    bean.discreteEvents = Maps.newHashMap();
-    bean.continuousEvents = Maps.newHashMap();
+    bean.version = EventRecorder.version;
+    bean.discretes = Maps.newHashMap();
+    bean.continuous = Maps.newHashMap();
 
-    bean.streamUuid = details.uuid;
+    bean.uuid = details.uuid;
 
     copySchema( details.schema, bean.schema );
 
-    bean.schemaUuid = details.schema.uuid;
-    bean.schemaVersion = details.schema.version;
     bean.observer = details.observer;
     bean.therapist = details.therapist;
     bean.condition = details.condition;
@@ -102,19 +94,26 @@ public class RecordingRawJson
     bean.stopTime = details.stopTime;
 
     for (Behavior b : details.behaviors) {
+      char c = b.key.c;
+
       if (b.isContinuous()) {
-        if (!bean.continuousEvents.containsKey( b.uuid )) {
-          bean.continuousEvents.put( b.uuid, Lists.newArrayList() );
+        if (!bean.continuous.containsKey( c )) {
+          bean.continuous.put( c, Lists.newArrayList() );
         }
 
-        Integer start = b.startTime;
-        Integer end = start + (((ContinuousBehavior) b).getDuration());
-        bean.continuousEvents.get( b.uuid ).add( new StartEndTimes( start, end ) );
-      } else {
-        if (!bean.discreteEvents.containsKey( b.uuid )) {
-          bean.discreteEvents.put( b.uuid, Lists.newArrayList() );
+        Integer start = b.startTime / 1000; // start-time in seconds
+        Integer end = start + (((ContinuousBehavior) b).getDuration() / 1000); // end-time in seconds
+
+        for (int i = start; i <= end; i++) {
+          if (!bean.continuous.get( c ).contains( i )) { // make sure there are no overlaps
+            bean.continuous.get( c ).add( i );
+          }
         }
-        bean.discreteEvents.get( b.uuid ).add( b.startTime );
+      } else {
+        if (!bean.discretes.containsKey( c )) {
+          bean.discretes.put( c, Lists.newArrayList() );
+        }
+        bean.discretes.get( c ).add( b.startTime / 1000 );
       }
     }
 
@@ -126,12 +125,11 @@ public class RecordingRawJson
     to.uuid = from.uuid;
     to.client = from.client;
     to.project = from.project;
-    to.version = from.version;
     to.behaviors = Lists.newArrayList();
 
     for (Entry< MappableChar, KeyBehaviorMapping > entry : from.mappings.entrySet()) {
       KeyBehaviorMapping b = entry.getValue();
-      to.behaviors.add( new BehaviorBean( b.uuid, b.key.c, b.behavior, b.isContinuous ) );
+      to.behaviors.add( new BehaviorBean( b.key.c, b.behavior, b.isContinuous ) );
     }
 
     to.sessionDirectory = from.sessionDirectory.getAbsolutePath();

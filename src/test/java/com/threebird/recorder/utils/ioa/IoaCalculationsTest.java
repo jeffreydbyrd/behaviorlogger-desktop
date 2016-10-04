@@ -9,14 +9,14 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.threebird.recorder.persistence.RecordingRawJson.BehaviorBean;
-import com.threebird.recorder.persistence.RecordingRawJson.SchemaBean;
-import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
-import com.threebird.recorder.persistence.StartEndTimes;
+import com.threebird.recorder.persistence.recordings.StartEndTimes;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SchemaBean1_1;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 
 public class IoaCalculationsTest
 {
-  static SessionBean input1 = new SessionBean();
+  static SessionBean1_1 input1 = new SessionBean1_1();
   static {
     input1.totalTimeMillis = 1700;
     input1.discreteEvents = Maps.newHashMap();
@@ -24,13 +24,13 @@ public class IoaCalculationsTest
     input1.discreteEvents.put( "d", Lists.newArrayList( 0, 1100, 1700 ) ); // 0,1,1
     input1.continuousEvents.put( "c", Lists.newArrayList( new StartEndTimes( 0, 1000 ) ) ); // 0,1
 
-    input1.schema = new SchemaBean();
+    input1.schema = new SchemaBean1_1();
     input1.schema.behaviors = Lists.newArrayList();
-    input1.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
-    input1.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
+    input1.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
+    input1.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
   }
 
-  static SessionBean input2 = new SessionBean();
+  static SessionBean1_1 input2 = new SessionBean1_1();
   static {
     input2.totalTimeMillis = 2700;
     input2.discreteEvents = Maps.newHashMap();
@@ -38,22 +38,22 @@ public class IoaCalculationsTest
     input2.discreteEvents.put( "d", Lists.newArrayList( 0, 1100 ) ); // 0,1
     input2.continuousEvents.put( "c", Lists.newArrayList( new StartEndTimes( 0, 2000 ) ) ); // 0,1,2
 
-    input2.schema = new SchemaBean();
+    input2.schema = new SchemaBean1_1();
     input2.schema.behaviors = Lists.newArrayList();
-    input2.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
-    input2.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
+    input2.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
+    input2.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
   }
 
-  static SessionBean empty = new SessionBean();
+  static SessionBean1_1 empty = new SessionBean1_1();
   static {
     empty.totalTimeMillis = 2700;
     empty.discreteEvents = Maps.newHashMap();
     empty.continuousEvents = Maps.newHashMap();
 
-    empty.schema = new SchemaBean();
+    empty.schema = new SchemaBean1_1();
     empty.schema.behaviors = Lists.newArrayList();
-    empty.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
-    empty.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
+    empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
+    empty.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
   }
 
   @Test public void partialAgreement_blocksize_1()
@@ -321,29 +321,29 @@ public class IoaCalculationsTest
 
   @Test public void compare_Mismatched()
   {
-    SessionBean input1 = new SessionBean();
+    SessionBean1_1 input1 = new SessionBean1_1();
     input1.totalTimeMillis = 1700;
     input1.discreteEvents = Maps.newHashMap();
     input1.continuousEvents = Maps.newHashMap();
     input1.discreteEvents.put( "a", Lists.newArrayList( 0 ) ); // 0
     input1.continuousEvents.put( "b", Lists.newArrayList( new StartEndTimes( 0, 1000 ) ) ); // 0,1
 
-    input1.schema = new SchemaBean();
+    input1.schema = new SchemaBean1_1();
     input1.schema.behaviors = Lists.newArrayList();
-    input1.schema.behaviors.add( new BehaviorBean( "a", 'a', "discrete", false ) );
-    input1.schema.behaviors.add( new BehaviorBean( "b", 'b', "continuous", true ) );
+    input1.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "discrete", false ) );
+    input1.schema.behaviors.add( new BehaviorBean1_1( "b", 'b', "continuous", true ) );
 
-    SessionBean input2 = new SessionBean();
+    SessionBean1_1 input2 = new SessionBean1_1();
     input2.totalTimeMillis = 2700;
     input2.discreteEvents = Maps.newHashMap();
     input2.continuousEvents = Maps.newHashMap();
     input2.discreteEvents.put( "c", Lists.newArrayList( 0 ) ); // 0
     input2.continuousEvents.put( "d", Lists.newArrayList( new StartEndTimes( 0, 2000 ) ) ); // 0,1,2
 
-    input2.schema = new SchemaBean();
+    input2.schema = new SchemaBean1_1();
     input2.schema.behaviors = Lists.newArrayList();
-    input2.schema.behaviors.add( new BehaviorBean( "c", 'c', "discrete", false ) );
-    input2.schema.behaviors.add( new BehaviorBean( "d", 'd', "continuous", true ) );
+    input2.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "discrete", false ) );
+    input2.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "continuous", true ) );
 
     int blockSize = 1;
 

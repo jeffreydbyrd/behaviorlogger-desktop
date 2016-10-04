@@ -14,14 +14,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.threebird.recorder.persistence.GsonUtils;
-import com.threebird.recorder.persistence.RecordingRawJson.BehaviorBean;
-import com.threebird.recorder.persistence.RecordingRawJson.SchemaBean;
-import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
-import com.threebird.recorder.persistence.StartEndTimes;
+import com.threebird.recorder.persistence.recordings.StartEndTimes;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SchemaBean1_1;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 
 public class IoaUtilsTest
 {
-  static SessionBean standard = new SessionBean();
+  static SessionBean1_1 standard = new SessionBean1_1();
   static {
     standard.totalTimeMillis = 6000;
     standard.discreteEvents = Maps.newHashMap();
@@ -31,25 +31,25 @@ public class IoaUtilsTest
                                    Lists.newArrayList( new StartEndTimes( 0, 1100 ),
                                                        new StartEndTimes( 3100, 3900 ) ) );
 
-    standard.schema = new SchemaBean();
+    standard.schema = new SchemaBean1_1();
     standard.schema.behaviors = Lists.newArrayList();
-    standard.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
-    standard.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
+    standard.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
+    standard.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
   }
 
-  static SessionBean empty = new SessionBean();
+  static SessionBean1_1 empty = new SessionBean1_1();
   static {
     empty.totalTimeMillis = 6000;
     empty.discreteEvents = Maps.newHashMap();
     empty.continuousEvents = Maps.newHashMap();
     
-    empty.schema = new SchemaBean();
+    empty.schema = new SchemaBean1_1();
     empty.schema.behaviors = Lists.newArrayList();
-    empty.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
-    empty.schema.behaviors.add( new BehaviorBean( "c", 'c', "continuous", true ) );
+    empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
+    empty.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
   }
 
-  static SessionBean multi = new SessionBean();
+  static SessionBean1_1 multi = new SessionBean1_1();
   static {
     multi.totalTimeMillis = 10000;
     multi.discreteEvents = Maps.newHashMap();
@@ -59,29 +59,29 @@ public class IoaUtilsTest
     multi.continuousEvents.put( "c", Lists.newArrayList( new StartEndTimes( 3000, 6100 ) ) );
     multi.continuousEvents.put( "d", Lists.newArrayList( new StartEndTimes( 5000, 8100 ) ) );
     
-    multi.schema = new SchemaBean();
+    multi.schema = new SchemaBean1_1();
     multi.schema.behaviors = Lists.newArrayList();
-    multi.schema.behaviors.add( new BehaviorBean( "a", 'a', "apple", false ) );
-    multi.schema.behaviors.add( new BehaviorBean( "b", 'b', "banana", false ) );
-    multi.schema.behaviors.add( new BehaviorBean( "c", 'c', "cucumber", true ) );
-    multi.schema.behaviors.add( new BehaviorBean( "d", 'd', "date", true ) );
+    multi.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "apple", false ) );
+    multi.schema.behaviors.add( new BehaviorBean1_1( "b", 'b', "banana", false ) );
+    multi.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "cucumber", true ) );
+    multi.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "date", true ) );
   }
   
-  static SessionBean zero_len = new SessionBean();
+  static SessionBean1_1 zero_len = new SessionBean1_1();
   static {
     zero_len.totalTimeMillis = 0;
     zero_len.discreteEvents = Maps.newHashMap();
     zero_len.continuousEvents = Maps.newHashMap();
-    zero_len.schema = new SchemaBean();
+    zero_len.schema = new SchemaBean1_1();
     zero_len.schema.behaviors = Lists.newArrayList();
-    zero_len.schema.behaviors.add( new BehaviorBean( "d", 'd', "discrete", false ) );
+    zero_len.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
   }
 
   @Test public void deserialize_standard() throws Exception
   {
     URL url = IoaUtilsTest.class.getResource( "test-0.raw" );
     File f = new File( url.toURI() );
-    SessionBean bean = GsonUtils.get( f, new SessionBean() );
+    SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
     assertEquals( standard.totalTimeMillis, bean.totalTimeMillis );
     assertEquals( standard.discreteEvents, bean.discreteEvents );
@@ -92,7 +92,7 @@ public class IoaUtilsTest
   {
     URL url = IoaUtilsTest.class.getResource( "test-empty.raw" );
     File f = new File( url.toURI() );
-    SessionBean bean = GsonUtils.get( f, new SessionBean() );
+    SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
     assertEquals( empty.totalTimeMillis, bean.totalTimeMillis );
     assertEquals( empty.discreteEvents, bean.discreteEvents );
@@ -103,7 +103,7 @@ public class IoaUtilsTest
   {
     URL url = IoaUtilsTest.class.getResource( "test-1.raw" );
     File f = new File( url.toURI() );
-    SessionBean bean = GsonUtils.get( f, new SessionBean() );
+    SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
     assertEquals( multi.totalTimeMillis, bean.totalTimeMillis );
     assertEquals( multi.discreteEvents, bean.discreteEvents );
