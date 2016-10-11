@@ -1,4 +1,4 @@
-package com.threebird.recorder.utils.ioa;
+package com.threebird.recorder.utils.ioa.version1_1;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,6 +18,8 @@ import com.threebird.recorder.persistence.recordings.StartEndTimes;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SchemaBean1_1;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
+import com.threebird.recorder.utils.ioa.KeyToInterval;
+import com.threebird.recorder.utils.ioa.version1_1.IoaUtils1_1;
 
 public class IoaUtilsTest
 {
@@ -116,13 +118,13 @@ public class IoaUtilsTest
 
     HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
     HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
-    IoaUtils.populateDiscrete( standard, mapD );
-    IoaUtils.populateContinuous( standard, mapC );
+    IoaUtils1_1.populateDiscrete( standard, mapD );
+    IoaUtils1_1.populateContinuous( standard, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils.partition( mapD, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, standard.totalTimeMillis, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils.partition( mapC, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, standard.totalTimeMillis, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
@@ -154,13 +156,13 @@ public class IoaUtilsTest
 
     HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
     HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
-    IoaUtils.populateDiscrete( standard, mapD );
-    IoaUtils.populateContinuous( standard, mapC );
+    IoaUtils1_1.populateDiscrete( standard, mapD );
+    IoaUtils1_1.populateContinuous( standard, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils.partition( mapD, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, standard.totalTimeMillis, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils.partition( mapC, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, standard.totalTimeMillis, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
@@ -195,13 +197,13 @@ public class IoaUtilsTest
 
     HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
     HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
-    IoaUtils.populateDiscrete( standard, mapD );
-    IoaUtils.populateContinuous( standard, mapC );
+    IoaUtils1_1.populateDiscrete( standard, mapD );
+    IoaUtils1_1.populateContinuous( standard, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils.partition( mapD, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, standard.totalTimeMillis, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils.partition( mapC, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, standard.totalTimeMillis, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
@@ -236,13 +238,13 @@ public class IoaUtilsTest
 
     HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
     HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
-    IoaUtils.populateDiscrete( multi, mapD );
-    IoaUtils.populateContinuous( multi, mapC );
+    IoaUtils1_1.populateDiscrete( multi, mapD );
+    IoaUtils1_1.populateContinuous( multi, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils.partition( mapD, multi.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, multi.totalTimeMillis, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils.partition( mapC, multi.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, multi.totalTimeMillis, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
@@ -277,13 +279,13 @@ public class IoaUtilsTest
 
     HashMap< String, ArrayList< Integer > > mapD = Maps.newHashMap();
     HashMap< String, ArrayList< Integer > > mapC = Maps.newHashMap();
-    IoaUtils.populateDiscrete( zero_len, mapD );
-    IoaUtils.populateContinuous( zero_len, mapC );
+    IoaUtils1_1.populateDiscrete( zero_len, mapD );
+    IoaUtils1_1.populateContinuous( zero_len, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils.partition( mapD, zero_len.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, zero_len.totalTimeMillis, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils.partition( mapC, zero_len.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, zero_len.totalTimeMillis, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();

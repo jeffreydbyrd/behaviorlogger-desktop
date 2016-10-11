@@ -19,13 +19,13 @@ import com.threebird.recorder.persistence.recordings.Recordings.SaveDetails;
 
 public class RecordingRawJson1_0
 {
-  public static class BehaviorBean
+  public static class BehaviorBean1_0
   {
-    Character key;
-    String name;
-    boolean isContinuous;
+    public Character key;
+    public String name;
+    public boolean isContinuous;
 
-    public BehaviorBean( Character key, String name, boolean isContinuous )
+    public BehaviorBean1_0( Character key, String name, boolean isContinuous )
     {
       this.key = key;
       this.name = name;
@@ -33,12 +33,12 @@ public class RecordingRawJson1_0
     }
   }
 
-  public static class SchemaBean
+  public static class SchemaBean1_0
   {
     public String uuid;
     public String client;
     public String project;
-    public ArrayList< BehaviorBean > behaviors;
+    public ArrayList< BehaviorBean1_0 > behaviors;
     public String sessionDirectory;
     public Integer duration; // in seconds
     public Boolean pause;
@@ -46,11 +46,11 @@ public class RecordingRawJson1_0
     public Boolean sound;
   }
 
-  public static class SessionBean
+  public static class SessionBean1_0
   {
     String uuid;
     String version;
-    SchemaBean schema;
+    public SchemaBean1_0 schema;
     String observer;
     String therapist;
     String condition;
@@ -58,8 +58,8 @@ public class RecordingRawJson1_0
     Integer sessionNumber;
     public Integer totalTimeMillis;
     String notes;
-    DateTime startTime;
-    DateTime stopTime;
+    public DateTime startTime;
+    public DateTime stopTime;
 
     // maps behavior key to times (in seconds) it occurred
     public HashMap< Character, ArrayList< Integer > > discretes;
@@ -73,8 +73,8 @@ public class RecordingRawJson1_0
       details.f.createNewFile();
     }
 
-    SessionBean bean = new SessionBean();
-    bean.schema = new SchemaBean();
+    SessionBean1_0 bean = new SessionBean1_0();
+    bean.schema = new SchemaBean1_0();
     bean.version = EventRecorder.version;
     bean.discretes = Maps.newHashMap();
     bean.continuous = Maps.newHashMap();
@@ -120,7 +120,7 @@ public class RecordingRawJson1_0
     GsonUtils.save( details.f, bean );
   }
 
-  private static void copySchema( Schema from, SchemaBean to )
+  private static void copySchema( Schema from, SchemaBean1_0 to )
   {
     to.uuid = from.uuid;
     to.client = from.client;
@@ -129,7 +129,7 @@ public class RecordingRawJson1_0
 
     for (Entry< MappableChar, KeyBehaviorMapping > entry : from.mappings.entrySet()) {
       KeyBehaviorMapping b = entry.getValue();
-      to.behaviors.add( new BehaviorBean( b.key.c, b.behavior, b.isContinuous ) );
+      to.behaviors.add( new BehaviorBean1_0( b.key.c, b.behavior, b.isContinuous ) );
     }
 
     to.sessionDirectory = from.sessionDirectory.getAbsolutePath();

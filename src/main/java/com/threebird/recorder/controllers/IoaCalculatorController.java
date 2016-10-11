@@ -21,7 +21,8 @@ import com.threebird.recorder.models.ioa.IoaManager;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.EventRecorderUtil;
 import com.threebird.recorder.utils.ioa.IoaMethod;
-import com.threebird.recorder.utils.ioa.IoaUtils;
+import com.threebird.recorder.utils.ioa.ProcessIoa;
+import com.threebird.recorder.utils.ioa.version1_1.IoaUtils1_1;
 
 public class IoaCalculatorController
 {
@@ -225,12 +226,12 @@ public class IoaCalculatorController
     }
 
     try {
-      Pane summary = IoaUtils.process( getFile1(),
-                                       getFile2(),
-                                       IoaManager.getSelectedMethod(),
-                                       IoaManager.thresholdProperty().get(),
-                                       appendToFile,
-                                       result );
+      Pane summary = ProcessIoa.process( getFile1(),
+                                         getFile2(),
+                                         IoaManager.getSelectedMethod(),
+                                         IoaManager.thresholdProperty().get(),
+                                         appendToFile,
+                                         result );
       summaryBox.setContent( summary );
 
       if (appendToFile) {

@@ -26,12 +26,21 @@ public class RecordingRawJson1_1
     public String name;
     public boolean isContinuous;
 
+    public BehaviorBean1_1()
+    {}
+
     public BehaviorBean1_1( String uuid, Character key, String name, boolean isContinuous )
     {
       this.uuid = uuid;
       this.key = key;
       this.name = name;
       this.isContinuous = isContinuous;
+    }
+
+    @Override public String toString()
+    {
+      return "BehaviorBean1_1 [uuid=" + uuid + ", key=" + key + ", name=" + name + ", isContinuous=" + isContinuous
+          + "]";
     }
   }
 
@@ -47,6 +56,13 @@ public class RecordingRawJson1_1
     public Boolean pause;
     public Boolean color;
     public Boolean sound;
+
+    @Override public String toString()
+    {
+      return "SchemaBean1_1 [uuid=" + uuid + ", client=" + client + ", project=" + project + ", version=" + version
+          + ", behaviors=" + behaviors + ", sessionDirectory=" + sessionDirectory + ", duration=" + duration
+          + ", pause=" + pause + ", color=" + color + ", sound=" + sound + "]";
+    }
   }
 
   public static class SessionBean1_1
@@ -63,14 +79,24 @@ public class RecordingRawJson1_1
     Integer sessionNumber;
     public Integer totalTimeMillis;
     String notes;
-    DateTime startTime;
-    DateTime stopTime;
+    public DateTime startTime;
+    public DateTime stopTime;
 
     // maps behavior key to times (in millis) it occurred
     public HashMap< String, ArrayList< Integer > > discreteEvents;
 
     // maps behavior key to start and end-times in millis
     public HashMap< String, ArrayList< StartEndTimes > > continuousEvents;
+
+    @Override public String toString()
+    {
+      return "SessionBean1_1 [streamUuid=" + streamUuid + ", blVersion=" + blVersion + ", schema=" + schema
+          + ", schemaUuid=" + schemaUuid + ", schemaVersion=" + schemaVersion + ", observer=" + observer
+          + ", therapist=" + therapist + ", condition=" + condition + ", location=" + location + ", sessionNumber="
+          + sessionNumber + ", totalTimeMillis=" + totalTimeMillis + ", notes=" + notes + ", startTime=" + startTime
+          + ", stopTime=" + stopTime + ", discreteEvents=" + discreteEvents + ", continuousEvents=" + continuousEvents
+          + "]";
+    }
   }
 
   public static void write( SaveDetails details ) throws Exception
