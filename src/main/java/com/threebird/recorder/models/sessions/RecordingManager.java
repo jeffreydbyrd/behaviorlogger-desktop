@@ -33,7 +33,7 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemasManager;
-import com.threebird.recorder.persistence.Recordings;
+import com.threebird.recorder.persistence.recordings.Recordings;
 
 public class RecordingManager
 {

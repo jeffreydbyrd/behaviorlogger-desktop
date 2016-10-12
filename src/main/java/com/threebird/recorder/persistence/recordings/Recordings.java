@@ -1,4 +1,4 @@
-package com.threebird.recorder.persistence;
+package com.threebird.recorder.persistence.recordings;
 
 import java.io.File;
 import java.io.IOException;
@@ -144,7 +144,7 @@ public class Recordings
   private static void writeJson( SaveDetails details )
   {
     try {
-      RecordingRawJson.write( details );
+      RecordingRawJson1_1.write( details );
       details.fResult.complete( details.f.length() );
     } catch (Exception e) {
       details.fResult.completeExceptionally( e );

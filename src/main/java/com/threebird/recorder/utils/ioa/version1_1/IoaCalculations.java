@@ -1,4 +1,4 @@
-package com.threebird.recorder.utils.ioa;
+package com.threebird.recorder.utils.ioa.version1_1;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +12,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
+import com.threebird.recorder.utils.ioa.IntervalCalculations;
+import com.threebird.recorder.utils.ioa.KeyToInterval;
+import com.threebird.recorder.utils.ioa.TimeWindowCalculations;
 
 public class IoaCalculations
 {

@@ -1,4 +1,4 @@
-package com.threebird.recorder.persistence;
+package com.threebird.recorder.persistence.recordings;
 
 public class StartEndTimes
 {

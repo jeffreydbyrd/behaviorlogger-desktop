@@ -1,4 +1,4 @@
-package com.threebird.recorder.utils.ioa;
+package com.threebird.recorder.utils.ioa.version1_1;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,15 +15,19 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.threebird.recorder.persistence.GsonUtils;
-import com.threebird.recorder.persistence.RecordingRawJson.BehaviorBean;
-import com.threebird.recorder.persistence.RecordingRawJson.SessionBean;
-import com.threebird.recorder.persistence.StartEndTimes;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
 import com.threebird.recorder.persistence.WriteIoaTimeWindows;
+import com.threebird.recorder.persistence.recordings.StartEndTimes;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
+import com.threebird.recorder.utils.ioa.IntervalCalculations;
+import com.threebird.recorder.utils.ioa.IoaMethod;
+import com.threebird.recorder.utils.ioa.KeyToInterval;
+import com.threebird.recorder.utils.ioa.TimeWindowCalculations;
 import com.threebird.recorder.views.ioa.IoaTimeBlockSummary;
 import com.threebird.recorder.views.ioa.IoaTimeWindowSummary;
 
-public class IoaUtils
+public class IoaUtils1_1
 {
   static KeyToInterval partition( HashMap< String, ArrayList< Integer > > stream,
                                   int totalTimeMilles,
@@ -40,16 +44,16 @@ public class IoaUtils
     } );
 
     int numIntervals = (int) Math.ceil( (totalTimeMilles / 1000.0) / size );
-    
+
     return new KeyToInterval( idToIntervals, numIntervals );
   }
 
-  private static VBox processTimeBlock( IoaMethod method,
-                                        int blockSize,
-                                        boolean appendToFile,
-                                        File out,
-                                        SessionBean stream1,
-                                        SessionBean stream2 )
+  public static VBox processTimeBlock( IoaMethod method,
+                                       int blockSize,
+                                       boolean appendToFile,
+                                       File out,
+                                       SessionBean1_1 stream1,
+                                       SessionBean1_1 stream2 )
       throws Exception
   {
     int size = blockSize < 1 ? 1 : blockSize;
@@ -63,12 +67,12 @@ public class IoaUtils
         method == IoaMethod.Exact_Agreement
             ? IoaCalculations.exactAgreement( data1, data2 )
             : IoaCalculations.partialAgreement( data1, data2 );
-            
+
     WriteIoaIntervals.write( intervals, appendToFile, out );
     return new IoaTimeBlockSummary( intervals );
   }
 
-  public static HashMap< String, ArrayList< Integer > > createIoaMap( SessionBean bean )
+  public static HashMap< String, ArrayList< Integer > > createIoaMap( SessionBean1_1 bean )
   {
     HashMap< String, ArrayList< Integer > > result = Maps.newHashMap();
     populateDiscrete( bean, result );
@@ -79,9 +83,9 @@ public class IoaUtils
   /**
    * Mutates the map
    */
-  public static void populateContinuous( SessionBean stream1, HashMap< String, ArrayList< Integer > > map1 )
+  public static void populateContinuous( SessionBean1_1 stream1, HashMap< String, ArrayList< Integer > > map1 )
   {
-    ImmutableMap< String, BehaviorBean > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
+    ImmutableMap< String, BehaviorBean1_1 > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
 
     for (Entry< String, ArrayList< StartEndTimes > > entry : stream1.continuousEvents.entrySet()) {
       String buuid = entry.getKey();
@@ -103,10 +107,10 @@ public class IoaUtils
   /**
    * Mutates the map
    */
-  public static void populateDiscrete( SessionBean stream1, HashMap< String, ArrayList< Integer > > map1 )
+  public static void populateDiscrete( SessionBean1_1 stream1, HashMap< String, ArrayList< Integer > > map1 )
   {
-    ImmutableMap< String, BehaviorBean > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
-
+    ImmutableMap< String, BehaviorBean1_1 > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
+    
     for (Entry< String, ArrayList< Integer > > entry : stream1.discreteEvents.entrySet()) {
       String buuid = entry.getKey();
       String key = behaviors.get( buuid ).key.toString();
@@ -121,13 +125,13 @@ public class IoaUtils
     }
   }
 
-  private static VBox processTimeWindow( String file1,
-                                         String file2,
-                                         boolean appendToFile,
-                                         File out,
-                                         int threshold,
-                                         SessionBean stream1,
-                                         SessionBean stream2 )
+  public static VBox processTimeWindow( String file1,
+                                        String file2,
+                                        boolean appendToFile,
+                                        File out,
+                                        int threshold,
+                                        SessionBean1_1 stream1,
+                                        SessionBean1_1 stream2 )
       throws Exception
   {
     HashMap< String, ArrayList< Integer > > discretes1 = Maps.newHashMap();
@@ -183,8 +187,8 @@ public class IoaUtils
                               File out )
       throws Exception
   {
-    SessionBean stream1 = GsonUtils.get( f1, new SessionBean() );
-    SessionBean stream2 = GsonUtils.get( f2, new SessionBean() );
+    SessionBean1_1 stream1 = GsonUtils.get( f1, new SessionBean1_1() );
+    SessionBean1_1 stream2 = GsonUtils.get( f2, new SessionBean1_1() );
 
     if (method != IoaMethod.Time_Window) {
       return processTimeBlock( method, blockSize, appendToFile, out, stream1, stream2 );

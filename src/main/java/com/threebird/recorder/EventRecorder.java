@@ -4,8 +4,8 @@ import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.models.PositionManager;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.InitSQLiteTables;
-import com.threebird.recorder.persistence.Recordings;
-import com.threebird.recorder.persistence.Recordings.Writer;
+import com.threebird.recorder.persistence.recordings.Recordings;
+import com.threebird.recorder.persistence.recordings.Recordings.Writer;
 
 import javafx.application.Application;
 import javafx.scene.image.Image;
@@ -22,7 +22,7 @@ public class EventRecorder extends Application
    */
   public static Stage STAGE;
 
-  public static String version = "1.0";
+  public static String version = "1.1";
 
   public static void main( String[] args )
   {

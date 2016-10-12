@@ -1,4 +1,4 @@
-package com.threebird.recorder.persistence;
+package com.threebird.recorder.persistence.recordings;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
-import com.threebird.recorder.persistence.Recordings.SaveDetails;
+import com.threebird.recorder.persistence.recordings.Recordings.SaveDetails;
 import com.threebird.recorder.utils.EventRecorderUtil;
 
 public class WriteRecordingXls
