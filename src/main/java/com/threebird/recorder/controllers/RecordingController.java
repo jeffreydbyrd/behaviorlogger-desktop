@@ -18,7 +18,7 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.ContinuousCounter;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.views.recording.BehaviorCountBox;
 import com.threebird.recorder.views.recording.ContinuousCountBox;
 import com.threebird.recorder.views.recording.DiscreteCountBox;
@@ -83,7 +83,7 @@ public class RecordingController
   public static void toRecordingView()
   {
     String filepath = "views/recording/recording.fxml";
-    RecordingController controller = EventRecorderUtil.loadScene( filepath, "Recording" );
+    RecordingController controller = BehaviorLoggerUtil.loadScene( filepath, "Recording" );
     controller.init();
   }
 
@@ -243,7 +243,7 @@ public class RecordingController
   private void onTick( int millis )
   {
     Schema schema = SchemasManager.getSelected();
-    timeBox.setText( EventRecorderUtil.millisToTimestamp( millis ) );
+    timeBox.setText( BehaviorLoggerUtil.millisToTimestamp( millis ) );
 
     if (millis == schema.duration) {
       if (schema.color) {
@@ -614,6 +614,6 @@ public class RecordingController
 
   @FXML private void onHelpBtnPressed()
   {
-    EventRecorderUtil.openManual( "recording" );
+    BehaviorLoggerUtil.openManual( "recording" );
   }
 }

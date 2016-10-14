@@ -7,9 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 
-import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.preferences.PreferencesManager;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 public class NewVersionController
 {
@@ -24,14 +24,14 @@ public class NewVersionController
   public static void show( String newVersion )
   {
     String fxmlPath = "views/new-version.fxml";
-    NewVersionController controller = EventRecorderUtil.showScene( fxmlPath, "New Version" );
+    NewVersionController controller = BehaviorLoggerUtil.showScene( fxmlPath, "New Version" );
     controller.init( newVersion );
   }
 
   private void init( String newVersion )
   {
     this.newVersion = newVersion;
-    this.currVersionLbl.setText( "Current Version: " + EventRecorder.version );
+    this.currVersionLbl.setText( "Current Version: " + BehaviorLoggerApp.version );
     this.newVersionLbl.setText( "New Version: " + this.newVersion );
 
     stopChecking.selectedProperty().addListener( ( obs, old, selected ) -> {
@@ -48,6 +48,6 @@ public class NewVersionController
   @FXML private void onClosePressed()
   {
     PreferencesManager.lastVersionCheckProperty().set( newVersion );
-    EventRecorderUtil.dialogStage.get().close();
+    BehaviorLoggerUtil.dialogStage.get().close();
   }
 }

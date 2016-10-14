@@ -19,7 +19,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import com.google.common.base.Strings;
 import com.threebird.recorder.models.ioa.IoaManager;
 import com.threebird.recorder.utils.Alerts;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.utils.ioa.IoaMethod;
 import com.threebird.recorder.utils.ioa.ProcessIoa;
 import com.threebird.recorder.utils.ioa.version1_1.IoaUtils1_1;
@@ -47,7 +47,7 @@ public class IoaCalculatorController
   public static void showIoaCalculator()
   {
     String fxmlPath = "views/ioa/ioa-calculator.fxml";
-    EventRecorderUtil.showScene( fxmlPath, "IOA Calculator" );
+    BehaviorLoggerUtil.showScene( fxmlPath, "IOA Calculator" );
   }
 
   @FXML private void initialize()
@@ -56,7 +56,7 @@ public class IoaCalculatorController
     file2Field.setText( IoaManager.file2Property().get() );
     thresholdField.setText( IoaManager.thresholdProperty().get() + "" );
     char[] digits = "0123456789".toCharArray();
-    thresholdField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( digits, 5 ) );
+    thresholdField.setOnKeyTyped( BehaviorLoggerUtil.createFieldLimiter( digits, 5 ) );
 
     methodChoiceBox.setItems( FXCollections.observableArrayList( IoaMethod.values() ) );
     methodChoiceBox.getSelectionModel().select( IoaManager.getSelectedMethod() );
@@ -143,7 +143,7 @@ public class IoaCalculatorController
     fileChooser.setInitialDirectory( f );
     ExtensionFilter extFilter = new FileChooser.ExtensionFilter( filterDescription, filterExtension );
     fileChooser.getExtensionFilters().add( extFilter );
-    File newFile = fileChooser.showOpenDialog( EventRecorderUtil.dialogStage.get() );
+    File newFile = fileChooser.showOpenDialog( BehaviorLoggerUtil.dialogStage.get() );
 
     if (newFile != null) {
       fileField.setText( newFile.getPath() );
@@ -218,7 +218,7 @@ public class IoaCalculatorController
       FileChooser fileChooser = new FileChooser();
       FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "XLS files (*.xls)", "*.xls" );
       fileChooser.getExtensionFilters().add( extFilter );
-      result = fileChooser.showSaveDialog( EventRecorderUtil.dialogStage.get() );
+      result = fileChooser.showSaveDialog( BehaviorLoggerUtil.dialogStage.get() );
     }
 
     if (result == null) {
@@ -248,11 +248,11 @@ public class IoaCalculatorController
 
   @FXML private void onCloseBtnPressed()
   {
-    EventRecorderUtil.dialogStage.get().close();
+    BehaviorLoggerUtil.dialogStage.get().close();
   }
 
   @FXML private void onHelpBtnPressed()
   {
-    EventRecorderUtil.openManual( "ioa-calculator" );
+    BehaviorLoggerUtil.openManual( "ioa-calculator" );
   }
 }

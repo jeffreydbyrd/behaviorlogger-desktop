@@ -17,7 +17,7 @@ import org.apache.http.util.EntityUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.NewVersionManager;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
@@ -27,7 +27,7 @@ import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.utils.Alerts;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -95,7 +95,7 @@ public class StartMenuController
   public static void toStartMenuView()
   {
     String filepath = "views/start-menu.fxml";
-    StartMenuController controller = EventRecorderUtil.loadScene( filepath, TITLE );
+    StartMenuController controller = BehaviorLoggerUtil.loadScene( filepath, TITLE );
     controller.init();
   }
 
@@ -186,7 +186,7 @@ public class StartMenuController
     conditionField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setCondition( newV ) );
     locationField.textProperty().addListener( ( o, old, newV ) -> SessionManager.setLocation( newV ) );
 
-    EventHandler< ? super KeyEvent > limitLenth100 = EventRecorderUtil.createFieldLimiter( 100 );
+    EventHandler< ? super KeyEvent > limitLenth100 = BehaviorLoggerUtil.createFieldLimiter( 100 );
     observerField.setOnKeyTyped( limitLenth100 );
     therapistField.setOnKeyTyped( limitLenth100 );
     conditionField.setOnKeyTyped( limitLenth100 );
@@ -195,7 +195,7 @@ public class StartMenuController
     // Put in some idiot-proof logic for the session # (limit to just digits,
     // prevent exceeding max_value)
     EventHandler< ? super KeyEvent > limitSessionField =
-        EventRecorderUtil.createFieldLimiter( "0123456789".toCharArray(), 9 );
+        BehaviorLoggerUtil.createFieldLimiter( "0123456789".toCharArray(), 9 );
     sessionField.setOnKeyTyped( limitSessionField );
     sessionField.textProperty().addListener( ( o, old, newV ) -> {
       String text = sessionField.getText().trim();
@@ -253,7 +253,7 @@ public class StartMenuController
     if (newV != null) {
       setVisibility( true );
       populateMappingsTable( newV );
-      timeBox.setText( EventRecorderUtil.millisToTimestamp( newV.duration ) );
+      timeBox.setText( BehaviorLoggerUtil.millisToTimestamp( newV.duration ) );
       updateFilenameLabel();
     } else {
       setVisibility( false );
@@ -275,7 +275,7 @@ public class StartMenuController
     FileChooser fileChooser = new FileChooser();
     ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
     fileChooser.getExtensionFilters().add( extFilter );
-    File newFile = fileChooser.showOpenDialog( EventRecorderUtil.dialogStage.get() );
+    File newFile = fileChooser.showOpenDialog( BehaviorLoggerUtil.dialogStage.get() );
 
     if (newFile == null) {
       return;
@@ -318,7 +318,7 @@ public class StartMenuController
       fileChooser.setInitialFileName( selected.client + "-" + selected.project );
     }
 
-    File result = fileChooser.showSaveDialog( EventRecorder.STAGE );
+    File result = fileChooser.showSaveDialog( BehaviorLoggerApp.STAGE );
 
     if (result != null) {
       try {
@@ -398,13 +398,13 @@ public class StartMenuController
 
   @FXML private void onHelpBtnPressed()
   {
-    EventRecorderUtil.openManual( "start-menu" );
+    BehaviorLoggerUtil.openManual( "start-menu" );
   }
 
   private void checkVersion()
   {
     NewVersionManager.checked.set( true );
-    String version = EventRecorder.version;
+    String version = BehaviorLoggerApp.version;
 
     new Thread( () -> {
       try {
@@ -435,7 +435,7 @@ public class StartMenuController
             } );
 
             // We only want to interrupt the user if they are on the start-menu and
-            boolean onStartMenu = EventRecorder.STAGE.getTitle().equals( StartMenuController.TITLE );
+            boolean onStartMenu = BehaviorLoggerApp.STAGE.getTitle().equals( StartMenuController.TITLE );
             boolean displayDialog = !Strings.isNullOrEmpty( v )
                 && !version.equals( v )
                 && !PreferencesManager.lastVersionCheckProperty().get().equals( v )

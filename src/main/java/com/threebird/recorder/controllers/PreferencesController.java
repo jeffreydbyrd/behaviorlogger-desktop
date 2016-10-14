@@ -23,7 +23,7 @@ import javafx.scene.paint.Color;
 
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.views.preferences.FilenameComponentView;
 
 /**
@@ -63,7 +63,7 @@ public class PreferencesController
   public static void showPreferences()
   {
     String fxmlPath = "views/preferences/preferences.fxml";
-    PreferencesController controller = EventRecorderUtil.showScene( fxmlPath, "Preferences" );
+    PreferencesController controller = BehaviorLoggerUtil.showScene( fxmlPath, "Preferences" );
     controller.init();
   }
 
@@ -89,7 +89,7 @@ public class PreferencesController
       componentsBox.getChildren().add( node );
 
       node.setOnDragDetected( evt -> {
-        EventRecorderUtil.dialogStage.get().getScene().setCursor( Cursor.CLOSED_HAND );
+        BehaviorLoggerUtil.dialogStage.get().getScene().setCursor( Cursor.CLOSED_HAND );
         addPreview( componentsBox, node );
         node.setVisible( false );
         node.startFullDrag();
@@ -110,7 +110,7 @@ public class PreferencesController
     }
 
     componentsBox.setOnMouseDragReleased( evt -> {
-      EventRecorderUtil.dialogStage.get().getScene().setCursor( Cursor.DEFAULT );
+      BehaviorLoggerUtil.dialogStage.get().getScene().setCursor( Cursor.DEFAULT );
       removePreview( componentsBox );
       redrawFilenameExample();
       for (int i = 0; i < components.size(); i++) {
@@ -162,12 +162,12 @@ public class PreferencesController
     int mins = minDivisor / 60;
     int secs = minDivisor % 60;
 
-    hoursField.setText( EventRecorderUtil.intToStr( hrs ) );
-    minutesField.setText( EventRecorderUtil.intToStr( mins ) );
-    secondsField.setText( EventRecorderUtil.intToStr( secs ) );
+    hoursField.setText( BehaviorLoggerUtil.intToStr( hrs ) );
+    minutesField.setText( BehaviorLoggerUtil.intToStr( mins ) );
+    secondsField.setText( BehaviorLoggerUtil.intToStr( secs ) );
 
     char[] digits = "0123456789".toCharArray();
-    EventHandler< ? super KeyEvent > limit2Digits = EventRecorderUtil.createFieldLimiter( digits, 2 );
+    EventHandler< ? super KeyEvent > limit2Digits = BehaviorLoggerUtil.createFieldLimiter( digits, 2 );
     hoursField.setOnKeyTyped( limit2Digits );
     minutesField.setOnKeyTyped( limit2Digits );
     secondsField.setOnKeyTyped( limit2Digits );
@@ -252,7 +252,7 @@ public class PreferencesController
 
   @FXML void onBrowseButtonPressed( ActionEvent evt )
   {
-    EventRecorderUtil.chooseFile( EventRecorderUtil.dialogStage.get(), directoryField );
+    BehaviorLoggerUtil.chooseFile( BehaviorLoggerUtil.dialogStage.get(), directoryField );
   }
 
   @FXML private void onSavePressed( ActionEvent evt )
@@ -263,7 +263,7 @@ public class PreferencesController
 
     PreferencesManager.saveSessionDirectory( directoryField.getText().trim() );
     int duration =
-        EventRecorderUtil.getDurationInMillis( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
+        BehaviorLoggerUtil.getDurationInMillis( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
     PreferencesManager.saveDuration( duration );
     PreferencesManager.saveColorOnEnd( colorCheckBox.isSelected() );
     PreferencesManager.savePauseOnEnd( pauseCheckBox.isSelected() );
@@ -279,16 +279,16 @@ public class PreferencesController
 
     PreferencesManager.setCheckVersion( checkVersion.isSelected() );
 
-    EventRecorderUtil.dialogStage.get().close();
+    BehaviorLoggerUtil.dialogStage.get().close();
   }
 
   @FXML private void onCancelPressed( ActionEvent evt )
   {
-    EventRecorderUtil.dialogStage.get().close();
+    BehaviorLoggerUtil.dialogStage.get().close();
   }
 
   @FXML void onHelpBtnPressed()
   {
-    EventRecorderUtil.openManual( "preferences" );
+    BehaviorLoggerUtil.openManual( "preferences" );
   }
 }

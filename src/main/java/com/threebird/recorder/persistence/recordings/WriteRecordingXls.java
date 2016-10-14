@@ -17,7 +17,7 @@ import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.persistence.recordings.Recordings.SaveDetails;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 public class WriteRecordingXls
 {
@@ -85,7 +85,7 @@ public class WriteRecordingXls
     // Session Time
     r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Session Time" );
-    r.createCell( 1 ).setCellValue( EventRecorderUtil.millisToTimestamp( details.totalTimeMillis ) );
+    r.createCell( 1 ).setCellValue( BehaviorLoggerUtil.millisToTimestamp( details.totalTimeMillis ) );
     
     
     rownum++; // Skip a row
@@ -117,7 +117,7 @@ public class WriteRecordingXls
       r.createCell( 1 ).setCellValue( dbs.get( 0 ).name );
       r.createCell( 2 ).setCellValue( dbs.size() );
 
-      double mins = EventRecorderUtil.millisToMinutes( details.totalTimeMillis );
+      double mins = BehaviorLoggerUtil.millisToMinutes( details.totalTimeMillis );
       r.createCell( 3 ).setCellValue( ((double) dbs.size()) / mins );
 
       r = s.createRow( rownum++ );

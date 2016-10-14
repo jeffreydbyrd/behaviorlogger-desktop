@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  * This is considered the main entry point by extending {@link Application}. The one method we must override is
  * start(Stage stage), which we invoke by calling the launch(...) method.
  */
-public class EventRecorder extends Application
+public class BehaviorLoggerApp extends Application
 {
   /**
    * A static variable for the Stage so that it's easily accessible later when we want to switch scenes
@@ -38,7 +38,7 @@ public class EventRecorder extends Application
   @Override public void start( Stage primaryStage ) throws Exception
   {
     STAGE = primaryStage;
-    STAGE.getIcons().add( new Image( EventRecorder.class.getResourceAsStream( "3bird-orig.png" ) ) );
+    STAGE.getIcons().add( new Image( BehaviorLoggerApp.class.getResourceAsStream( "3bird-orig.png" ) ) );
     
     InitSQLiteTables.init();
 

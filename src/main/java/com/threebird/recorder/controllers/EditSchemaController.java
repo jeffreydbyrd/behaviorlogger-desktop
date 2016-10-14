@@ -14,7 +14,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
@@ -23,7 +23,7 @@ import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.views.edit_schema.BehaviorBox;
 
 import javafx.event.ActionEvent;
@@ -47,9 +47,9 @@ import javafx.scene.text.Text;
  */
 public class EditSchemaController
 {
-  private static final EventHandler< ? super KeyEvent > LIMIT_FIELD_100 = EventRecorderUtil.createFieldLimiter( 100 );
+  private static final EventHandler< ? super KeyEvent > LIMIT_FIELD_100 = BehaviorLoggerUtil.createFieldLimiter( 100 );
   private static EventHandler< ? super KeyEvent > LIMIT_FIELD_1 =
-      EventRecorderUtil.createFieldLimiter( MappableChar.acceptableKeys(), 1 );
+      BehaviorLoggerUtil.createFieldLimiter( MappableChar.acceptableKeys(), 1 );
   private static char[] DIGITS = "0123456789".toCharArray();
   private static String CSS_RED = "-fx-background-color:#FFDDDD;-fx-border-color: #f00;";
 
@@ -95,7 +95,7 @@ public class EditSchemaController
   public static void toEditSchemaView( Schema selected )
   {
     String filepath = "views/edit_schema/edit-schema.fxml";
-    EditSchemaController controller = EventRecorderUtil.loadScene( filepath, "Create Schema" );
+    EditSchemaController controller = BehaviorLoggerUtil.loadScene( filepath, "Create Schema" );
     controller.init( selected );
   }
 
@@ -163,11 +163,11 @@ public class EditSchemaController
     int mins = minDivisor / 60;
     int secs = minDivisor % 60;
 
-    hoursField.setText( EventRecorderUtil.intToStr( hrs ) );
-    minutesField.setText( EventRecorderUtil.intToStr( mins ) );
-    secondsField.setText( EventRecorderUtil.intToStr( secs ) );
+    hoursField.setText( BehaviorLoggerUtil.intToStr( hrs ) );
+    minutesField.setText( BehaviorLoggerUtil.intToStr( mins ) );
+    secondsField.setText( BehaviorLoggerUtil.intToStr( secs ) );
 
-    EventHandler< ? super KeyEvent > limit2Digits = EventRecorderUtil.createFieldLimiter( DIGITS, 2 );
+    EventHandler< ? super KeyEvent > limit2Digits = BehaviorLoggerUtil.createFieldLimiter( DIGITS, 2 );
     hoursField.setOnKeyTyped( limit2Digits );
     minutesField.setOnKeyTyped( limit2Digits );
     secondsField.setOnKeyTyped( limit2Digits );
@@ -375,7 +375,7 @@ public class EditSchemaController
 
   @FXML void onBrowseButtonPressed( ActionEvent evt )
   {
-    EventRecorderUtil.chooseFile( EventRecorder.STAGE, directoryField );
+    BehaviorLoggerUtil.chooseFile( BehaviorLoggerApp.STAGE, directoryField );
   }
 
   /**
@@ -415,7 +415,7 @@ public class EditSchemaController
     model.mappings = temp;
     model.sessionDirectory = getDirectory();
     model.duration =
-        EventRecorderUtil.getDurationInMillis( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
+        BehaviorLoggerUtil.getDurationInMillis( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
     model.color = colorCheckBox.isSelected();
     model.pause = pauseCheckBox.isSelected();
     model.sound = beepCheckBox.isSelected();
@@ -449,6 +449,6 @@ public class EditSchemaController
 
   @FXML void onHelpBtnPressed()
   {
-    EventRecorderUtil.openManual( "edit-schema" );
+    BehaviorLoggerUtil.openManual( "edit-schema" );
   }
 }

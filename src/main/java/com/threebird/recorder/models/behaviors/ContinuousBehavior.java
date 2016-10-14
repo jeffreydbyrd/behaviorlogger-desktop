@@ -1,7 +1,7 @@
 package com.threebird.recorder.models.behaviors;
 
 import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 public class ContinuousBehavior extends Behavior
 {
@@ -37,8 +37,8 @@ public class ContinuousBehavior extends Behavior
 
   @Override public String timeDisplay()
   {
-    String start = EventRecorderUtil.millisToTimestampNoSpaces( startTime );
-    String end = EventRecorderUtil.millisToTimestampNoSpaces( startTime + duration );
+    String start = BehaviorLoggerUtil.millisToTimestampNoSpaces( startTime );
+    String end = BehaviorLoggerUtil.millisToTimestampNoSpaces( startTime + duration );
     return String.format( "%s-%s", start, end );
   }
 

@@ -34,7 +34,7 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 /**
  * Combines with add_keys.fxml. The researcher uses this view to add new keys
@@ -52,7 +52,7 @@ public class AddKeysController
   public static void showAddKeysView( RecordingManager manager, Runnable onSave )
   {
     String filepath = "views/add-keys.fxml";
-    AddKeysController controller = EventRecorderUtil.showScene( filepath, "Add Keys" );
+    AddKeysController controller = BehaviorLoggerUtil.showScene( filepath, "Add Keys" );
     controller.init( manager, onSave );
   }
 
@@ -117,7 +117,7 @@ public class AddKeysController
    */
   @FXML private void onCancelPress( ActionEvent evt )
   {
-    EventRecorderUtil.dialogStage.get().close();
+    BehaviorLoggerUtil.dialogStage.get().close();
   }
 
   /**
@@ -213,7 +213,7 @@ public class AddKeysController
     onSave.run();
 
     manager.unknowns.clear();
-    EventRecorderUtil.dialogStage.get().close();
+    BehaviorLoggerUtil.dialogStage.get().close();
   }
 
   private boolean validate()

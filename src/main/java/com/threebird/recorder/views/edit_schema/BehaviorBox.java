@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -148,7 +148,7 @@ public class BehaviorBox extends VBox
 
     keyField.setOnKeyPressed( onEnter );
     descField.setOnKeyPressed( onEnter );
-    descField.setOnKeyTyped( EventRecorderUtil.createFieldLimiter( 100 ) );
+    descField.setOnKeyTyped( BehaviorLoggerUtil.createFieldLimiter( 100 ) );
 
     keyField.focusedProperty().addListener( ( old, ov, isFocused ) -> {
       if (!isFocused && !descField.isFocused()) {
@@ -163,7 +163,7 @@ public class BehaviorBox extends VBox
     } );
 
     EventHandler< ? super KeyEvent > limitText =
-        EventRecorderUtil.createFieldLimiter( MappableChar.acceptableKeys(), 1 );
+        BehaviorLoggerUtil.createFieldLimiter( MappableChar.acceptableKeys(), 1 );
 
     keyField.setOnKeyTyped( evt -> {
       String text = keyField.getText() + evt.getCharacter();

@@ -19,20 +19,20 @@ import javafx.stage.StageStyle;
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.utils.resources.ResourceUtils;
 
 /**
  * A collection of helpful functions used throughout the app
  */
-public class EventRecorderUtil
+public class BehaviorLoggerUtil
 {
 
   public static Supplier< Stage > dialogStage = Suppliers.memoize( () -> {
     Stage s = new Stage();
     s.initModality( Modality.APPLICATION_MODAL );
     s.initStyle( StageStyle.UTILITY );
-    s.initOwner( EventRecorder.STAGE );
+    s.initOwner( BehaviorLoggerApp.STAGE );
     return s;
   } );
 
@@ -72,7 +72,7 @@ public class EventRecorderUtil
   public static < T > T showScene( String fxmlPath, String title )
   {
     FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( fxmlPath ) );
+        new FXMLLoader( BehaviorLoggerApp.class.getResource( fxmlPath ) );
 
     Parent root;
     try {
@@ -107,7 +107,7 @@ public class EventRecorderUtil
                                    String title )
   {
     FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( fxmlPath ) );
+        new FXMLLoader( BehaviorLoggerApp.class.getResource( fxmlPath ) );
 
     Parent root;
     try {
@@ -118,16 +118,16 @@ public class EventRecorderUtil
       throw new RuntimeException( e );
     }
 
-    Scene scene = EventRecorder.STAGE.getScene();
+    Scene scene = BehaviorLoggerApp.STAGE.getScene();
     if (scene == null) {
       scene = new Scene( root );
-      EventRecorder.STAGE.setScene( scene );
+      BehaviorLoggerApp.STAGE.setScene( scene );
     } else {
       scene.setRoot( root );
     }
 
-    EventRecorder.STAGE.setTitle( title );
-    EventRecorder.STAGE.show();
+    BehaviorLoggerApp.STAGE.setTitle( title );
+    BehaviorLoggerApp.STAGE.show();
 
     return fxmlLoader.< T > getController();
   }
@@ -193,9 +193,9 @@ public class EventRecorderUtil
   public static int getDuration( String timestamp )
   {
     String[] split = timestamp.split( " *: *" );
-    int hrs = EventRecorderUtil.strToInt( split[0] );
-    int min = EventRecorderUtil.strToInt( split[1] );
-    int sec = EventRecorderUtil.strToInt( split[2] );
+    int hrs = BehaviorLoggerUtil.strToInt( split[0] );
+    int min = BehaviorLoggerUtil.strToInt( split[1] );
+    int sec = BehaviorLoggerUtil.strToInt( split[2] );
 
     return (hrs * 60 * 60) + (min * 60) + sec;
   }

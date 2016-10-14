@@ -17,11 +17,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import com.threebird.recorder.EventRecorder;
+import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.PositionManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.utils.Alerts;
-import com.threebird.recorder.utils.EventRecorderUtil;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 public class NotesController
 {
@@ -36,7 +36,7 @@ public class NotesController
     String fxmlPath = "views/recording/notes.fxml";
 
     FXMLLoader fxmlLoader =
-        new FXMLLoader( EventRecorder.class.getResource( fxmlPath ) );
+        new FXMLLoader( BehaviorLoggerApp.class.getResource( fxmlPath ) );
 
     Parent root;
     try {
@@ -69,10 +69,10 @@ public class NotesController
                                      Parent newValue )
       {
         stage.hide();
-        EventRecorder.STAGE.getScene().rootProperty().removeListener( this );
+        BehaviorLoggerApp.STAGE.getScene().rootProperty().removeListener( this );
       }
     };
-    EventRecorder.STAGE.getScene().rootProperty().addListener( onViewChange );
+    BehaviorLoggerApp.STAGE.getScene().rootProperty().addListener( onViewChange );
 
     fxmlLoader.< NotesController > getController().init( stage, manager );
   }
@@ -120,7 +120,7 @@ public class NotesController
     if (evt.isShortcutDown() && code == KeyCode.T) {
       int index = textArea.getCaretPosition();
       int count = manager.count();
-      String timestamp = EventRecorderUtil.millisToTimestamp( count );
+      String timestamp = BehaviorLoggerUtil.millisToTimestamp( count );
       String msg = String.format( "[%s] ", timestamp );
       textArea.insertText( index, msg );
       return;
