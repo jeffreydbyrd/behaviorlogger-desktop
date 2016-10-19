@@ -2,6 +2,7 @@ package com.threebird.recorder;
 
 import com.threebird.recorder.controllers.StartMenuController;
 import com.threebird.recorder.models.PositionManager;
+import com.threebird.recorder.persistence.CreateResources;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.InitSQLiteTables;
 import com.threebird.recorder.persistence.recordings.Recordings;
@@ -40,6 +41,7 @@ public class BehaviorLoggerApp extends Application
     STAGE = primaryStage;
     STAGE.getIcons().add( new Image( BehaviorLoggerApp.class.getResourceAsStream( "3bird-orig.png" ) ) );
     
+    CreateResources.apply();
     InitSQLiteTables.init();
 
     STAGE.setX( PositionManager.mainXProperty().doubleValue() );
