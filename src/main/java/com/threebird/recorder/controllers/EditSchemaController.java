@@ -421,9 +421,10 @@ public class EditSchemaController
     model.sound = beepCheckBox.isSelected();
 
     if (model.uuid == null) {
-      SchemasManager.schemas().add( model );
+      SchemasManager.create( model );
     } else {
       try {
+        model.version = model.version + 1;
         Schemas.update( model );
       } catch (Exception e) {
         e.printStackTrace();
@@ -442,7 +443,8 @@ public class EditSchemaController
     String msg = "Are you sure you want to delete this schema?\nYou can't undo this action.";
 
     Alerts.confirm( "Confirm deletion", null, msg, () -> {
-      SchemasManager.schemas().remove( model );
+      model.archived = true;
+      SchemasManager.update( model );
       StartMenuController.toStartMenuView();
     } );
   }
