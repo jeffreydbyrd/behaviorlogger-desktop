@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
@@ -26,6 +27,7 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
@@ -140,7 +142,7 @@ public class StartMenuController
     clientCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().client ) );
     projectCol.setCellValueFactory( p -> new SimpleStringProperty( p.getValue().project ) );
 
-    schemaTable.setItems( SchemasManager.schemas() );
+    schemaTable.setItems( SchemasManager.schemas().filtered( s -> !s.archived ) );
     schemaTable.getSelectionModel()
                .selectedItemProperty()
                .addListener( this::onSchemaSelect );
@@ -291,12 +293,23 @@ public class StartMenuController
     }
 
     try {
-      if (SchemasManager.schemas().contains( schema )) {
-        SchemasManager.schemas().remove( schema );
-      }
+      Optional< Schema > oldOpt = Schemas.getForUuid( schema.uuid );
 
-      SchemasManager.schemas().add( schema );
-      schemaTable.getSelectionModel().select( schema );
+      if (oldOpt.isPresent()) {
+        Schema old = oldOpt.get();
+        if (old.version < schema.version) {
+          Schemas.update( schema );
+          SchemasManager.schemas().remove( old );
+          SchemasManager.schemas().add( schema );
+        }
+      } else {
+        SchemasManager.create( schema );
+      }
+      
+      schemaTable.refresh();
+      if (!schema.archived) {
+        schemaTable.getSelectionModel().select( schema );
+      }
     } catch (Exception e) {
       e.printStackTrace();
       Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
