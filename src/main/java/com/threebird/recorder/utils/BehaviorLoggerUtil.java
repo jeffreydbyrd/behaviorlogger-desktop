@@ -144,7 +144,8 @@ public class BehaviorLoggerUtil
     return evt -> {
       Object source = evt.getSource();
       if (source instanceof TextField) {
-        if (((TextField) source).getText().length() >= limit) {
+        String text = Strings.nullToEmpty( ((TextField) source).getText() );
+        if (text.length() >= limit) {
           evt.consume();
         }
       }
