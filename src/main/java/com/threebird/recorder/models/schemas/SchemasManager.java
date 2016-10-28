@@ -61,23 +61,33 @@ public class SchemasManager
     }
   }
 
+  private static Schema getFirstActiveSchema()
+  {
+    for (Schema s : schemas()) {
+      if (!s.archived) {
+        return s;
+      }
+    }
+
+    return null;
+  }
+
   /**
    * Returns the selected schema in the Start-Menu. If no schema is selected, defaults to the first element in
    * schemas(), or null if schemas() is empty.
    */
   public static SimpleObjectProperty< Schema > selectedProperty()
   {
-    if (selectedProperty == null || selectedProperty.get() == null || !schemas().contains( selectedProperty.get() )) {
-      Schema selected = null;
-      // = schemas().isEmpty() ? null : schemas().get( 0 );
-      for (Schema s : schemas()) {
-        if (!s.archived) {
-          selected = s;
-          break;
-        }
-      }
+    Schema selected = null;
+
+    if (selectedProperty == null) {
+      selected = getFirstActiveSchema();
       selectedProperty = new SimpleObjectProperty< Schema >( selected );
+    } else if (selectedProperty.get() == null || !schemas().contains( selectedProperty.get() )) {
+      selected = getFirstActiveSchema();
+      selectedProperty.set( selected );
     }
+
     return selectedProperty;
   }
 

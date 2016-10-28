@@ -422,6 +422,7 @@ public class EditSchemaController
 
     if (model.uuid == null) {
       SchemasManager.create( model );
+      SchemasManager.setSelected( model );
     } else {
       try {
         model.version = model.version + 1;
@@ -445,6 +446,7 @@ public class EditSchemaController
     Alerts.confirm( "Confirm deletion", null, msg, () -> {
       model.archived = true;
       SchemasManager.update( model );
+      SchemasManager.setSelected( null );
       StartMenuController.toStartMenuView();
     } );
   }
