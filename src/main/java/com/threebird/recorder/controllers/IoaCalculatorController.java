@@ -2,6 +2,13 @@ package com.threebird.recorder.controllers;
 
 import java.io.File;
 
+import com.google.common.base.Strings;
+import com.threebird.recorder.models.ioa.IoaManager;
+import com.threebird.recorder.utils.Alerts;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
+import com.threebird.recorder.utils.ioa.IoaMethod;
+import com.threebird.recorder.utils.ioa.ProcessIoa;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,14 +22,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-
-import com.google.common.base.Strings;
-import com.threebird.recorder.models.ioa.IoaManager;
-import com.threebird.recorder.utils.Alerts;
-import com.threebird.recorder.utils.BehaviorLoggerUtil;
-import com.threebird.recorder.utils.ioa.IoaMethod;
-import com.threebird.recorder.utils.ioa.ProcessIoa;
-import com.threebird.recorder.utils.ioa.version1_1.IoaUtils1_1;
 
 public class IoaCalculatorController
 {

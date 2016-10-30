@@ -1,6 +1,5 @@
 package com.threebird.recorder.models.schemas;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -17,7 +16,6 @@ public class Schema
   public String client;
   public String project;
   public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
-  public File sessionDirectory;
   public Integer duration; // in milliseconds
   public Boolean pause;
   public Boolean color;
@@ -66,7 +64,7 @@ public class Schema
   @Override public String toString()
   {
     return "Schema [uuid=" + uuid + ", version=" + version + ", client=" + client + ", project=" + project
-        + ", sessionDirectory=" + sessionDirectory + ", duration=" + duration + ", pause=" + pause + ", color=" + color
+        + ", duration=" + duration + ", pause=" + pause + ", color=" + color
         + ", sound=" + sound + ", archived=" + archived + "]";
   }
 }

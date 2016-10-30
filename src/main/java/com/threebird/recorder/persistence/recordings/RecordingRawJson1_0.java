@@ -15,6 +15,7 @@ import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.SessionDirectories;
 import com.threebird.recorder.persistence.recordings.Recordings.SaveDetails;
 
 public class RecordingRawJson1_0
@@ -132,7 +133,7 @@ public class RecordingRawJson1_0
       to.behaviors.add( new BehaviorBean1_0( b.key.c, b.behavior, b.isContinuous ) );
     }
 
-    to.sessionDirectory = from.sessionDirectory.getAbsolutePath();
+    to.sessionDirectory = SessionDirectories.getForSchemaIdOrDefault( from.uuid ).getAbsolutePath();
     to.duration = from.duration;
     to.pause = from.pause;
     to.color = from.color;

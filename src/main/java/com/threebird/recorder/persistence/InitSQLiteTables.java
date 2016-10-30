@@ -162,17 +162,22 @@ public class InitSQLiteTables
     // Create the new tables
     String createNewSchemas =
         "CREATE TABLE schemas_v1_1 ("
-            + "uuid TEXT,"
+            + "uuid TEXT NOT NULL,"
             + "version INTEGER NOT NULL," // new field
             + "client TEXT NOT NULL,"
             + "project TEXT NOT NULL,"
-            + "session_directory TEXT NOT NULL,"
             + "duration INTEGER NOT NULL,"
             + "pause_on_end INTEGER NOT NULL,"
             + "color_on_end INTEGER NOT NULL,"
             + "sound_on_end INTEGER NOT NULL,"
             + "archived INTEGER NOT NULL,"
             + "UNIQUE(uuid, version) )";
+
+    String createSessionDirs =
+        "CREATE TABLE session_dirs_v1_1 ("
+            + "schema_uuid TEXT NOT NULL,"
+            + "session_directory TEXT NOT NULL,"
+            + "FOREIGN KEY (schema_uuid) REFERENCES schemas_v1_1(uuid) )";
 
     String createNewBehaviors =
         "CREATE TABLE behaviors_v1_1 ("
@@ -192,10 +197,12 @@ public class InitSQLiteTables
             + "FOREIGN KEY (behavior_uuid) REFERENCES behaviors_v1_1(uuid) )";
 
     SqliteDao.update( createNewSchemas );
+    SqliteDao.update( createSessionDirs );
     SqliteDao.update( createNewBehaviors );
     SqliteDao.update( createBehaviorSchemas );
 
     String insertSchemaFmt = "INSERT INTO schemas_v1_1 VALUES ('%s',%d,'%s','%s','%s',%d,%d,%d,%d,%d);";
+    String insertSessionDirFmt = "INSERT INTO session_dirs_v1_1 VALUES ('%s', '%s')";
     String getBehaviorsFmt = "SELECT * FROM key_behaviors_v1_0 WHERE schema_uuid = '%s';";
     String insertBehaviorFmt = "INSERT INTO behaviors_v1_1 VALUES ('%s','%s','%s',%d);";
     String insertSchemaBehaviorFmt = "INSERT INTO schema_behaviors_v1_1 VALUES ('%s',%d,'%s');";
@@ -208,13 +215,15 @@ public class InitSQLiteTables
                                              1,
                                              rs.getString( "client" ),
                                              rs.getString( "project" ),
-                                             rs.getString( "session_directory" ),
                                              rs.getInt( "duration" ),
                                              rs.getInt( "pause_on_end" ),
                                              rs.getInt( "color_on_end" ),
                                              rs.getInt( "sound_on_end" ),
                                              0 );
+        String insertSessionDir = String.format( insertSessionDirFmt, schemaUuid, rs.getString( "session_dir" ) );
+
         SqliteDao.update( insertSchema );
+        SqliteDao.update( insertSessionDir );
 
         String getBehaviors = String.format( getBehaviorsFmt, schemaUuid );
 

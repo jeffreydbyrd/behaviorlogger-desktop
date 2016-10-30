@@ -1,6 +1,5 @@
 package com.threebird.recorder.persistence;
 
-import java.io.File;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +24,32 @@ public class Schemas
 {
   private static final String TBL_NAME = "schemas_v1_1";
 
+  private static boolean noDifference( Schema s1, Schema s2 )
+  {
+    if (!s1.client.equals( s2.client )) {
+      return false;
+    }
+    if (!s1.project.equals( s2.project )) {
+      return false;
+    }
+    if (!s1.duration.equals( s2.duration )) {
+      return false;
+    }
+    if (!s1.pause.equals( s2.pause )) {
+      return false;
+    }
+    if (!s1.color.equals( s2.color )) {
+      return false;
+    }
+    if (!s1.sound.equals( s2.sound )) {
+      return false;
+    }
+    if (!s1.archived.equals( s2.archived )) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * Updates all the values of the given schema in the 'schemas' and 'key_behaviors' table. This method assumes that the
    * schema 'version' is already set to the correct value.
@@ -33,9 +58,17 @@ public class Schemas
    */
   public static void update( Schema schema ) throws Exception
   {
+    Optional< Schema > current = getForUuid( schema.uuid );
+
+    Preconditions.checkState( current.isPresent() );
+
+    if (noDifference( schema, current.get() )) {
+      return;
+    }
+
     String sql =
         "INSERT INTO " + TBL_NAME
-            + " (uuid, version, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end, archived) "
+            + " (uuid, version, client, project, duration, pause_on_end, color_on_end, sound_on_end, archived) "
             + " VALUES (?,?,?,?,?,?,?,?,?,?)";
 
     List< Object > params = Lists.newArrayList( schema.uuid,
@@ -43,7 +76,6 @@ public class Schemas
                                                 schema.client,
                                                 schema.project,
                                                 schema.duration,
-                                                schema.sessionDirectory.getPath(),
                                                 schema.pause,
                                                 schema.color,
                                                 schema.sound,
@@ -89,14 +121,13 @@ public class Schemas
 
     String sql =
         "INSERT INTO " + TBL_NAME
-            + " (uuid, version, client, project, duration, session_directory, pause_on_end, color_on_end, sound_on_end, archived) "
+            + " (uuid, version, client, project, duration, pause_on_end, color_on_end, sound_on_end, archived) "
             + " VALUES (?,?,?,?,?,?,?,?,?,?)";
     List< Object > params = Lists.newArrayList( schema.uuid,
                                                 schema.version,
                                                 schema.client,
                                                 schema.project,
                                                 schema.duration,
-                                                schema.sessionDirectory.getPath(),
                                                 schema.pause,
                                                 schema.color,
                                                 schema.sound,
@@ -131,7 +162,6 @@ public class Schemas
         s.version = rs.getInt( "version" );
         s.client = rs.getString( "client" );
         s.project = rs.getString( "project" );
-        s.sessionDirectory = new File( rs.getString( "session_directory" ) );
         s.duration = rs.getInt( "duration" );
         s.color = rs.getBoolean( "color_on_end" );
         s.pause = rs.getBoolean( "pause_on_end" );
@@ -143,7 +173,11 @@ public class Schemas
 
     SqliteDao.query( sql, params, handle );
 
-    return s.uuid == null ? Optional.empty() : Optional.of( s );
+    if (s.uuid == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of( s );
   }
 
   public static boolean isArchived( String uuid ) throws Exception
@@ -185,7 +219,6 @@ public class Schemas
         s.version = rs.getInt( "version" );
         s.client = rs.getString( "client" );
         s.project = rs.getString( "project" );
-        s.sessionDirectory = new File( rs.getString( "session_directory" ) );
         s.duration = rs.getInt( "duration" );
         s.color = rs.getBoolean( "color_on_end" );
         s.pause = rs.getBoolean( "pause_on_end" );

@@ -161,7 +161,6 @@ public class RecordingRawJson1_1
       to.behaviors.add( new BehaviorBean1_1( b.uuid, b.key.c, b.behavior, b.isContinuous ) );
     }
 
-    to.sessionDirectory = from.sessionDirectory.getAbsolutePath();
     to.duration = from.duration;
     to.pause = from.pause;
     to.color = from.color;

@@ -33,6 +33,7 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.persistence.SessionDirectories;
 import com.threebird.recorder.persistence.recordings.Recordings;
 
 public class RecordingManager
@@ -98,12 +99,24 @@ public class RecordingManager
     DateTime stopTime = DateTime.now();
 
     CompletableFuture< Long > fCsv =
-        Recordings.saveJson( new File( fullFileName + ".raw" ), streamUuid, behaviors, count(), _notes, startTime, stopTime );
+        Recordings.saveJson( new File( fullFileName + ".raw" ),
+                             streamUuid,
+                             behaviors,
+                             count(),
+                             _notes,
+                             startTime,
+                             stopTime );
     CompletableFuture< Long > fXls =
-        Recordings.saveXls( new File( fullFileName + ".xls" ), streamUuid, behaviors, count(), _notes, startTime, stopTime );
+        Recordings.saveXls( new File( fullFileName + ".xls" ),
+                            streamUuid,
+                            behaviors,
+                            count(),
+                            _notes,
+                            startTime,
+                            stopTime );
 
     CompletableFuture.allOf( fCsv, fXls ).handleAsync( ( v, t ) -> {
-      Platform.runLater( ( ) -> saveSuccessfulProperty.set( t == null ) );
+      Platform.runLater( () -> saveSuccessfulProperty.set( t == null ) );
       if (t != null) {
         t.printStackTrace();
       }
@@ -137,7 +150,9 @@ public class RecordingManager
     if (SchemasManager.getSelected() == null) {
       return null;
     }
-    String directory = SchemasManager.getSelected().sessionDirectory.getPath();
+
+    String uuid = SchemasManager.getSelected().uuid;
+    String directory = SessionDirectories.getForSchemaIdOrDefault( uuid ).getPath();
     String filename = getFileName();
     return String.format( "%s%s%s", directory, File.separator, filename );
   }

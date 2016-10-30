@@ -22,6 +22,7 @@ import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.persistence.Schemas;
+import com.threebird.recorder.persistence.SessionDirectories;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.views.edit_schema.BehaviorBox;
@@ -120,11 +121,7 @@ public class EditSchemaController
     clientField.setOnKeyTyped( limitLength100 );
     projectField.setOnKeyTyped( limitLength100 );
 
-    String dir =
-        model.sessionDirectory == null
-            ? PreferencesManager.getSessionDirectory()
-            : model.sessionDirectory.getPath();
-
+    String dir = SessionDirectories.getForSchemaIdOrDefault( selected.uuid ).getPath();
     directoryField.setText( dir );
 
     setupDurationRadioButtons();
@@ -413,7 +410,6 @@ public class EditSchemaController
     model.client = clientField.getText().trim();
     model.project = projectField.getText().trim();
     model.mappings = temp;
-    model.sessionDirectory = getDirectory();
     model.duration =
         BehaviorLoggerUtil.getDurationInMillis( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
     model.color = colorCheckBox.isSelected();
@@ -431,6 +427,13 @@ public class EditSchemaController
         e.printStackTrace();
         Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
       }
+    }
+    
+    try {
+      SessionDirectories.save( model.uuid, getDirectory() );
+    } catch (Exception e) {
+      e.printStackTrace();
+      Alerts.error( "Error saving session directory", "There was a problem while saving the session directory.", e );
     }
 
     StartMenuController.toStartMenuView();
