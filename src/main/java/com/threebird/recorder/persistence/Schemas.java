@@ -69,7 +69,7 @@ public class Schemas
     String sql =
         "INSERT INTO " + TBL_NAME
             + " (uuid, version, client, project, duration, pause_on_end, color_on_end, sound_on_end, archived) "
-            + " VALUES (?,?,?,?,?,?,?,?,?,?)";
+            + " VALUES (?,?,?,?,?,?,?,?,?)";
 
     List< Object > params = Lists.newArrayList( schema.uuid,
                                                 schema.version,
@@ -122,7 +122,7 @@ public class Schemas
     String sql =
         "INSERT INTO " + TBL_NAME
             + " (uuid, version, client, project, duration, pause_on_end, color_on_end, sound_on_end, archived) "
-            + " VALUES (?,?,?,?,?,?,?,?,?,?)";
+            + " VALUES (?,?,?,?,?,?,?,?,?)";
     List< Object > params = Lists.newArrayList( schema.uuid,
                                                 schema.version,
                                                 schema.client,

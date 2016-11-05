@@ -60,20 +60,20 @@ public class SessionDirectories
     return Optional.of( f );
   }
 
-  public static void save( String schemaId, File sessionDir ) throws Exception
+  public static void update( String schemaId, File sessionDir ) throws Exception
   {
     Preconditions.checkState( sessionDir.exists() );
-    Optional< File > current = getForSchemaId( schemaId );
+    String sqlFmt = "UPDATE " + TBL_NAME + " SET session_directory = ? WHERE schema_uuid = ?";
+    List< Object > params = Lists.newArrayList( sessionDir.getPath(), schemaId );
+    SqliteDao.update( sqlFmt, params, SqlCallback.NOOP );
+  }
 
-    String sqlFmt;
-    List< Object > params;
-    if (current.isPresent()) {
-      sqlFmt = "UPDATE " + TBL_NAME + " SET session_directory = ? WHERE schema_uuid = ?";
-      params = Lists.newArrayList( sessionDir.getPath(), schemaId );
-    } else {
-      sqlFmt = "INSERT INTO " + TBL_NAME + " (schema_uuid, session_directory) VALUES (?,?)";
-      params = Lists.newArrayList( schemaId, sessionDir.getPath() );
-    }
+  public static void create( String schemaId, File sessionDir ) throws Exception
+  {
+    Preconditions.checkState( sessionDir.exists() );
+
+    String sqlFmt = "INSERT INTO " + TBL_NAME + " (schema_uuid, session_directory) VALUES (?,?)";
+    List< Object > params = Lists.newArrayList( schemaId, sessionDir.getPath() );
 
     SqliteDao.update( sqlFmt, params, SqlCallback.NOOP );
   }

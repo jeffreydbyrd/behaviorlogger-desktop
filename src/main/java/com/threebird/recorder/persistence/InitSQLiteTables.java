@@ -201,7 +201,7 @@ public class InitSQLiteTables
     SqliteDao.update( createNewBehaviors );
     SqliteDao.update( createBehaviorSchemas );
 
-    String insertSchemaFmt = "INSERT INTO schemas_v1_1 VALUES ('%s',%d,'%s','%s','%s',%d,%d,%d,%d,%d);";
+    String insertSchemaFmt = "INSERT INTO schemas_v1_1 VALUES ('%s',%d,'%s','%s',%d,%d,%d,%d,%d);";
     String insertSessionDirFmt = "INSERT INTO session_dirs_v1_1 VALUES ('%s', '%s')";
     String getBehaviorsFmt = "SELECT * FROM key_behaviors_v1_0 WHERE schema_uuid = '%s';";
     String insertBehaviorFmt = "INSERT INTO behaviors_v1_1 VALUES ('%s','%s','%s',%d);";
@@ -215,13 +215,14 @@ public class InitSQLiteTables
                                              1,
                                              rs.getString( "client" ),
                                              rs.getString( "project" ),
-                                             rs.getInt( "duration" ),
+                                             rs.getInt( "duration" ) * 1000,
                                              rs.getInt( "pause_on_end" ),
                                              rs.getInt( "color_on_end" ),
                                              rs.getInt( "sound_on_end" ),
                                              0 );
-        String insertSessionDir = String.format( insertSessionDirFmt, schemaUuid, rs.getString( "session_dir" ) );
+        String insertSessionDir = String.format( insertSessionDirFmt, schemaUuid, rs.getString( "session_directory" ) );
 
+        System.out.println( "copying schema:" + schemaUuid );
         SqliteDao.update( insertSchema );
         SqliteDao.update( insertSessionDir );
 
@@ -233,7 +234,6 @@ public class InitSQLiteTables
             String insertBehavior =
                 String.format( insertBehaviorFmt,
                                behaviorUuid,
-                               schemaUuid,
                                rs2.getString( "key" ),
                                rs2.getString( "name" ),
                                rs2.getInt( "is_continuous" ) );

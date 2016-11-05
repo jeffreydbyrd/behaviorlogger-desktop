@@ -121,7 +121,7 @@ public class EditSchemaController
     clientField.setOnKeyTyped( limitLength100 );
     projectField.setOnKeyTyped( limitLength100 );
 
-    String dir = SessionDirectories.getForSchemaIdOrDefault( selected.uuid ).getPath();
+    String dir = SessionDirectories.getForSchemaIdOrDefault( model.uuid ).getPath();
     directoryField.setText( dir );
 
     setupDurationRadioButtons();
@@ -416,24 +416,19 @@ public class EditSchemaController
     model.pause = pauseCheckBox.isSelected();
     model.sound = beepCheckBox.isSelected();
 
-    if (model.uuid == null) {
-      SchemasManager.create( model );
-      SchemasManager.setSelected( model );
-    } else {
-      try {
+    try {
+      if (model.uuid == null) {
+        SchemasManager.create( model );
+        SessionDirectories.create( model.uuid, getDirectory() );
+        SchemasManager.setSelected( model );
+      } else {
         model.version = model.version + 1;
         Schemas.update( model );
-      } catch (Exception e) {
-        e.printStackTrace();
-        Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
+        SessionDirectories.update( model.uuid, getDirectory() );
       }
-    }
-    
-    try {
-      SessionDirectories.save( model.uuid, getDirectory() );
     } catch (Exception e) {
       e.printStackTrace();
-      Alerts.error( "Error saving session directory", "There was a problem while saving the session directory.", e );
+      Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
     }
 
     StartMenuController.toStartMenuView();
