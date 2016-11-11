@@ -24,30 +24,13 @@ public class Schemas
 {
   private static final String TBL_NAME = "schemas_v1_1";
 
-  private static boolean noDifference( Schema s1, Schema s2 )
+  public static boolean hasChanged( Schema schema ) throws Exception
   {
-    if (!s1.client.equals( s2.client )) {
-      return false;
-    }
-    if (!s1.project.equals( s2.project )) {
-      return false;
-    }
-    if (!s1.duration.equals( s2.duration )) {
-      return false;
-    }
-    if (!s1.pause.equals( s2.pause )) {
-      return false;
-    }
-    if (!s1.color.equals( s2.color )) {
-      return false;
-    }
-    if (!s1.sound.equals( s2.sound )) {
-      return false;
-    }
-    if (!s1.archived.equals( s2.archived )) {
-      return false;
-    }
-    return true;
+    Optional< Schema > current = getForUuid( schema.uuid );
+
+    Preconditions.checkState( current.isPresent() );
+
+    return Schema.isDifferent( schema, current.get() );
   }
 
   /**
@@ -58,14 +41,6 @@ public class Schemas
    */
   public static void update( Schema schema ) throws Exception
   {
-    Optional< Schema > current = getForUuid( schema.uuid );
-
-    Preconditions.checkState( current.isPresent() );
-
-    if (noDifference( schema, current.get() )) {
-      return;
-    }
-
     String sql =
         "INSERT INTO " + TBL_NAME
             + " (uuid, version, client, project, duration, pause_on_end, color_on_end, sound_on_end, archived) "
@@ -167,6 +142,10 @@ public class Schemas
         s.pause = rs.getBoolean( "pause_on_end" );
         s.sound = rs.getBoolean( "sound_on_end" );
         s.archived = rs.getBoolean( "archived" );
+
+        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
+        s.mappings = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
+
         counter++;
       }
     };

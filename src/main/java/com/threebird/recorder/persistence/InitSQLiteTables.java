@@ -222,7 +222,6 @@ public class InitSQLiteTables
                                              0 );
         String insertSessionDir = String.format( insertSessionDirFmt, schemaUuid, rs.getString( "session_directory" ) );
 
-        System.out.println( "copying schema:" + schemaUuid );
         SqliteDao.update( insertSchema );
         SqliteDao.update( insertSessionDir );
 

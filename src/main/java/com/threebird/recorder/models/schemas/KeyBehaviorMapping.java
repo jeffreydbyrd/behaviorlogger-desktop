@@ -64,4 +64,19 @@ public class KeyBehaviorMapping
       return false;
     return true;
   }
+
+  public static boolean isDifferent( KeyBehaviorMapping kbm1, KeyBehaviorMapping kbm2 )
+  {
+    if (!kbm1.key.equals( kbm2.key )) {
+      return true;
+    }
+    if (!kbm1.behavior.equals( kbm2.behavior )) {
+      return true;
+    }
+    if (kbm1.isContinuous != kbm2.isContinuous) {
+      return true;
+    }
+
+    return false;
+  }
 }

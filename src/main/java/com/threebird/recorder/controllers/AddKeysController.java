@@ -8,6 +8,20 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.models.sessions.RecordingManager;
+import com.threebird.recorder.utils.Alerts;
+import com.threebird.recorder.utils.BehaviorLoggerUtil;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -20,21 +34,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.models.behaviors.Behavior;
-import com.threebird.recorder.models.behaviors.ContinuousBehavior;
-import com.threebird.recorder.models.behaviors.DiscreteBehavior;
-import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
-import com.threebird.recorder.models.schemas.Schema;
-import com.threebird.recorder.models.schemas.SchemasManager;
-import com.threebird.recorder.models.sessions.RecordingManager;
-import com.threebird.recorder.persistence.Schemas;
-import com.threebird.recorder.utils.Alerts;
-import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 /**
  * Combines with add_keys.fxml. The researcher uses this view to add new keys
@@ -145,7 +144,7 @@ public class AddKeysController
     } );
 
     try {
-      Schemas.update( schema );
+      SchemasManager.update( schema );
     } catch (Exception e) {
       Alerts.error( "Failed to Save Schema",
                     "The application encountered a problem while trying to save the schema.",

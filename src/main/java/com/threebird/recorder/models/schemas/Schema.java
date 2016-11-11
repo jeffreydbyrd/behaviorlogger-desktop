@@ -2,6 +2,7 @@ package com.threebird.recorder.models.schemas;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.MappableChar;
@@ -36,6 +37,13 @@ public class Schema
     mappings.put( mapping.key, mapping );
   }
 
+  @Override public String toString()
+  {
+    return "Schema [uuid=" + uuid + ", version=" + version + ", client=" + client + ", project=" + project
+        + ", duration=" + duration + ", pause=" + pause + ", color=" + color
+        + ", sound=" + sound + ", archived=" + archived + "]";
+  }
+
   @Override public int hashCode()
   {
     final int prime = 31;
@@ -61,10 +69,59 @@ public class Schema
     return true;
   }
 
-  @Override public String toString()
+  private static boolean isDifferent( HashMap< MappableChar, KeyBehaviorMapping > m1,
+                                      HashMap< MappableChar, KeyBehaviorMapping > m2 )
   {
-    return "Schema [uuid=" + uuid + ", version=" + version + ", client=" + client + ", project=" + project
-        + ", duration=" + duration + ", pause=" + pause + ", color=" + color
-        + ", sound=" + sound + ", archived=" + archived + "]";
+    if (!m1.equals( m2 )) {
+      return true;
+    }
+
+    for (Entry< MappableChar, KeyBehaviorMapping > e : m1.entrySet()) {
+      KeyBehaviorMapping kbm1 = e.getValue();
+      KeyBehaviorMapping kbm2 = m2.get( e.getKey() );
+
+      if (KeyBehaviorMapping.isDifferent( kbm1, kbm2 )) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public static boolean isDifferent( Schema s1, Schema s2 )
+  {
+    if (!s1.uuid.equals( s2.uuid )) {
+      return true;
+    }
+    if (!s1.version.equals( s2.version )) {
+      return true;
+    }
+    if (!s1.client.equals( s2.client )) {
+      return true;
+    }
+    if (!s1.project.equals( s2.project )) {
+      return true;
+    }
+    if (!s1.duration.equals( s2.duration )) {
+      return true;
+    }
+    if (!s1.pause.equals( s2.pause )) {
+      return true;
+    }
+    if (!s1.color.equals( s2.color )) {
+      return true;
+    }
+    if (!s1.sound.equals( s2.sound )) {
+      return true;
+    }
+    if (!s1.archived.equals( s2.archived )) {
+      return true;
+    }
+
+    if (isDifferent( s1.mappings, s2.mappings )) {
+      return true;
+    }
+
+    return false;
   }
 }

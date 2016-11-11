@@ -21,7 +21,6 @@ import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.Schema;
 import com.threebird.recorder.models.schemas.SchemasManager;
-import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.persistence.SessionDirectories;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
@@ -422,8 +421,7 @@ public class EditSchemaController
         SessionDirectories.create( model.uuid, getDirectory() );
         SchemasManager.setSelected( model );
       } else {
-        model.version = model.version + 1;
-        Schemas.update( model );
+        SchemasManager.update( model );
         SessionDirectories.update( model.uuid, getDirectory() );
       }
     } catch (Exception e) {
@@ -443,7 +441,12 @@ public class EditSchemaController
 
     Alerts.confirm( "Confirm deletion", null, msg, () -> {
       model.archived = true;
-      SchemasManager.update( model );
+      try {
+        SchemasManager.update( model );
+      } catch (Exception e) {
+        Alerts.error( "Failed to delete schema", "There was a problem while trying to delete the schema", e );
+        e.printStackTrace();
+      }
       SchemasManager.setSelected( null );
       StartMenuController.toStartMenuView();
     } );

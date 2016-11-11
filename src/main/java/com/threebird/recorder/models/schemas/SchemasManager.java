@@ -31,34 +31,24 @@ public class SchemasManager
     return schemas;
   }
 
-  public static void create( Schema s )
+  public static void create( Schema s ) throws Exception
   {
-    try {
-      Schemas.create( s );
-    } catch (Exception e) {
-      e.printStackTrace();
-      Alerts.error( "Failed to create schema", "Error while trying to create schema", e );
-      return;
-    }
-
+    Schemas.create( s );
     schemas().add( s );
   }
 
-  public static void update( Schema s )
+  public static void update( Schema s ) throws Exception
   {
-    try {
-      Optional< Schema > oldOpt = Schemas.getForUuid( s.uuid );
-      Preconditions.checkState( oldOpt.isPresent() );
-
-      Schema old = oldOpt.get();
-      s.version = old.version + 1;
-
-      Schemas.update( s );
-    } catch (Exception e) {
-      e.printStackTrace();
-      Alerts.error( "Failed to archive schema.", "Error while trying to archive schema " + s.uuid, e );
+    if (!Schemas.hasChanged( s )) {
       return;
     }
+
+    Optional< Schema > oldOpt = Schemas.getForUuid( s.uuid );
+    Preconditions.checkState( oldOpt.isPresent() );
+    Schema old = oldOpt.get();
+    s.version = old.version + 1;
+
+    Schemas.update( s );
   }
 
   private static Schema getFirstActiveSchema()
