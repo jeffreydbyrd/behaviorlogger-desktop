@@ -75,7 +75,7 @@ public class KeyBehaviors
     String insertBehavior =
         "INSERT INTO " + TBL_NAME + " (uuid, key, description, is_continuous) VALUES (?,?,?,?)";
     List< Object > params1 =
-        Lists.newArrayList( mapping.uuid, mapping.key.c + "", mapping.behavior, mapping.isContinuous );
+        Lists.newArrayList( mapping.uuid, mapping.key.c + "", mapping.description, mapping.isContinuous );
     SqliteDao.update( insertBehavior, params1, SqlCallback.NOOP );
 
     bridge( schema.uuid, schema.version, mapping.uuid );
@@ -87,7 +87,7 @@ public class KeyBehaviors
         "UPDATE " + TBL_NAME + " SET key=?, description=? WHERE uuid=?";
 
     List< Object > params =
-        Lists.newArrayList( mapping.key.c + "", mapping.behavior, mapping.uuid );
+        Lists.newArrayList( mapping.key.c + "", mapping.description, mapping.uuid );
 
     SqliteDao.update( sql, params, SqlCallback.NOOP );
   }

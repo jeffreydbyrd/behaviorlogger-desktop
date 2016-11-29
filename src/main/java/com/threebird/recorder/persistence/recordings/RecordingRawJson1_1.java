@@ -156,9 +156,9 @@ public class RecordingRawJson1_1
     to.version = from.version;
     to.behaviors = Lists.newArrayList();
 
-    for (Entry< MappableChar, KeyBehaviorMapping > entry : from.mappings.entrySet()) {
+    for (Entry< MappableChar, KeyBehaviorMapping > entry : from.behaviors.entrySet()) {
       KeyBehaviorMapping b = entry.getValue();
-      to.behaviors.add( new BehaviorBean1_1( b.uuid, b.key.c, b.behavior, b.isContinuous ) );
+      to.behaviors.add( new BehaviorBean1_1( b.uuid, b.key.c, b.description, b.isContinuous ) );
     }
 
     to.duration = from.duration;

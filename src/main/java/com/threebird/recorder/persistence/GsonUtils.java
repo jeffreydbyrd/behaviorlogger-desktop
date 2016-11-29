@@ -22,6 +22,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.threebird.recorder.models.MappableChar;
 
 public class GsonUtils
 {
@@ -45,6 +46,8 @@ public class GsonUtils
   private static Gson gson =
       new GsonBuilder().registerTypeAdapter( DateTime.class, new DateTimeSerializer() )
                        .registerTypeAdapter( DateTime.class, new DateTimeDeserializer() )
+                       .registerTypeAdapter( MappableChar.class, MappableChar.gsonDeserializer )
+                       .registerTypeAdapter( MappableChar.class, MappableChar.gsonSerializer )
                        .create();
 
   public static ExecutorService es = Executors.newSingleThreadExecutor();
@@ -56,7 +59,7 @@ public class GsonUtils
    */
   public static void save( File file, Object model ) throws Exception
   {
-    es.submit( ( ) -> {
+    es.submit( () -> {
       if (!file.exists()) {
         file.getParentFile().mkdirs();
         file.createNewFile();

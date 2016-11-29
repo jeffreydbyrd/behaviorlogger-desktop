@@ -66,13 +66,13 @@ public enum MappableChar
   public static final JsonDeserializer< MappableChar > gsonDeserializer =
       ( json, typeOfT, context ) -> {
         String str = json.getAsJsonPrimitive().getAsString();
-        MappableChar mc = MappableChar.valueOf( str );
-        return mc;
+        Optional< MappableChar > mc = MappableChar.getForString( str );
+        return mc.get();
       };
 
   public static final JsonSerializer< MappableChar > gsonSerializer =
       ( src, typeOfSrc, context ) -> {
-        JsonElement el = new JsonPrimitive( src.name() );
+        JsonElement el = new JsonPrimitive( src.c );
         return el;
       };
 
@@ -131,4 +131,8 @@ public enum MappableChar
     return acceptableKeys;
   }
 
+  @Override public String toString()
+  {
+    return c + "";
+  }
 }

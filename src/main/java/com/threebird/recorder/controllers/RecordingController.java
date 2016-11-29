@@ -137,7 +137,7 @@ public class RecordingController
     Schema schema = SchemasManager.getSelected();
 
     // Figure out which unknowns were ignored and which were updated
-    Set< MappableChar > mappedChars = schema.mappings.keySet();
+    Set< MappableChar > mappedChars = schema.behaviors.keySet();
     Set< MappableChar > unknownChars = manager.unknowns.keySet();
     SetView< MappableChar > ignoredChars = Sets.difference( unknownChars, mappedChars );
     SetView< MappableChar > newChars = Sets.intersection( mappedChars, unknownChars );
@@ -164,8 +164,8 @@ public class RecordingController
 
     // Update the CountBoxes labels
     for (MappableChar newChar : newChars) {
-      KeyBehaviorMapping kbm = schema.mappings.get( newChar );
-      countBoxes.get( kbm.key ).behaviorLbl.setText( kbm.behavior );
+      KeyBehaviorMapping kbm = schema.behaviors.get( newChar );
+      countBoxes.get( kbm.key ).behaviorLbl.setText( kbm.description );
     }
 
     addNewKeysButton.setVisible( false );
@@ -178,7 +178,7 @@ public class RecordingController
   {
     Schema schema = SchemasManager.getSelected();
 
-    for (KeyBehaviorMapping kbm : schema.mappings.values()) {
+    for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
       initializeBehaviorCountBox( kbm );
     }
   }
@@ -470,7 +470,7 @@ public class RecordingController
     if (mapping.isContinuous) {
       logContinuous( mapping );
     } else {
-      manager.log( new DiscreteBehavior( mapping.uuid, mapping.key, mapping.behavior, manager.count() ) );
+      manager.log( new DiscreteBehavior( mapping.uuid, mapping.key, mapping.description, manager.count() ) );
       SimpleIntegerProperty count = manager.discreteCounts.get( mapping.key );
       count.set( count.get() + 1 );
     }
@@ -491,7 +491,7 @@ public class RecordingController
       manager.continuousCounts.get( mapping.key ).timer.pause();
     } else {
       ContinuousBehavior cb =
-          new ContinuousBehavior( mapping.uuid, mapping.key, mapping.behavior, manager.count(), null );
+          new ContinuousBehavior( mapping.uuid, mapping.key, mapping.description, manager.count(), null );
       manager.midContinuous.put( mapping.key, cb );
       manager.continuousCounts.get( mapping.key ).timer.play();
     }
@@ -525,8 +525,8 @@ public class RecordingController
     KeyCode code = evt.getCode();
     MappableChar.getForKeyCode( code ).ifPresent( mc -> {
       Schema schema = SchemasManager.getSelected();
-      if (schema.mappings.containsKey( mc )) {
-        logBehavior( schema.mappings.get( mc ) );
+      if (schema.behaviors.containsKey( mc )) {
+        logBehavior( schema.behaviors.get( mc ) );
       } else if (manager.unknowns.containsKey( mc )) {
         logBehavior( manager.unknowns.get( mc ) );
       } else {

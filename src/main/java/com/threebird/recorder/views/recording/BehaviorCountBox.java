@@ -31,7 +31,7 @@ public abstract class BehaviorCountBox extends HBox
     keyLabel.setMaxWidth( 30 );
     HBox.setHgrow( keyLabel, Priority.NEVER );
 
-    behaviorLbl = new Label( kbm.behavior );
+    behaviorLbl = new Label( kbm.description );
     behaviorLbl.setWrapText( true );
     HBox.setHgrow( behaviorLbl, Priority.ALWAYS );
     behaviorLbl.setMaxWidth( Double.MAX_VALUE );

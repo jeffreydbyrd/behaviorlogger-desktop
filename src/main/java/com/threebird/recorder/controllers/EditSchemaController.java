@@ -188,8 +188,8 @@ public class EditSchemaController
   private void initBehaviorSection( Schema schema )
   {
     // Add BehaviorBoxes for existing behavior-mappings
-    for (KeyBehaviorMapping kbm : schema.mappings.values()) {
-      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.behavior, this::getBehaviorBoxes );
+    for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
+      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.description, this::getBehaviorBoxes );
       if (kbm.isContinuous) {
         this.continuousBoxes.getChildren().add( bb );
       } else {
@@ -408,7 +408,7 @@ public class EditSchemaController
 
     model.client = clientField.getText().trim();
     model.project = projectField.getText().trim();
-    model.mappings = temp;
+    model.behaviors = temp;
     model.duration =
         BehaviorLoggerUtil.getDurationInMillis( infiniteRadioBtn.isSelected(), hoursField, minutesField, secondsField );
     model.color = colorCheckBox.isSelected();

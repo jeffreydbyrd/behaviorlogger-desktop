@@ -1,8 +1,8 @@
 package com.threebird.recorder.models.schemas;
 
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.MappableChar;
@@ -16,7 +16,7 @@ public class Schema
   public Integer version;
   public String client;
   public String project;
-  public HashMap< MappableChar, KeyBehaviorMapping > mappings = Maps.newHashMap();
+  public HashMap< MappableChar, KeyBehaviorMapping > behaviors = Maps.newHashMap();
   public Integer duration; // in milliseconds
   public Boolean pause;
   public Boolean color;
@@ -29,12 +29,12 @@ public class Schema
    */
   public Optional< KeyBehaviorMapping > getMapping( Character key )
   {
-    return Optional.ofNullable( mappings.get( key ) );
+    return Optional.ofNullable( behaviors.get( key ) );
   }
 
   public void addMapping( KeyBehaviorMapping mapping )
   {
-    mappings.put( mapping.key, mapping );
+    behaviors.put( mapping.key, mapping );
   }
 
   @Override public String toString()
@@ -118,7 +118,7 @@ public class Schema
       return true;
     }
 
-    if (isDifferent( s1.mappings, s2.mappings )) {
+    if (isDifferent( s1.behaviors, s2.behaviors )) {
       return true;
     }
 

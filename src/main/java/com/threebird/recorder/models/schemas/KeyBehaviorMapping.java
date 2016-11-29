@@ -9,7 +9,7 @@ public class KeyBehaviorMapping
 {
   public final String uuid;
   public final MappableChar key;
-  public final String behavior;
+  public final String description;
   public final boolean isContinuous;
 
   public KeyBehaviorMapping( String uuid,
@@ -19,7 +19,7 @@ public class KeyBehaviorMapping
   {
     this.uuid = uuid;
     this.key = key;
-    this.behavior = behavior;
+    this.description = behavior;
     this.isContinuous = isContinuous;
   }
 
@@ -36,7 +36,7 @@ public class KeyBehaviorMapping
 
   @Override public String toString()
   {
-    return "KeyBehaviorMapping [key=" + key + ", behavior=" + behavior
+    return "KeyBehaviorMapping [key=" + key + ", behavior=" + description
         + ", isContinuous=" + isContinuous + "]";
   }
 
@@ -70,7 +70,7 @@ public class KeyBehaviorMapping
     if (!kbm1.key.equals( kbm2.key )) {
       return true;
     }
-    if (!kbm1.behavior.equals( kbm2.behavior )) {
+    if (!kbm1.description.equals( kbm2.description )) {
       return true;
     }
     if (kbm1.isContinuous != kbm2.isContinuous) {

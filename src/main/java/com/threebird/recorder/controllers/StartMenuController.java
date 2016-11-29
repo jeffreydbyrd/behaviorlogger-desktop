@@ -156,7 +156,7 @@ public class StartMenuController
   {
     mappingsBox.getChildren().clear();
 
-    schema.mappings.values().forEach( mapping -> {
+    schema.behaviors.values().forEach( mapping -> {
       Label contLbl = new Label();
       contLbl.setText( mapping.isContinuous ? "(cont.)" : "" );
       contLbl.setMinWidth( 45 );
@@ -166,7 +166,7 @@ public class StartMenuController
 
       Label separator = new Label( ":" );
 
-      Label behaviorLbl = new Label( mapping.behavior );
+      Label behaviorLbl = new Label( mapping.description );
       behaviorLbl.setWrapText( true );
 
       HBox hbox = new HBox( contLbl, keyLbl, separator, behaviorLbl );

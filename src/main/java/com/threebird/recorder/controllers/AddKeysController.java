@@ -89,7 +89,7 @@ public class AddKeysController
       HBox.setHgrow( keyText, Priority.NEVER );
 
       TextField behaviorField = new TextField();
-      behaviorField.setPromptText( kbm.behavior );
+      behaviorField.setPromptText( kbm.description );
       HBox.setHgrow( behaviorField, Priority.ALWAYS );
       HBox.setMargin( behaviorField, new Insets( 2, 2, 2, 10 ) );
 
@@ -140,7 +140,7 @@ public class AddKeysController
         uuid = UUID.randomUUID().toString();
       }
       
-      schema.mappings.put( kbm.key, new KeyBehaviorMapping( uuid, kbm.key, behavior, kbm.isContinuous ) );
+      schema.behaviors.put( kbm.key, new KeyBehaviorMapping( uuid, kbm.key, behavior, kbm.isContinuous ) );
     } );
 
     try {
@@ -173,7 +173,7 @@ public class AddKeysController
         Lists.transform( updatedDiscretes, db ->
                          new DiscreteBehavior( db.uuid,
                                                db.key,
-                                               schema.mappings.get( db.key ).behavior,
+                                               schema.behaviors.get( db.key ).description,
                                                db.startTime ) );
 
     List< DiscreteBehavior > removedDiscretes =
@@ -191,7 +191,7 @@ public class AddKeysController
         Lists.transform( updatedContinuous, cb ->
                          new ContinuousBehavior( cb.uuid,
                                                  cb.key,
-                                                 schema.mappings.get( cb.key ).behavior,
+                                                 schema.behaviors.get( cb.key ).description,
                                                  cb.startTime,
                                                  cb.getDuration() ) );
 

@@ -128,9 +128,9 @@ public class RecordingRawJson1_0
     to.project = from.project;
     to.behaviors = Lists.newArrayList();
 
-    for (Entry< MappableChar, KeyBehaviorMapping > entry : from.mappings.entrySet()) {
+    for (Entry< MappableChar, KeyBehaviorMapping > entry : from.behaviors.entrySet()) {
       KeyBehaviorMapping b = entry.getValue();
-      to.behaviors.add( new BehaviorBean1_0( b.key.c, b.behavior, b.isContinuous ) );
+      to.behaviors.add( new BehaviorBean1_0( b.key.c, b.description, b.isContinuous ) );
     }
 
     to.sessionDirectory = SessionDirectories.getForSchemaIdOrDefault( from.uuid ).getAbsolutePath();

@@ -57,7 +57,7 @@ public class Schemas
                                                 schema.archived );
 
     Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.uuid );
-    Set< KeyBehaviorMapping > newSet = Sets.newHashSet( schema.mappings.values() );
+    Set< KeyBehaviorMapping > newSet = Sets.newHashSet( schema.behaviors.values() );
     SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
     List< KeyBehaviorMapping > update = Lists.newArrayList();
     for (KeyBehaviorMapping kbm : newSet) {
@@ -109,7 +109,7 @@ public class Schemas
                                                 schema.archived );
 
     SqliteDao.update( sql, params, SqlCallback.NOOP );
-    KeyBehaviors.addAll( schema, schema.mappings.values() );
+    KeyBehaviors.addAll( schema, schema.behaviors.values() );
   }
 
   /**
@@ -144,7 +144,7 @@ public class Schemas
         s.archived = rs.getBoolean( "archived" );
 
         Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
-        s.mappings = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
+        s.behaviors = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
 
         counter++;
       }
@@ -205,7 +205,7 @@ public class Schemas
         s.archived = rs.getBoolean( "archived" );
 
         Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
-        s.mappings = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
+        s.behaviors = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
 
         result.add( s );
       }
