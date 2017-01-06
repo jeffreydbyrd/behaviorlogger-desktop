@@ -60,8 +60,8 @@ public class IoaUtils1_1
     HashMap< String, ArrayList< Integer > > map1 = createIoaMap( stream1 );
     HashMap< String, ArrayList< Integer > > map2 = createIoaMap( stream2 );
 
-    KeyToInterval data1 = partition( map1, stream1.totalTimeMillis, size );
-    KeyToInterval data2 = partition( map2, stream2.totalTimeMillis, size );
+    KeyToInterval data1 = partition( map1, stream1.duration, size );
+    KeyToInterval data2 = partition( map2, stream2.duration, size );
 
     Map< String, IntervalCalculations > intervals =
         method == IoaMethod.Exact_Agreement
@@ -138,15 +138,15 @@ public class IoaUtils1_1
     HashMap< String, ArrayList< Integer > > discretes2 = Maps.newHashMap();
     populateDiscrete( stream1, discretes1 );
     populateDiscrete( stream2, discretes2 );
-    KeyToInterval discrete1 = partition( discretes1, stream1.totalTimeMillis, 1 );
-    KeyToInterval discrete2 = partition( discretes2, stream2.totalTimeMillis, 1 );
+    KeyToInterval discrete1 = partition( discretes1, stream1.duration, 1 );
+    KeyToInterval discrete2 = partition( discretes2, stream2.duration, 1 );
 
     HashMap< String, ArrayList< Integer > > continuous1 = Maps.newHashMap();
     HashMap< String, ArrayList< Integer > > continuous2 = Maps.newHashMap();
     populateContinuous( stream1, continuous1 );
     populateContinuous( stream2, continuous2 );
-    KeyToInterval cont1 = partition( continuous1, stream1.totalTimeMillis, 1 );
-    KeyToInterval cont2 = partition( continuous2, stream2.totalTimeMillis, 1 );
+    KeyToInterval cont1 = partition( continuous1, stream1.duration, 1 );
+    KeyToInterval cont2 = partition( continuous2, stream2.duration, 1 );
 
     Map< String, TimeWindowCalculations > ioaDiscrete =
         IoaCalculations.windowAgreementDiscrete( discrete1, discrete2, threshold );

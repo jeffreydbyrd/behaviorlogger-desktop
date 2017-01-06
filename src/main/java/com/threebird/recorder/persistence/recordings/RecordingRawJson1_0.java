@@ -13,7 +13,7 @@ import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
-import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.SessionDirectories;
 import com.threebird.recorder.persistence.recordings.Recordings.SaveDetails;
@@ -121,7 +121,7 @@ public class RecordingRawJson1_0
     GsonUtils.save( details.f, bean );
   }
 
-  private static void copySchema( Schema from, SchemaBean1_0 to )
+  private static void copySchema( SchemaVersion from, SchemaBean1_0 to )
   {
     to.uuid = from.uuid;
     to.client = from.client;

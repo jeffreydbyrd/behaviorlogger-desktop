@@ -23,7 +23,7 @@ public class IoaCalculationsTest
 {
   static SessionBean1_1 input1 = new SessionBean1_1();
   static {
-    input1.totalTimeMillis = 1700;
+    input1.duration = 1700;
     input1.discreteEvents = Maps.newHashMap();
     input1.continuousEvents = Maps.newHashMap();
     input1.discreteEvents.put( "d", Lists.newArrayList( 0, 1100, 1700 ) ); // 0,1,1
@@ -31,13 +31,13 @@ public class IoaCalculationsTest
 
     input1.schema = new SchemaBean1_1();
     input1.schema.behaviors = Lists.newArrayList();
-    input1.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
-    input1.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
+    input1.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
+    input1.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
   }
 
   static SessionBean1_1 input2 = new SessionBean1_1();
   static {
-    input2.totalTimeMillis = 2700;
+    input2.duration = 2700;
     input2.discreteEvents = Maps.newHashMap();
     input2.continuousEvents = Maps.newHashMap();
     input2.discreteEvents.put( "d", Lists.newArrayList( 0, 1100 ) ); // 0,1
@@ -45,20 +45,20 @@ public class IoaCalculationsTest
 
     input2.schema = new SchemaBean1_1();
     input2.schema.behaviors = Lists.newArrayList();
-    input2.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
-    input2.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
+    input2.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
+    input2.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
   }
 
   static SessionBean1_1 empty = new SessionBean1_1();
   static {
-    empty.totalTimeMillis = 2700;
+    empty.duration = 2700;
     empty.discreteEvents = Maps.newHashMap();
     empty.continuousEvents = Maps.newHashMap();
 
     empty.schema = new SchemaBean1_1();
     empty.schema.behaviors = Lists.newArrayList();
-    empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
-    empty.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
+    empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
+    empty.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
   }
 
   @Test public void partialAgreement_blocksize_1()
@@ -67,8 +67,8 @@ public class IoaCalculationsTest
 
     HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
     HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
-    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.totalTimeMillis, blockSize );
-    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.totalTimeMillis, blockSize );
+    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
+    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
     Map< String, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< String, IntervalCalculations > expected = Maps.newHashMap();
@@ -94,8 +94,8 @@ public class IoaCalculationsTest
 
     HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
     HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
-    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.totalTimeMillis, blockSize );
-    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.totalTimeMillis, blockSize );
+    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
+    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
     Map< String, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< String, IntervalCalculations > expected = Maps.newHashMap();
@@ -122,8 +122,8 @@ public class IoaCalculationsTest
 
     HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
     HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
-    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.totalTimeMillis, blockSize );
-    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.totalTimeMillis, blockSize );
+    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
+    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
     Map< String, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< String, IntervalCalculations > expected = Maps.newHashMap();
@@ -150,8 +150,8 @@ public class IoaCalculationsTest
 
     HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
     HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( empty );
-    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.totalTimeMillis, blockSize );
-    KeyToInterval data2 = IoaUtils1_1.partition( stream2, empty.totalTimeMillis, blockSize );
+    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
+    KeyToInterval data2 = IoaUtils1_1.partition( stream2, empty.duration, blockSize );
 
     Map< String, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< String, IntervalCalculations > expected = Maps.newHashMap();
@@ -178,8 +178,8 @@ public class IoaCalculationsTest
 
     HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
     HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
-    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.totalTimeMillis, blockSize );
-    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.totalTimeMillis, blockSize );
+    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
+    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
     Map< String, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< String, IntervalCalculations > expected = Maps.newHashMap();
@@ -206,8 +206,8 @@ public class IoaCalculationsTest
 
     HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
     HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
-    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.totalTimeMillis, blockSize );
-    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.totalTimeMillis, blockSize );
+    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
+    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
     Map< String, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< String, IntervalCalculations > expected = Maps.newHashMap();
@@ -234,8 +234,8 @@ public class IoaCalculationsTest
 
     HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
     HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( empty );
-    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.totalTimeMillis, blockSize );
-    KeyToInterval data2 = IoaUtils1_1.partition( stream2, empty.totalTimeMillis, blockSize );
+    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
+    KeyToInterval data2 = IoaUtils1_1.partition( stream2, empty.duration, blockSize );
 
     Map< String, IntervalCalculations > actual = IoaCalculations.exactAgreement( data1, data2 );
     Map< String, IntervalCalculations > expected = Maps.newHashMap();
@@ -270,10 +270,10 @@ public class IoaCalculationsTest
     IoaUtils1_1.populateContinuous( input1, mapC1 );
     IoaUtils1_1.populateContinuous( input2, mapC2 );
 
-    KeyToInterval discrete1 = IoaUtils1_1.partition( mapD1, input1.totalTimeMillis, 1 );
-    KeyToInterval discrete2 = IoaUtils1_1.partition( mapD2, input2.totalTimeMillis, 1 );
-    KeyToInterval continuous1 = IoaUtils1_1.partition( mapC1, input1.totalTimeMillis, 1 );
-    KeyToInterval continuous2 = IoaUtils1_1.partition( mapC2, input2.totalTimeMillis, 1 );
+    KeyToInterval discrete1 = IoaUtils1_1.partition( mapD1, input1.duration, 1 );
+    KeyToInterval discrete2 = IoaUtils1_1.partition( mapD2, input2.duration, 1 );
+    KeyToInterval continuous1 = IoaUtils1_1.partition( mapC1, input1.duration, 1 );
+    KeyToInterval continuous2 = IoaUtils1_1.partition( mapC2, input2.duration, 1 );
 
     Map< String, TimeWindowCalculations > actualDiscrete =
         IoaCalculations.windowAgreementDiscrete( discrete1, discrete2, thresh );
@@ -304,10 +304,10 @@ public class IoaCalculationsTest
     IoaUtils1_1.populateContinuous( input1, mapC1 );
     IoaUtils1_1.populateContinuous( empty, mapC2 );
 
-    KeyToInterval discrete1 = IoaUtils1_1.partition( mapD1, input1.totalTimeMillis, 1 );
-    KeyToInterval discrete2 = IoaUtils1_1.partition( mapD2, empty.totalTimeMillis, 1 );
-    KeyToInterval continuous1 = IoaUtils1_1.partition( mapC1, input1.totalTimeMillis, 1 );
-    KeyToInterval continuous2 = IoaUtils1_1.partition( mapC2, empty.totalTimeMillis, 1 );
+    KeyToInterval discrete1 = IoaUtils1_1.partition( mapD1, input1.duration, 1 );
+    KeyToInterval discrete2 = IoaUtils1_1.partition( mapD2, empty.duration, 1 );
+    KeyToInterval continuous1 = IoaUtils1_1.partition( mapC1, input1.duration, 1 );
+    KeyToInterval continuous2 = IoaUtils1_1.partition( mapC2, empty.duration, 1 );
 
     Map< String, TimeWindowCalculations > actualDiscrete =
         IoaCalculations.windowAgreementDiscrete( discrete1, discrete2, thresh );
@@ -327,7 +327,7 @@ public class IoaCalculationsTest
   @Test public void compare_Mismatched()
   {
     SessionBean1_1 input1 = new SessionBean1_1();
-    input1.totalTimeMillis = 1700;
+    input1.duration = 1700;
     input1.discreteEvents = Maps.newHashMap();
     input1.continuousEvents = Maps.newHashMap();
     input1.discreteEvents.put( "a", Lists.newArrayList( 0 ) ); // 0
@@ -335,11 +335,11 @@ public class IoaCalculationsTest
 
     input1.schema = new SchemaBean1_1();
     input1.schema.behaviors = Lists.newArrayList();
-    input1.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "discrete", false ) );
-    input1.schema.behaviors.add( new BehaviorBean1_1( "b", 'b', "continuous", true ) );
+    input1.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "discrete", false, false ) );
+    input1.schema.behaviors.add( new BehaviorBean1_1( "b", 'b', "continuous", true, false ) );
 
     SessionBean1_1 input2 = new SessionBean1_1();
-    input2.totalTimeMillis = 2700;
+    input2.duration = 2700;
     input2.discreteEvents = Maps.newHashMap();
     input2.continuousEvents = Maps.newHashMap();
     input2.discreteEvents.put( "c", Lists.newArrayList( 0 ) ); // 0
@@ -347,15 +347,15 @@ public class IoaCalculationsTest
 
     input2.schema = new SchemaBean1_1();
     input2.schema.behaviors = Lists.newArrayList();
-    input2.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "discrete", false ) );
-    input2.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "continuous", true ) );
+    input2.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "discrete", false, false ) );
+    input2.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "continuous", true, false ) );
 
     int blockSize = 1;
 
     HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
     HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
-    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.totalTimeMillis, blockSize );
-    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.totalTimeMillis, blockSize );
+    KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
+    KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
     Map< String, IntervalCalculations > actual = IoaCalculations.partialAgreement( data1, data2 );
     Map< String, IntervalCalculations > expected = Maps.newHashMap();

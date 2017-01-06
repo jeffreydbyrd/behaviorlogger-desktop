@@ -34,7 +34,7 @@ public class BehaviorBox extends VBox
   private SimpleBooleanProperty isContinuousProp;
   private SimpleStringProperty keyProp;
   private SimpleStringProperty descriptionProp;
-  private SimpleBooleanProperty deletedProp;
+  private SimpleBooleanProperty archivedProp;
 
   private HBox hbox = new HBox();
   private Label keyTakenLbl = new Label( "That key is taken." );
@@ -52,9 +52,9 @@ public class BehaviorBox extends VBox
   private HBox actionBox = new HBox( deleteBtn, editBtn );
 
   public BehaviorBox( String uuid,
-                      boolean isContinuous,
                       MappableChar key,
                       String description,
+                      boolean isContinuous,
                       Supplier< List< BehaviorBox > > getOthers )
   {
     super();
@@ -63,7 +63,7 @@ public class BehaviorBox extends VBox
     this.isContinuousProp = new SimpleBooleanProperty( isContinuous );
     this.keyProp = new SimpleStringProperty( key.c + "" );
     this.descriptionProp = new SimpleStringProperty( description );
-    this.deletedProp = new SimpleBooleanProperty( false );
+    this.archivedProp = new SimpleBooleanProperty( false );
     keyText = new Label( key.c + "" );
     descText = new Label( description );
     keyField = new TextField( key.c + "" );
@@ -103,7 +103,7 @@ public class BehaviorBox extends VBox
 
     // Setup delete button
     deleteBtn.setOnAction( e -> {
-      deletedProp.setValue( true );
+      archivedProp.setValue( true );
       actionBox.getChildren().clear();
       actionBox.getChildren().addAll( undoBtn, editBtn );
       editBtn.setVisible( false );
@@ -119,7 +119,7 @@ public class BehaviorBox extends VBox
         return;
       }
 
-      deletedProp.setValue( false );
+      archivedProp.setValue( false );
       actionBox.getChildren().clear();
       actionBox.getChildren().addAll( deleteBtn, editBtn );
       editBtn.setVisible( true );
@@ -277,6 +277,6 @@ public class BehaviorBox extends VBox
 
   public boolean isDeleted()
   {
-    return this.deletedProp.get();
+    return this.archivedProp.get();
   }
 }

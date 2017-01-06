@@ -19,8 +19,9 @@ import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
-import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.persistence.SessionDirectories;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
@@ -84,7 +85,7 @@ public class EditSchemaController
 
   @FXML private Button deleteSchemaButton;
 
-  private Schema model;
+  private SchemaVersion model;
 
   /**
    * Sets the stage to the EditScema view.
@@ -92,7 +93,7 @@ public class EditSchemaController
    * @param schema
    *          - the currently selected schema if editing, or null if creating a new schema
    */
-  public static void toEditSchemaView( Schema selected )
+  public static void toEditSchemaView( SchemaVersion selected )
   {
     String filepath = "views/edit_schema/edit-schema.fxml";
     EditSchemaController controller = BehaviorLoggerUtil.loadScene( filepath, "Create Schema" );
@@ -103,11 +104,11 @@ public class EditSchemaController
    * @param sch
    *          - The Schema being edited. If null, a new schema is created
    */
-  private void init( Schema selected )
+  private void init( SchemaVersion selected )
   {
     deleteSchemaButton.setVisible( selected != null );
     if (selected == null) {
-      model = new Schema();
+      model = new SchemaVersion();
       model.archived = false;
     } else {
       model = selected;
@@ -185,11 +186,11 @@ public class EditSchemaController
   /**
    * Configures {@link #behaviorTable} to represent the schema's list of KeyBehaviorsMappings
    */
-  private void initBehaviorSection( Schema schema )
+  private void initBehaviorSection( SchemaVersion schema )
   {
     // Add BehaviorBoxes for existing behavior-mappings
     for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
-      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.isContinuous, kbm.key, kbm.description, this::getBehaviorBoxes );
+      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.key, kbm.description, kbm.isContinuous, this::getBehaviorBoxes );
       if (kbm.isContinuous) {
         this.continuousBoxes.getChildren().add( bb );
       } else {
@@ -343,7 +344,7 @@ public class EditSchemaController
     String behavior = descriptionField.getText();
     boolean isCont = contCheckbox.isSelected();
 
-    BehaviorBox bb = new BehaviorBox( uuid, isCont, key, behavior, this::getBehaviorBoxes );
+    BehaviorBox bb = new BehaviorBox( uuid, key, behavior, isCont, this::getBehaviorBoxes );
     if (contCheckbox.isSelected()) {
       this.continuousBoxes.getChildren().add( bb );
     } else {
@@ -396,14 +397,15 @@ public class EditSchemaController
     behaviorBoxes.addAll( continuousBoxes.getChildren() );
     for (Node node : behaviorBoxes) {
       BehaviorBox bb = (BehaviorBox) node;
-      if (bb.isDeleted()) {
+      if (bb.isDeleted() && (bb.uuid == null || bb.uuid.isEmpty())) {
         continue;
       }
       MappableChar key = bb.getKey();
       String description = bb.getDescription();
       boolean isContinuous = bb.isContinuous();
+      boolean archived = bb.isDeleted();
       String uuid = bb.uuid;
-      temp.put( key, new KeyBehaviorMapping( uuid, key, description, isContinuous ) );
+      temp.put( key, new KeyBehaviorMapping( uuid, key, description, isContinuous, archived ) );
     }
 
     model.client = clientField.getText().trim();
@@ -415,13 +417,15 @@ public class EditSchemaController
     model.pause = pauseCheckBox.isSelected();
     model.sound = beepCheckBox.isSelected();
 
+    boolean newschema = model.uuid == null;
+
     try {
-      if (model.uuid == null) {
-        SchemasManager.create( model );
+      Schemas.save( model );
+      if (newschema) {
         SessionDirectories.create( model.uuid, getDirectory() );
+        SchemasManager.schemas().add( model );
         SchemasManager.setSelected( model );
       } else {
-        SchemasManager.update( model );
         SessionDirectories.update( model.uuid, getDirectory() );
       }
     } catch (Exception e) {
@@ -442,11 +446,12 @@ public class EditSchemaController
     Alerts.confirm( "Confirm deletion", null, msg, () -> {
       model.archived = true;
       try {
-        SchemasManager.update( model );
+        Schemas.save( model );
       } catch (Exception e) {
         Alerts.error( "Failed to delete schema", "There was a problem while trying to delete the schema", e );
         e.printStackTrace();
       }
+      SchemasManager.schemas().remove( model );
       SchemasManager.setSelected( null );
       StartMenuController.toStartMenuView();
     } );

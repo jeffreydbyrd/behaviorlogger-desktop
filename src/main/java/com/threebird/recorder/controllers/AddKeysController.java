@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -16,9 +15,10 @@ import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
-import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
+import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
@@ -36,8 +36,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 /**
- * Combines with add_keys.fxml. The researcher uses this view to add new keys
- * after pressing unknown keys during a recording
+ * Combines with add_keys.fxml. The researcher uses this view to add new keys after pressing unknown keys during a
+ * recording
  */
 public class AddKeysController
 {
@@ -63,8 +63,7 @@ public class AddKeysController
   }
 
   /**
-   * For each KeyBehaviorMapping, print out a checkbox, some labels, and a
-   * TextField. Wire these widgets to the model.
+   * For each KeyBehaviorMapping, print out a checkbox, some labels, and a TextField. Wire these widgets to the model.
    */
   private void populateMappingsBox()
   {
@@ -120,13 +119,12 @@ public class AddKeysController
   }
 
   /**
-   * Runs through the 'behaviorFields' and adds new KeyBehaviorMappings to
-   * 'schema', saves 'schema', updates the recorded behaviors, and redraws the
-   * recording window with new information
+   * Runs through the 'behaviorFields' and adds new KeyBehaviorMappings to 'schema', saves 'schema', updates the
+   * recorded behaviors, and redraws the recording window with new information
    */
   @FXML private void onSavePress()
   {
-    Schema schema = SchemasManager.getSelected();
+    SchemaVersion schema = SchemasManager.getSelected();
 
     if (!validate()) {
       return;
@@ -135,16 +133,12 @@ public class AddKeysController
     // Modify the Schema and save it
     behaviorFields.forEach( ( field, kbm ) -> {
       String behavior = field.getText().trim();
-      String uuid = kbm.uuid;
-      if (uuid == null) {
-        uuid = UUID.randomUUID().toString();
-      }
-      
-      schema.behaviors.put( kbm.key, new KeyBehaviorMapping( uuid, kbm.key, behavior, kbm.isContinuous ) );
+      schema.behaviors.put( kbm.key,
+                            new KeyBehaviorMapping( kbm.uuid, kbm.key, behavior, kbm.isContinuous, kbm.archived ) );
     } );
 
     try {
-      SchemasManager.update( schema );
+      Schemas.save( schema );
     } catch (Exception e) {
       Alerts.error( "Failed to Save Schema",
                     "The application encountered a problem while trying to save the schema.",
@@ -170,11 +164,10 @@ public class AddKeysController
                         .collect( Collectors.toList() );
 
     List< DiscreteBehavior > newDiscretes =
-        Lists.transform( updatedDiscretes, db ->
-                         new DiscreteBehavior( db.uuid,
-                                               db.key,
-                                               schema.behaviors.get( db.key ).description,
-                                               db.startTime ) );
+        Lists.transform( updatedDiscretes, db -> new DiscreteBehavior( db.uuid,
+                                                                       db.key,
+                                                                       schema.behaviors.get( db.key ).description,
+                                                                       db.startTime ) );
 
     List< DiscreteBehavior > removedDiscretes =
         manager.discrete.stream()
@@ -188,12 +181,11 @@ public class AddKeysController
                           .collect( Collectors.toList() );
 
     List< ContinuousBehavior > newContinuous =
-        Lists.transform( updatedContinuous, cb ->
-                         new ContinuousBehavior( cb.uuid,
-                                                 cb.key,
-                                                 schema.behaviors.get( cb.key ).description,
-                                                 cb.startTime,
-                                                 cb.getDuration() ) );
+        Lists.transform( updatedContinuous, cb -> new ContinuousBehavior( cb.uuid,
+                                                                          cb.key,
+                                                                          schema.behaviors.get( cb.key ).description,
+                                                                          cb.startTime,
+                                                                          cb.getDuration() ) );
 
     List< ContinuousBehavior > removedContinuous =
         manager.continuous.stream()
@@ -238,7 +230,7 @@ public class AddKeysController
       }
     } );
 
-    Map< String, List< TextField >> byName =
+    Map< String, List< TextField > > byName =
         behaviorFields.keySet().stream().collect( Collectors.groupingBy( field -> field.getText().trim() ) );
 
     byName.forEach( ( name, fields ) -> {

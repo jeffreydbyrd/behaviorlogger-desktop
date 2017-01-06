@@ -3,35 +3,40 @@ package com.threebird.recorder.models.schemas;
 import com.threebird.recorder.models.MappableChar;
 
 /**
- * Maps a key to a behavior. We use this in configuring a {@link Schema}
+ * Maps a key to a behavior. We use this in configuring a {@link SchemaVersion}
  */
 public class KeyBehaviorMapping
 {
-  public final String uuid;
-  public final MappableChar key;
-  public final String description;
-  public final boolean isContinuous;
+  public String uuid;
+  public MappableChar key;
+  public String description;
+  public boolean isContinuous;
+  public boolean archived;
 
   public KeyBehaviorMapping( String uuid,
                              MappableChar key,
                              String behavior,
-                             boolean isContinuous )
+                             boolean isContinuous,
+                             boolean archived )
   {
     this.uuid = uuid;
     this.key = key;
     this.description = behavior;
     this.isContinuous = isContinuous;
+    this.archived = archived;
   }
 
   public KeyBehaviorMapping( String uuid,
                              String key,
                              String behavior,
-                             boolean isContinuous )
+                             boolean isContinuous,
+                             boolean archived )
   {
     this( uuid,
           MappableChar.getForChar( key.charAt( 0 ) ).get(),
           behavior,
-          isContinuous );
+          isContinuous,
+          archived );
   }
 
   @Override public String toString()

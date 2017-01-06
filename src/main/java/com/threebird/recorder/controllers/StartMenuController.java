@@ -2,11 +2,9 @@ package com.threebird.recorder.controllers;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
@@ -22,12 +20,11 @@ import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.NewVersionManager;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
-import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.persistence.GsonUtils;
-import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
@@ -62,9 +59,9 @@ public class StartMenuController
   public static final String TITLE = "Start Menu";
   private static String homeURL = "http://3birdsoftware.com";
 
-  @FXML private TableView< Schema > schemaTable;
-  @FXML private TableColumn< Schema, String > clientCol;
-  @FXML private TableColumn< Schema, String > projectCol;
+  @FXML private TableView< SchemaVersion > schemaTable;
+  @FXML private TableColumn< SchemaVersion, String > clientCol;
+  @FXML private TableColumn< SchemaVersion, String > projectCol;
   @FXML private Button createSchemaButton;
   @FXML private Button editSchemaBtn;
   @FXML private Button exportSchemaButton;
@@ -152,7 +149,7 @@ public class StartMenuController
   /**
    * Populates the 'mappingBox' with the currently selected Schema's key-behavior mappings
    */
-  private void populateMappingsTable( Schema schema )
+  private void populateMappingsTable( SchemaVersion schema )
   {
     mappingsBox.getChildren().clear();
 
@@ -247,9 +244,9 @@ public class StartMenuController
    * On schema-select: if the new value is null, hide right-hand-side. Otherwise, populate right-hand-side with new
    * schema's data
    */
-  private void onSchemaSelect( ObservableValue< ? extends Schema > ov,
-                               Schema oldV,
-                               Schema newV )
+  private void onSchemaSelect( ObservableValue< ? extends SchemaVersion > ov,
+                               SchemaVersion oldV,
+                               SchemaVersion newV )
   {
     SchemasManager.setSelected( newV );
     if (newV != null) {
@@ -283,42 +280,42 @@ public class StartMenuController
       return;
     }
 
-    Schema schema;
-    try {
-      schema = GsonUtils.< Schema > get( newFile, new Schema() );
-    } catch (IOException e) {
-      Alerts.error( "Error Importing Schema", "There was a problem while importing the Schema.", e );
-      e.printStackTrace();
-      return;
-    }
-
-    try {
-      Optional< Schema > oldOpt = Schemas.getForUuid( schema.uuid );
-
-      if (oldOpt.isPresent()) {
-        Schema old = oldOpt.get();
-        if (old.version < schema.version) {
-          Schemas.update( schema );
-          SchemasManager.schemas().remove( old );
-          SchemasManager.schemas().add( schema );
-        }
-      } else {
-        SchemasManager.create( schema );
-      }
-      
-      schemaTable.refresh();
-      if (!schema.archived) {
-        schemaTable.getSelectionModel().select( schema );
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
-    }
+//    SchemaVersion schema;
+//    try {
+//      schema = GsonUtils.< SchemaVersion > get( newFile, new SchemaVersion() );
+//    } catch (IOException e) {
+//      Alerts.error( "Error Importing Schema", "There was a problem while importing the Schema.", e );
+//      e.printStackTrace();
+//      return;
+//    }
+//
+//    try {
+//      Optional< SchemaVersion > oldOpt = Schemas.getForUuid( schema.uuid );
+//
+//      if (oldOpt.isPresent()) {
+//        SchemaVersion old = oldOpt.get();
+//        if (old.version < schema.version) {
+//          Schemas.update( schema );
+//          SchemasManager.schemas().remove( old );
+//          SchemasManager.schemas().add( schema );
+//        }
+//      } else {
+//        SchemasManager.create( schema );
+//      }
+//      
+//      schemaTable.refresh();
+//      if (!schema.archived) {
+//        schemaTable.getSelectionModel().select( schema );
+//      }
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
+//    }
   }
 
   @FXML private void onExportBtnPressed()
   {
-    Schema selected = SchemasManager.getSelected();
+    SchemaVersion selected = SchemasManager.getSelected();
     FileChooser fileChooser = new FileChooser();
     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
     fileChooser.getExtensionFilters().add( extFilter );

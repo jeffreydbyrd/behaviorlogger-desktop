@@ -161,9 +161,10 @@ public class InitSQLiteTables
 
     // Create the new tables
     String createNewSchemas =
-        "CREATE TABLE schemas_v1_1 ("
+        "CREATE TABLE schema_versions_v1_1 ("
             + "uuid TEXT NOT NULL,"
-            + "version INTEGER NOT NULL," // new field
+            + "version_uuid TEXT NOT NULL," // new field
+            + "version_number INTEGER NOT NULL," // new field
             + "client TEXT NOT NULL,"
             + "project TEXT NOT NULL,"
             + "duration INTEGER NOT NULL,"
@@ -171,47 +172,52 @@ public class InitSQLiteTables
             + "color_on_end INTEGER NOT NULL,"
             + "sound_on_end INTEGER NOT NULL,"
             + "archived INTEGER NOT NULL,"
-            + "UNIQUE(uuid, version) )";
+            + "UNIQUE(uuid, version_uuid),"
+            + "UNIQUE(uuid, version_number) )";
 
     String createSessionDirs =
         "CREATE TABLE session_dirs_v1_1 ("
             + "schema_uuid TEXT NOT NULL,"
             + "session_directory TEXT NOT NULL,"
-            + "FOREIGN KEY (schema_uuid) REFERENCES schemas_v1_1(uuid) )";
+            + "FOREIGN KEY (schema_uuid) REFERENCES schema_versions_v1_1(uuid) )";
 
     String createNewBehaviors =
         "CREATE TABLE behaviors_v1_1 ("
-            + "uuid TEXT NOT NULL PRIMARY KEY," // new field
-            + "key CHAR(1) NOT NULL,"
-            + "description TEXT NOT NULL," // changed names
-            + "is_continuous INTEGER NOT NULL )";
-
-    String createBehaviorSchemas =
-        "CREATE TABLE IF NOT EXISTS schema_behaviors_v1_1 ("
+            + "uuid TEXT NOT NULL PRIMARY KEY,"
             + "schema_uuid TEXT NOT NULL,"
-            + "schema_version INTEGER NOT NULL,"
+            + "is_continuous INTEGER NOT NULL,"
+            + "UNIQUE(uuid),"
+            + "FOREIGN KEY (schema_uuid) REFERENCES schema_versions_v1_1(uuid) )";
+
+    String createBehaviorVersions =
+        "CREATE TABLE IF NOT EXISTS behavior_versions_v1_1 ("
             + "behavior_uuid TEXT NOT NULL,"
-            + "UNIQUE(schema_uuid, schema_version, behavior_uuid),"
-            + "FOREIGN KEY (schema_uuid) REFERENCES schemas_v1_1(uuid),"
-            + "FOREIGN KEY (schema_version) REFERENCES schemas_v1_1(version),"
-            + "FOREIGN KEY (behavior_uuid) REFERENCES behaviors_v1_1(uuid) )";
+            + "skema_version_uuid TEXT NOT NULL,"
+            + "k CHAR(1) NOT NULL,"
+            + "description TEXT NOT NULL,"
+            + "archived INTEGER NOT NULL,"
+            + "UNIQUE(behavior_uuid, schema_version_uuid),"
+            + "FOREIGN KEY (behavior_uuid) REFERENCES behaviors_v1_1(uuid),"
+            + "FOREIGN KEY (schema_version_uuid) REFERENCES schemas_versions_v1_1(version_uuid) )";
 
     SqliteDao.update( createNewSchemas );
     SqliteDao.update( createSessionDirs );
     SqliteDao.update( createNewBehaviors );
-    SqliteDao.update( createBehaviorSchemas );
+    SqliteDao.update( createBehaviorVersions );
 
-    String insertSchemaFmt = "INSERT INTO schemas_v1_1 VALUES ('%s',%d,'%s','%s',%d,%d,%d,%d,%d);";
+    String insertSchemaFmt = "INSERT INTO schema_versions_v1_1 VALUES ('%s','%s',%d,'%s','%s',%d,%d,%d,%d,%d);";
     String insertSessionDirFmt = "INSERT INTO session_dirs_v1_1 VALUES ('%s', '%s')";
     String getBehaviorsFmt = "SELECT * FROM key_behaviors_v1_0 WHERE schema_uuid = '%s';";
-    String insertBehaviorFmt = "INSERT INTO behaviors_v1_1 VALUES ('%s','%s','%s',%d);";
-    String insertSchemaBehaviorFmt = "INSERT INTO schema_behaviors_v1_1 VALUES ('%s',%d,'%s');";
+    String insertBehaviorFmt = "INSERT INTO behaviors_v1_1 VALUES ('%s','%s',%d);";
+    String insertBehaviorVersionFmt = "INSERT INTO behavior_versions_v1_1 VALUES ('%s','%s','%s','%s',%d);";
 
     SqliteDao.query( "SELECT * FROM schemas_v1_0", Lists.newArrayList(), rs -> {
       while (rs.next()) {
         String schemaUuid = rs.getString( "uuid" );
+        String schemaVersionUuid = UUID.randomUUID().toString();
         String insertSchema = String.format( insertSchemaFmt,
                                              schemaUuid,
+                                             schemaVersionUuid,
                                              1,
                                              rs.getString( "client" ),
                                              rs.getString( "project" ),
@@ -233,14 +239,16 @@ public class InitSQLiteTables
             String insertBehavior =
                 String.format( insertBehaviorFmt,
                                behaviorUuid,
+                               schemaUuid,
+                               rs2.getInt( "is_continuous" ) );
+            
+            String insertSchemaBehavior =
+                String.format( insertBehaviorVersionFmt,
+                               behaviorUuid,
+                               schemaVersionUuid,
                                rs2.getString( "key" ),
                                rs2.getString( "name" ),
-                               rs2.getInt( "is_continuous" ) );
-            String insertSchemaBehavior =
-                String.format( insertSchemaBehaviorFmt,
-                               schemaUuid,
-                               1,
-                               behaviorUuid );
+                               1 );
             SqliteDao.update( insertBehavior );
             SqliteDao.update( insertSchemaBehavior );
           }

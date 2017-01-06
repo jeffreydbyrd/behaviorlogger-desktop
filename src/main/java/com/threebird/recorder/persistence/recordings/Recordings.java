@@ -14,7 +14,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 import com.threebird.recorder.models.behaviors.Behavior;
-import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 
@@ -25,7 +25,7 @@ public class Recordings
     public File f;
     public CompletableFuture< Long > fResult;
     public List< Behavior > behaviors;
-    public Schema schema;
+    public SchemaVersion schema;
     public String observer;
     public String therapist;
     public String condition;

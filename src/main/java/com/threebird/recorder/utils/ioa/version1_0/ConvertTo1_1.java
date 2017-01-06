@@ -30,7 +30,7 @@ public class ConvertTo1_1
     }
 
     // Copy over random details
-    bean1.totalTimeMillis = bean0.totalTimeMillis;
+    bean1.duration = bean0.totalTimeMillis;
     bean1.startTime = bean0.startTime;
     bean1.stopTime = bean0.stopTime;
 

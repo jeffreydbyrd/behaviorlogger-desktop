@@ -13,7 +13,7 @@ import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
-import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.ContinuousCounter;
 import com.threebird.recorder.models.sessions.RecordingManager;
@@ -89,7 +89,7 @@ public class RecordingController
 
   private void init()
   {
-    Schema schema = SchemasManager.getSelected();
+    SchemaVersion schema = SchemasManager.getSelected();
     manager = new RecordingManager();
 
     behaviorGrid.setDisable( true );
@@ -134,7 +134,7 @@ public class RecordingController
 
   public void update()
   {
-    Schema schema = SchemasManager.getSelected();
+    SchemaVersion schema = SchemasManager.getSelected();
 
     // Figure out which unknowns were ignored and which were updated
     Set< MappableChar > mappedChars = schema.behaviors.keySet();
@@ -176,7 +176,7 @@ public class RecordingController
    */
   private void initializeBehaviorCountBoxes()
   {
-    Schema schema = SchemasManager.getSelected();
+    SchemaVersion schema = SchemasManager.getSelected();
 
     for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
       initializeBehaviorCountBox( kbm );
@@ -242,7 +242,7 @@ public class RecordingController
    */
   private void onTick( int millis )
   {
-    Schema schema = SchemasManager.getSelected();
+    SchemaVersion schema = SchemasManager.getSelected();
     timeBox.setText( BehaviorLoggerUtil.millisToTimestamp( millis ) );
 
     if (millis == schema.duration) {
@@ -276,7 +276,7 @@ public class RecordingController
 
       for (Entry< MappableChar, ContinuousBehavior > e : manager.midContinuous.entrySet()) {
         ContinuousBehavior cb = e.getValue();
-        KeyBehaviorMapping kbm = new KeyBehaviorMapping( cb.uuid, e.getKey(), cb.name, true );
+        KeyBehaviorMapping kbm = new KeyBehaviorMapping( cb.uuid, e.getKey(), cb.name, true, false );
         logBehavior( kbm );
       }
     }
@@ -502,7 +502,7 @@ public class RecordingController
    */
   private void initUnknown( MappableChar mc, boolean isContinuous )
   {
-    KeyBehaviorMapping kbm = new KeyBehaviorMapping( null, mc, "[unknown]", isContinuous );
+    KeyBehaviorMapping kbm = new KeyBehaviorMapping( null, mc, "[unknown]", isContinuous, false );
     initializeBehaviorCountBox( kbm );
     manager.unknowns.put( mc, kbm );
     logBehavior( kbm );
@@ -524,7 +524,7 @@ public class RecordingController
 
     KeyCode code = evt.getCode();
     MappableChar.getForKeyCode( code ).ifPresent( mc -> {
-      Schema schema = SchemasManager.getSelected();
+      SchemaVersion schema = SchemasManager.getSelected();
       if (schema.behaviors.containsKey( mc )) {
         logBehavior( schema.behaviors.get( mc ) );
       } else if (manager.unknowns.containsKey( mc )) {

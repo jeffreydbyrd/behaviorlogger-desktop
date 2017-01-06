@@ -3,17 +3,14 @@ package com.threebird.recorder.persistence;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
-import com.threebird.recorder.models.schemas.Schema;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.utils.persistence.SqlCallback;
 import com.threebird.recorder.utils.persistence.SqliteDao;
 
@@ -22,84 +19,41 @@ import com.threebird.recorder.utils.persistence.SqliteDao;
  */
 public class Schemas
 {
-  private static final String TBL_NAME = "schemas_v1_1";
+  private static final String TBL_NAME = "schema_versions_v1_1";
 
-  public static boolean hasChanged( Schema schema ) throws Exception
+  public static boolean hasChanged( SchemaVersion schema ) throws Exception
   {
-    Optional< Schema > current = getForUuid( schema.uuid );
+    Optional< SchemaVersion > current = getLatestForUuid( schema.uuid );
 
     Preconditions.checkState( current.isPresent() );
 
-    return Schema.isDifferent( schema, current.get() );
+    return SchemaVersion.isDifferent( schema, current.get() );
   }
 
   /**
-   * Updates all the values of the given schema in the 'schemas' and 'key_behaviors' table. This method assumes that the
-   * schema 'version' is already set to the correct value.
+   * Saves the given schema in the 'schema_versions' table. Also adds all related behaviors to the key_behaviors table
    * 
    * @throws Exception
    */
-  public static void update( Schema schema ) throws Exception
+  public static void save( SchemaVersion schema ) throws Exception
   {
-    String sql =
-        "INSERT INTO " + TBL_NAME
-            + " (uuid, version, client, project, duration, pause_on_end, color_on_end, sound_on_end, archived) "
-            + " VALUES (?,?,?,?,?,?,?,?,?)";
-
-    List< Object > params = Lists.newArrayList( schema.uuid,
-                                                schema.version,
-                                                schema.client,
-                                                schema.project,
-                                                schema.duration,
-                                                schema.pause,
-                                                schema.color,
-                                                schema.sound,
-                                                schema.archived );
-
-    Set< KeyBehaviorMapping > oldSet = KeyBehaviors.getAllForSchema( schema.uuid );
-    Set< KeyBehaviorMapping > newSet = Sets.newHashSet( schema.behaviors.values() );
-    SetView< KeyBehaviorMapping > create = Sets.difference( newSet, oldSet );
-    List< KeyBehaviorMapping > update = Lists.newArrayList();
-    for (KeyBehaviorMapping kbm : newSet) {
-      if (oldSet.contains( kbm )) {
-        update.add( kbm );
-      }
-    }
-
-    SqlCallback handle = ( ResultSet rs ) -> {
-      for (KeyBehaviorMapping mapping : create) {
-        KeyBehaviors.create( schema, mapping );
-      }
-
-      for (KeyBehaviorMapping mapping : update) {
-        KeyBehaviors.update( schema.uuid, mapping );
-        KeyBehaviors.bridge( schema.uuid, schema.version, mapping.uuid );
-      }
-    };
-
-    SqliteDao.update( sql, params, handle );
-  }
-
-  /**
-   * Creates the given schema in the 'schemas' table. Also adds all related behaviors to the key_behaviors table
-   * 
-   * @throws Exception
-   */
-  public static void create( Schema schema ) throws Exception
-  {
-    if (schema.version == null) {
-      schema.version = 1;
+    if (schema.versionNumber == null) {
+      schema.versionNumber = 1;
     }
     if (schema.uuid == null) {
       schema.uuid = UUID.randomUUID().toString();
     }
+    if (schema.versionUuid == null) {
+      schema.versionUuid = UUID.randomUUID().toString();
+    }
 
     String sql =
         "INSERT INTO " + TBL_NAME
-            + " (uuid, version, client, project, duration, pause_on_end, color_on_end, sound_on_end, archived) "
-            + " VALUES (?,?,?,?,?,?,?,?,?)";
+            + " (uuid, version_uuid, version_number, client, project, duration, pause_on_end, color_on_end, sound_on_end, archived) "
+            + " VALUES (?,?,?,?,?,?,?,?,?,?)";
     List< Object > params = Lists.newArrayList( schema.uuid,
-                                                schema.version,
+                                                schema.versionUuid,
+                                                schema.versionNumber,
                                                 schema.client,
                                                 schema.project,
                                                 schema.duration,
@@ -109,32 +63,35 @@ public class Schemas
                                                 schema.archived );
 
     SqliteDao.update( sql, params, SqlCallback.NOOP );
-    KeyBehaviors.addAll( schema, schema.behaviors.values() );
+    for (KeyBehaviorMapping mapping : schema.behaviors.values()) {
+      KeyBehaviors.save( schema, mapping );
+    }
   }
 
   /**
-   * Returns the an Optional containing the schema associated with this uuid, or empty if there is none. This method
+   * Returns an Optional containing the schema associated with this uuid, or empty if there is none. This method
    * will return an archived schema also.
    * 
    * @throws Exception
    */
-  public static Optional< Schema > getForUuid( String uuid ) throws Exception
+  public static Optional< SchemaVersion > getLatestForUuid( String uuid ) throws Exception
   {
     String sql = "SELECT * "
         + " FROM " + TBL_NAME
         + " WHERE"
-        + "  version = (SELECT MAX(version) FROM " + TBL_NAME + " WHERE uuid = ?)"
+        + "  version_number = (SELECT MAX(version_number) FROM " + TBL_NAME + " WHERE uuid = ?)"
         + "  AND uuid = ?";
     List< Object > params = Lists.newArrayList( uuid, uuid );
 
-    Schema s = new Schema();
+    SchemaVersion s = new SchemaVersion();
 
     SqlCallback handle = ( ResultSet rs ) -> {
       int counter = 0;
       while (rs.next()) {
         Preconditions.checkState( counter < 2 ); // this should never go higher than 1 iteration
         s.uuid = rs.getString( "uuid" );
-        s.version = rs.getInt( "version" );
+        s.versionUuid = rs.getString( "version_uuid" );
+        s.versionNumber = rs.getInt( "version_number" );
         s.client = rs.getString( "client" );
         s.project = rs.getString( "project" );
         s.duration = rs.getInt( "duration" );
@@ -179,23 +136,24 @@ public class Schemas
   }
 
   /**
-   * Retrieves all active Schemas
+   * Retrieves all the latest Schemas
    * 
    * @throws Exception
    */
-  public static List< Schema > all() throws Exception
+  public static List< SchemaVersion > allLatest() throws Exception
   {
     String sql = "SELECT * "
         + "FROM " + TBL_NAME + " AS outer "
         + "WHERE"
-        + "  version = (SELECT MAX(version) FROM " + TBL_NAME + " WHERE uuid = outer.uuid)";
-    List< Schema > result = Lists.newArrayList();
+        + "  version_number = (SELECT MAX(version_number) FROM " + TBL_NAME + " WHERE uuid = outer.uuid)";
+    List< SchemaVersion > result = Lists.newArrayList();
 
     SqlCallback callback = rs -> {
       while (rs.next()) {
-        Schema s = new Schema();
+        SchemaVersion s = new SchemaVersion();
         s.uuid = rs.getString( "uuid" );
-        s.version = rs.getInt( "version" );
+        s.versionUuid = rs.getString( "version_uuid" );
+        s.versionNumber = rs.getInt( "version_number" );
         s.client = rs.getString( "client" );
         s.project = rs.getString( "project" );
         s.duration = rs.getInt( "duration" );

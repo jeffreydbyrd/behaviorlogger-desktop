@@ -25,7 +25,7 @@ public class IoaUtilsTest
 {
   static SessionBean1_1 standard = new SessionBean1_1();
   static {
-    standard.totalTimeMillis = 6000;
+    standard.duration = 6000;
     standard.discreteEvents = Maps.newHashMap();
     standard.continuousEvents = Maps.newHashMap();
     standard.discreteEvents.put( "d", Lists.newArrayList( 0, 1000, 1100, 3000, 3100 ) );
@@ -35,25 +35,25 @@ public class IoaUtilsTest
 
     standard.schema = new SchemaBean1_1();
     standard.schema.behaviors = Lists.newArrayList();
-    standard.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
-    standard.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
+    standard.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
+    standard.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
   }
 
   static SessionBean1_1 empty = new SessionBean1_1();
   static {
-    empty.totalTimeMillis = 6000;
+    empty.duration = 6000;
     empty.discreteEvents = Maps.newHashMap();
     empty.continuousEvents = Maps.newHashMap();
     
     empty.schema = new SchemaBean1_1();
     empty.schema.behaviors = Lists.newArrayList();
-    empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
-    empty.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true ) );
+    empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
+    empty.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
   }
 
   static SessionBean1_1 multi = new SessionBean1_1();
   static {
-    multi.totalTimeMillis = 10000;
+    multi.duration = 10000;
     multi.discreteEvents = Maps.newHashMap();
     multi.continuousEvents = Maps.newHashMap();
     multi.discreteEvents.put( "a", Lists.newArrayList( 0, 1000, 1100, 3000, 3100, 7000, 8000 ) );
@@ -63,20 +63,20 @@ public class IoaUtilsTest
     
     multi.schema = new SchemaBean1_1();
     multi.schema.behaviors = Lists.newArrayList();
-    multi.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "apple", false ) );
-    multi.schema.behaviors.add( new BehaviorBean1_1( "b", 'b', "banana", false ) );
-    multi.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "cucumber", true ) );
-    multi.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "date", true ) );
+    multi.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "apple", false, false ) );
+    multi.schema.behaviors.add( new BehaviorBean1_1( "b", 'b', "banana", false, false ) );
+    multi.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "cucumber", true, false ) );
+    multi.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "date", true, false ) );
   }
   
   static SessionBean1_1 zero_len = new SessionBean1_1();
   static {
-    zero_len.totalTimeMillis = 0;
+    zero_len.duration = 0;
     zero_len.discreteEvents = Maps.newHashMap();
     zero_len.continuousEvents = Maps.newHashMap();
     zero_len.schema = new SchemaBean1_1();
     zero_len.schema.behaviors = Lists.newArrayList();
-    zero_len.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false ) );
+    zero_len.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
   }
 
   @Test public void deserialize_standard() throws Exception
@@ -85,7 +85,7 @@ public class IoaUtilsTest
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
-    assertEquals( standard.totalTimeMillis, bean.totalTimeMillis );
+    assertEquals( standard.duration, bean.duration );
     assertEquals( standard.discreteEvents, bean.discreteEvents );
     assertEquals( standard.continuousEvents, bean.continuousEvents );
   }
@@ -96,7 +96,7 @@ public class IoaUtilsTest
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
-    assertEquals( empty.totalTimeMillis, bean.totalTimeMillis );
+    assertEquals( empty.duration, bean.duration );
     assertEquals( empty.discreteEvents, bean.discreteEvents );
     assertEquals( empty.continuousEvents, bean.continuousEvents );
   }
@@ -107,7 +107,7 @@ public class IoaUtilsTest
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
-    assertEquals( multi.totalTimeMillis, bean.totalTimeMillis );
+    assertEquals( multi.duration, bean.duration );
     assertEquals( multi.discreteEvents, bean.discreteEvents );
     assertEquals( multi.continuousEvents, bean.continuousEvents );
   }
@@ -122,9 +122,9 @@ public class IoaUtilsTest
     IoaUtils1_1.populateContinuous( standard, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils1_1.partition( mapD, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, standard.duration, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils1_1.partition( mapC, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, standard.duration, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
@@ -160,9 +160,9 @@ public class IoaUtilsTest
     IoaUtils1_1.populateContinuous( standard, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils1_1.partition( mapD, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, standard.duration, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils1_1.partition( mapC, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, standard.duration, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
@@ -201,9 +201,9 @@ public class IoaUtilsTest
     IoaUtils1_1.populateContinuous( standard, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils1_1.partition( mapD, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, standard.duration, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils1_1.partition( mapC, standard.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, standard.duration, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
@@ -242,9 +242,9 @@ public class IoaUtilsTest
     IoaUtils1_1.populateContinuous( multi, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils1_1.partition( mapD, multi.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, multi.duration, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils1_1.partition( mapC, multi.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, multi.duration, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
@@ -283,9 +283,9 @@ public class IoaUtilsTest
     IoaUtils1_1.populateContinuous( zero_len, mapC );
 
     KeyToInterval actualDiscrete =
-        IoaUtils1_1.partition( mapD, zero_len.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapD, zero_len.duration, blockSize );
     KeyToInterval actualContinuous =
-        IoaUtils1_1.partition( mapC, zero_len.totalTimeMillis, blockSize );
+        IoaUtils1_1.partition( mapC, zero_len.duration, blockSize );
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
