@@ -144,7 +144,7 @@ public class InitSQLiteTables
   private static void evo1_1_add_versioning() throws Exception
   {
     // figure out if this evolution has been executed yet
-    String pragmaSchemas = "SELECT name FROM sqlite_master WHERE type='table' AND name='schemas_v1_1'";
+    String pragmaSchemas = "SELECT name FROM sqlite_master WHERE type='table' AND name='schema_versions_v1_1'";
     AtomicBoolean tableExists = new AtomicBoolean( false );
 
     SqliteDao.query( pragmaSchemas, Lists.newArrayList(), rs -> {
@@ -190,9 +190,9 @@ public class InitSQLiteTables
             + "FOREIGN KEY (schema_uuid) REFERENCES schema_versions_v1_1(uuid) )";
 
     String createBehaviorVersions =
-        "CREATE TABLE IF NOT EXISTS behavior_versions_v1_1 ("
+        "CREATE TABLE IF behavior_versions_v1_1 ("
             + "behavior_uuid TEXT NOT NULL,"
-            + "skema_version_uuid TEXT NOT NULL,"
+            + "schema_version_uuid TEXT NOT NULL,"
             + "k CHAR(1) NOT NULL,"
             + "description TEXT NOT NULL,"
             + "archived INTEGER NOT NULL,"

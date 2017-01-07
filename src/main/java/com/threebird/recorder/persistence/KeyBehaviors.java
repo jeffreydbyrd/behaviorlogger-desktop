@@ -32,7 +32,7 @@ public class KeyBehaviors
             + "FROM " + BEHAVIORS_TBL + " AS b"
             + "  JOIN " + BEHAVIOR_VERSIONS_TBL + " AS bv"
             + "  ON b.uuid = bv.behavior_uuid "
-            + "WHERE bv.skema_version_uuid = ?";
+            + "WHERE bv.schema_version_uuid = ?";
 
     Set< KeyBehaviorMapping > mappings = Sets.newHashSet();
 
@@ -69,7 +69,7 @@ public class KeyBehaviors
     
     // Insert new entry in behavior_versions
     String sql = 
-        "INSERT INTO " + BEHAVIOR_VERSIONS_TBL + " (behavior_uuid, skema_version_uuid, k, description, archived)";
+        "INSERT INTO " + BEHAVIOR_VERSIONS_TBL + " (behavior_uuid, schema_version_uuid, k, description, archived) VALUES (?,?,?,?,?)";
     
     List< Object > params =
         Lists.newArrayList( mapping.uuid, schema.versionUuid, mapping.key.c + "", mapping.description, mapping.archived );
