@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import javafx.scene.layout.VBox;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMap;
@@ -17,8 +14,9 @@ import com.google.common.collect.Multiset;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
 import com.threebird.recorder.persistence.WriteIoaTimeWindows;
-import com.threebird.recorder.persistence.recordings.StartEndTimes;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 import com.threebird.recorder.utils.ioa.IntervalCalculations;
 import com.threebird.recorder.utils.ioa.IoaMethod;
@@ -26,6 +24,8 @@ import com.threebird.recorder.utils.ioa.KeyToInterval;
 import com.threebird.recorder.utils.ioa.TimeWindowCalculations;
 import com.threebird.recorder.views.ioa.IoaTimeBlockSummary;
 import com.threebird.recorder.views.ioa.IoaTimeWindowSummary;
+
+import javafx.scene.layout.VBox;
 
 public class IoaUtils1_1
 {
@@ -87,19 +87,18 @@ public class IoaUtils1_1
   {
     ImmutableMap< String, BehaviorBean1_1 > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
 
-    for (Entry< String, ArrayList< StartEndTimes > > entry : stream1.continuousEvents.entrySet()) {
-      String buuid = entry.getKey();
+    for (ContinuousEvent ce : stream1.continuousEvents) {
+      String buuid = ce.behaviorUuid;
       String key = behaviors.get( buuid ).key.toString();
 
       if (!map1.containsKey( key )) {
         map1.put( key, Lists.newArrayList() );
       }
-      for (StartEndTimes startEndTimes : entry.getValue()) {
-        int start = startEndTimes.start / 1000;
-        int end = startEndTimes.end / 1000;
-        for (int t = start; t <= end; t += 1) {
-          map1.get( key ).add( t );
-        }
+
+      int start = ce.startTime / 1000;
+      int end = ce.endTime / 1000;
+      for (int t = start; t <= end; t += 1) {
+        map1.get( key ).add( t );
       }
     }
   }
@@ -110,18 +109,16 @@ public class IoaUtils1_1
   public static void populateDiscrete( SessionBean1_1 stream1, HashMap< String, ArrayList< Integer > > map1 )
   {
     ImmutableMap< String, BehaviorBean1_1 > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
-    
-    for (Entry< String, ArrayList< Integer > > entry : stream1.discreteEvents.entrySet()) {
-      String buuid = entry.getKey();
+
+    for (DiscreteEvent de : stream1.discreteEvents) {
+      String buuid = de.behaviorUuid;
       String key = behaviors.get( buuid ).key.toString();
 
       if (!map1.containsKey( key )) {
         map1.put( key, Lists.newArrayList() );
       }
-      for (Integer t : entry.getValue()) {
-        int seconds = t / 1000;
-        map1.get( key ).add( seconds );
-      }
+
+      map1.get( key ).add( de.time / 1000 );
     }
   }
 

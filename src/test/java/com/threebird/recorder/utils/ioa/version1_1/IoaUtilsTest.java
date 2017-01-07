@@ -14,24 +14,29 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.threebird.recorder.persistence.GsonUtils;
-import com.threebird.recorder.persistence.recordings.StartEndTimes;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SchemaBean1_1;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 import com.threebird.recorder.utils.ioa.KeyToInterval;
-import com.threebird.recorder.utils.ioa.version1_1.IoaUtils1_1;
 
 public class IoaUtilsTest
 {
   static SessionBean1_1 standard = new SessionBean1_1();
   static {
     standard.duration = 6000;
-    standard.discreteEvents = Maps.newHashMap();
-    standard.continuousEvents = Maps.newHashMap();
-    standard.discreteEvents.put( "d", Lists.newArrayList( 0, 1000, 1100, 3000, 3100 ) );
-    standard.continuousEvents.put( "c",
-                                   Lists.newArrayList( new StartEndTimes( 0, 1100 ),
-                                                       new StartEndTimes( 3100, 3900 ) ) );
+    standard.discreteEvents = Lists.newArrayList();
+    standard.continuousEvents = Lists.newArrayList();
+
+    standard.discreteEvents.add( new DiscreteEvent("event-one", "d", 0 ) );
+    standard.discreteEvents.add( new DiscreteEvent( "event-two", "d", 1000 ) );
+    standard.discreteEvents.add( new DiscreteEvent( "event-three", "d", 1100 ) );
+    standard.discreteEvents.add( new DiscreteEvent( "event-four", "d", 3000 ) );
+    standard.discreteEvents.add( new DiscreteEvent( "event-five", "d", 3100 ) );
+
+    standard.continuousEvents.add( new ContinuousEvent( "event-six", "c", 0, 1100 ) );
+    standard.continuousEvents.add( new ContinuousEvent( "event-seven", "c", 3100, 3900 ) );
 
     standard.schema = new SchemaBean1_1();
     standard.schema.behaviors = Lists.newArrayList();
@@ -42,9 +47,9 @@ public class IoaUtilsTest
   static SessionBean1_1 empty = new SessionBean1_1();
   static {
     empty.duration = 6000;
-    empty.discreteEvents = Maps.newHashMap();
-    empty.continuousEvents = Maps.newHashMap();
-    
+    empty.discreteEvents = Lists.newArrayList();
+    empty.continuousEvents = Lists.newArrayList();
+
     empty.schema = new SchemaBean1_1();
     empty.schema.behaviors = Lists.newArrayList();
     empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
@@ -54,13 +59,23 @@ public class IoaUtilsTest
   static SessionBean1_1 multi = new SessionBean1_1();
   static {
     multi.duration = 10000;
-    multi.discreteEvents = Maps.newHashMap();
-    multi.continuousEvents = Maps.newHashMap();
-    multi.discreteEvents.put( "a", Lists.newArrayList( 0, 1000, 1100, 3000, 3100, 7000, 8000 ) );
-    multi.discreteEvents.put( "b", Lists.newArrayList( 2000, 2100, 4000, 9000 ) );
-    multi.continuousEvents.put( "c", Lists.newArrayList( new StartEndTimes( 3000, 6100 ) ) );
-    multi.continuousEvents.put( "d", Lists.newArrayList( new StartEndTimes( 5000, 8100 ) ) );
-    
+    multi.discreteEvents = Lists.newArrayList();
+    multi.continuousEvents = Lists.newArrayList();
+
+    multi.discreteEvents.add( new DiscreteEvent( "event-one", "a", 0 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-two", "a", 1000 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-three", "a", 1100 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-four", "a", 3000 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-five", "a", 3100 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-six", "a", 7000 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-seven", "a", 8000 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-eight", "b", 2000 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-nine", "b", 2100 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-ten", "b", 4000 ) );
+    multi.discreteEvents.add( new DiscreteEvent( "event-eleven", "b", 9000 ) );
+    multi.continuousEvents.add( new ContinuousEvent( "event-twelve", "c", 3000, 6100 ) );
+    multi.continuousEvents.add( new ContinuousEvent( "event-thirteen", "d", 5000, 8100 ) );
+
     multi.schema = new SchemaBean1_1();
     multi.schema.behaviors = Lists.newArrayList();
     multi.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "apple", false, false ) );
@@ -68,12 +83,12 @@ public class IoaUtilsTest
     multi.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "cucumber", true, false ) );
     multi.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "date", true, false ) );
   }
-  
+
   static SessionBean1_1 zero_len = new SessionBean1_1();
   static {
     zero_len.duration = 0;
-    zero_len.discreteEvents = Maps.newHashMap();
-    zero_len.continuousEvents = Maps.newHashMap();
+    zero_len.discreteEvents = Lists.newArrayList();
+    zero_len.continuousEvents = Lists.newArrayList();
     zero_len.schema = new SchemaBean1_1();
     zero_len.schema.behaviors = Lists.newArrayList();
     zero_len.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
@@ -81,7 +96,7 @@ public class IoaUtilsTest
 
   @Test public void deserialize_standard() throws Exception
   {
-    URL url = IoaUtilsTest.class.getResource( "test-0.raw" );
+    URL url = IoaUtilsTest.class.getResource( "test-0.json" );
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
@@ -92,7 +107,7 @@ public class IoaUtilsTest
 
   @Test public void deserialize_empty() throws Exception
   {
-    URL url = IoaUtilsTest.class.getResource( "test-empty.raw" );
+    URL url = IoaUtilsTest.class.getResource( "test-empty.json" );
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
@@ -103,7 +118,7 @@ public class IoaUtilsTest
 
   @Test public void deserialize_multi() throws Exception
   {
-    URL url = IoaUtilsTest.class.getResource( "test-1.raw" );
+    URL url = IoaUtilsTest.class.getResource( "test-1.json" );
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
@@ -272,7 +287,7 @@ public class IoaUtilsTest
     assertEquals( expected1, actualDiscrete );
     assertEquals( expected2, actualContinuous );
   }
-  
+
   @Test public void partition_zero_length_blockSize_1()
   {
     int blockSize = 1;

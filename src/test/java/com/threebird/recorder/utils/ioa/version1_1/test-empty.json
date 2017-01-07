@@ -1,5 +1,5 @@
 {
-  "streamUuid": "bec7236a-7b24-43ba-be1a-46b49b62ab39",
+  "uuid": "bec7236a-7b24-43ba-be1a-46b49b62ab39",
   "blVersion":1,
   "schema": {
     "uuid": "5640ec5b-1293-4c05-b096-381c80c1c19c",
@@ -10,40 +10,29 @@
       	"uuid":"d",
         "key": "d",
         "name": "discrete",
-        "isContinuous": false
+        "isContinuous": false,
+        "archived":false
       },
       {
       	"uuid":"c",
         "key": "c",
         "name": "continuous",
-        "isContinuous": true
+        "isContinuous": true,
+        "archived":false
       }
     ],
-    "sessionDirectory": "/tmp",
-    "duration": 300,
+    "duration": 30000,
     "pause": false,
     "color": true,
-    "sound": false
+    "sound": false,
+    "archived":false
   },
   "observer": "SP",
   "therapist": "CSP",
   "condition": "Escape",
   "sessionNumber": 0,
-  "totalTimeMillis": 6000,
+  "duration": 6000,
   "notes": "",
-  "discreteEvents": {
-  	"d": [0, 1000, 1100, 3000, 3100]
-  },
-  "continuousEvents": {
-  	"c": [
-  	  {
-  	    "start":0,
-  	    "end":1100
-  	  },
-  	  {
-  	    "start":3100,
-  	    "end":3900
-  	  }
-  	]
-  }
+  "discreteEvents": [],
+  "continuousEvents": []
 }
