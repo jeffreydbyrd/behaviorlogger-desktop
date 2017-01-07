@@ -179,7 +179,9 @@ public class RecordingController
     SchemaVersion schema = SchemasManager.getSelected();
 
     for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
-      initializeBehaviorCountBox( kbm );
+      if (!kbm.archived) {
+        initializeBehaviorCountBox( kbm );
+      }
     }
   }
 
@@ -526,7 +528,10 @@ public class RecordingController
     MappableChar.getForKeyCode( code ).ifPresent( mc -> {
       SchemaVersion schema = SchemasManager.getSelected();
       if (schema.behaviors.containsKey( mc )) {
-        logBehavior( schema.behaviors.get( mc ) );
+        KeyBehaviorMapping kbm = schema.behaviors.get( mc );
+        if (!kbm.archived) {
+          logBehavior( schema.behaviors.get( mc ) );
+        }
       } else if (manager.unknowns.containsKey( mc )) {
         logBehavior( manager.unknowns.get( mc ) );
       } else {

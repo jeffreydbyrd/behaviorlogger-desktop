@@ -21,15 +21,6 @@ public class Schemas
 {
   private static final String TBL_NAME = "schema_versions_v1_1";
 
-  public static boolean hasChanged( SchemaVersion schema ) throws Exception
-  {
-    Optional< SchemaVersion > current = getLatestForUuid( schema.uuid );
-
-    Preconditions.checkState( current.isPresent() );
-
-    return SchemaVersion.isDifferent( schema, current.get() );
-  }
-
   /**
    * Saves the given schema in the 'schema_versions' table. Also adds all related behaviors to the key_behaviors table
    * 
@@ -37,14 +28,16 @@ public class Schemas
    */
   public static void save( SchemaVersion schema ) throws Exception
   {
+    schema.versionUuid = UUID.randomUUID().toString();
+    
     if (schema.versionNumber == null) {
       schema.versionNumber = 1;
+    } else {
+      schema.versionNumber = schema.versionNumber + 1;
     }
+    
     if (schema.uuid == null) {
       schema.uuid = UUID.randomUUID().toString();
-    }
-    if (schema.versionUuid == null) {
-      schema.versionUuid = UUID.randomUUID().toString();
     }
 
     String sql =

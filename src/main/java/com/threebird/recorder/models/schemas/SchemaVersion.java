@@ -1,7 +1,6 @@
 package com.threebird.recorder.models.schemas;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.collect.Maps;
@@ -26,60 +25,98 @@ public class SchemaVersion
   {
     return "SchemaVersion [uuid=" + uuid + ", versionUuid=" + versionUuid + ", versionNumber=" + versionNumber
         + ", parentVersionSet=" + parentVersionSet + ", client=" + client + ", project=" + project + ", duration="
-        + duration + ", pause=" + pause + ", color=" + color + ", sound=" + sound + ", behaviors=" + behaviors
-        + ", archived=" + archived + "]";
+        + duration + ", pause=" + pause + ", color=" + color + ", sound=" + sound + ", archived=" + archived
+        + ", behaviors=" + behaviors + "]";
   }
 
-  private static boolean isDifferent( HashMap< MappableChar, KeyBehaviorMapping > m1,
-                                      HashMap< MappableChar, KeyBehaviorMapping > m2 )
+  @Override public int hashCode()
   {
-    if (!m1.keySet().equals( m2.keySet() )) {
-      return true;
-    }
-    
-    for (Entry< MappableChar, KeyBehaviorMapping > e : m1.entrySet()) {
-      KeyBehaviorMapping kbm1 = e.getValue();
-      KeyBehaviorMapping kbm2 = m2.get( e.getKey() );
-      
-      if (KeyBehaviorMapping.isDifferent( kbm1, kbm2 )) {
-        return true;
-      }
-    }
-
-    return false;
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((archived == null) ? 0 : archived.hashCode());
+    result = prime * result + ((behaviors == null) ? 0 : behaviors.hashCode());
+    result = prime * result + ((client == null) ? 0 : client.hashCode());
+    result = prime * result + ((color == null) ? 0 : color.hashCode());
+    result = prime * result + ((duration == null) ? 0 : duration.hashCode());
+    result = prime * result + ((parentVersionSet == null) ? 0 : parentVersionSet.hashCode());
+    result = prime * result + ((pause == null) ? 0 : pause.hashCode());
+    result = prime * result + ((project == null) ? 0 : project.hashCode());
+    result = prime * result + ((sound == null) ? 0 : sound.hashCode());
+    result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+    result = prime * result + ((versionNumber == null) ? 0 : versionNumber.hashCode());
+    result = prime * result + ((versionUuid == null) ? 0 : versionUuid.hashCode());
+    return result;
   }
-  
-    public static boolean isDifferent( SchemaVersion s1, SchemaVersion s2 )
-    {
-      if (!s1.uuid.equals( s2.uuid )) {
-        return true;
-      }
-      if (!s1.client.equals( s2.client )) {
-        return true;
-      }
-      if (!s1.project.equals( s2.project )) {
-        return true;
-      }
-      if (!s1.duration.equals( s2.duration )) {
-        return true;
-      }
-      if (!s1.pause.equals( s2.pause )) {
-        return true;
-      }
-      if (!s1.color.equals( s2.color )) {
-        return true;
-      }
-      if (!s1.sound.equals( s2.sound )) {
-        return true;
-      }
-      if (!s1.archived.equals( s2.archived )) {
-        return true;
-      }
-  
-      if (isDifferent( s1.behaviors, s2.behaviors )) {
-        return true;
-      }
-  
+
+  @Override public boolean equals( Object obj )
+  {
+    if (this == obj)
+      return true;
+    if (obj == null)
       return false;
-    }
+    if (getClass() != obj.getClass())
+      return false;
+    SchemaVersion other = (SchemaVersion) obj;
+    if (archived == null) {
+      if (other.archived != null)
+        return false;
+    } else if (!archived.equals( other.archived ))
+      return false;
+    if (behaviors == null) {
+      if (other.behaviors != null)
+        return false;
+    } else if (!behaviors.equals( other.behaviors ))
+      return false;
+    if (client == null) {
+      if (other.client != null)
+        return false;
+    } else if (!client.equals( other.client ))
+      return false;
+    if (color == null) {
+      if (other.color != null)
+        return false;
+    } else if (!color.equals( other.color ))
+      return false;
+    if (duration == null) {
+      if (other.duration != null)
+        return false;
+    } else if (!duration.equals( other.duration ))
+      return false;
+    if (parentVersionSet == null) {
+      if (other.parentVersionSet != null)
+        return false;
+    } else if (!parentVersionSet.equals( other.parentVersionSet ))
+      return false;
+    if (pause == null) {
+      if (other.pause != null)
+        return false;
+    } else if (!pause.equals( other.pause ))
+      return false;
+    if (project == null) {
+      if (other.project != null)
+        return false;
+    } else if (!project.equals( other.project ))
+      return false;
+    if (sound == null) {
+      if (other.sound != null)
+        return false;
+    } else if (!sound.equals( other.sound ))
+      return false;
+    if (uuid == null) {
+      if (other.uuid != null)
+        return false;
+    } else if (!uuid.equals( other.uuid ))
+      return false;
+    if (versionNumber == null) {
+      if (other.versionNumber != null)
+        return false;
+    } else if (!versionNumber.equals( other.versionNumber ))
+      return false;
+    if (versionUuid == null) {
+      if (other.versionUuid != null)
+        return false;
+    } else if (!versionUuid.equals( other.versionUuid ))
+      return false;
+    return true;
+  }
 }

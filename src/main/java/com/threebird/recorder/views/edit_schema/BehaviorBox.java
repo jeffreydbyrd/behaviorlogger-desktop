@@ -46,15 +46,16 @@ public class BehaviorBox extends VBox
   private TextField keyField;
   private TextField descField;
 
-  private Button deleteBtn = new Button( "delete" );
+  private Button archiveBtn = new Button( "archive" );
   private Button editBtn = new Button( "edit" );
-  private Button undoBtn = new Button( "undo" );
-  private HBox actionBox = new HBox( deleteBtn, editBtn );
+  private Button reviveBtn = new Button( "revive" );
+  private HBox actionBox = new HBox( archiveBtn, editBtn );
 
   public BehaviorBox( String uuid,
                       MappableChar key,
                       String description,
                       boolean isContinuous,
+                      boolean archived,
                       Supplier< List< BehaviorBox > > getOthers )
   {
     super();
@@ -63,7 +64,7 @@ public class BehaviorBox extends VBox
     this.isContinuousProp = new SimpleBooleanProperty( isContinuous );
     this.keyProp = new SimpleStringProperty( key.c + "" );
     this.descriptionProp = new SimpleStringProperty( description );
-    this.archivedProp = new SimpleBooleanProperty( false );
+    this.archivedProp = new SimpleBooleanProperty( archived );
     keyText = new Label( key.c + "" );
     descText = new Label( description );
     keyField = new TextField( key.c + "" );
@@ -78,8 +79,8 @@ public class BehaviorBox extends VBox
     keyField.setMaxWidth( 44 );
     descField.setMinWidth( 80 );
     editBtn.setMinWidth( 40 );
-    deleteBtn.setMinWidth( 50 );
-    undoBtn.setMinWidth( 40 );
+    archiveBtn.setMinWidth( 50 );
+    reviveBtn.setMinWidth( 40 );
     actionBox.setNodeOrientation( NodeOrientation.RIGHT_TO_LEFT );
     HBox.setHgrow( descText, Priority.ALWAYS );
     HBox.setHgrow( descField, Priority.ALWAYS );
@@ -92,8 +93,8 @@ public class BehaviorBox extends VBox
 
     Font font = Font.font( 12 );
     editBtn.setFont( font );
-    deleteBtn.setFont( font );
-    undoBtn.setFont( font );
+    archiveBtn.setFont( font );
+    reviveBtn.setFont( font );
 
     hbox.getChildren().addAll( keyText, separator, descText, actionBox );
     this.getChildren().addAll( hbox );
@@ -101,18 +102,13 @@ public class BehaviorBox extends VBox
     this.setOnMouseEntered( evt -> this.setStyle( "-fx-background-color:#e0e0e0;" ) );
     this.setOnMouseExited( evt -> this.setStyle( "" ) );
 
-    // Setup delete button
-    deleteBtn.setOnAction( e -> {
-      archivedProp.setValue( true );
-      actionBox.getChildren().clear();
-      actionBox.getChildren().addAll( undoBtn, editBtn );
-      editBtn.setVisible( false );
-      keyText.setDisable( true );
-      descText.setDisable( true );
-      undoBtn.requestFocus();
+    // Setup archive button
+    archiveBtn.setOnAction( e -> {
+      deactivateBox();
     } );
 
-    undoBtn.setOnAction( e -> {
+    // setup revive button
+    reviveBtn.setOnAction( e -> {
       if (isTaken( getKey(), getOthers.get() )) {
         e.consume();
         displayKeyTakenLabel();
@@ -121,12 +117,17 @@ public class BehaviorBox extends VBox
 
       archivedProp.setValue( false );
       actionBox.getChildren().clear();
-      actionBox.getChildren().addAll( deleteBtn, editBtn );
+      actionBox.getChildren().addAll( archiveBtn, editBtn );
       editBtn.setVisible( true );
       keyText.setDisable( false );
       descText.setDisable( false );
-      deleteBtn.requestFocus();
+      archiveBtn.requestFocus();
     } );
+
+    // If already archived, then click the archive btn
+    if (archived) {
+      deactivateBox();
+    }
 
     // Setup Edit Stuff
     SimpleBooleanProperty editingProp = new SimpleBooleanProperty( false );
@@ -216,6 +217,17 @@ public class BehaviorBox extends VBox
       timer.getKeyFrames().add( kf );
       timer.play();
     }
+  }
+
+  private void deactivateBox()
+  {
+    archivedProp.setValue( true );
+    actionBox.getChildren().clear();
+    actionBox.getChildren().addAll( reviveBtn, editBtn );
+    editBtn.setVisible( false );
+    keyText.setDisable( true );
+    descText.setDisable( true );
+    reviveBtn.requestFocus();
   }
 
   private boolean isTaken( MappableChar c, List< BehaviorBox > boxes )

@@ -41,14 +41,18 @@ public class KeyBehaviorMapping
 
   @Override public String toString()
   {
-    return "KeyBehaviorMapping [key=" + key + ", behavior=" + description
-        + ", isContinuous=" + isContinuous + "]";
+    return "KeyBehaviorMapping [uuid=" + uuid + ", key=" + key + ", description=" + description + ", isContinuous="
+        + isContinuous + ", archived=" + archived + "]";
   }
 
   @Override public int hashCode()
   {
     final int prime = 31;
     int result = 1;
+    result = prime * result + (archived ? 1231 : 1237);
+    result = prime * result + ((description == null) ? 0 : description.hashCode());
+    result = prime * result + (isContinuous ? 1231 : 1237);
+    result = prime * result + ((key == null) ? 0 : key.hashCode());
     result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
     return result;
   }
@@ -62,26 +66,22 @@ public class KeyBehaviorMapping
     if (getClass() != obj.getClass())
       return false;
     KeyBehaviorMapping other = (KeyBehaviorMapping) obj;
+    if (archived != other.archived)
+      return false;
+    if (description == null) {
+      if (other.description != null)
+        return false;
+    } else if (!description.equals( other.description ))
+      return false;
+    if (isContinuous != other.isContinuous)
+      return false;
+    if (key != other.key)
+      return false;
     if (uuid == null) {
       if (other.uuid != null)
         return false;
     } else if (!uuid.equals( other.uuid ))
       return false;
     return true;
-  }
-
-  public static boolean isDifferent( KeyBehaviorMapping kbm1, KeyBehaviorMapping kbm2 )
-  {
-    if (!kbm1.key.equals( kbm2.key )) {
-      return true;
-    }
-    if (!kbm1.description.equals( kbm2.description )) {
-      return true;
-    }
-    if (kbm1.isContinuous != kbm2.isContinuous) {
-      return true;
-    }
-
-    return false;
   }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
@@ -190,7 +189,7 @@ public class EditSchemaController
   {
     // Add BehaviorBoxes for existing behavior-mappings
     for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
-      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.key, kbm.description, kbm.isContinuous, this::getBehaviorBoxes );
+      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.key, kbm.description, kbm.isContinuous, kbm.archived, this::getBehaviorBoxes );
       if (kbm.isContinuous) {
         this.continuousBoxes.getChildren().add( bb );
       } else {
@@ -339,12 +338,11 @@ public class EditSchemaController
       descriptionField.setStyle( "" );
     }
 
-    String uuid = UUID.randomUUID().toString();
     MappableChar key = MappableChar.getForString( keyField.getText() ).get(); // This shouldn't be empty
     String behavior = descriptionField.getText();
     boolean isCont = contCheckbox.isSelected();
 
-    BehaviorBox bb = new BehaviorBox( uuid, key, behavior, isCont, this::getBehaviorBoxes );
+    BehaviorBox bb = new BehaviorBox( null, key, behavior, isCont, false, this::getBehaviorBoxes );
     if (contCheckbox.isSelected()) {
       this.continuousBoxes.getChildren().add( bb );
     } else {
