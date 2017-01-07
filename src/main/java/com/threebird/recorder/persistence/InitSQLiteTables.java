@@ -190,7 +190,7 @@ public class InitSQLiteTables
             + "FOREIGN KEY (schema_uuid) REFERENCES schema_versions_v1_1(uuid) )";
 
     String createBehaviorVersions =
-        "CREATE TABLE IF behavior_versions_v1_1 ("
+        "CREATE TABLE behavior_versions_v1_1 ("
             + "behavior_uuid TEXT NOT NULL,"
             + "schema_version_uuid TEXT NOT NULL,"
             + "k CHAR(1) NOT NULL,"

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.google.common.io.Files;
+import com.threebird.recorder.models.PositionManager;
 import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.utils.resources.ResourceUtils;
 
@@ -50,5 +51,9 @@ public class CreateResources
 
     // Update the Preferences time since we used to store it in seconds.
     PreferencesManager.saveDuration( PreferencesManager.getDuration() * 1000 );
+    
+    // Resize the main window because the original default was too small
+    PositionManager.mainWidthProperty().set( 900 );
+    PositionManager.mainHeightProperty().set( 700 );
   }
 }
