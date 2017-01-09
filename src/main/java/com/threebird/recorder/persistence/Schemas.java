@@ -1,12 +1,10 @@
 package com.threebird.recorder.persistence;
 
-import java.sql.ResultSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
@@ -28,16 +26,24 @@ public class Schemas
    */
   public static void save( SchemaVersion schema ) throws Exception
   {
-    schema.versionUuid = UUID.randomUUID().toString();
-    
-    if (schema.versionNumber == null) {
-      schema.versionNumber = 1;
+    // Validate UUIDs
+    UUID.fromString( schema.uuid );
+    UUID.fromString( schema.versionUuid );
+
+    // Validate version number
+    List< SchemaVersion > versionset = getVersionSet( schema.uuid );
+    int expected;
+    if (versionset.isEmpty()) {
+      expected = 1;
     } else {
-      schema.versionNumber = schema.versionNumber + 1;
+      expected = versionset.get( versionset.size() - 1 ).versionNumber + 1;
     }
-    
-    if (schema.uuid == null) {
-      schema.uuid = UUID.randomUUID().toString();
+    if (schema.versionNumber != expected) {
+      String msg = String.format( "Failed to save schema %s: versionNumber=%d but expected %d",
+                                  schema.uuid,
+                                  schema.versionNumber,
+                                  expected );
+      throw new IllegalArgumentException( msg );
     }
 
     String sql =
@@ -59,73 +65,6 @@ public class Schemas
     for (KeyBehaviorMapping mapping : schema.behaviors.values()) {
       KeyBehaviors.save( schema, mapping );
     }
-  }
-
-  /**
-   * Returns an Optional containing the schema associated with this uuid, or empty if there is none. This method
-   * will return an archived schema also.
-   * 
-   * @throws Exception
-   */
-  public static Optional< SchemaVersion > getLatestForUuid( String uuid ) throws Exception
-  {
-    String sql = "SELECT * "
-        + " FROM " + TBL_NAME
-        + " WHERE"
-        + "  version_number = (SELECT MAX(version_number) FROM " + TBL_NAME + " WHERE uuid = ?)"
-        + "  AND uuid = ?";
-    List< Object > params = Lists.newArrayList( uuid, uuid );
-
-    SchemaVersion s = new SchemaVersion();
-
-    SqlCallback handle = ( ResultSet rs ) -> {
-      int counter = 0;
-      while (rs.next()) {
-        Preconditions.checkState( counter < 2 ); // this should never go higher than 1 iteration
-        s.uuid = rs.getString( "uuid" );
-        s.versionUuid = rs.getString( "version_uuid" );
-        s.versionNumber = rs.getInt( "version_number" );
-        s.client = rs.getString( "client" );
-        s.project = rs.getString( "project" );
-        s.duration = rs.getInt( "duration" );
-        s.color = rs.getBoolean( "color_on_end" );
-        s.pause = rs.getBoolean( "pause_on_end" );
-        s.sound = rs.getBoolean( "sound_on_end" );
-        s.archived = rs.getBoolean( "archived" );
-
-        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
-        s.behaviors = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
-
-        counter++;
-      }
-    };
-
-    SqliteDao.query( sql, params, handle );
-
-    if (s.uuid == null) {
-      return Optional.empty();
-    }
-
-    return Optional.of( s );
-  }
-
-  public static boolean isArchived( String uuid ) throws Exception
-  {
-    String sql = "SELECT 1 "
-        + "FROM " + TBL_NAME
-        + "WHERE"
-        + "  version = (SELECT MAX(version) FROM " + TBL_NAME + " WHERE uuid = ?)"
-        + "  AND archived = 1";
-    List< Object > params = Lists.newArrayList( uuid );
-    AtomicBoolean isArchived = new AtomicBoolean( false );
-
-    SqlCallback handle = ( ResultSet rs ) -> {
-      isArchived.set( true );
-    };
-
-    SqliteDao.query( sql, params, handle );
-
-    return isArchived.get();
   }
 
   /**
@@ -165,5 +104,78 @@ public class Schemas
     SqliteDao.query( sql, Lists.newArrayList(), callback );
 
     return result;
+  }
+
+  public static List< SchemaVersion > getVersionSet( String schemaId ) throws Exception
+  {
+    String sql = "SELECT * FROM schema_versions_v1_1 WHERE version_uuid = ? ORDER BY version_number ASC";
+    List< SchemaVersion > result = Lists.newArrayList();
+
+    SqlCallback callback = rs -> {
+      while (rs.next()) {
+        SchemaVersion s = new SchemaVersion();
+        s.uuid = rs.getString( "uuid" );
+        s.versionUuid = rs.getString( "version_uuid" );
+        s.versionNumber = rs.getInt( "version_number" );
+        s.client = rs.getString( "client" );
+        s.project = rs.getString( "project" );
+        s.duration = rs.getInt( "duration" );
+        s.color = rs.getBoolean( "color_on_end" );
+        s.pause = rs.getBoolean( "pause_on_end" );
+        s.sound = rs.getBoolean( "sound_on_end" );
+        s.archived = rs.getBoolean( "archived" );
+
+        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
+        s.behaviors = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
+
+        result.add( s );
+      }
+    };
+
+    SqliteDao.query( sql, Lists.newArrayList(), callback );
+
+    return result;
+  }
+
+  public static void saveVersionset( List< SchemaVersion > versionset ) throws Exception
+  {
+    if (versionset.size() == 0) {
+      return;
+    }
+
+    String schemaId = versionset.get( 0 ).uuid;
+
+    // Validate that these are all the same schema
+    for (SchemaVersion sv : versionset) {
+      if (!sv.uuid.equals( schemaId )) {
+        String msg =
+            String.format( "Received Schema version where UUID=%s, but first version had UUID=%s", sv.uuid, schemaId );
+        throw new IllegalArgumentException( msg );
+      }
+    }
+
+    // Validate schemaId (throws IllegalArgumentException if invalid)
+    UUID.fromString( schemaId );
+
+    // Get the current version-set IDs
+    List< SchemaVersion > currentVersionset = getVersionSet( schemaId );
+
+    List< Object > currentIds =
+        currentVersionset.stream().map( sv -> sv.versionUuid ).collect( Collectors.toList() );
+
+    // Delete old behavior_versions
+    String placeholders = currentIds.stream().map( s -> "?" ).collect( Collectors.joining( "," ) );
+    String deleteSql = "DELETE FROM behavior_versions_v1_1 WHERE schema_version_uuid IN (" + placeholders + ")";
+    SqliteDao.update( deleteSql, currentIds, SqlCallback.NOOP );
+
+    // Delete old behaviors
+    deleteSql = "DELETE FROM behaviors_v1_1 WHERE schema_uuid=?";
+    SqliteDao.update( deleteSql );
+
+    // Incrementally add new version-sets
+    Collections.sort( versionset, ( sv1, sv2 ) -> sv1.versionNumber - sv2.versionNumber );
+    for (SchemaVersion sv : versionset) {
+      save( sv );
+    }
   }
 }

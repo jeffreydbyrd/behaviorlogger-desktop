@@ -1,5 +1,7 @@
 package com.threebird.recorder.models.schemas;
 
+import java.util.UUID;
+
 import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 
@@ -37,6 +39,18 @@ public class SchemasManager
     }
 
     return null;
+  }
+  
+  public static void save(SchemaVersion sv) throws Exception {
+    if (sv.uuid == null) {
+      sv.uuid = UUID.randomUUID().toString();
+      sv.versionNumber = 0;
+    }
+    
+    sv.uuid = UUID.randomUUID().toString();
+    sv.versionNumber++;
+    
+    Schemas.save( sv );
   }
 
   /**

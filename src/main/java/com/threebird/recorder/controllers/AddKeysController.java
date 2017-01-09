@@ -18,7 +18,6 @@ import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
-import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
@@ -138,7 +137,7 @@ public class AddKeysController
     } );
 
     try {
-      Schemas.save( schema );
+      SchemasManager.save( schema );
     } catch (Exception e) {
       Alerts.error( "Failed to Save Schema",
                     "The application encountered a problem while trying to save the schema.",

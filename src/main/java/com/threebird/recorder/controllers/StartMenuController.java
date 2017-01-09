@@ -280,37 +280,37 @@ public class StartMenuController
       return;
     }
 
-//    SchemaVersion schema;
-//    try {
-//      schema = GsonUtils.< SchemaVersion > get( newFile, new SchemaVersion() );
-//    } catch (IOException e) {
-//      Alerts.error( "Error Importing Schema", "There was a problem while importing the Schema.", e );
-//      e.printStackTrace();
-//      return;
-//    }
-//
-//    try {
-//      Optional< SchemaVersion > oldOpt = Schemas.getForUuid( schema.uuid );
-//
-//      if (oldOpt.isPresent()) {
-//        SchemaVersion old = oldOpt.get();
-//        if (old.version < schema.version) {
-//          Schemas.update( schema );
-//          SchemasManager.schemas().remove( old );
-//          SchemasManager.schemas().add( schema );
-//        }
-//      } else {
-//        SchemasManager.create( schema );
-//      }
-//      
-//      schemaTable.refresh();
-//      if (!schema.archived) {
-//        schemaTable.getSelectionModel().select( schema );
-//      }
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
-//    }
+    // try {
+    // List< SchemaVersion > versionset = GsonUtils.< List< SchemaVersion > > get( newFile, Lists.newArrayList() );
+    // } catch (IOException e) {
+    // Alerts.error( "Error Importing Schema", "There was a problem while importing the Schema.", e );
+    // e.printStackTrace();
+    // return;
+    // }
+
+    //
+    // try {
+    // Optional< SchemaVersion > oldOpt = Schemas.getForUuid( schema.uuid );
+    //
+    // if (oldOpt.isPresent()) {
+    // SchemaVersion old = oldOpt.get();
+    // if (old.version < schema.version) {
+    // Schemas.update( schema );
+    // SchemasManager.schemas().remove( old );
+    // SchemasManager.schemas().add( schema );
+    // }
+    // } else {
+    // SchemasManager.create( schema );
+    // }
+    //
+    // schemaTable.refresh();
+    // if (!schema.archived) {
+    // schemaTable.getSelectionModel().select( schema );
+    // }
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
+    // }
   }
 
   @FXML private void onExportBtnPressed()

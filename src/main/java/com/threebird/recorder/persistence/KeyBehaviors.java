@@ -43,7 +43,7 @@ public class KeyBehaviors
         String description = rs.getString( "description" );
         boolean isContinuous = rs.getBoolean( "is_continuous" );
         boolean archived = rs.getBoolean( "archived" );
-        
+
         MappableChar ch = MappableChar.getForChar( k.charAt( 0 ) ).get();
         mappings.add( new KeyBehaviorMapping( behaviorUuid, ch, description, isContinuous, archived ) );
       }
@@ -56,24 +56,32 @@ public class KeyBehaviors
 
   public static void save( SchemaVersion schema, KeyBehaviorMapping mapping ) throws Exception
   {
-    if (mapping.uuid == null || mapping.uuid.isEmpty()) {
+    // Validate UUID
+    if (mapping.uuid == null) {
       mapping.uuid = UUID.randomUUID().toString();
+    } else {
+      UUID.fromString( mapping.uuid );
     }
-    
+
     // Create in behaviors if it doesn't exist
     String insertBehavior =
         "INSERT OR IGNORE INTO " + BEHAVIORS_TBL + " (uuid, schema_uuid, is_continuous) VALUES (?,?,?)";
     List< Object > params1 =
         Lists.newArrayList( mapping.uuid, schema.uuid, mapping.isContinuous );
     SqliteDao.update( insertBehavior, params1, SqlCallback.NOOP );
-    
+
     // Insert new entry in behavior_versions
-    String sql = 
-        "INSERT INTO " + BEHAVIOR_VERSIONS_TBL + " (behavior_uuid, schema_version_uuid, k, description, archived) VALUES (?,?,?,?,?)";
-    
+    String sql =
+        "INSERT INTO " + BEHAVIOR_VERSIONS_TBL
+            + " (behavior_uuid, schema_version_uuid, k, description, archived) VALUES (?,?,?,?,?)";
+
     List< Object > params =
-        Lists.newArrayList( mapping.uuid, schema.versionUuid, mapping.key.c + "", mapping.description, mapping.archived );
-    
+        Lists.newArrayList( mapping.uuid,
+                            schema.versionUuid,
+                            mapping.key.c + "",
+                            mapping.description,
+                            mapping.archived );
+
     SqliteDao.update( sql, params, SqlCallback.NOOP );
   }
 }

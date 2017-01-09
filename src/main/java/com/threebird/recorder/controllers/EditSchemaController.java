@@ -20,7 +20,6 @@ import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
-import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.persistence.SessionDirectories;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
@@ -189,7 +188,8 @@ public class EditSchemaController
   {
     // Add BehaviorBoxes for existing behavior-mappings
     for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
-      BehaviorBox bb = new BehaviorBox( kbm.uuid, kbm.key, kbm.description, kbm.isContinuous, kbm.archived, this::getBehaviorBoxes );
+      BehaviorBox bb =
+          new BehaviorBox( kbm.uuid, kbm.key, kbm.description, kbm.isContinuous, kbm.archived, this::getBehaviorBoxes );
       if (kbm.isContinuous) {
         this.continuousBoxes.getChildren().add( bb );
       } else {
@@ -418,7 +418,7 @@ public class EditSchemaController
     boolean newschema = model.uuid == null;
 
     try {
-      Schemas.save( model );
+      SchemasManager.save( model );
       if (newschema) {
         SessionDirectories.create( model.uuid, getDirectory() );
         SchemasManager.schemas().add( model );
@@ -444,7 +444,7 @@ public class EditSchemaController
     Alerts.confirm( "Confirm deletion", null, msg, () -> {
       model.archived = true;
       try {
-        Schemas.save( model );
+        SchemasManager.save( model );
       } catch (Exception e) {
         Alerts.error( "Failed to delete schema", "There was a problem while trying to delete the schema", e );
         e.printStackTrace();
