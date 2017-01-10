@@ -2,9 +2,12 @@ package com.threebird.recorder.controllers;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
@@ -15,6 +18,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.NewVersionManager;
@@ -25,6 +29,7 @@ import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
 import com.threebird.recorder.models.sessions.SessionManager;
 import com.threebird.recorder.persistence.GsonUtils;
+import com.threebird.recorder.persistence.Schemas;
 import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
@@ -271,6 +276,7 @@ public class StartMenuController
 
   @FXML private void onImportSchemaPressed()
   {
+    // Load file
     FileChooser fileChooser = new FileChooser();
     ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
     fileChooser.getExtensionFilters().add( extFilter );
@@ -280,37 +286,71 @@ public class StartMenuController
       return;
     }
 
-    // try {
-    // List< SchemaVersion > versionset = GsonUtils.< List< SchemaVersion > > get( newFile, Lists.newArrayList() );
-    // } catch (IOException e) {
-    // Alerts.error( "Error Importing Schema", "There was a problem while importing the Schema.", e );
-    // e.printStackTrace();
-    // return;
-    // }
+    // Parse into version-set
+    List< SchemaVersion > versionset;
+    try {
+      versionset = GsonUtils.< List< SchemaVersion > > get( newFile, Lists.newArrayList() );
+    } catch (Exception e) {
+      Alerts.error( "Error Importing Schema", "There was a problem while processing the file.", e );
+      e.printStackTrace();
+      return;
+    }
 
-    //
-    // try {
-    // Optional< SchemaVersion > oldOpt = Schemas.getForUuid( schema.uuid );
-    //
-    // if (oldOpt.isPresent()) {
-    // SchemaVersion old = oldOpt.get();
-    // if (old.version < schema.version) {
-    // Schemas.update( schema );
-    // SchemasManager.schemas().remove( old );
-    // SchemasManager.schemas().add( schema );
-    // }
-    // } else {
-    // SchemasManager.create( schema );
-    // }
-    //
-    // schemaTable.refresh();
-    // if (!schema.archived) {
-    // schemaTable.getSelectionModel().select( schema );
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // Alerts.error( "Error saving Schema", "There was a problem while saving your schema.", e );
-    // }
+    if (versionset.isEmpty()) {
+      return;
+    }
+
+    // Check if overwriting existing version-set
+    SchemaVersion newLatest = versionset.get( versionset.size() - 1 );
+    List< SchemaVersion > currentVersionset;
+    try {
+      currentVersionset = Schemas.getVersionSet( newLatest.uuid );
+    } catch (Exception e) {
+      Alerts.error( "Error Importing Schema", "There was a problem loading the current schema.", e );
+      e.printStackTrace();
+      return;
+    }
+    
+    // Check if user wants to overwrite existing versionset
+    AtomicBoolean doContinue = new AtomicBoolean( false );
+    SchemaVersion oldLatest = null;
+    if (!currentVersionset.isEmpty()) {
+      oldLatest = currentVersionset.get( currentVersionset.size() - 1 );
+      String msg =
+          String.format( "Importing this schema will edit an existing schema: %s-%s.",
+                         oldLatest.client,
+                         oldLatest.project );
+      Alerts.confirm( "Confirm update", null, msg, () -> {
+        doContinue.set( true );
+      } );
+    } else {
+      doContinue.set( true );
+    }
+    
+    // If this is new schema, or user denied update, then bail
+    if (!doContinue.get()) {
+      return;
+    }
+
+    // Save verstion-set to DB
+    try {
+      Schemas.saveVersionset( versionset );
+    } catch (Exception e) {
+      Alerts.error( "Error Importing Schema", "There was a problem saving the Schema.", e );
+      e.printStackTrace();
+      return;
+    }
+    
+    // Update the schema table
+    if (oldLatest != null) {
+      SchemasManager.schemas().remove( oldLatest );
+    }
+    SchemasManager.schemas().add( newLatest );
+    
+    schemaTable.refresh();
+    if (!newLatest.archived) {
+      schemaTable.getSelectionModel().select( newLatest );
+    }
   }
 
   @FXML private void onExportBtnPressed()
