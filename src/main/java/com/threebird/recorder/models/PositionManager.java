@@ -39,6 +39,8 @@ public class PositionManager
   private static File file = ResourceUtils.getPositionDetails();
   private static Supplier< GsonBean > defaultModel = Suppliers.memoize( ( ) -> {
     GsonBean bean = new GsonBean();
+    bean.mainWidth = 900;
+    bean.mainHeight = 700;
     try {
       return GsonUtils.get( file, bean );
     } catch (Exception e) {

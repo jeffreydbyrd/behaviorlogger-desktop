@@ -1,9 +1,11 @@
 package com.threebird.recorder.controllers;
 
 import java.awt.Desktop;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,10 +18,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
+import com.google.gson.reflect.TypeToken;
 import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.NewVersionManager;
 import com.threebird.recorder.models.preferences.FilenameComponent;
@@ -289,7 +293,9 @@ public class StartMenuController
     // Parse into version-set
     List< SchemaVersion > versionset;
     try {
-      versionset = GsonUtils.< List< SchemaVersion > > get( newFile, Lists.newArrayList() );
+      Type listType = new TypeToken< ArrayList< SchemaVersion > >() {}.getType();
+      BufferedReader reader = Files.newReader( newFile, Charsets.UTF_8 );
+      versionset = GsonUtils.gson.fromJson( reader, listType );
     } catch (Exception e) {
       Alerts.error( "Error Importing Schema", "There was a problem while processing the file.", e );
       e.printStackTrace();
@@ -310,7 +316,7 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-    
+
     // Check if user wants to overwrite existing versionset
     AtomicBoolean doContinue = new AtomicBoolean( false );
     SchemaVersion oldLatest = null;
@@ -326,13 +332,13 @@ public class StartMenuController
     } else {
       doContinue.set( true );
     }
-    
+
     // If this is new schema, or user denied update, then bail
     if (!doContinue.get()) {
       return;
     }
 
-    // Save verstion-set to DB
+    // Save version-set to DB
     try {
       Schemas.saveVersionset( versionset );
     } catch (Exception e) {
@@ -340,13 +346,13 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-    
+
     // Update the schema table
     if (oldLatest != null) {
       SchemasManager.schemas().remove( oldLatest );
     }
     SchemasManager.schemas().add( newLatest );
-    
+
     schemaTable.refresh();
     if (!newLatest.archived) {
       schemaTable.getSelectionModel().select( newLatest );
@@ -372,7 +378,8 @@ public class StartMenuController
 
     if (result != null) {
       try {
-        GsonUtils.save( result, selected );
+        List< SchemaVersion > versionSet = Schemas.getVersionSet( selected.uuid );
+        GsonUtils.save( result, versionSet );
       } catch (Exception e) {
         Alerts.error( "Failed to Export", "There was a problem while exporting the selected schema.", e );
         e.printStackTrace();

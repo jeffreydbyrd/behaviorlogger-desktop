@@ -43,7 +43,7 @@ public class GsonUtils
     }
   }
 
-  private static Gson gson =
+  public static Gson gson =
       new GsonBuilder().registerTypeAdapter( DateTime.class, new DateTimeSerializer() )
                        .registerTypeAdapter( DateTime.class, new DateTimeDeserializer() )
                        .registerTypeAdapter( MappableChar.class, MappableChar.gsonDeserializer )

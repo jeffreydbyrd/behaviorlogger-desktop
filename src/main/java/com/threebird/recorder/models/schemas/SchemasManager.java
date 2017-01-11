@@ -47,7 +47,7 @@ public class SchemasManager
       sv.versionNumber = 0;
     }
     
-    sv.uuid = UUID.randomUUID().toString();
+    sv.versionUuid = UUID.randomUUID().toString();
     sv.versionNumber++;
     
     Schemas.save( sv );

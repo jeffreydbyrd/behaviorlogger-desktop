@@ -94,7 +94,7 @@ public class Schemas
         s.sound = rs.getBoolean( "sound_on_end" );
         s.archived = rs.getBoolean( "archived" );
 
-        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
+        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.versionUuid );
         s.behaviors = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
 
         result.add( s );
@@ -108,7 +108,7 @@ public class Schemas
 
   public static List< SchemaVersion > getVersionSet( String schemaId ) throws Exception
   {
-    String sql = "SELECT * FROM schema_versions_v1_1 WHERE version_uuid = ? ORDER BY version_number ASC";
+    String sql = "SELECT * FROM schema_versions_v1_1 WHERE uuid = ? ORDER BY version_number ASC";
     List< SchemaVersion > result = Lists.newArrayList();
 
     SqlCallback callback = rs -> {
@@ -125,14 +125,14 @@ public class Schemas
         s.sound = rs.getBoolean( "sound_on_end" );
         s.archived = rs.getBoolean( "archived" );
 
-        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.uuid );
+        Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.versionUuid );
         s.behaviors = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
 
         result.add( s );
       }
     };
 
-    SqliteDao.query( sql, Lists.newArrayList(), callback );
+    SqliteDao.query( sql, Lists.newArrayList(schemaId), callback );
 
     return result;
   }
