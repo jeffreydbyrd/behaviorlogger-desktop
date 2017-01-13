@@ -170,7 +170,11 @@ public class Schemas
 
     // Delete old behaviors
     deleteSql = "DELETE FROM behaviors_v1_1 WHERE schema_uuid=?";
-    SqliteDao.update( deleteSql );
+    SqliteDao.update( deleteSql, Lists.newArrayList(schemaId), SqlCallback.NOOP );
+    
+    // Delete old SchemaVersions
+    deleteSql = "DELETE FROM schema_versions_v1_1 WHERE uuid=?";
+    SqliteDao.update( deleteSql, Lists.newArrayList(schemaId), SqlCallback.NOOP );
 
     // Incrementally add new version-sets
     Collections.sort( versionset, ( sv1, sv2 ) -> sv1.versionNumber - sv2.versionNumber );
