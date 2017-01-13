@@ -2,7 +2,6 @@ package com.threebird.recorder.controllers;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -187,7 +186,7 @@ public class EditSchemaController
   private void initBehaviorSection( SchemaVersion schema )
   {
     // Add BehaviorBoxes for existing behavior-mappings
-    for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
+    for (KeyBehaviorMapping kbm : schema.behaviors) {
       BehaviorBox bb =
           new BehaviorBox( kbm.uuid, kbm.key, kbm.description, kbm.isContinuous, kbm.archived, this::getBehaviorBoxes );
       if (kbm.isContinuous) {
@@ -390,7 +389,7 @@ public class EditSchemaController
       return;
     }
 
-    HashMap< MappableChar, KeyBehaviorMapping > temp = Maps.newHashMap();
+    List<KeyBehaviorMapping > temp = Lists.newArrayList();
     ArrayList< Node > behaviorBoxes = Lists.newArrayList( discreteBoxes.getChildren() );
     behaviorBoxes.addAll( continuousBoxes.getChildren() );
     for (Node node : behaviorBoxes) {
@@ -403,7 +402,7 @@ public class EditSchemaController
       boolean isContinuous = bb.isContinuous();
       boolean archived = bb.isDeleted();
       String uuid = bb.uuid;
-      temp.put( key, new KeyBehaviorMapping( uuid, key, description, isContinuous, archived ) );
+      temp.add( new KeyBehaviorMapping( uuid, key, description, isContinuous, archived ) );
     }
 
     model.client = clientField.getText().trim();

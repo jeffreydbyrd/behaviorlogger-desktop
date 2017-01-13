@@ -132,8 +132,7 @@ public class AddKeysController
     // Modify the Schema and save it
     behaviorFields.forEach( ( field, kbm ) -> {
       String behavior = field.getText().trim();
-      schema.behaviors.put( kbm.key,
-                            new KeyBehaviorMapping( kbm.uuid, kbm.key, behavior, kbm.isContinuous, kbm.archived ) );
+      schema.behaviors.add( new KeyBehaviorMapping( kbm.uuid, kbm.key, behavior, kbm.isContinuous, kbm.archived ) );
     } );
 
     try {
@@ -165,7 +164,7 @@ public class AddKeysController
     List< DiscreteBehavior > newDiscretes =
         Lists.transform( updatedDiscretes, db -> new DiscreteBehavior( db.uuid,
                                                                        db.key,
-                                                                       schema.behaviors.get( db.key ).description,
+                                                                       schema.behaviorsMap().get( db.key ).description,
                                                                        db.startTime ) );
 
     List< DiscreteBehavior > removedDiscretes =
@@ -182,7 +181,7 @@ public class AddKeysController
     List< ContinuousBehavior > newContinuous =
         Lists.transform( updatedContinuous, cb -> new ContinuousBehavior( cb.uuid,
                                                                           cb.key,
-                                                                          schema.behaviors.get( cb.key ).description,
+                                                                          schema.behaviorsMap().get( cb.key ).description,
                                                                           cb.startTime,
                                                                           cb.getDuration() ) );
 

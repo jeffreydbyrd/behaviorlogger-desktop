@@ -1,8 +1,10 @@
 package com.threebird.recorder.models.schemas;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.MappableChar;
 
@@ -19,7 +21,12 @@ public class SchemaVersion
   public Boolean color;
   public Boolean sound;
   public Boolean archived;
-  public HashMap< MappableChar, KeyBehaviorMapping > behaviors = Maps.newHashMap();
+  public List< KeyBehaviorMapping > behaviors = Lists.newArrayList();
+
+  public Map< MappableChar, KeyBehaviorMapping > behaviorsMap()
+  {
+    return Maps.uniqueIndex( behaviors, b -> b.key );
+  }
 
   @Override public String toString()
   {

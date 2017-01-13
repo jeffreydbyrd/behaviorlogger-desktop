@@ -163,11 +163,11 @@ public class StartMenuController
   {
     mappingsBox.getChildren().clear();
 
-    for (KeyBehaviorMapping mapping : schema.behaviors.values()) {
+    for (KeyBehaviorMapping mapping : schema.behaviors) {
       if (mapping.archived) {
         continue;
       }
-      
+
       Label contLbl = new Label();
       contLbl.setText( mapping.isContinuous ? "(cont.)" : "" );
       contLbl.setMinWidth( 45 );

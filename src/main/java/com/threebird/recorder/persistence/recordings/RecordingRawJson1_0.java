@@ -2,14 +2,12 @@ package com.threebird.recorder.persistence.recordings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.BehaviorLoggerApp;
-import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.Behavior;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
@@ -128,8 +126,7 @@ public class RecordingRawJson1_0
     to.project = from.project;
     to.behaviors = Lists.newArrayList();
 
-    for (Entry< MappableChar, KeyBehaviorMapping > entry : from.behaviors.entrySet()) {
-      KeyBehaviorMapping b = entry.getValue();
+    for (KeyBehaviorMapping b : from.behaviors) {
       to.behaviors.add( new BehaviorBean1_0( b.key.c, b.description, b.isContinuous ) );
     }
 

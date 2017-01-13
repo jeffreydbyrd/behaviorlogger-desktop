@@ -137,7 +137,7 @@ public class RecordingController
     SchemaVersion schema = SchemasManager.getSelected();
 
     // Figure out which unknowns were ignored and which were updated
-    Set< MappableChar > mappedChars = schema.behaviors.keySet();
+    Set< MappableChar > mappedChars = schema.behaviorsMap().keySet();
     Set< MappableChar > unknownChars = manager.unknowns.keySet();
     SetView< MappableChar > ignoredChars = Sets.difference( unknownChars, mappedChars );
     SetView< MappableChar > newChars = Sets.intersection( mappedChars, unknownChars );
@@ -164,7 +164,7 @@ public class RecordingController
 
     // Update the CountBoxes labels
     for (MappableChar newChar : newChars) {
-      KeyBehaviorMapping kbm = schema.behaviors.get( newChar );
+      KeyBehaviorMapping kbm = schema.behaviorsMap().get( newChar );
       countBoxes.get( kbm.key ).behaviorLbl.setText( kbm.description );
     }
 
@@ -178,7 +178,7 @@ public class RecordingController
   {
     SchemaVersion schema = SchemasManager.getSelected();
 
-    for (KeyBehaviorMapping kbm : schema.behaviors.values()) {
+    for (KeyBehaviorMapping kbm : schema.behaviors) {
       if (!kbm.archived) {
         initializeBehaviorCountBox( kbm );
       }
@@ -527,10 +527,10 @@ public class RecordingController
     KeyCode code = evt.getCode();
     MappableChar.getForKeyCode( code ).ifPresent( mc -> {
       SchemaVersion schema = SchemasManager.getSelected();
-      if (schema.behaviors.containsKey( mc )) {
-        KeyBehaviorMapping kbm = schema.behaviors.get( mc );
+      if (schema.behaviorsMap().containsKey( mc )) {
+        KeyBehaviorMapping kbm = schema.behaviorsMap().get( mc );
         if (!kbm.archived) {
-          logBehavior( schema.behaviors.get( mc ) );
+          logBehavior( schema.behaviorsMap().get( mc ) );
         }
       } else if (manager.unknowns.containsKey( mc )) {
         logBehavior( manager.unknowns.get( mc ) );

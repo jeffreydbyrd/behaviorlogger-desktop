@@ -6,7 +6,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.utils.persistence.SqlCallback;
@@ -62,7 +61,7 @@ public class Schemas
                                                 schema.archived );
 
     SqliteDao.update( sql, params, SqlCallback.NOOP );
-    for (KeyBehaviorMapping mapping : schema.behaviors.values()) {
+    for (KeyBehaviorMapping mapping : schema.behaviors) {
       KeyBehaviors.save( schema, mapping );
     }
   }
@@ -95,7 +94,7 @@ public class Schemas
         s.archived = rs.getBoolean( "archived" );
 
         Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.versionUuid );
-        s.behaviors = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
+        s.behaviors = Lists.newArrayList( mappings );
 
         result.add( s );
       }
@@ -126,13 +125,13 @@ public class Schemas
         s.archived = rs.getBoolean( "archived" );
 
         Iterable< KeyBehaviorMapping > mappings = KeyBehaviors.getAllForSchema( s.versionUuid );
-        s.behaviors = Maps.newHashMap( Maps.uniqueIndex( mappings, m -> m.key ) );
+        s.behaviors = Lists.newArrayList( mappings );
 
         result.add( s );
       }
     };
 
-    SqliteDao.query( sql, Lists.newArrayList(schemaId), callback );
+    SqliteDao.query( sql, Lists.newArrayList( schemaId ), callback );
 
     return result;
   }
@@ -170,11 +169,11 @@ public class Schemas
 
     // Delete old behaviors
     deleteSql = "DELETE FROM behaviors_v1_1 WHERE schema_uuid=?";
-    SqliteDao.update( deleteSql, Lists.newArrayList(schemaId), SqlCallback.NOOP );
-    
+    SqliteDao.update( deleteSql, Lists.newArrayList( schemaId ), SqlCallback.NOOP );
+
     // Delete old SchemaVersions
     deleteSql = "DELETE FROM schema_versions_v1_1 WHERE uuid=?";
-    SqliteDao.update( deleteSql, Lists.newArrayList(schemaId), SqlCallback.NOOP );
+    SqliteDao.update( deleteSql, Lists.newArrayList( schemaId ), SqlCallback.NOOP );
 
     // Incrementally add new version-sets
     Collections.sort( versionset, ( sv1, sv2 ) -> sv1.versionNumber - sv2.versionNumber );
