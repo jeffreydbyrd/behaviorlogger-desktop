@@ -28,6 +28,7 @@ import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.NewVersionManager;
 import com.threebird.recorder.models.preferences.FilenameComponent;
 import com.threebird.recorder.models.preferences.PreferencesManager;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.RecordingManager;
@@ -162,7 +163,11 @@ public class StartMenuController
   {
     mappingsBox.getChildren().clear();
 
-    schema.behaviors.values().forEach( mapping -> {
+    for (KeyBehaviorMapping mapping : schema.behaviors.values()) {
+      if (mapping.archived) {
+        continue;
+      }
+      
       Label contLbl = new Label();
       contLbl.setText( mapping.isContinuous ? "(cont.)" : "" );
       contLbl.setMinWidth( 45 );
@@ -178,7 +183,7 @@ public class StartMenuController
       HBox hbox = new HBox( contLbl, keyLbl, separator, behaviorLbl );
       hbox.setSpacing( 5 );
       mappingsBox.getChildren().add( hbox );
-    } );
+    }
   }
 
   private void initSessionDetails()
