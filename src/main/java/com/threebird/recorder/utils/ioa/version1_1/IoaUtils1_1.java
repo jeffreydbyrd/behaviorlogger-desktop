@@ -11,10 +11,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.WriteIoaIntervals;
 import com.threebird.recorder.persistence.WriteIoaTimeWindows;
-import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
@@ -85,7 +85,7 @@ public class IoaUtils1_1
    */
   public static void populateContinuous( SessionBean1_1 stream1, HashMap< String, ArrayList< Integer > > map1 )
   {
-    ImmutableMap< String, BehaviorBean1_1 > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
+    ImmutableMap< String, KeyBehaviorMapping > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
 
     for (ContinuousEvent ce : stream1.continuousEvents) {
       String buuid = ce.behaviorUuid;
@@ -108,7 +108,7 @@ public class IoaUtils1_1
    */
   public static void populateDiscrete( SessionBean1_1 stream1, HashMap< String, ArrayList< Integer > > map1 )
   {
-    ImmutableMap< String, BehaviorBean1_1 > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
+    ImmutableMap< String, KeyBehaviorMapping > behaviors = Maps.uniqueIndex( stream1.schema.behaviors, b -> b.uuid );
 
     for (DiscreteEvent de : stream1.discreteEvents) {
       String buuid = de.behaviorUuid;

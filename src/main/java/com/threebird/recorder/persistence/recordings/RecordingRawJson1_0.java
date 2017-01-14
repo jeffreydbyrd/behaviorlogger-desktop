@@ -78,7 +78,7 @@ public class RecordingRawJson1_0
     bean.discretes = Maps.newHashMap();
     bean.continuous = Maps.newHashMap();
 
-    bean.uuid = details.uuid;
+    bean.uuid = details.sessionUuid;
 
     copySchema( details.schema, bean.schema );
 

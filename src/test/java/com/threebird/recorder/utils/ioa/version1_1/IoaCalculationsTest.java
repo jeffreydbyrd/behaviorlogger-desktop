@@ -9,10 +9,10 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
-import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SchemaBean1_1;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 import com.threebird.recorder.utils.ioa.IntervalCalculations;
 import com.threebird.recorder.utils.ioa.KeyToInterval;
@@ -34,10 +34,10 @@ public class IoaCalculationsTest
     // 0,1
     input1.continuousEvents.add( new ContinuousEvent("c", 0, 1000) );
 
-    input1.schema = new SchemaBean1_1();
+    input1.schema = new SchemaVersion();
     input1.schema.behaviors = Lists.newArrayList();
-    input1.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
-    input1.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
+    input1.schema.behaviors.add( new KeyBehaviorMapping( "d", "d", "discrete", false, false ) );
+    input1.schema.behaviors.add( new KeyBehaviorMapping( "c", 'c', "continuous", true, false ) );
   }
 
   static SessionBean1_1 input2 = new SessionBean1_1();
@@ -53,10 +53,10 @@ public class IoaCalculationsTest
     // 0,1,2
     input2.continuousEvents.add( new ContinuousEvent("c", 0, 2000) );
 
-    input2.schema = new SchemaBean1_1();
+    input2.schema = new SchemaVersion();
     input2.schema.behaviors = Lists.newArrayList();
-    input2.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
-    input2.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
+    input2.schema.behaviors.add( new KeyBehaviorMapping( "d", 'd', "discrete", false, false ) );
+    input2.schema.behaviors.add( new KeyBehaviorMapping( "c", 'c', "continuous", true, false ) );
   }
 
   static SessionBean1_1 empty = new SessionBean1_1();
@@ -65,10 +65,10 @@ public class IoaCalculationsTest
     empty.discreteEvents = Lists.newArrayList();
     empty.continuousEvents = Lists.newArrayList();
 
-    empty.schema = new SchemaBean1_1();
+    empty.schema = new SchemaVersion();
     empty.schema.behaviors = Lists.newArrayList();
-    empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
-    empty.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
+    empty.schema.behaviors.add( new KeyBehaviorMapping( "d", 'd', "discrete", false, false ) );
+    empty.schema.behaviors.add( new KeyBehaviorMapping( "c", 'c', "continuous", true, false ) );
   }
 
   @Test public void partialAgreement_blocksize_1()
@@ -344,10 +344,10 @@ public class IoaCalculationsTest
     input1.discreteEvents.add( new DiscreteEvent("a", 0) ); // 0
     input1.continuousEvents.add( new ContinuousEvent("b", 0, 1000) ); // 0,1
 
-    input1.schema = new SchemaBean1_1();
+    input1.schema = new SchemaVersion();
     input1.schema.behaviors = Lists.newArrayList();
-    input1.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "discrete", false, false ) );
-    input1.schema.behaviors.add( new BehaviorBean1_1( "b", 'b', "continuous", true, false ) );
+    input1.schema.behaviors.add( new KeyBehaviorMapping( "a", 'a', "discrete", false, false ) );
+    input1.schema.behaviors.add( new KeyBehaviorMapping( "b", 'b', "continuous", true, false ) );
 
     SessionBean1_1 input2 = new SessionBean1_1();
     input2.duration = 2700;
@@ -357,10 +357,10 @@ public class IoaCalculationsTest
     input2.discreteEvents.add( new DiscreteEvent( "c", 0 ) ); // 0
     input2.continuousEvents.add( new ContinuousEvent("d", 0, 2000) ); // 0,1,2
 
-    input2.schema = new SchemaBean1_1();
+    input2.schema = new SchemaVersion();
     input2.schema.behaviors = Lists.newArrayList();
-    input2.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "discrete", false, false ) );
-    input2.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "continuous", true, false ) );
+    input2.schema.behaviors.add( new KeyBehaviorMapping( "c", 'c', "discrete", false, false ) );
+    input2.schema.behaviors.add( new KeyBehaviorMapping( "d", 'd', "continuous", true, false ) );
 
     int blockSize = 1;
 

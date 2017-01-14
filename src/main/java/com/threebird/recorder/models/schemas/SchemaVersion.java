@@ -1,9 +1,9 @@
 package com.threebird.recorder.models.schemas;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.MappableChar;
@@ -23,7 +23,7 @@ public class SchemaVersion
   public Boolean archived;
   public List< KeyBehaviorMapping > behaviors = Lists.newArrayList();
 
-  public Map< MappableChar, KeyBehaviorMapping > behaviorsMap()
+  public ImmutableMap< MappableChar, KeyBehaviorMapping > behaviorsMap()
   {
     return Maps.uniqueIndex( behaviors, b -> b.key );
   }

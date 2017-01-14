@@ -38,6 +38,19 @@ public class KeyBehaviorMapping
           isContinuous,
           archived );
   }
+  
+  public KeyBehaviorMapping( String uuid,
+                             Character key,
+                             String behavior,
+                             boolean isContinuous,
+                             boolean archived )
+  {
+    this( uuid,
+          MappableChar.getForChar( key ).get(),
+          behavior,
+          isContinuous,
+          archived );
+  }
 
   @Override public String toString()
   {

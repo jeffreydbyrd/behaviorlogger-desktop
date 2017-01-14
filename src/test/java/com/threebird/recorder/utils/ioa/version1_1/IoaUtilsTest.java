@@ -13,11 +13,11 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.persistence.GsonUtils;
-import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.BehaviorBean1_1;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
-import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SchemaBean1_1;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 import com.threebird.recorder.utils.ioa.KeyToInterval;
 
@@ -38,10 +38,10 @@ public class IoaUtilsTest
     standard.continuousEvents.add( new ContinuousEvent( "event-six", "c", 0, 1100 ) );
     standard.continuousEvents.add( new ContinuousEvent( "event-seven", "c", 3100, 3900 ) );
 
-    standard.schema = new SchemaBean1_1();
+    standard.schema = new SchemaVersion();
     standard.schema.behaviors = Lists.newArrayList();
-    standard.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
-    standard.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
+    standard.schema.behaviors.add( new KeyBehaviorMapping( "d", 'd', "discrete", false, false ) );
+    standard.schema.behaviors.add( new KeyBehaviorMapping( "c", 'c', "continuous", true, false ) );
   }
 
   static SessionBean1_1 empty = new SessionBean1_1();
@@ -50,10 +50,10 @@ public class IoaUtilsTest
     empty.discreteEvents = Lists.newArrayList();
     empty.continuousEvents = Lists.newArrayList();
 
-    empty.schema = new SchemaBean1_1();
+    empty.schema = new SchemaVersion();
     empty.schema.behaviors = Lists.newArrayList();
-    empty.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
-    empty.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "continuous", true, false ) );
+    empty.schema.behaviors.add( new KeyBehaviorMapping( "d", 'd', "discrete", false, false ) );
+    empty.schema.behaviors.add( new KeyBehaviorMapping( "c", 'c', "continuous", true, false ) );
   }
 
   static SessionBean1_1 multi = new SessionBean1_1();
@@ -76,12 +76,12 @@ public class IoaUtilsTest
     multi.continuousEvents.add( new ContinuousEvent( "event-twelve", "c", 3000, 6100 ) );
     multi.continuousEvents.add( new ContinuousEvent( "event-thirteen", "d", 5000, 8100 ) );
 
-    multi.schema = new SchemaBean1_1();
+    multi.schema = new SchemaVersion();
     multi.schema.behaviors = Lists.newArrayList();
-    multi.schema.behaviors.add( new BehaviorBean1_1( "a", 'a', "apple", false, false ) );
-    multi.schema.behaviors.add( new BehaviorBean1_1( "b", 'b', "banana", false, false ) );
-    multi.schema.behaviors.add( new BehaviorBean1_1( "c", 'c', "cucumber", true, false ) );
-    multi.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "date", true, false ) );
+    multi.schema.behaviors.add( new KeyBehaviorMapping( "a", 'a', "apple", false, false ) );
+    multi.schema.behaviors.add( new KeyBehaviorMapping( "b", 'b', "banana", false, false ) );
+    multi.schema.behaviors.add( new KeyBehaviorMapping( "c", 'c', "cucumber", true, false ) );
+    multi.schema.behaviors.add( new KeyBehaviorMapping( "d", 'd', "date", true, false ) );
   }
 
   static SessionBean1_1 zero_len = new SessionBean1_1();
@@ -89,9 +89,9 @@ public class IoaUtilsTest
     zero_len.duration = 0;
     zero_len.discreteEvents = Lists.newArrayList();
     zero_len.continuousEvents = Lists.newArrayList();
-    zero_len.schema = new SchemaBean1_1();
+    zero_len.schema = new SchemaVersion();
     zero_len.schema.behaviors = Lists.newArrayList();
-    zero_len.schema.behaviors.add( new BehaviorBean1_1( "d", 'd', "discrete", false, false ) );
+    zero_len.schema.behaviors.add( new KeyBehaviorMapping( "d", 'd', "discrete", false, false ) );
   }
 
   @Test public void deserialize_standard() throws Exception

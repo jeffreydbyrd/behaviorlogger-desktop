@@ -33,7 +33,7 @@ public class Recordings
     public Integer sessionNumber;
     public Integer totalTimeMillis;
     public String notes;
-    public String uuid;
+    public String sessionUuid;
     public DateTime startTime;
     public DateTime stopTime;
   }
@@ -99,7 +99,7 @@ public class Recordings
 
     sd.f = f;
     sd.fResult = new CompletableFuture< Long >();
-    sd.uuid = uuid;
+    sd.sessionUuid = uuid;
     sd.behaviors = behaviors;
     sd.schema = SchemasManager.getSelected();
     sd.observer = SessionManager.getObserver();
