@@ -248,7 +248,7 @@ public class InitSQLiteTables
                                schemaVersionUuid,
                                rs2.getString( "key" ),
                                rs2.getString( "name" ),
-                               1 );
+                               0 );
             SqliteDao.update( insertBehavior );
             SqliteDao.update( insertSchemaBehavior );
           }
