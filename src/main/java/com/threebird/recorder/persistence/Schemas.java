@@ -1,11 +1,14 @@
 package com.threebird.recorder.persistence;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import com.threebird.recorder.models.preferences.PreferencesManager;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.utils.persistence.SqlCallback;
@@ -179,6 +182,12 @@ public class Schemas
     Collections.sort( versionset, ( sv1, sv2 ) -> sv1.versionNumber - sv2.versionNumber );
     for (SchemaVersion sv : versionset) {
       save( sv );
+    }
+
+    // Check if there's a session-directory set for this schema
+    Optional< File > forSchemaId = SessionDirectories.getForSchemaId( schemaId );
+    if (!forSchemaId.isPresent()) {
+      SessionDirectories.create( schemaId, new File( PreferencesManager.getSessionDirectory() ) );
     }
   }
 }

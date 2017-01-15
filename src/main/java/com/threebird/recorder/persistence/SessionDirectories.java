@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -34,13 +35,12 @@ public class SessionDirectories
     String sql = "SELECT session_directory FROM " + TBL_NAME + " WHERE schema_uuid = ?";
 
     StringBuilder sb = new StringBuilder( "" );
-
+    AtomicInteger counter = new AtomicInteger( 0 );
     SqlCallback handle = ( ResultSet rs ) -> {
-      int counter = 0;
       while (rs.next()) {
-        Preconditions.checkState( counter < 2 ); // this should never go higher than 1 iteration
+        Preconditions.checkState( counter.get() < 2 ); // this should never go higher than 1 iteration
         sb.append( rs.getString( "session_directory" ) );
-        counter++;
+        counter.getAndIncrement();
       }
     };
 
@@ -51,10 +51,14 @@ public class SessionDirectories
       return Optional.empty();
     }
 
+    if (counter.get() < 1) {
+      return Optional.empty();
+    }
+
     File f = new File( sb.toString() );
 
     if (!f.exists()) {
-      Optional.empty();
+      return Optional.empty();
     }
 
     return Optional.of( f );
