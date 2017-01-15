@@ -11,7 +11,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
@@ -196,8 +196,8 @@ public class AddKeysController
     manager.continuous.removeAll( removedContinuous );
     manager.continuous.addAll( newContinuous );
 
-    Collections.sort( manager.discrete, Behavior.comparator );
-    Collections.sort( manager.continuous, Behavior.comparator );
+    Collections.sort( manager.discrete, BehaviorEvent.comparator );
+    Collections.sort( manager.continuous, BehaviorEvent.comparator );
 
     onSave.run();
 

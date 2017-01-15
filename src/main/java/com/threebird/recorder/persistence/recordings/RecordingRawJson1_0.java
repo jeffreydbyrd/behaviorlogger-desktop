@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.BehaviorLoggerApp;
-import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemaVersion;
@@ -92,7 +92,7 @@ public class RecordingRawJson1_0
     bean.startTime = details.startTime;
     bean.stopTime = details.stopTime;
 
-    for (Behavior b : details.behaviors) {
+    for (BehaviorEvent b : details.behaviors) {
       char c = b.key.c;
 
       if (b.isContinuous()) {

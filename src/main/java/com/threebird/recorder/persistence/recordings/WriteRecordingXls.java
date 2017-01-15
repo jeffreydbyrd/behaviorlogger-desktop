@@ -13,7 +13,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.persistence.recordings.Recordings.SaveDetails;
@@ -168,7 +168,7 @@ public class WriteRecordingXls
     r.createCell( 1 ).setCellValue( "Timestamp" );
     r.createCell( 2 ).setCellValue( "Behavior" );
 
-    for (Behavior b : details.behaviors) {
+    for (BehaviorEvent b : details.behaviors) {
       r = s.createRow( rownum++ );
       r.createCell( 0 ).setCellValue( b.key.c + "" );
       r.createCell( 1 ).setCellValue( b.timeDisplay() );

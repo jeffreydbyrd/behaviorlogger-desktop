@@ -3,7 +3,7 @@ package com.threebird.recorder.models.behaviors;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
-public class ContinuousBehavior extends Behavior
+public class ContinuousBehavior extends BehaviorEvent
 {
   private Integer duration;
 

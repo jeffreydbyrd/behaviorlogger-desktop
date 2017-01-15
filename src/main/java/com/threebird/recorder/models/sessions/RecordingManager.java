@@ -27,7 +27,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.preferences.PreferencesManager;
@@ -93,7 +93,7 @@ public class RecordingManager
   private void persist()
   {
     String fullFileName = getFullFileName();
-    List< Behavior > behaviors = allBehaviors();
+    List< BehaviorEvent > behaviors = allBehaviors();
     String _notes = Optional.ofNullable( notes.get() ).orElse( "" );
 
     DateTime stopTime = DateTime.now();
@@ -124,12 +124,12 @@ public class RecordingManager
     } );
   }
 
-  private List< Behavior > allBehaviors()
+  private List< BehaviorEvent > allBehaviors()
   {
-    ArrayList< Behavior > behaviors = Lists.newArrayList();
+    ArrayList< BehaviorEvent > behaviors = Lists.newArrayList();
     behaviors.addAll( discrete );
     behaviors.addAll( continuous );
-    Collections.sort( behaviors, Behavior.comparator );
+    Collections.sort( behaviors, BehaviorEvent.comparator );
     return behaviors;
   }
 

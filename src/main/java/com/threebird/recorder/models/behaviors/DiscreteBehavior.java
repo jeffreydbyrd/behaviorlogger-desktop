@@ -3,7 +3,7 @@ package com.threebird.recorder.models.behaviors;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
-public class DiscreteBehavior extends Behavior
+public class DiscreteBehavior extends BehaviorEvent
 {
   public DiscreteBehavior( String uuid, MappableChar key, String description, Integer time )
   {

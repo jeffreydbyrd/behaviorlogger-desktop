@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
-import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.models.schemas.SchemasManager;
 import com.threebird.recorder.models.sessions.SessionManager;
@@ -24,7 +24,7 @@ public class Recordings
   {
     public File f;
     public CompletableFuture< Long > fResult;
-    public List< Behavior > behaviors;
+    public List< BehaviorEvent > behaviors;
     public SchemaVersion schema;
     public String observer;
     public String therapist;
@@ -89,7 +89,7 @@ public class Recordings
 
   private static SaveDetails createSaveDetails( File f,
                                                 String uuid,
-                                                List< Behavior > behaviors,
+                                                List< BehaviorEvent > behaviors,
                                                 int totalTime,
                                                 String notes,
                                                 DateTime startTime,
@@ -117,7 +117,7 @@ public class Recordings
 
   public static CompletableFuture< Long > saveJson( File f,
                                                     String uuid,
-                                                    List< Behavior > behaviors,
+                                                    List< BehaviorEvent > behaviors,
                                                     int count,
                                                     String notes,
                                                     DateTime startTime,
@@ -130,7 +130,7 @@ public class Recordings
 
   public static CompletableFuture< Long > saveXls( File f,
                                                    String uuid,
-                                                   List< Behavior > behaviors,
+                                                   List< BehaviorEvent > behaviors,
                                                    int count,
                                                    String notes,
                                                    DateTime startTime,

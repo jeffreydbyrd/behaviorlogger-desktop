@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.threebird.recorder.models.behaviors.Behavior;
+import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 
@@ -43,9 +43,9 @@ public class Recording
     return Lists.newArrayList( continuous );
   }
 
-  public List< Behavior > getAllBehaviors()
+  public List< BehaviorEvent > getAllBehaviors()
   {
-    ArrayList< Behavior > result = Lists.newArrayList( discrete );
+    ArrayList< BehaviorEvent > result = Lists.newArrayList( discrete );
     result.addAll( continuous );
     return result;
   }

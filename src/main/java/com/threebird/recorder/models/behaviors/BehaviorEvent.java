@@ -5,11 +5,11 @@ import java.util.Comparator;
 import com.threebird.recorder.models.MappableChar;
 
 /**
- * An actual behavior that a researcher observed during a recording session
+ * An actual behavioral event that a researcher observed during a recording session
  */
-public abstract class Behavior
+public abstract class BehaviorEvent
 {
-  public static final Comparator< Behavior > comparator = ( Behavior o1, Behavior o2 ) -> o1.startTime - o2.startTime;
+  public static final Comparator< BehaviorEvent > comparator = ( BehaviorEvent o1, BehaviorEvent o2 ) -> o1.startTime - o2.startTime;
 
   public final int startTime;
   public final String uuid;
@@ -23,7 +23,7 @@ public abstract class Behavior
    * @param startTime
    *          - start-time in millis
    */
-  Behavior( String uuid, MappableChar key, String description, int startTime )
+  BehaviorEvent( String uuid, MappableChar key, String description, int startTime )
   {
     this.uuid = uuid;
     this.key = key;
