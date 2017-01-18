@@ -42,10 +42,10 @@ public class ResourceUtils
     String osName = System.getProperty( "os.name" );
     if (osName.equals( "Mac OS X" )) {
       String home = System.getProperty( "user.home" );
-      String resourcesPath = String.format( "%s/Library/Application Support/3bird/behavior-logger/1.1/resources/", home );
+      String resourcesPath = String.format( "%s/Library/Application Support/Behavior Logger/1.1/resources/", home );
       result = new File( resourcesPath );
     } else if (osName.toUpperCase().contains( "WIN" )) {
-      String path = System.getenv( "localappdata" ) + "/3bird/behavior-logger/1.1/resources/";
+      String path = System.getenv( "localappdata" ) + "/Behavior Logger/1.1/resources/";
       result = new File( path );
     } else {
       throw new IllegalStateException( "Unsupported Operating System: " + osName );

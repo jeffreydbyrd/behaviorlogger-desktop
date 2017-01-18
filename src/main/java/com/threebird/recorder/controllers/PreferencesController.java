@@ -223,10 +223,15 @@ public class PreferencesController
     errMsgBox.getChildren().clear();
 
     // Validate Directory field
-    if (!getDirectory().exists()) {
-      directoryField.setStyle( cssRed );
+    File directory = getDirectory();
+    if (!directory.exists()) {
       valid = false;
       Label lbl = new Label( "Directory does not exist." );
+      lbl.setTextFill( Color.RED );
+      errMsgBox.getChildren().add( lbl );
+    } else if (!directory.canWrite() || !directory.canRead()) {
+      valid = false;
+      Label lbl = new Label( "You don't have read/write permissions to that folder." );
       lbl.setTextFill( Color.RED );
       errMsgBox.getChildren().add( lbl );
     } else {

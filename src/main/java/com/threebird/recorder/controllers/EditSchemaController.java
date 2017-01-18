@@ -261,12 +261,13 @@ public class EditSchemaController
     errorMsgBox.getChildren().clear();
 
     // Make some red error messages:
-    Text dirMsg = new Text( "- That folder does not exist." );
+    Text dirExistsMsg = new Text( "- That folder does not exist." );
+    Text dirPermissionsMsg = new Text( "- You don't have read/write permissions to this folder." );
     Text clientProjectMsg = new Text( "- You must fill either Client or Project (or both)." );
     Text duplicateKeyMsg = new Text( "- Each key must be unique." );
     Text duplicateNameMsg = new Text( "- Each name must be unique." );
     Text emptyKeyMsg = new Text( "- You must have at least one key mapped." );
-    Lists.newArrayList( dirMsg, clientProjectMsg, duplicateKeyMsg, duplicateNameMsg, emptyKeyMsg )
+    Lists.newArrayList( dirExistsMsg, dirPermissionsMsg, clientProjectMsg, duplicateKeyMsg, duplicateNameMsg, emptyKeyMsg )
          .forEach( txt -> txt.setFill( Color.RED ) );
 
     // Verify that all the required fields for the file-name are filled
@@ -292,10 +293,15 @@ public class EditSchemaController
     }
 
     // Validate Directory field
-    if (!getDirectory().exists()) {
+    File directory = getDirectory();
+    if (!directory.exists()) {
       isValid = false;
       directoryField.setStyle( CSS_RED );
-      errorMsgBox.getChildren().add( dirMsg );
+      errorMsgBox.getChildren().add( dirExistsMsg );
+    } else if (!directory.canWrite() || !directory.canRead()) {
+      isValid = false;
+      directoryField.setStyle( CSS_RED );
+      errorMsgBox.getChildren().add( dirPermissionsMsg );
     } else {
       directoryField.setStyle( "" );
     }
