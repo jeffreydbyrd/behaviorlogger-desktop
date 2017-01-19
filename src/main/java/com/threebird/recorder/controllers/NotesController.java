@@ -88,9 +88,11 @@ public class NotesController
     Timeline timer = new Timeline();
     timer.setCycleCount( 1 );
     KeyFrame kf = new KeyFrame( Duration.millis( 250 ), evt -> {
-      boolean saved = manager.saveSuccessfulProperty.get();
-      savedLabel.setVisible( saved );
-      failedLabel.setVisible( !saved );
+      Boolean saved = manager.saveSuccessfulProperty.get();
+      if (saved != null) {
+        savedLabel.setVisible( saved );
+        failedLabel.setVisible( !saved );
+      }
     } );
     timer.getKeyFrames().add( kf );
 

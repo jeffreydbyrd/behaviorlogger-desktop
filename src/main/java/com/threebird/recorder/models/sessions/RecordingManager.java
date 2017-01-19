@@ -39,7 +39,7 @@ import com.threebird.recorder.persistence.recordings.Recordings;
 public class RecordingManager
 {
   public final Timeline timer;
-  public final SimpleBooleanProperty saveSuccessfulProperty = new SimpleBooleanProperty( true );
+  public final SimpleBooleanProperty saveSuccessfulProperty = new SimpleBooleanProperty();
   public final SimpleBooleanProperty playingProperty = new SimpleBooleanProperty( false );
   public final SimpleIntegerProperty counter = new SimpleIntegerProperty( 0 );
   public final SimpleStringProperty notes = new SimpleStringProperty();
@@ -116,7 +116,8 @@ public class RecordingManager
                             stopTime );
 
     CompletableFuture.allOf( fCsv, fXls ).handleAsync( ( v, t ) -> {
-      Platform.runLater( () -> saveSuccessfulProperty.set( t == null ) );
+      boolean saveSuccessful = t == null;
+      Platform.runLater( () -> saveSuccessfulProperty.set( saveSuccessful ) );
       if (t != null) {
         t.printStackTrace();
       }

@@ -95,6 +95,9 @@ public class Recordings
                                                 DateTime startTime,
                                                 DateTime stopTime )
   {
+    Preconditions.checkNotNull( f );
+    Preconditions.checkNotNull( stopTime );
+    
     SaveDetails sd = new SaveDetails();
 
     sd.f = f;
@@ -109,7 +112,7 @@ public class Recordings
     sd.sessionNumber = SessionManager.getSessionNumber();
     sd.totalTimeMillis = totalTime;
     sd.notes = notes;
-    sd.startTime = startTime;
+    sd.startTime = startTime != null ? startTime : stopTime;
     sd.stopTime = stopTime;
 
     return sd;

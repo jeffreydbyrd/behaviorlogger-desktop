@@ -40,6 +40,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -66,6 +67,7 @@ public class RecordingController
   @FXML private Label timeBox;
 
   @FXML private Label spacebarLbl;
+  @FXML private StackPane saveLabelPane;
   @FXML private Label failedLabel;
   @FXML private Label savedLabel;
 
@@ -125,11 +127,13 @@ public class RecordingController
 
     savedLabel.setText( "Saved data to " + RecordingManager.getFullFileName() + "(.raw/.xls)" );
     savedLabel.setVisible( false );
+    // saveLabelPane.setVisible( false );
 
     initializeTimer();
     initializeBehaviorCountBoxes();
 
     manager.playingProperty.addListener( ( obs, oldV, playing ) -> onPlayToggled( playing ) );
+    manager.saveSuccessfulProperty.addListener( ( obs, oldV, success ) -> onSaveSuccessfulToggled( success ) );
   }
 
   public void update()
@@ -269,12 +273,10 @@ public class RecordingController
   {
     if (playing) {
       manager.timer.play();
-      failedLabel.setVisible( false );
-      savedLabel.setVisible( false );
+      saveLabelPane.setVisible( false );
     } else {
       manager.timer.pause();
-      failedLabel.setVisible( !manager.saveSuccessfulProperty.get() );
-      savedLabel.setVisible( manager.saveSuccessfulProperty.get() );
+      saveLabelPane.setVisible( true );
 
       for (Entry< MappableChar, ContinuousBehavior > e : manager.midContinuous.entrySet()) {
         ContinuousBehavior cb = e.getValue();
@@ -294,6 +296,14 @@ public class RecordingController
 
     if (!manager.unknowns.isEmpty()) {
       addNewKeysButton.setVisible( !playing );
+    }
+  }
+
+  private void onSaveSuccessfulToggled( Boolean saveSuccessful )
+  {
+    if (saveSuccessful != null) {
+      failedLabel.setVisible( !saveSuccessful );
+      savedLabel.setVisible( saveSuccessful );
     }
   }
 
