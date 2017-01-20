@@ -59,11 +59,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-/**
- * Controls the first view the user sees. All these member variables with the @FXML annotation are physical objects I
- * placed in Scene Builder and applied an 'id'. The 'id' must match the variable name. Methods with an @FXML annotation
- * are triggered by events (again, specified in scene builder)
- */
 public class StartMenuController
 {
   public static final String TITLE = "Start Menu";
@@ -289,12 +284,12 @@ public class StartMenuController
     FileChooser fileChooser = new FileChooser();
     ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
     fileChooser.getExtensionFilters().add( extFilter );
-    File newFile = fileChooser.showOpenDialog( BehaviorLoggerUtil.dialogStage.get() );
-
+    File newFile = fileChooser.showOpenDialog( BehaviorLoggerApp.STAGE );
+    
     if (newFile == null) {
       return;
     }
-
+    
     // Parse into version-set
     List< SchemaVersion > versionset;
     try {
@@ -306,11 +301,11 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-
+    
     if (versionset.isEmpty()) {
       return;
     }
-
+    
     // Check if overwriting existing version-set
     SchemaVersion newLatest = versionset.get( versionset.size() - 1 );
     List< SchemaVersion > currentVersionset;
@@ -321,7 +316,7 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-
+    
     // Check if user wants to overwrite existing versionset
     AtomicBoolean doContinue = new AtomicBoolean( false );
     SchemaVersion oldLatest = null;
@@ -337,12 +332,12 @@ public class StartMenuController
     } else {
       doContinue.set( true );
     }
-
+    
     // If this is new schema, or user denied update, then bail
     if (!doContinue.get()) {
       return;
     }
-
+    
     // Save version-set to DB
     try {
       Schemas.saveVersionset( versionset );
@@ -351,13 +346,13 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-
+    
     // Update the schema table
     if (oldLatest != null) {
       SchemasManager.schemas().remove( oldLatest );
     }
     SchemasManager.schemas().add( newLatest );
-
+    
     schemaTable.refresh();
     if (!newLatest.archived) {
       schemaTable.getSelectionModel().select( newLatest );
