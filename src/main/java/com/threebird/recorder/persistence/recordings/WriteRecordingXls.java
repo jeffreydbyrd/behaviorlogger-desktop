@@ -11,6 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.joda.time.DateTime;
 
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
@@ -73,21 +74,20 @@ public class WriteRecordingXls
     r.createCell( 1 ).setCellValue( details.sessionNumber );
 
     // Start-Time
-    r = s.createRow(rownum++);
+    r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Start Time" );
-    r.createCell( 1 ).setCellValue( details.startTime.toString( "yyyy-MM-dd HH:mm:ss" ) );
-    
+    r.createCell( 1 ).setCellValue( new DateTime( details.startTime ).toString( "yyyy-MM-dd HH:mm:ss" ) );
+
     // End-Time
-    r = s.createRow(rownum++);
+    r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Stop Time" );
-    r.createCell( 1 ).setCellValue( details.stopTime.toString( "yyyy-MM-dd HH:mm:ss" ) );
-    
+    r.createCell( 1 ).setCellValue( new DateTime( details.stopTime ).toString( "yyyy-MM-dd HH:mm:ss" ) );
+
     // Session Time
     r = s.createRow( rownum++ );
     r.createCell( 0 ).setCellValue( "Session Time" );
     r.createCell( 1 ).setCellValue( BehaviorLoggerUtil.millisToTimestamp( details.totalTimeMillis ) );
-    
-    
+
     rownum++; // Skip a row
 
     // __Behavior Summary__
@@ -103,13 +103,13 @@ public class WriteRecordingXls
     r.createCell( 3 ).setCellValue( "Responses / Min" );
 
     // Data:
-    Map< MappableChar, List< DiscreteBehavior >> discretes =
+    Map< MappableChar, List< DiscreteBehavior > > discretes =
         details.behaviors.stream().filter( b -> !b.isContinuous() )
                          .map( b -> (DiscreteBehavior) b )
                          .collect( Collectors.groupingBy( db -> db.key ) );
 
     r = s.createRow( rownum++ );
-    for (Entry< MappableChar, List< DiscreteBehavior >> e : discretes.entrySet()) {
+    for (Entry< MappableChar, List< DiscreteBehavior > > e : discretes.entrySet()) {
       MappableChar ch = e.getKey();
       List< DiscreteBehavior > dbs = e.getValue();
 
@@ -133,13 +133,13 @@ public class WriteRecordingXls
     r.createCell( 3 ).setCellValue( "% Session Time" );
 
     // Data:
-    Map< MappableChar, List< ContinuousBehavior >> continuous =
+    Map< MappableChar, List< ContinuousBehavior > > continuous =
         details.behaviors.stream().filter( b -> b.isContinuous() )
                          .map( b -> (ContinuousBehavior) b )
                          .collect( Collectors.groupingBy( db -> db.key ) );
 
     r = s.createRow( rownum++ );
-    for (Entry< MappableChar, List< ContinuousBehavior >> e : continuous.entrySet()) {
+    for (Entry< MappableChar, List< ContinuousBehavior > > e : continuous.entrySet()) {
       MappableChar ch = e.getKey();
       List< ContinuousBehavior > cbs = e.getValue();
 

@@ -10,6 +10,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
+import com.threebird.recorder.models.MappableChar;
+import com.threebird.recorder.models.behaviors.BehaviorEvent;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.models.preferences.PreferencesManager;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.models.schemas.SchemasManager;
+import com.threebird.recorder.persistence.SessionDirectories;
+import com.threebird.recorder.persistence.recordings.Recordings;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -22,19 +33,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.util.Duration;
-
-import org.joda.time.DateTime;
-
-import com.google.common.collect.Lists;
-import com.threebird.recorder.models.MappableChar;
-import com.threebird.recorder.models.behaviors.BehaviorEvent;
-import com.threebird.recorder.models.behaviors.ContinuousBehavior;
-import com.threebird.recorder.models.behaviors.DiscreteBehavior;
-import com.threebird.recorder.models.preferences.PreferencesManager;
-import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
-import com.threebird.recorder.models.schemas.SchemasManager;
-import com.threebird.recorder.persistence.SessionDirectories;
-import com.threebird.recorder.persistence.recordings.Recordings;
 
 public class RecordingManager
 {
@@ -55,7 +53,7 @@ public class RecordingManager
       FXCollections.observableHashMap();
 
   private final String streamUuid;
-  private DateTime startTime;
+  private long startTime = 0;
 
   public RecordingManager()
   {
@@ -79,7 +77,7 @@ public class RecordingManager
     AtomicBoolean started = new AtomicBoolean( false );
     playingProperty.addListener( ( o, oldV, playing ) -> {
       if (playing && !started.get()) {
-        this.startTime = DateTime.now();
+        this.startTime = System.currentTimeMillis();
         started.set( true );
       }
     } );
@@ -96,7 +94,7 @@ public class RecordingManager
     List< BehaviorEvent > behaviors = allBehaviors();
     String _notes = Optional.ofNullable( notes.get() ).orElse( "" );
 
-    DateTime stopTime = DateTime.now();
+    long stopTime = System.currentTimeMillis();
 
     CompletableFuture< Long > fCsv =
         Recordings.saveJson( new File( fullFileName + ".raw" ),

@@ -1,11 +1,12 @@
 package com.threebird.recorder.persistence.recordings;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
-import org.joda.time.DateTime;
-
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.threebird.recorder.BehaviorLoggerApp;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
@@ -125,15 +126,11 @@ public class RecordingRawJson1_1
     String blVersion;
     String versionUuid;
     Integer sessionNumber;
-    public Integer duration; // in millis
-    String observer;
-    String therapist;
-    String condition;
-    String location;
+    public long duration; // in millis
     String notes;
-    public DateTime startTime;
-    public DateTime stopTime;
+    public long startTime; // in millis
     public SchemaVersion schema;
+    Map< String, String > attributes;
 
     // maps behavior key to times (in millis) it occurred
     public ArrayList< DiscreteEvent > discreteEvents;
@@ -157,15 +154,16 @@ public class RecordingRawJson1_1
 
     bean.uuid = details.sessionUuid;
     bean.versionUuid = details.schema.versionUuid;
-    bean.observer = details.observer;
-    bean.therapist = details.therapist;
-    bean.condition = details.condition;
-    bean.location = details.location;
     bean.sessionNumber = details.sessionNumber;
     bean.duration = details.totalTimeMillis;
     bean.notes = details.notes;
     bean.startTime = details.startTime;
-    bean.stopTime = details.stopTime;
+
+    bean.attributes = Maps.newHashMap();
+    bean.attributes.put( "observer", Strings.emptyToNull( details.observer ) );
+    bean.attributes.put( "therapist", Strings.emptyToNull( details.therapist ) );
+    bean.attributes.put( "condition", Strings.emptyToNull( details.condition ) );
+    bean.attributes.put( "location", Strings.emptyToNull( details.location ) );
 
     for (BehaviorEvent b : details.behaviors) {
       if (b.isContinuous()) {

@@ -89,8 +89,8 @@ public class RecordingRawJson1_0
     bean.sessionNumber = details.sessionNumber;
     bean.totalTimeMillis = details.totalTimeMillis;
     bean.notes = details.notes;
-    bean.startTime = details.startTime;
-    bean.stopTime = details.stopTime;
+    bean.startTime = new DateTime( details.startTime );
+    bean.stopTime = new DateTime( details.stopTime );
 
     for (BehaviorEvent b : details.behaviors) {
       char c = b.key.c;

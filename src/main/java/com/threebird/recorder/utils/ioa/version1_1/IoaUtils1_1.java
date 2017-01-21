@@ -30,7 +30,7 @@ import javafx.scene.layout.VBox;
 public class IoaUtils1_1
 {
   static KeyToInterval partition( HashMap< String, ArrayList< Integer > > stream,
-                                  int totalTimeMilles,
+                                  long totalTimeMilles,
                                   int size )
   {
     HashMap< String, Multiset< Integer > > idToIntervals = Maps.newHashMap();

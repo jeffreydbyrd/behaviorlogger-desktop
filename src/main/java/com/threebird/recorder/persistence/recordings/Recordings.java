@@ -10,8 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.Preconditions;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.schemas.SchemaVersion;
@@ -34,8 +32,8 @@ public class Recordings
     public Integer totalTimeMillis;
     public String notes;
     public String sessionUuid;
-    public DateTime startTime;
-    public DateTime stopTime;
+    public long startTime;
+    public long stopTime;
   }
 
   public static enum Writer
@@ -92,8 +90,8 @@ public class Recordings
                                                 List< BehaviorEvent > behaviors,
                                                 int totalTime,
                                                 String notes,
-                                                DateTime startTime,
-                                                DateTime stopTime )
+                                                long startTime,
+                                                long stopTime )
   {
     Preconditions.checkNotNull( f );
     Preconditions.checkNotNull( stopTime );
@@ -112,7 +110,7 @@ public class Recordings
     sd.sessionNumber = SessionManager.getSessionNumber();
     sd.totalTimeMillis = totalTime;
     sd.notes = notes;
-    sd.startTime = startTime != null ? startTime : stopTime;
+    sd.startTime = startTime != 0 ? startTime : stopTime;
     sd.stopTime = stopTime;
 
     return sd;
@@ -123,8 +121,8 @@ public class Recordings
                                                     List< BehaviorEvent > behaviors,
                                                     int count,
                                                     String notes,
-                                                    DateTime startTime,
-                                                    DateTime stopTime )
+                                                    long startTime,
+                                                    long stopTime )
   {
     SaveDetails saveDetails = createSaveDetails( f, uuid, behaviors, count, notes, startTime, stopTime );
     Writer.JSON.schedule( saveDetails );
@@ -136,8 +134,8 @@ public class Recordings
                                                    List< BehaviorEvent > behaviors,
                                                    int count,
                                                    String notes,
-                                                   DateTime startTime,
-                                                   DateTime stopTime )
+                                                   long startTime,
+                                                   long stopTime )
   {
     SaveDetails saveDetails = createSaveDetails( f, uuid, behaviors, count, notes, startTime, stopTime );
     Writer.XLS.schedule( saveDetails );
