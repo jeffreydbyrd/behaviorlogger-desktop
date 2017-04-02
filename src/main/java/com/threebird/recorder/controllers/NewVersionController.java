@@ -13,7 +13,7 @@ import com.threebird.recorder.utils.BehaviorLoggerUtil;
 
 public class NewVersionController
 {
-  public static final String URL = "http://3birdsoftware.com/html/behaviorlogger.html";
+  public static final String URL = "https://behaviorlogger.com/static/apps/download/app.html";
   
   @FXML Label currVersionLbl;
   @FXML Label newVersionLbl;

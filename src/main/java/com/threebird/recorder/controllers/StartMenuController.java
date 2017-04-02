@@ -62,7 +62,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 public class StartMenuController
 {
   public static final String TITLE = "Start Menu";
-  private static String homeURL = "http://3birdsoftware.com";
+  private static String homeURL = "https://behaviorlogger.com";
 
   @FXML private TableView< SchemaVersion > schemaTable;
   @FXML private TableColumn< SchemaVersion, String > clientCol;
@@ -113,7 +113,7 @@ public class StartMenuController
       checkVersion();
     } else {
       hyperlink.onActionProperty().set( e -> {
-        setHyperlink( "3birdsoftware.com", homeURL );
+        setHyperlink( "behaviorlogger.com", homeURL );
       } );
     }
   }
@@ -467,24 +467,25 @@ public class StartMenuController
       try {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
-          HttpGet httpget = new HttpGet( "http://3birdsoftware.com/bl-version.txt" );
-
+          String versionUrl = String.format( "%s/desktop/version", homeURL );
+          HttpGet httpget = new HttpGet( versionUrl );
+          
           ResponseHandler< String > responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {
               HttpEntity entity = response.getEntity();
-              return entity != null ? EntityUtils.toString( entity ) : null;
+              return entity != null ? EntityUtils.toString( entity ) : BehaviorLoggerApp.version;
             }
 
-            return null;
+            return BehaviorLoggerApp.version;
           };
-
-          String v = httpclient.execute( httpget, responseHandler ).trim();
+          
+          String v = Strings.nullToEmpty( httpclient.execute( httpget, responseHandler ) ).trim();
 
           boolean newVersionAvailable = !version.equals( v );
 
           Platform.runLater( () -> {
-            String text = newVersionAvailable ? "New Version Available!" : "3birdsoftware.com";
+            String text = newVersionAvailable ? "New Version Available!" : "behaviorlogger.com";
             String url = newVersionAvailable ? NewVersionController.URL : homeURL;
             hyperlink.setText( text );
             hyperlink.onActionProperty().set( ( event ) -> {

@@ -39,8 +39,8 @@ public class BehaviorLoggerApp extends Application
   @Override public void start( Stage primaryStage ) throws Exception
   {
     STAGE = primaryStage;
-    STAGE.getIcons().add( new Image( BehaviorLoggerApp.class.getResourceAsStream( "3bird-orig.png" ) ) );
-    
+    // STAGE.getIcons().add( new Image( BehaviorLoggerApp.class.getResourceAsStream( "3bird-orig.png" ) ) );
+
     CreateResources.apply();
     InitSQLiteTables.init();
 

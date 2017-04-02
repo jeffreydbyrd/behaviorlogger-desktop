@@ -29,7 +29,7 @@
                   <Font size="12.0" />
                </font>
             </Text>
-            <Hyperlink onAction="#onHyperlinkClick" text="3birdsoftware.com" />
+            <Hyperlink onAction="#onHyperlinkClick" text="behaviorlogger.com" />
          </children>
       </HBox>
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
