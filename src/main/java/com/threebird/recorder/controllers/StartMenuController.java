@@ -62,7 +62,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 public class StartMenuController
 {
   public static final String TITLE = "Start Menu";
-  private static String homeURL = "https://behaviorlogger.com";
+  private static String homeURL = "https://www.behaviorlogger.com";
 
   @FXML private TableView< SchemaVersion > schemaTable;
   @FXML private TableColumn< SchemaVersion, String > clientCol;
@@ -467,7 +467,7 @@ public class StartMenuController
       try {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
-          String versionUrl = String.format( "%s/desktop/version", homeURL );
+          String versionUrl = String.format( "%s/api/v1/u/desktop/version", homeURL );
           HttpGet httpget = new HttpGet( versionUrl );
           
           ResponseHandler< String > responseHandler = response -> {
