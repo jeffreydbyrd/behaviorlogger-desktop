@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -129,9 +130,12 @@ public class AddKeysController
       return;
     }
 
-    // Modify the Schema and save it
+    // Set UUIDs on new behaviors, modify the Schema and save it
     behaviorFields.forEach( ( field, kbm ) -> {
       String behavior = field.getText().trim();
+      if (kbm.uuid == null) {
+        kbm.uuid = UUID.randomUUID().toString();
+      }
       schema.behaviors.add( new KeyBehaviorMapping( kbm.uuid, kbm.key, behavior, kbm.isContinuous, kbm.archived ) );
     } );
 

@@ -277,7 +277,7 @@ public class RecordingController
     } else {
       manager.timer.pause();
       saveLabelPane.setVisible( true );
-
+      
       for (Entry< MappableChar, ContinuousBehavior > e : manager.midContinuous.entrySet()) {
         ContinuousBehavior cb = e.getValue();
         KeyBehaviorMapping kbm = new KeyBehaviorMapping( cb.uuid, e.getKey(), cb.name, true, false );

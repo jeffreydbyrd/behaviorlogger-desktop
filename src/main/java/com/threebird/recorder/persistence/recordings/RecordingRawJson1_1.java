@@ -5,11 +5,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.threebird.recorder.BehaviorLoggerApp;
+import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.models.schemas.SchemaVersion;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.recordings.Recordings.SaveDetails;
@@ -165,13 +168,18 @@ public class RecordingRawJson1_1
     bean.attributes.put( "condition", Strings.emptyToNull( details.condition ) );
     bean.attributes.put( "location", Strings.emptyToNull( details.location ) );
 
+    ImmutableMap< MappableChar, KeyBehaviorMapping > behaviorsMap = bean.schema.behaviorsMap();
     for (BehaviorEvent b : details.behaviors) {
+      if (!behaviorsMap.containsKey( b.key )) {
+        continue;
+      }
+      String behaviorUuid = behaviorsMap.get( b.key ).uuid;
       if (b.isContinuous()) {
         ContinuousEvent ce =
-            new ContinuousEvent( b.uuid, b.startTime, b.startTime + (((ContinuousBehavior) b).getDuration()) );
+            new ContinuousEvent( behaviorUuid, b.startTime, b.startTime + (((ContinuousBehavior) b).getDuration()) );
         bean.continuousEvents.add( ce );
       } else {
-        DiscreteEvent de = new DiscreteEvent( b.uuid, b.startTime );
+        DiscreteEvent de = new DiscreteEvent( behaviorUuid, b.startTime );
         bean.discreteEvents.add( de );
       }
     }

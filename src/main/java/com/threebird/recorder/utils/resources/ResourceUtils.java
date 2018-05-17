@@ -29,7 +29,9 @@ public class ResourceUtils
       String path = System.getenv( "localappdata" ) + "/3bird/event-recorder/resources/";
       result = new File( path );
     } else {
-      throw new IllegalStateException( "Unsupported Operating System: " + osName );
+      String home = System.getProperty( "user.home" );
+      String resourcesPath = String.format( "%s/.behaviorlogger/1.0/resources/", home );
+      result = new File( resourcesPath );
     }
 
     return result;
@@ -48,7 +50,9 @@ public class ResourceUtils
       String path = System.getenv( "localappdata" ) + "/Behavior Logger/1.1/resources/";
       result = new File( path );
     } else {
-      throw new IllegalStateException( "Unsupported Operating System: " + osName );
+      String home = System.getProperty( "user.home" );
+      String resourcesPath = String.format( "%s/.behaviorlogger/1.1/resources/", home );
+      result = new File( resourcesPath );
     }
 
     return result;
