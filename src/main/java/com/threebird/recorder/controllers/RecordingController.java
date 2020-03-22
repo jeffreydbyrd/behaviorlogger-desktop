@@ -1,5 +1,6 @@
 package com.threebird.recorder.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -278,9 +279,14 @@ public class RecordingController
       manager.timer.pause();
       saveLabelPane.setVisible( true );
       
+      // trigger all mid-continuous keys
+      List< KeyBehaviorMapping > midContinousKeys = new ArrayList<KeyBehaviorMapping>();
       for (Entry< MappableChar, ContinuousBehavior > e : manager.midContinuous.entrySet()) {
         ContinuousBehavior cb = e.getValue();
         KeyBehaviorMapping kbm = new KeyBehaviorMapping( cb.uuid, e.getKey(), cb.name, true, false );
+        midContinousKeys.add( kbm );
+      }
+      for (KeyBehaviorMapping kbm : midContinousKeys) {
         logBehavior( kbm );
       }
     }
