@@ -29,7 +29,7 @@ import javafx.scene.layout.VBox;
 
 public class IoaUtils1_1
 {
-  static KeyToInterval partition( HashMap< String, ArrayList< Integer > > stream,
+  public static KeyToInterval partition( HashMap< String, ArrayList< Integer > > stream,
                                   long totalTimeMilles,
                                   int size )
   {
@@ -45,7 +45,7 @@ public class IoaUtils1_1
 
     int numIntervals = (int) Math.ceil( (totalTimeMilles / 1000.0) / size );
 
-    return new KeyToInterval( idToIntervals, numIntervals );
+    return new KeyToInterval( idToIntervals, numIntervals, size );
   }
 
   public static VBox processTimeBlock( IoaMethod method,

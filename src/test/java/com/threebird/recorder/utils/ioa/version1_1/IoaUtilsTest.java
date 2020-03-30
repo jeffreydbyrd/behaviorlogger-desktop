@@ -158,8 +158,8 @@ public class IoaUtilsTest
     expectedCTimes.add( 1 );
     expectedCTimes.add( 3 );
 
-    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 6 );
-    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 6 );
+    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 6, blockSize );
+    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 6, blockSize );
 
     assertEquals( expected1, actualDiscrete );
     assertEquals( expected2, actualContinuous );
@@ -199,8 +199,8 @@ public class IoaUtilsTest
     expectedCTimes.add( 0 );
     expectedCTimes.add( 1 );
 
-    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 3 );
-    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 3 );
+    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 3, blockSize );
+    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 3, blockSize );
 
     assertEquals( expected1, actualDiscrete );
     assertEquals( expected2, actualContinuous );
@@ -240,8 +240,8 @@ public class IoaUtilsTest
     expectedCTimes.add( 0 );
     expectedCTimes.add( 0 );
 
-    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 2 );
-    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 2 );
+    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 2, blockSize );
+    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 2, blockSize );
 
     assertEquals( expected1, actualDiscrete );
     assertEquals( expected2, actualContinuous );
@@ -281,8 +281,8 @@ public class IoaUtilsTest
     expectedCTimes.addAll( Lists.newArrayList( 1, 1, 1, 2 ) );
     expectedDTimes.addAll( Lists.newArrayList( 1, 2, 2, 2 ) );
 
-    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 4 );
-    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 4 );
+    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 4, blockSize );
+    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 4, blockSize );
 
     assertEquals( expected1, actualDiscrete );
     assertEquals( expected2, actualContinuous );
@@ -304,8 +304,8 @@ public class IoaUtilsTest
 
     HashMap< String, Multiset< Integer > > expectedDMap = Maps.newHashMap();
     HashMap< String, Multiset< Integer > > expectedCMap = Maps.newHashMap();
-    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 0 );
-    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 0 );
+    KeyToInterval expected1 = new KeyToInterval( expectedDMap, 0, blockSize );
+    KeyToInterval expected2 = new KeyToInterval( expectedCMap, 0, blockSize );
 
     assertEquals( expected1, actualDiscrete );
     assertEquals( expected2, actualContinuous );

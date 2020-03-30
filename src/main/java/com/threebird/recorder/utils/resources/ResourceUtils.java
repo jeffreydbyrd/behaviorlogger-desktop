@@ -91,6 +91,12 @@ public class ResourceUtils
     return new File( path );
   }
 
+  public static File getBinDetails()
+  {
+    String path = resources().getAbsolutePath() + "/bin-details.json";
+    return new File( path );
+  }
+
   public static File getManual()
   {
     String currentDir = System.getProperty( "user.dir" );

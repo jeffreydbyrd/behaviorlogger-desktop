@@ -453,6 +453,11 @@ public class StartMenuController
     IoaCalculatorController.showIoaCalculator();
   }
 
+  @FXML private void onBinBtnPressed()
+  {
+    BinCalculatorController.showBinCalculator();;
+  }
+
   @FXML private void onHelpBtnPressed()
   {
     BehaviorLoggerUtil.openManual( "start-menu" );
