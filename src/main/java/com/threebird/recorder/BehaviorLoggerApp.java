@@ -9,7 +9,6 @@ import com.threebird.recorder.persistence.recordings.Recordings;
 import com.threebird.recorder.persistence.recordings.Recordings.Writer;
 
 import javafx.application.Application;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -23,7 +22,7 @@ public class BehaviorLoggerApp extends Application
    */
   public static Stage STAGE;
 
-  public static String version = "1.1.1";
+  public static String version = "1.1.2";
 
   public static void main( String[] args )
   {
