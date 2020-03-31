@@ -10,7 +10,7 @@
 
 [Setup]
 AppName=Behavior Logger
-AppVersion=1.1.1
+AppVersion=1.1.2
 AppId=2b29f03d-be34-4ce7-b834-337ed62c89c0
 DefaultDirName={pf}\Behavior Logger
 DefaultGroupName=Behavior Logger
