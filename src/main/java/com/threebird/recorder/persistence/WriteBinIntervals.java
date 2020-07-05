@@ -46,7 +46,7 @@ public class WriteBinIntervals
     }
 
     // zero out the body
-    Row[] mainRows = new Row[keyToInterval.totalIntervals];
+    Row[] mainRows = new Row[keyToInterval.totalIntervals + 1];
     for (int r = 0; r < mainRows.length; r++) {
       Row row = s.createRow( r + 1 );
       mainRows[r] = row;
@@ -58,7 +58,7 @@ public class WriteBinIntervals
         row.createCell( c ).setCellValue( 0 );
       }
     }
-    
+
     // fill in the counts
     c = 2;
     for (Entry< String, Multiset< Integer > > entry : keyToInterval.keyToIntervals.entrySet()) {
