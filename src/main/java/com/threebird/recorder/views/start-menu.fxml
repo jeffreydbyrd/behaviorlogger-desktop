@@ -185,6 +185,7 @@
                   <Button mnemonicParsing="false" onAction="#onPrefsClicked" text="Preferences" />
                   <Button mnemonicParsing="false" onAction="#onIoaBtnPressed" text="IOA Calculator" />
                   <Button mnemonicParsing="false" onAction="#onBinBtnPressed" text="Bin Calculator" />
+                  <Button mnemonicParsing="false" onAction="#onProbBtnPressed" text="Conditional Probability" />
                </children>
             </HBox>
             <HBox alignment="BOTTOM_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">

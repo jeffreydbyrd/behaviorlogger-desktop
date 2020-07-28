@@ -12,9 +12,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
@@ -257,4 +259,41 @@ public class BehaviorLoggerUtil
       Alerts.error( "Error Loading Resource", "There was a problem loading a resource: " + filepath, e );
     }
   }
+
+  /**
+   * Opens a file selection dialog and populates TextField fileField with the chosen file path.
+   * @param fileField
+   * @param filterDescription
+   * @param filterExtension
+   */
+  public static void browseBtnPressed( TextField fileField,
+                                String filterDescription,
+                                String... filterExtension )
+  {
+    File f = getFile( fileField );
+    if (!f.exists()) {
+      f = new File( System.getProperty( "user.home" ) );
+    } else {
+      if (!f.isDirectory()) {
+        f = f.getParentFile(); // if not a directory, get the parent directory
+      }
+    }
+
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setInitialDirectory( f );
+    ExtensionFilter extFilter = new FileChooser.ExtensionFilter( filterDescription, filterExtension );
+    fileChooser.getExtensionFilters().add( extFilter );
+    File newFile = fileChooser.showOpenDialog( BehaviorLoggerUtil.dialogStage.get() );
+
+    if (newFile != null) {
+      fileField.setText( newFile.getPath() );
+    }
+  }
+
+  private static File getFile( TextField fileField )
+  {
+    String text = Strings.nullToEmpty( fileField.getText() ).trim();
+    return new File( text );
+  }
+
 }

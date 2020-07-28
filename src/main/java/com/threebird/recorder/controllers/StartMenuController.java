@@ -285,15 +285,16 @@ public class StartMenuController
     ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Schema files (*.schema)", "*.schema" );
     fileChooser.getExtensionFilters().add( extFilter );
     File newFile = fileChooser.showOpenDialog( BehaviorLoggerApp.STAGE );
-    
+
     if (newFile == null) {
       return;
     }
-    
+
     // Parse into version-set
     List< SchemaVersion > versionset;
     try {
-      Type listType = new TypeToken< ArrayList< SchemaVersion > >() {}.getType();
+      Type listType = new TypeToken< ArrayList< SchemaVersion > >() {
+      }.getType();
       BufferedReader reader = Files.newReader( newFile, Charsets.UTF_8 );
       versionset = GsonUtils.gson.fromJson( reader, listType );
     } catch (Exception e) {
@@ -301,11 +302,11 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-    
+
     if (versionset.isEmpty()) {
       return;
     }
-    
+
     // Check if overwriting existing version-set
     SchemaVersion newLatest = versionset.get( versionset.size() - 1 );
     List< SchemaVersion > currentVersionset;
@@ -316,7 +317,7 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-    
+
     // Check if user wants to overwrite existing versionset
     AtomicBoolean doContinue = new AtomicBoolean( false );
     SchemaVersion oldLatest = null;
@@ -332,12 +333,12 @@ public class StartMenuController
     } else {
       doContinue.set( true );
     }
-    
+
     // If this is new schema, or user denied update, then bail
     if (!doContinue.get()) {
       return;
     }
-    
+
     // Save version-set to DB
     try {
       Schemas.saveVersionset( versionset );
@@ -346,13 +347,13 @@ public class StartMenuController
       e.printStackTrace();
       return;
     }
-    
+
     // Update the schema table
     if (oldLatest != null) {
       SchemasManager.schemas().remove( oldLatest );
     }
     SchemasManager.schemas().add( newLatest );
-    
+
     schemaTable.refresh();
     if (!newLatest.archived) {
       schemaTable.getSelectionModel().select( newLatest );
@@ -455,7 +456,12 @@ public class StartMenuController
 
   @FXML private void onBinBtnPressed()
   {
-    BinCalculatorController.showBinCalculator();;
+    BinCalculatorController.showBinCalculator();
+  }
+
+  @FXML private void onProbBtnPressed()
+  {
+    ConditionalProbabilityController.showCalculator();
   }
 
   @FXML private void onHelpBtnPressed()
@@ -474,7 +480,7 @@ public class StartMenuController
         try {
           String versionUrl = String.format( "%s/api/v1/u/desktop/version", homeURL );
           HttpGet httpget = new HttpGet( versionUrl );
-          
+
           ResponseHandler< String > responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {
@@ -484,7 +490,7 @@ public class StartMenuController
 
             return BehaviorLoggerApp.version;
           };
-          
+
           String v = Strings.nullToEmpty( httpclient.execute( httpget, responseHandler ) ).trim();
 
           boolean newVersionAvailable = !version.equals( v );
