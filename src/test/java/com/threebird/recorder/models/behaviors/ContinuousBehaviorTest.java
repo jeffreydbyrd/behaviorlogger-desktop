@@ -10,9 +10,17 @@ import com.threebird.recorder.models.MappableChar;
 
 public class ContinuousBehaviorTest {
     @Test
-    public void intervals() {
+    public void intervalsHalfSecond() {
 	ContinuousBehavior cb = new ContinuousBehavior("uuid", MappableChar.C, "continuous", 1100, 1000);
 	List<Integer> intervals = cb.intervals(500);
 	Assert.assertTrue(intervals.equals(Lists.newArrayList(2, 3, 4)));
+    }
+
+    @Test
+    public void intervalsOneMillisecond() {
+	ContinuousBehavior cb = new ContinuousBehavior("uuid", MappableChar.C, "continuous", 1100, 10);
+	List<Integer> intervals = cb.intervals(1);
+	Assert.assertTrue(
+		intervals.equals(Lists.newArrayList(1100, 1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110)));
     }
 }

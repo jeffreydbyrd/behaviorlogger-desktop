@@ -10,9 +10,16 @@ import com.threebird.recorder.models.MappableChar;
 
 public class DiscreteBehaviorTest {
     @Test
-    public void intervals() {
+    public void intervalsOneSecond() {
 	DiscreteBehavior db = new DiscreteBehavior("uuid", MappableChar.D, "discrete", 3300);
 	List<Integer> intervals = db.intervals(1000);
 	Assert.assertTrue(intervals.equals(Lists.newArrayList(3)));
+    }
+    
+    @Test
+    public void intervalsOneMillisecond() {
+	DiscreteBehavior db = new DiscreteBehavior("uuid", MappableChar.D, "discrete", 3300);
+	List<Integer> intervals = db.intervals(1);
+	Assert.assertTrue(intervals.equals(Lists.newArrayList(3300)));
     }
 }
