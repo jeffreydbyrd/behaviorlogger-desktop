@@ -23,4 +23,10 @@ public class ContinuousBehaviorTest {
 	Assert.assertTrue(
 		intervals.equals(Lists.newArrayList(1100, 1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110)));
     }
+
+    @Test
+    public void endTime() {
+	ContinuousBehavior cb = new ContinuousBehavior("uuid", MappableChar.C, "continuous", 1100, 10);
+	Assert.assertEquals(1110, cb.endTime());
+    }
 }

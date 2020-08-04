@@ -30,4 +30,9 @@ public class DiscreteBehavior extends BehaviorEvent {
     public List<Integer> intervals(int sizeMillis) {
 	return Lists.newArrayList(this.startTime / sizeMillis);
     }
+    
+    @Override
+    public int endTime() {
+        return this.startTime;
+    }
 }

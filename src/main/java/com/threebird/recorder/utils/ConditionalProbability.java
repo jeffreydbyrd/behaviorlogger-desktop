@@ -23,61 +23,96 @@ public class ConditionalProbability {
 	    ConditionalProbability.RANGE_20);
 
     public static Map<Integer, Double> binary(KeyBehaviorMapping target, KeyBehaviorMapping consequence,
-	    List<BehaviorEvent> events) {
-	List<Integer> targetIntervals = events.stream() //
-		.filter((e) -> e.key == target.key) //
-		.map((e) -> e.startTime) //
-		.collect(Collectors.toList());
-	List<Integer> consequentIntervals = events.stream() //
+	    List<BehaviorEvent> events, boolean establishingOperations) {
+	List<BehaviorEvent> consequentEvents = events.stream() //
 		.filter((e) -> e.key == consequence.key) //
-		.map((e) -> e.startTime) //
 		.collect(Collectors.toList());
+	List<BehaviorEvent> targetEvents = events.stream() //
+		.filter((e) -> e.key == target.key) //
+		.collect(Collectors.toList());
+
+	if (establishingOperations) {
+	    targetEvents = targetEvents.stream() //
+		    .filter((e) -> !hasOverlappingEvents(consequentEvents, e)) //
+		    .collect(Collectors.toList());
+	}
 
 	Map<Integer, Double> results = Maps.newHashMap();
 	double numOccurrencesOfConsequenceFollowingTarget;
 	for (Integer range : RANGES) {
 	    numOccurrencesOfConsequenceFollowingTarget = 0f;
-	    for (Integer targetInterval : targetIntervals) {
-		for (Integer consequentInterval : consequentIntervals) {
-		    int end = (targetInterval) + range;
-		    if (consequentInterval > targetInterval && consequentInterval < end) {
-			numOccurrencesOfConsequenceFollowingTarget++;
-			break;
-		    }
+	    for (BehaviorEvent te : targetEvents) {
+		if (hasConsequentEvents(consequentEvents, te, range)) {
+		    numOccurrencesOfConsequenceFollowingTarget++;
 		}
 	    }
-	    results.put(range, numOccurrencesOfConsequenceFollowingTarget / targetIntervals.size());
+	    results.put(range, numOccurrencesOfConsequenceFollowingTarget / targetEvents.size());
 	}
 	return results;
     }
 
     public static Map<Integer, Double> proportion(KeyBehaviorMapping target, KeyBehaviorMapping consequence,
-	    List<BehaviorEvent> events) {
-	List<Integer> targets = events.stream() //
-		.filter((e) -> e.key == target.key) //
-		.flatMap((e) -> e.intervals(1).stream()) //
-		.collect(Collectors.toList());
-	List<Integer> consequences = events.stream() //
+	    List<BehaviorEvent> events, boolean establishingOperations) {
+	List<BehaviorEvent> consequentEvents = events.stream() //
 		.filter((e) -> e.key == consequence.key) //
-		.flatMap((e) -> e.intervals(1).stream()) //
+		.collect(Collectors.toList());
+	List<BehaviorEvent> targetEvents = events.stream() //
+		.filter((e) -> e.key == target.key) //
 		.collect(Collectors.toList());
 
+	if (establishingOperations) {
+	    targetEvents = targetEvents.stream() //
+		    .filter((e) -> !hasOverlappingEvents(consequentEvents, e)) //
+		    .collect(Collectors.toList());
+	}
+
 	Map<Integer, Double> results = Maps.newHashMap();
-	float numOccurrencesOfConsequenceFollowingTarget;
+	double totalDurationOfConsequenceFollowingTarget;
 	for (Integer range : RANGES) {
-	    numOccurrencesOfConsequenceFollowingTarget = 0f;
-	    for (Integer targetSecond : targets) {
-		for (Integer consequentSecond : consequences) {
-		    int end = targetSecond + range;
-		    if (consequentSecond > targetSecond && consequentSecond < end) {
-			numOccurrencesOfConsequenceFollowingTarget++;
+	    totalDurationOfConsequenceFollowingTarget = 0f;
+	    for (BehaviorEvent te : targetEvents) {
+		int rangeEnd = te.startTime + range;
+		List<BehaviorEvent> matchingEvents = findConsequentEvents(consequentEvents, te, range);
+		for (BehaviorEvent ce : matchingEvents) {
+		    int consequentEnd = ce.endTime();
+		    if (consequentEnd > rangeEnd) {
+			consequentEnd = rangeEnd;
 		    }
+		    int duration = consequentEnd - ce.startTime;
+		    totalDurationOfConsequenceFollowingTarget += duration;
 		}
 	    }
-	    int totalMillis = range * targets.size();
-	    double p = numOccurrencesOfConsequenceFollowingTarget / totalMillis;
+	    int totalMillis = range * targetEvents.size();
+	    double p = totalDurationOfConsequenceFollowingTarget / totalMillis;
 	    results.put(range, p);
 	}
 	return results;
+    }
+
+    private static boolean hasConsequentEvents(List<BehaviorEvent> candidates, BehaviorEvent target, int range) {
+	int end = target.startTime + range;
+	for (BehaviorEvent ce : candidates) {
+	    if (ce.startTime > target.startTime && ce.startTime < end) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    private static List<BehaviorEvent> findConsequentEvents(List<BehaviorEvent> candidates, BehaviorEvent target,
+	    int range) {
+	int end = target.startTime + range;
+	return candidates.stream() //
+		.filter((ce) -> ce.startTime > target.startTime && ce.startTime < end) //
+		.collect(Collectors.toList());
+    }
+
+    private static boolean hasOverlappingEvents(List<BehaviorEvent> candidates, BehaviorEvent target) {
+	for (BehaviorEvent ce : candidates) {
+	    if (ce.startTime < target.startTime && ce.endTime() > target.startTime) {
+		return true;
+	    }
+	}
+	return false;
     }
 }

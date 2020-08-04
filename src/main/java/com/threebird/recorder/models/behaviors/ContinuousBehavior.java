@@ -55,4 +55,9 @@ public class ContinuousBehavior extends BehaviorEvent {
 	}
         return result;
     }
+    
+    @Override
+    public int endTime() {
+        return this.startTime + this.duration;
+    }
 }

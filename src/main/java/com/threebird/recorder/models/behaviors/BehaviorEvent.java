@@ -37,4 +37,6 @@ public abstract class BehaviorEvent {
     public abstract String type();
 
     public abstract List<Integer> intervals(int sizeMillis);
+    
+    public abstract int endTime();
 }
