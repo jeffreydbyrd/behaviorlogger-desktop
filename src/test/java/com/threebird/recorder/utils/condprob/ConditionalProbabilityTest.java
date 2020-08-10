@@ -189,4 +189,26 @@ public class ConditionalProbabilityTest {
 	Assert.assertEquals(-1, result, 0.0001);
     }
 
+    @Test
+    public void emptyConsequences() {
+	List<BehaviorEvent> targetEvents = Lists.newArrayList();
+	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 4000));
+	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 10000));
+
+	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+
+	Double result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
+		ConditionalProbability.RANGE_5);
+	Assert.assertEquals(0, result, 0.0001);
+
+	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	Assert.assertEquals(0, result, 0.0001);
+
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	Assert.assertEquals(0, result, 0.0001);
+
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	Assert.assertEquals(0, result, 0.0001);
+    }
+
 }
