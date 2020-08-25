@@ -318,7 +318,7 @@ public class ConditionalProbabilityController {
 	row.createCell(1).setCellValue(this.selectedBehavior.key.c + "");
 	row.createCell(2).setCellValue(this.selectedBehavior.description);
 	row = s.createRow(r++);
-	row.createCell(0).setCellValue("range (seconds)");
+	row.createCell(0).setCellValue("range (millis)");
 	row.createCell(1).setCellValue(ConditionalProbabilityManager.rangeProperty().get() * 1000);
 
 	// __Headers__
@@ -338,7 +338,7 @@ public class ConditionalProbabilityController {
 	Set<Entry<KeyBehaviorMapping, Results>> entrySet = resultsMap.entrySet();
 	ArrayList<Entry<KeyBehaviorMapping, Results>> entries = Lists.newArrayList(entrySet);
 	entries.sort((e1, e2) -> ConditionalProbability.Results.compare.compare(e1.getValue(), e2.getValue()));
-	for (Entry<KeyBehaviorMapping, Results> entry : entrySet) {
+	for (Entry<KeyBehaviorMapping, Results> entry : entries) {
 	    KeyBehaviorMapping key = entry.getKey();
 	    Results results = entry.getValue();
 	    row = s.createRow(r++);
