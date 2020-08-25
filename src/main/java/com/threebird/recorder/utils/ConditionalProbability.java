@@ -1,5 +1,6 @@
 package com.threebird.recorder.utils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,37 @@ public class ConditionalProbability {
     public static Integer RANGE_10 = 10000;
     public static Integer RANGE_15 = 15000;
     public static Integer RANGE_20 = 20000;
+
+    public static class Results {
+	public static Comparator<Results> compare = //
+		(r1, r2) -> (int) (Math.floor(r1.avg * 1000) - Math.floor(r2.avg * 1000));
+
+	public final Double binaryEO;
+	public final Double binaryNonEO;
+	public final Double proportionEO;
+	public final Double proportionNonEO;
+	public final Double avg;
+
+	public Results(Double binaryEO, Double binaryNonEO, Double proportionEO, Double proportionNonEO) {
+	    super();
+
+	    this.binaryEO = binaryEO;
+	    this.binaryNonEO = binaryNonEO;
+	    this.proportionEO = proportionEO;
+	    this.proportionNonEO = proportionNonEO;
+	    this.avg = (binaryEO + binaryNonEO + proportionEO + proportionNonEO) / 4;
+	}
+    }
+
+    public static Results results(List<BehaviorEvent> targetEvents, //
+	    List<BehaviorEvent> consequentEvents, //
+	    int range) {
+	return new Results(//
+		binaryEO(targetEvents, consequentEvents, range), //
+		binaryNonEO(targetEvents, consequentEvents, range), //
+		proportionEO(targetEvents, consequentEvents, range), //
+		proportionNonEO(targetEvents, consequentEvents, range));
+    }
 
     public static Double binaryNonEO( //
 	    List<BehaviorEvent> targetEvents, //

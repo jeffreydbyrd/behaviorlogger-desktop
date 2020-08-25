@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity"
 	minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0"
@@ -14,22 +15,73 @@
 	<children>
 		<Text strokeType="OUTSIDE" strokeWidth="0.0"
 			text="Select a .raw output from a session recording:" />
-		<HBox spacing="20.0">
+		<Label text="File" />
+		<HBox spacing="5.0" HBox.hgrow="ALWAYS">
 			<children>
-				<VBox HBox.hgrow="ALWAYS">
+				<TextField fx:id="fileField" HBox.hgrow="ALWAYS" />
+				<Button fx:id="browseBtn" mnemonicParsing="false"
+					onAction="#browseBtnPressed" text="Browse" HBox.hgrow="NEVER" />
+			</children>
+		</HBox>
+		<Label fx:id="fileNotFoundLbl" text="That file does not exist"
+			textFill="RED" visible="false" />
+		<Label text="Save Options:" />
+		<HBox spacing="10.0">
+			<children>
+				<RadioButton fx:id="newFileRadio"
+					mnemonicParsing="false" text="New File" />
+				<RadioButton fx:id="appendRadio" mnemonicParsing="false"
+					text="Append to Existing:" />
+				<VBox fx:id="appendBox" HBox.hgrow="ALWAYS">
 					<children>
-						<Label text="File" />
 						<HBox spacing="5.0" HBox.hgrow="ALWAYS">
 							<children>
-								<TextField fx:id="fileField" HBox.hgrow="ALWAYS" />
-								<Button fx:id="browseBtn" mnemonicParsing="false"
-									onAction="#browseBtnPressed" text="Browse" HBox.hgrow="NEVER" />
+								<TextField fx:id="appendField" HBox.hgrow="ALWAYS" />
+								<Button fx:id="appendBrowseBtn" mnemonicParsing="false"
+									onAction="#appendBtnPressed" text="Browse" HBox.hgrow="NEVER" />
 							</children>
 						</HBox>
-						<Label fx:id="fileNotFoundLbl"
+						<Label fx:id="appendFileNotFoundLbl"
 							text="That file does not exist" textFill="RED" visible="false" />
 					</children>
 				</VBox>
+			</children>
+		</HBox>
+		<HBox spacing="5.0">
+			<children>
+				<Label text="Range (seconds):" />
+				<TextField fx:id="rangeField" prefWidth="50.0" />
+				<Label fx:id="rangeRequiredLbl" text="Range is required."
+					textFill="RED" visible="false" />
+			</children>
+		</HBox>
+		<Label>Target Behavior:</Label>
+		<VBox spacing="20.0" HBox.hgrow="ALWAYS"
+			fx:id="behaviorSelection">
+		</VBox>
+		<Label fx:id="unselectedTargetLbl"
+			text="You must select a target behavior." textFill="RED"
+			visible="false" />
+		<Label fx:id="saveStatusLbl" wrapText="true" />
+		<Separator prefWidth="200.0" />
+		<HBox spacing="10.0">
+			<children>
+				<Button mnemonicParsing="false" onAction="#onCloseBtnPressed"
+					text="Close" />
+				<Button mnemonicParsing="false"
+					onAction="#generateBtnPressed"
+					text="Generate Conditional Probabilities" />
+				<Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+					<children>
+						<Button mnemonicParsing="false"
+							onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9"
+							snapToPixel="false" style="-fx-background-radius: 5em;" text="?">
+							<HBox.margin>
+								<Insets />
+							</HBox.margin>
+						</Button>
+					</children>
+				</Pane>
 			</children>
 		</HBox>
 	</children>

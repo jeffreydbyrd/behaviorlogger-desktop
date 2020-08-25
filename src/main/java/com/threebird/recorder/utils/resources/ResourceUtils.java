@@ -2,111 +2,105 @@ package com.threebird.recorder.utils.resources;
 
 import java.io.File;
 
-public class ResourceUtils
-{
-  private static File resources;
+public class ResourceUtils {
+    private static File resources;
 
-  private static File resources()
-  {
-    if (resources != null) {
-      return resources;
-    }
-    resources = resources1_1();
-    resources.mkdirs();
-    return resources;
-  }
-
-  public static File resources1_0()
-  {
-    File result;
-
-    String osName = System.getProperty( "os.name" );
-    if (osName.equals( "Mac OS X" )) {
-      String home = System.getProperty( "user.home" );
-      String resourcesPath = String.format( "%s/Library/Application Support/3bird/event-recorder/resources/", home );
-      result = new File( resourcesPath );
-    } else if (osName.toUpperCase().contains( "WIN" )) {
-      String path = System.getenv( "localappdata" ) + "/3bird/event-recorder/resources/";
-      result = new File( path );
-    } else {
-      String home = System.getProperty( "user.home" );
-      String resourcesPath = String.format( "%s/.behaviorlogger/1.0/resources/", home );
-      result = new File( resourcesPath );
+    private static File resources() {
+	if (resources != null) {
+	    return resources;
+	}
+	resources = resources1_1();
+	resources.mkdirs();
+	return resources;
     }
 
-    return result;
-  }
+    public static File resources1_0() {
+	File result;
 
-  public static File resources1_1()
-  {
-    File result;
+	String osName = System.getProperty("os.name");
+	if (osName.equals("Mac OS X")) {
+	    String home = System.getProperty("user.home");
+	    String resourcesPath = String.format("%s/Library/Application Support/3bird/event-recorder/resources/",
+		    home);
+	    result = new File(resourcesPath);
+	} else if (osName.toUpperCase().contains("WIN")) {
+	    String path = System.getenv("localappdata") + "/3bird/event-recorder/resources/";
+	    result = new File(path);
+	} else {
+	    String home = System.getProperty("user.home");
+	    String resourcesPath = String.format("%s/.behaviorlogger/1.0/resources/", home);
+	    result = new File(resourcesPath);
+	}
 
-    String osName = System.getProperty( "os.name" );
-    if (osName.equals( "Mac OS X" )) {
-      String home = System.getProperty( "user.home" );
-      String resourcesPath = String.format( "%s/Library/Application Support/Behavior Logger/1.1/resources/", home );
-      result = new File( resourcesPath );
-    } else if (osName.toUpperCase().contains( "WIN" )) {
-      String path = System.getenv( "localappdata" ) + "/Behavior Logger/1.1/resources/";
-      result = new File( path );
-    } else {
-      String home = System.getProperty( "user.home" );
-      String resourcesPath = String.format( "%s/.behaviorlogger/1.1/resources/", home );
-      result = new File( resourcesPath );
+	return result;
     }
 
-    return result;
-  }
+    public static File resources1_1() {
+	File result;
 
-  public static File getDb1_0()
-  {
-    resources1_0().mkdirs();
-    String path = resources1_0().getAbsolutePath() + "/recorder.db";
-    return new File(path);
-  }
-  
-  public static File getDb()
-  {
-    resources().mkdirs();
-    String path = resources().getAbsolutePath() + "/database.db";
-    return new File( path );
-  }
+	String osName = System.getProperty("os.name");
+	if (osName.equals("Mac OS X")) {
+	    String home = System.getProperty("user.home");
+	    String resourcesPath = String.format("%s/Library/Application Support/Behavior Logger/1.1/resources/", home);
+	    result = new File(resourcesPath);
+	} else if (osName.toUpperCase().contains("WIN")) {
+	    String path = System.getenv("localappdata") + "/Behavior Logger/1.1/resources/";
+	    result = new File(path);
+	} else {
+	    String home = System.getProperty("user.home");
+	    String resourcesPath = String.format("%s/.behaviorlogger/1.1/resources/", home);
+	    result = new File(resourcesPath);
+	}
 
-  public static File getPrefs()
-  {
-    resources().mkdirs();
-    return new File( resources().getAbsolutePath() + "/prefs.json" );
-  }
+	return result;
+    }
 
-  public static File getSessionDetails()
-  {
-    resources().mkdirs();
-    String path = resources().getAbsolutePath() + "/session-details.json";
-    return new File( path );
-  }
+    public static File getDb1_0() {
+	resources1_0().mkdirs();
+	String path = resources1_0().getAbsolutePath() + "/recorder.db";
+	return new File(path);
+    }
 
-  public static File getIoaDetails()
-  {
-    String path = resources().getAbsolutePath() + "/ioa-details.json";
-    return new File( path );
-  }
+    public static File getDb() {
+	resources().mkdirs();
+	String path = resources().getAbsolutePath() + "/database.db";
+	return new File(path);
+    }
 
-  public static File getBinDetails()
-  {
-    String path = resources().getAbsolutePath() + "/bin-details.json";
-    return new File( path );
-  }
+    public static File getPrefs() {
+	resources().mkdirs();
+	return new File(resources().getAbsolutePath() + "/prefs.json");
+    }
 
-  public static File getManual()
-  {
-    String currentDir = System.getProperty( "user.dir" );
-    String path = currentDir + "/resources/manual/manual.html";
-    return new File( path );
-  }
+    public static File getSessionDetails() {
+	resources().mkdirs();
+	String path = resources().getAbsolutePath() + "/session-details.json";
+	return new File(path);
+    }
 
-  public static File getPositionDetails()
-  {
-    String path = resources().getAbsolutePath() + "/positions.json";
-    return new File( path );
-  }
+    public static File getIoaDetails() {
+	String path = resources().getAbsolutePath() + "/ioa-details.json";
+	return new File(path);
+    }
+
+    public static File getBinDetails() {
+	String path = resources().getAbsolutePath() + "/bin-details.json";
+	return new File(path);
+    }
+
+    public static File getConditionalProbabilityDetails() {
+	String path = resources().getAbsolutePath() + "/conditional-probability-details.json";
+	return new File(path);
+    }
+
+    public static File getManual() {
+	String currentDir = System.getProperty("user.dir");
+	String path = currentDir + "/resources/manual/manual.html";
+	return new File(path);
+    }
+
+    public static File getPositionDetails() {
+	String path = resources().getAbsolutePath() + "/positions.json";
+	return new File(path);
+    }
 }
