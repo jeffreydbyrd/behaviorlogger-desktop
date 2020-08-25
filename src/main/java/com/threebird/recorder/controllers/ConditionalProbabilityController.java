@@ -318,7 +318,7 @@ public class ConditionalProbabilityController {
 	row.createCell(1).setCellValue(this.selectedBehavior.key.c + "");
 	row.createCell(2).setCellValue(this.selectedBehavior.description);
 	row = s.createRow(r++);
-	row.createCell(0).setCellValue("target");
+	row.createCell(0).setCellValue("range (seconds)");
 	row.createCell(1).setCellValue(ConditionalProbabilityManager.rangeProperty().get() * 1000);
 
 	// __Headers__
