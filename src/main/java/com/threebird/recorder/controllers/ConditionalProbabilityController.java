@@ -314,12 +314,15 @@ public class ConditionalProbabilityController {
 
 	// __Summary__
 	row = s.createRow(r++);
-	row.createCell(0).setCellValue("target");
-	row.createCell(1).setCellValue(this.selectedBehavior.key.c + "");
-	row.createCell(2).setCellValue(this.selectedBehavior.description);
+	row.createCell(0).setCellValue("File");
+	row.createCell(1).setCellValue(outputFile.getName());
 	row = s.createRow(r++);
-	row.createCell(0).setCellValue("range (millis)");
-	row.createCell(1).setCellValue(ConditionalProbabilityManager.rangeProperty().get() * 1000);
+	row.createCell(0).setCellValue("Target");
+	String targetDescription = String.format("%s (%s)", this.selectedBehavior.description, this.selectedBehavior.key.c);
+	row.createCell(1).setCellValue(targetDescription);
+	row = s.createRow(r++);
+	row.createCell(0).setCellValue("Window Size (seconds)");
+	row.createCell(1).setCellValue(ConditionalProbabilityManager.rangeProperty().get());
 
 	// __Headers__
 	r++; // skip row
@@ -337,7 +340,7 @@ public class ConditionalProbabilityController {
 	// __Details__
 	Set<Entry<KeyBehaviorMapping, Results>> entrySet = resultsMap.entrySet();
 	ArrayList<Entry<KeyBehaviorMapping, Results>> entries = Lists.newArrayList(entrySet);
-	entries.sort((e1, e2) -> ConditionalProbability.Results.compare.compare(e1.getValue(), e2.getValue()));
+	entries.sort((e1, e2) -> -1 * ConditionalProbability.Results.compare.compare(e1.getValue(), e2.getValue()));
 	for (Entry<KeyBehaviorMapping, Results> entry : entries) {
 	    KeyBehaviorMapping key = entry.getKey();
 	    Results results = entry.getValue();

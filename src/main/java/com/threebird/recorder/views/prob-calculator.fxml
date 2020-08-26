@@ -56,13 +56,12 @@
 			</children>
 		</HBox>
 		<Label>Target Behavior:</Label>
-		<VBox spacing="20.0" HBox.hgrow="ALWAYS"
-			fx:id="behaviorSelection">
+		<VBox spacing="3.0" fx:id="behaviorSelection">
 		</VBox>
 		<Label fx:id="unselectedTargetLbl"
 			text="You must select a target behavior." textFill="RED"
 			visible="false" />
-		<Label fx:id="saveStatusLbl" wrapText="true" />
+		<Label fx:id="saveStatusLbl" wrapText="false" />
 		<Separator prefWidth="200.0" />
 		<HBox spacing="10.0">
 			<children>
