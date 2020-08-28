@@ -14,41 +14,82 @@ public class ConditionalProbability {
     public static Integer RANGE_20 = 20000;
 
     public static class Results {
-	public static Comparator<Results> compare = //
+	public double probability;
+	public int sampled;
+	public int total;
+
+	public Results(double probability, int sampled, int total) {
+	    this.probability = probability;
+	    this.sampled = sampled;
+	    this.total = total;
+	}
+
+	@Override
+	public int hashCode() {
+	    final int prime = 31;
+	    int result = 1;
+	    long temp;
+	    temp = Double.doubleToLongBits(probability);
+	    result = prime * result + (int) (temp ^ (temp >>> 32));
+	    result = prime * result + sampled;
+	    result = prime * result + total;
+	    return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj)
+		return true;
+	    if (obj == null)
+		return false;
+	    if (getClass() != obj.getClass())
+		return false;
+	    Results other = (Results) obj;
+	    if (Double.doubleToLongBits(probability) != Double.doubleToLongBits(other.probability))
+		return false;
+	    if (sampled != other.sampled)
+		return false;
+	    if (total != other.total)
+		return false;
+	    return true;
+	}
+    }
+
+    public static class AllResults {
+	public static Comparator<AllResults> compare = //
 		(r1, r2) -> (int) (Math.floor(r1.avg * 1000) - Math.floor(r2.avg * 1000));
 
-	public final Double binaryEO;
-	public final Double binaryNonEO;
-	public final Double proportionEO;
-	public final Double proportionNonEO;
+	public final Results binaryEO;
+	public final Results binaryNonEO;
+	public final Results proportionEO;
+	public final Results proportionNonEO;
 	public final Double avg;
 
-	public Results(Double binaryEO, Double binaryNonEO, Double proportionEO, Double proportionNonEO) {
-	    super();
-
+	public AllResults(Results binaryEO, Results binaryNonEO, Results proportionEO, Results proportionNonEO) {
 	    this.binaryEO = binaryEO;
 	    this.binaryNonEO = binaryNonEO;
 	    this.proportionEO = proportionEO;
 	    this.proportionNonEO = proportionNonEO;
-	    this.avg = (binaryEO + binaryNonEO + proportionEO + proportionNonEO) / 4;
+	    this.avg = (binaryEO.probability + binaryNonEO.probability + proportionEO.probability
+		    + proportionNonEO.probability) / 4;
 	}
     }
 
-    public static Results results(List<BehaviorEvent> targetEvents, //
+    public static AllResults all(List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
 	    int range) {
-	return new Results(//
+	return new AllResults(//
 		binaryEO(targetEvents, consequentEvents, range), //
 		binaryNonEO(targetEvents, consequentEvents, range), //
 		proportionEO(targetEvents, consequentEvents, range), //
 		proportionNonEO(targetEvents, consequentEvents, range));
     }
 
-    public static Double binaryNonEO( //
+    public static Results binaryNonEO( //
 	    List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
 	    int range) {
-	double numTargets = targetEvents.size();
+	int numTargets = targetEvents.size();
 	double numPotentiallyReinforcedTargets = 0f;
 	for (BehaviorEvent te : targetEvents) {
 	    boolean hasConsequentEvents = hasConsequentEvents(consequentEvents, te, range);
@@ -58,9 +99,10 @@ public class ConditionalProbability {
 	    }
 	}
 	if (numTargets == 0) {
-	    return -1.0;
+	    return new Results(-1.0, numTargets, numTargets);
 	}
-	return numPotentiallyReinforcedTargets / numTargets;
+	return new Results(numPotentiallyReinforcedTargets / numTargets, //
+		numTargets, numTargets);
     }
 
     private static boolean hasOverlappingEvents(List<BehaviorEvent> candidates, BehaviorEvent target) {
@@ -82,7 +124,7 @@ public class ConditionalProbability {
 	return false;
     }
 
-    public static Double binaryEO( //
+    public static Results binaryEO( //
 	    List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
 	    int range) {
@@ -100,12 +142,12 @@ public class ConditionalProbability {
 	    }
 	}
 	if (numTargets == 0) {
-	    return -1.0;
+	    return new Results(-1.0, numTargets, targetEvents.size());
 	}
-	return numPotentiallyReinforcedTargets / numTargets;
+	return new Results(numPotentiallyReinforcedTargets / numTargets, numTargets, targetEvents.size());
     }
 
-    public static Double proportionNonEO(//
+    public static Results proportionNonEO(//
 	    List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
 	    int range) {
@@ -126,9 +168,10 @@ public class ConditionalProbability {
 	}
 	int totalMillis = range * targetEvents.size();
 	if (totalMillis == 0) {
-	    return -1.0;
+	    return new Results(-1.0, targetEvents.size(), targetEvents.size());
 	}
-	return totalDurationOfReinforcingConsequences / totalMillis;
+	return new Results(totalDurationOfReinforcingConsequences / totalMillis, targetEvents.size(),
+		targetEvents.size());
     }
 
     private static List<BehaviorEvent> findOverlappingEvents(List<BehaviorEvent> candidates, BehaviorEvent target) {
@@ -145,7 +188,7 @@ public class ConditionalProbability {
 		.collect(Collectors.toList());
     }
 
-    public static Double proportionEO(//
+    public static Results proportionEO(//
 	    List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
 	    int range) {
@@ -171,9 +214,9 @@ public class ConditionalProbability {
 	}
 	int totalMillis = range * numTargets;
 	if (totalMillis == 0) {
-	    return -1.0;
+	    return new Results(-1.0, numTargets, targetEvents.size());
 	}
-	return totalDurationOfReinforcingConsequences / totalMillis;
+	return new Results(totalDurationOfReinforcingConsequences / totalMillis, numTargets, targetEvents.size());
     }
 
 }

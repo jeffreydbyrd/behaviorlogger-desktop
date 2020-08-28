@@ -11,6 +11,7 @@ import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.utils.ConditionalProbability;
+import com.threebird.recorder.utils.ConditionalProbability.Results;
 
 public class ConditionalProbabilityTest {
     @Test
@@ -23,11 +24,14 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
-	Double result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
+	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(1f / 2, result, 0.0001);
+	Results expected = new Results(1.0 / 2, 2, 2);
+	Assert.assertEquals(expected, result);
+
+	expected = new Results(1.0, 2, 2);
 	result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
-	Assert.assertEquals(1f, result, 0.0001);
+	Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -39,10 +43,14 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
-	Double result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(0f, result, 0.0001);
+	Results result = ConditionalProbability.binaryEO(targetEvents, consequentEvents,
+		ConditionalProbability.RANGE_5);
+	Results expected = new Results(0.0 / 2, 1, 2);
+	Assert.assertEquals(expected, result);
+
 	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
-	Assert.assertEquals(1f / 1, result, 0.0001);
+	expected = new Results(1.0 / 1, 1, 2);
+	Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -55,15 +63,20 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
-	Double result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
+	Results result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(1f / 10, result, 0.0001);
+	Results expected = new Results(1.0 / 10, 2, 2);
+	Assert.assertEquals(expected, result);
+
 	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_10);
-	Assert.assertEquals(2f / 20, result, 0.0001);
+	expected = new Results(2.0 / 20, 2, 2);
+	Assert.assertEquals(expected, result);
+
 	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_20);
-	Assert.assertEquals(3f / 40, result, 0.0001);
+	expected = new Results(3.0 / 40, 2, 2);
+	Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -76,13 +89,18 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
-	Double result = ConditionalProbability.proportionEO(targetEvents, consequentEvents,
+	Results result = ConditionalProbability.proportionEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(0f / 5, result, 0.0001);
+	Results expected = new Results(0.0 / 5, 1, 2);
+	Assert.assertEquals(expected, result);
+
 	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
-	Assert.assertEquals(1f / 10, result, 0.0001);
+	expected = new Results(1.0 / 10, 1, 2);
+	Assert.assertEquals(expected, result);
+
 	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_20);
-	Assert.assertEquals(1f / 20, result, 0.0001);
+	expected = new Results(1.0 / 20, 1, 2);
+	Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -117,18 +135,21 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 81001, 2000));
 
 	// non-EO
-	Double result1 = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
+	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(10f / 10, result1, 0.0001);
-	Double result2 = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(19f / 50f, result2, 0.0001);
+	Results expected = new Results(10.0 / 10, 10, 10);
+	Assert.assertEquals(expected, result);
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	expected = new Results(19.0 / 50, 10, 10);
+	Assert.assertEquals(expected, result);
 
 	// EO
-	result1 = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(9f / 9, result1, 0.0001);
-	result1 = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(17f / 45, result1, 0.0001);
+	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	expected = new Results(9.0 / 9, 9, 10);
+	Assert.assertEquals(expected, result);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	expected = new Results(17.0 / 45, 9, 10);
+	Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -149,23 +170,28 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 89000, 7000));
 
 	// non-EO
-	Double result1 = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
+	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(1f / 10, result1, 0.0001);
-	Double result2 = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(4f / 50, result2, 0.0001);
-	Double result3 = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
+	Results expected = new Results(1.0 / 10, 10, 10);
+	Assert.assertEquals(expected, result);
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	expected = new Results(4.0 / 50, 10, 10);
+	Assert.assertEquals(expected, result);
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_10);
-	Assert.assertEquals(6f / 100, result3, 0.0001);
+	expected = new Results(6.0 / 100, 10, 10);
+	Assert.assertEquals(expected, result);
 
 	// EO
-	result1 = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(0f / 9, result1, 0.0001);
-	result2 = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(0f / 45, result2, 0.0001);
-	result3 = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
-	Assert.assertEquals(2f / 90, result3, 0.0001);
+	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	expected = new Results(0.0 / 9, 9, 10);
+	Assert.assertEquals(expected, result);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	expected = new Results(0.0 / 45, 9, 10);
+	Assert.assertEquals(expected, result);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
+	expected = new Results(2.0 / 90, 9, 10);
+	Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -175,18 +201,22 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
-	Double result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
+	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(-1, result, 0.0001);
+	Results expected = new Results(-1, 0, 0);
+	Assert.assertEquals(expected, result);
 
 	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(-1, result, 0.0001);
+	expected = new Results(-1, 0, 0);
+	Assert.assertEquals(expected, result);
 
 	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(-1, result, 0.0001);
+	expected = new Results(-1, 0, 0);
+	Assert.assertEquals(expected, result);
 
 	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(-1, result, 0.0001);
+	expected = new Results(-1, 0, 0);
+	Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -197,18 +227,22 @@ public class ConditionalProbabilityTest {
 
 	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
 
-	Double result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
+	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.RANGE_5);
-	Assert.assertEquals(0, result, 0.0001);
+	Results expected = new Results(0, 2, 2);
+	Assert.assertEquals(expected, result);
 
 	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(0, result, 0.0001);
+	expected = new Results(0, 2, 2);
+	Assert.assertEquals(expected, result);
 
 	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(0, result, 0.0001);
+	expected = new Results(0, 2, 2);
+	Assert.assertEquals(expected, result);
 
 	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
-	Assert.assertEquals(0, result, 0.0001);
+	expected = new Results(0, 2, 2);
+	Assert.assertEquals(expected, result);
     }
 
 }

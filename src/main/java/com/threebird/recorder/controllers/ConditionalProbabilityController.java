@@ -34,7 +34,7 @@ import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.Discret
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.utils.ConditionalProbability;
-import com.threebird.recorder.utils.ConditionalProbability.Results;
+import com.threebird.recorder.utils.ConditionalProbability.AllResults;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -247,14 +247,14 @@ public class ConditionalProbabilityController {
 		    return new DiscreteBehavior(kbm.uuid, kbm.key, kbm.description, e.time);
 		}).collect(Collectors.toList());
 
-	Map<KeyBehaviorMapping, Results> resultsMap = Maps.newHashMap();
+	Map<KeyBehaviorMapping, AllResults> resultsMap = Maps.newHashMap();
 	for (KeyBehaviorMapping kbm : this.dataStream.schema.behaviors) {
 	    if (kbm.uuid.equals(targetBehavior.uuid)) {
 		continue;
 	    }
 	    List<BehaviorEvent> consequenceEvents = getConsequenceEvents(kbm);
 	    int rangeMillis = ConditionalProbabilityManager.rangeProperty().get() * 1000;
-	    Results results = ConditionalProbability.results(targetEvents, consequenceEvents, rangeMillis);
+	    AllResults results = ConditionalProbability.all(targetEvents, consequenceEvents, rangeMillis);
 	    resultsMap.put(kbm, results);
 	}
 
@@ -280,7 +280,7 @@ public class ConditionalProbabilityController {
 	return consequenceEvents;
     }
 
-    private void writeToFile(Map<KeyBehaviorMapping, Results> resultsMap)
+    private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap)
 	    throws IOException, EncryptedDocumentException, InvalidFormatException {
 	File outputFile;
 	boolean appendToFile = ConditionalProbabilityManager.appendSelectedProperty().get();
@@ -318,7 +318,8 @@ public class ConditionalProbabilityController {
 	row.createCell(1).setCellValue(outputFile.getName());
 	row = s.createRow(r++);
 	row.createCell(0).setCellValue("Target");
-	String targetDescription = String.format("%s (%s)", this.selectedBehavior.description, this.selectedBehavior.key.c);
+	String targetDescription = String.format("%s (%s)", this.selectedBehavior.description,
+		this.selectedBehavior.key.c);
 	row.createCell(1).setCellValue(targetDescription);
 	row = s.createRow(r++);
 	row.createCell(0).setCellValue("Window Size (seconds)");
@@ -338,19 +339,19 @@ public class ConditionalProbabilityController {
 	row.createCell(5).setCellValue("non-EO");
 
 	// __Details__
-	Set<Entry<KeyBehaviorMapping, Results>> entrySet = resultsMap.entrySet();
-	ArrayList<Entry<KeyBehaviorMapping, Results>> entries = Lists.newArrayList(entrySet);
-	entries.sort((e1, e2) -> -1 * ConditionalProbability.Results.compare.compare(e1.getValue(), e2.getValue()));
-	for (Entry<KeyBehaviorMapping, Results> entry : entries) {
+	Set<Entry<KeyBehaviorMapping, AllResults>> entrySet = resultsMap.entrySet();
+	ArrayList<Entry<KeyBehaviorMapping, AllResults>> entries = Lists.newArrayList(entrySet);
+	entries.sort((e1, e2) -> -1 * ConditionalProbability.AllResults.compare.compare(e1.getValue(), e2.getValue()));
+	for (Entry<KeyBehaviorMapping, AllResults> entry : entries) {
 	    KeyBehaviorMapping key = entry.getKey();
-	    Results results = entry.getValue();
+	    AllResults results = entry.getValue();
 	    row = s.createRow(r++);
 	    row.createCell(0).setCellValue(key.key.c + "");
 	    row.createCell(1).setCellValue(key.description);
-	    row.createCell(2).setCellValue(results.binaryEO);
-	    row.createCell(3).setCellValue(results.binaryNonEO);
-	    row.createCell(4).setCellValue(results.proportionEO);
-	    row.createCell(5).setCellValue(results.proportionNonEO);
+	    row.createCell(2).setCellValue(results.binaryEO.probability);
+	    row.createCell(3).setCellValue(results.binaryNonEO.probability);
+	    row.createCell(4).setCellValue(results.proportionEO.probability);
+	    row.createCell(5).setCellValue(results.proportionNonEO.probability);
 	}
 
 	FileOutputStream out = new FileOutputStream(outputFile);
