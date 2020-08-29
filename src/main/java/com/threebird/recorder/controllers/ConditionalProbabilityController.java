@@ -328,15 +328,27 @@ public class ConditionalProbabilityController {
 	// __Headers__
 	r++; // skip row
 	row = s.createRow(r++); // main headers
-	row.createCell(0).setCellValue("key");
-	row.createCell(1).setCellValue("behavior");
-	row.createCell(2).setCellValue("binary");
-	row.createCell(4).setCellValue("proportion");
+	row.createCell(1).setCellValue("Binary");
+	row.createCell(7).setCellValue("Proportion");
 	row = s.createRow(r++); // eo/non-eo headers
-	row.createCell(2).setCellValue("EO");
-	row.createCell(3).setCellValue("non-EO");
-	row.createCell(4).setCellValue("EO");
-	row.createCell(5).setCellValue("non-EO");
+	row.createCell(1).setCellValue("EO");
+	row.createCell(4).setCellValue("Non-EO");
+	row.createCell(7).setCellValue("EO");
+	row.createCell(10).setCellValue("Non-EO");
+	row = s.createRow(r++); // behavior/sample/condition/background
+	row.createCell(0).setCellValue("Behavior");
+	row.createCell(1).setCellValue("Sample");
+	row.createCell(2).setCellValue("Condition");
+	row.createCell(3).setCellValue("Background");
+	row.createCell(4).setCellValue("Sample");
+	row.createCell(5).setCellValue("Condition");
+	row.createCell(6).setCellValue("Background");
+	row.createCell(7).setCellValue("Sample");
+	row.createCell(8).setCellValue("Condition");
+	row.createCell(9).setCellValue("Background");
+	row.createCell(10).setCellValue("Sample");
+	row.createCell(11).setCellValue("Condition");
+	row.createCell(12).setCellValue("Background");
 
 	// __Details__
 	Set<Entry<KeyBehaviorMapping, AllResults>> entrySet = resultsMap.entrySet();
@@ -346,12 +358,20 @@ public class ConditionalProbabilityController {
 	    KeyBehaviorMapping key = entry.getKey();
 	    AllResults results = entry.getValue();
 	    row = s.createRow(r++);
-	    row.createCell(0).setCellValue(key.key.c + "");
-	    row.createCell(1).setCellValue(key.description);
-	    row.createCell(2).setCellValue(results.binaryEO.probability);
-	    row.createCell(3).setCellValue(results.binaryNonEO.probability);
-	    row.createCell(4).setCellValue(results.proportionEO.probability);
-	    row.createCell(5).setCellValue(results.proportionNonEO.probability);
+	    int c = 0;
+	    row.createCell(c++).setCellValue(String.format("%s (%s)", key.description, key.key.c));
+	    row.createCell(c++).setCellValue(results.binaryEO.sampled);
+	    row.createCell(c++).setCellValue(results.binaryEO.probability);
+	    row.createCell(c++).setCellValue("0.0");
+	    row.createCell(c++).setCellValue(results.binaryNonEO.sampled);
+	    row.createCell(c++).setCellValue(results.binaryNonEO.probability);
+	    row.createCell(c++).setCellValue("0.0");
+	    row.createCell(c++).setCellValue(results.proportionEO.sampled);
+	    row.createCell(c++).setCellValue(results.proportionEO.probability);
+	    row.createCell(c++).setCellValue("0.0");
+	    row.createCell(c++).setCellValue(results.proportionNonEO.sampled);
+	    row.createCell(c++).setCellValue(results.proportionNonEO.probability);
+	    row.createCell(c++).setCellValue("0.0");
 	}
 
 	FileOutputStream out = new FileOutputStream(outputFile);
