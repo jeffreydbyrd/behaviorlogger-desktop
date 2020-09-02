@@ -3,8 +3,15 @@ package com.threebird.recorder.utils;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.google.common.collect.Lists;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
+import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
 
 public class ConditionalProbability {
 
@@ -217,6 +224,33 @@ public class ConditionalProbability {
 	    return new Results(-1.0, numTargets, targetEvents.size());
 	}
 	return new Results(totalDurationOfReinforcingConsequences / totalMillis, numTargets, targetEvents.size());
+    }
+
+    public static List<BehaviorEvent> getTargetEvents(KeyBehaviorMapping target, List<DiscreteEvent> discreteEvents) {
+	return discreteEvents.stream().filter((e) -> e.behaviorUuid.equals(target.uuid)) //
+		.map((e) -> {
+		    return new DiscreteBehavior(target.uuid, target.key, target.description, e.time);
+		}).collect(Collectors.toList());
+    }
+
+    public static List<BehaviorEvent> getConsequenceEvents(KeyBehaviorMapping kbm, List<DiscreteEvent> discreteEvents,
+	    List<ContinuousEvent> continuousEvents) {
+	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	for (DiscreteEvent evt : discreteEvents) {
+	    if (evt.behaviorUuid.equals(kbm.uuid)) {
+		BehaviorEvent discreteBehavior = new DiscreteBehavior(kbm.uuid, kbm.key, kbm.description, evt.time);
+		consequenceEvents.add(discreteBehavior);
+	    }
+	}
+	for (ContinuousEvent evt : continuousEvents) {
+	    if (evt.behaviorUuid.equals(kbm.uuid)) {
+		int duration = evt.endTime - evt.startTime;
+		BehaviorEvent continuousBehavior = new ContinuousBehavior(kbm.uuid, kbm.key, kbm.description,
+			evt.startTime, duration);
+		consequenceEvents.add(continuousBehavior);
+	    }
+	}
+	return consequenceEvents;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.threebird.recorder.utils.condprob;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -10,10 +11,65 @@ import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
+import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
+import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
 import com.threebird.recorder.utils.ConditionalProbability;
 import com.threebird.recorder.utils.ConditionalProbability.Results;
 
 public class ConditionalProbabilityTest {
+    public void getTargets() {
+	List<DiscreteEvent> discreteEvents = new ArrayList<>();
+	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
+	discreteEvents.add(new DiscreteEvent("b1", 0));
+	discreteEvents.add(new DiscreteEvent("b2", 0));
+	discreteEvents.add(new DiscreteEvent("b1", 1));
+	List<BehaviorEvent> targetEvents = ConditionalProbability.getTargetEvents(target, discreteEvents);
+	List<BehaviorEvent> expected = new ArrayList<>();
+	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 0));
+	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 1));
+	Assert.assertTrue(targetEvents.size() == 2);
+	Assert.assertTrue(targetEvents.get(0).uuid.equals("b1"));
+	Assert.assertTrue(targetEvents.get(0).startTime == 0);
+	Assert.assertTrue(targetEvents.get(1).uuid.equals("b1"));
+	Assert.assertTrue(targetEvents.get(1).startTime == 1);
+    }
+
+    public void getConsequenceEvents() {
+	List<DiscreteEvent> discreteEvents = new ArrayList<>();
+	discreteEvents.add(new DiscreteEvent("b1", 0));
+	discreteEvents.add(new DiscreteEvent("b2", 0));
+	discreteEvents.add(new DiscreteEvent("b1", 1));
+	List<ContinuousEvent> continuousEvents = new ArrayList<>();
+	continuousEvents.add(new ContinuousEvent("b3", 0, 1));
+	continuousEvents.add(new ContinuousEvent("b4", 0, 1));
+	continuousEvents.add(new ContinuousEvent("b3", 1, 2));
+
+	KeyBehaviorMapping consequence = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
+	List<BehaviorEvent> targetEvents = ConditionalProbability.getConsequenceEvents(consequence, discreteEvents, continuousEvents);
+	
+	List<BehaviorEvent> expected = new ArrayList<>();
+	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 0));
+	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 1));
+	Assert.assertTrue(targetEvents.size() == 2);
+	Assert.assertTrue(targetEvents.get(0).uuid.equals("b1"));
+	Assert.assertTrue(targetEvents.get(0).startTime == 0);
+	Assert.assertTrue(targetEvents.get(1).uuid.equals("b1"));
+	Assert.assertTrue(targetEvents.get(1).startTime == 1);
+
+	consequence = new KeyBehaviorMapping("b3", MappableChar.C, "", true, false);
+	targetEvents = ConditionalProbability.getConsequenceEvents(consequence, discreteEvents, continuousEvents);
+	
+	expected = new ArrayList<>();
+	expected.add(new ContinuousBehavior("b3", MappableChar.C, "", 0, 1));
+	expected.add(new ContinuousBehavior("b3", MappableChar.C, "", 1, 1));
+	Assert.assertTrue(targetEvents.size() == 2);
+	Assert.assertTrue(targetEvents.get(0).uuid.equals("b3"));
+	Assert.assertTrue(targetEvents.get(0).startTime == 0);
+	Assert.assertTrue(targetEvents.get(1).uuid.equals("b3"));
+	Assert.assertTrue(targetEvents.get(1).startTime == 1);
+    }
+
     @Test
     public void binaryNonEO() {
 	List<BehaviorEvent> targetEvents = Lists.newArrayList();

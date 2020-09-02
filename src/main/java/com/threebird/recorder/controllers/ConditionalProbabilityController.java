@@ -237,14 +237,11 @@ public class ConditionalProbabilityController {
     }
 
     private void generateResults() throws IOException, EncryptedDocumentException, InvalidFormatException {
-	ImmutableMap<String, KeyBehaviorMapping> idToKeys = Maps.uniqueIndex(this.dataStream.schema.behaviors,
-		(kbm) -> kbm.uuid);
 	KeyBehaviorMapping targetBehavior = this.selectedBehavior;
 	List<BehaviorEvent> targetEvents = this.dataStream.discreteEvents.stream() //
 		.filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
 		.map((e) -> {
-		    KeyBehaviorMapping kbm = idToKeys.get(e.behaviorUuid);
-		    return new DiscreteBehavior(kbm.uuid, kbm.key, kbm.description, e.time);
+		    return new DiscreteBehavior(targetBehavior.uuid, targetBehavior.key, targetBehavior.description, e.time);
 		}).collect(Collectors.toList());
 
 	Map<KeyBehaviorMapping, AllResults> resultsMap = Maps.newHashMap();
@@ -252,32 +249,13 @@ public class ConditionalProbabilityController {
 	    if (kbm.uuid.equals(targetBehavior.uuid)) {
 		continue;
 	    }
-	    List<BehaviorEvent> consequenceEvents = getConsequenceEvents(kbm);
+	    List<BehaviorEvent> consequenceEvents = ConditionalProbability.getConsequenceEvents(kbm, this.dataStream.discreteEvents, this.dataStream.continuousEvents);
 	    int rangeMillis = ConditionalProbabilityManager.rangeProperty().get() * 1000;
 	    AllResults results = ConditionalProbability.all(targetEvents, consequenceEvents, rangeMillis);
 	    resultsMap.put(kbm, results);
 	}
 
 	writeToFile(resultsMap);
-    }
-
-    private List<BehaviorEvent> getConsequenceEvents(KeyBehaviorMapping kbm) {
-	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
-	for (DiscreteEvent evt : this.dataStream.discreteEvents) {
-	    if (evt.behaviorUuid.equals(kbm.uuid)) {
-		BehaviorEvent discreteBehavior = new DiscreteBehavior(kbm.uuid, kbm.key, kbm.description, evt.time);
-		consequenceEvents.add(discreteBehavior);
-	    }
-	}
-	for (ContinuousEvent evt : this.dataStream.continuousEvents) {
-	    if (evt.behaviorUuid.equals(kbm.uuid)) {
-		int duration = evt.endTime - evt.startTime;
-		BehaviorEvent continuousBehavior = new ContinuousBehavior(kbm.uuid, kbm.key, kbm.description,
-			evt.startTime, duration);
-		consequenceEvents.add(continuousBehavior);
-	    }
-	}
-	return consequenceEvents;
     }
 
     private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap)
