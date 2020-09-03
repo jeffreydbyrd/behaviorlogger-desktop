@@ -1,9 +1,12 @@
 package com.threebird.recorder.utils;
 
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
@@ -242,6 +245,9 @@ public class ConditionalProbability {
 		consequenceEvents.add(discreteBehavior);
 	    }
 	}
+	if (!consequenceEvents.isEmpty()) {
+	    return consequenceEvents;
+	}
 	for (ContinuousEvent evt : continuousEvents) {
 	    if (evt.behaviorUuid.equals(kbm.uuid)) {
 		int duration = evt.endTime - evt.startTime;
@@ -253,4 +259,38 @@ public class ConditionalProbability {
 	return consequenceEvents;
     }
 
+    public static List<DiscreteBehavior> randomBackgroundEventsWithIter(Iterator<Integer> randomInts,
+	    KeyBehaviorMapping kbm, int numEvents) {
+	Set<Integer> startTimes = new HashSet<>();
+	for (int i = 0; i < numEvents; i++) {
+	    Integer next = randomInts.next();
+	    while (startTimes.contains(next)) {
+		next = randomInts.next();
+	    }
+	    startTimes.add(next);
+	}
+	List<DiscreteBehavior> result = Lists.newArrayList();
+	for (Integer startTime : startTimes) {
+	    DiscreteBehavior evt = new DiscreteBehavior(kbm.uuid, kbm.key, kbm.description, startTime);
+	    result.add(evt);
+	}
+	return result;
+    }
+
+    public static List<DiscreteBehavior> randomBackgroundEvents(KeyBehaviorMapping target, int duration,
+	    int numEvents) {
+	Random random = new Random();
+	Iterator<Integer> randomInts = new Iterator<Integer>() {
+	    @Override
+	    public boolean hasNext() {
+		return true;
+	    }
+
+	    @Override
+	    public Integer next() {
+		return random.nextInt(duration + 1);
+	    }
+	};
+	return randomBackgroundEventsWithIter(randomInts, target, numEvents);
+    }
 }

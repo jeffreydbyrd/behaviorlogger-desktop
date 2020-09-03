@@ -19,18 +19,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.threebird.recorder.models.ConditionalProbabilityManager;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
-import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.persistence.GsonUtils;
-import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
-import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.utils.ConditionalProbability;

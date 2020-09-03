@@ -1,6 +1,7 @@
 package com.threebird.recorder.utils.condprob;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -18,6 +19,7 @@ import com.threebird.recorder.utils.ConditionalProbability;
 import com.threebird.recorder.utils.ConditionalProbability.Results;
 
 public class ConditionalProbabilityTest {
+    @Test
     public void getTargets() {
 	List<DiscreteEvent> discreteEvents = new ArrayList<>();
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
@@ -35,6 +37,7 @@ public class ConditionalProbabilityTest {
 	Assert.assertTrue(targetEvents.get(1).startTime == 1);
     }
 
+    @Test
     public void getConsequenceEvents() {
 	List<DiscreteEvent> discreteEvents = new ArrayList<>();
 	discreteEvents.add(new DiscreteEvent("b1", 0));
@@ -46,8 +49,9 @@ public class ConditionalProbabilityTest {
 	continuousEvents.add(new ContinuousEvent("b3", 1, 2));
 
 	KeyBehaviorMapping consequence = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
-	List<BehaviorEvent> targetEvents = ConditionalProbability.getConsequenceEvents(consequence, discreteEvents, continuousEvents);
-	
+	List<BehaviorEvent> targetEvents = ConditionalProbability.getConsequenceEvents(consequence, discreteEvents,
+		continuousEvents);
+
 	List<BehaviorEvent> expected = new ArrayList<>();
 	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 0));
 	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 1));
@@ -59,7 +63,7 @@ public class ConditionalProbabilityTest {
 
 	consequence = new KeyBehaviorMapping("b3", MappableChar.C, "", true, false);
 	targetEvents = ConditionalProbability.getConsequenceEvents(consequence, discreteEvents, continuousEvents);
-	
+
 	expected = new ArrayList<>();
 	expected.add(new ContinuousBehavior("b3", MappableChar.C, "", 0, 1));
 	expected.add(new ContinuousBehavior("b3", MappableChar.C, "", 1, 1));
@@ -68,6 +72,28 @@ public class ConditionalProbabilityTest {
 	Assert.assertTrue(targetEvents.get(0).startTime == 0);
 	Assert.assertTrue(targetEvents.get(1).uuid.equals("b3"));
 	Assert.assertTrue(targetEvents.get(1).startTime == 1);
+    }
+
+    @Test
+    public void createBackgroundEventsWithIter() {
+	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
+	int numEvents = 3;
+	Iterator<Integer> iter = Lists.newArrayList(0, 0, 1, 1, 1, 2, 2, 3, 3).iterator();
+	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEventsWithIter(iter, target, numEvents);
+	List<Integer> expectedStartTimes = Lists.newArrayList(0, 1, 2);
+	List<Integer> actualStartTimes = Lists.transform(events, (e) -> e.startTime);
+	Assert.assertEquals(expectedStartTimes, actualStartTimes);
+	Assert.assertTrue(events.stream().allMatch((e) -> e.uuid.equals(target.uuid)));
+    }
+    
+    @Test
+    public void createBackgroundEventsTrueRandom() {
+	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
+	int numEvents = 9;
+	int duration = 10;
+	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEvents(target, duration, numEvents);
+	Assert.assertEquals(9, events.size());
+	Assert.assertEquals(9, events.stream().map((e) -> e.startTime).distinct().count());
     }
 
     @Test
