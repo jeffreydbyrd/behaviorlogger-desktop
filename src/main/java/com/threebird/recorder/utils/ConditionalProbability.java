@@ -15,7 +15,6 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
-import com.threebird.recorder.utils.ConditionalProbability.TooManyBackgroundEventsException;
 
 public class ConditionalProbability {
 
