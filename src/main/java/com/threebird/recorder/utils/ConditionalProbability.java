@@ -15,8 +15,13 @@ import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
+import com.threebird.recorder.utils.ConditionalProbability.TooManyBackgroundEventsException;
 
 public class ConditionalProbability {
+
+    public static class TooManyBackgroundEventsException extends Throwable {
+	private static final long serialVersionUID = 1L;
+    }
 
     public static Integer RANGE_5 = 5000;
     public static Integer RANGE_10 = 10000;
@@ -103,7 +108,7 @@ public class ConditionalProbability {
 	double numPotentiallyReinforcedTargets = 0f;
 	for (BehaviorEvent te : targetEvents) {
 	    boolean hasConsequentEvents = hasConsequentEvents(consequentEvents, te, range);
-	    boolean hasOverlappingEvents = hasOverlappingEvents(consequentEvents, te);
+	    boolean hasOverlappingEvents = hasOverlappingEvents(consequentEvents, te.startTime);
 	    if (hasConsequentEvents || hasOverlappingEvents) {
 		numPotentiallyReinforcedTargets++;
 	    }
@@ -115,9 +120,9 @@ public class ConditionalProbability {
 		numTargets, numTargets);
     }
 
-    private static boolean hasOverlappingEvents(List<BehaviorEvent> candidates, BehaviorEvent target) {
+    private static boolean hasOverlappingEvents(List<BehaviorEvent> candidates, int targetTime) {
 	for (BehaviorEvent ce : candidates) {
-	    if (ce.startTime < target.startTime && ce.endTime() > target.startTime) {
+	    if (ce.startTime <= targetTime && ce.endTime() >= targetTime) {
 		return true;
 	    }
 	}
@@ -141,7 +146,7 @@ public class ConditionalProbability {
 	int numTargets = 0;
 	double numPotentiallyReinforcedTargets = 0.0;
 	for (BehaviorEvent te : targetEvents) {
-	    boolean hasOverlappingEvents = hasOverlappingEvents(consequentEvents, te);
+	    boolean hasOverlappingEvents = hasOverlappingEvents(consequentEvents, te.startTime);
 	    if (hasOverlappingEvents) {
 		continue;
 	    }
@@ -205,7 +210,7 @@ public class ConditionalProbability {
 	int numTargets = 0;
 	double totalDurationOfReinforcingConsequences = 0.0;
 	for (BehaviorEvent te : targetEvents) {
-	    boolean hasOverlappingEvents = hasOverlappingEvents(consequentEvents, te);
+	    boolean hasOverlappingEvents = hasOverlappingEvents(consequentEvents, te.startTime);
 	    if (hasOverlappingEvents) {
 		continue;
 	    }
@@ -260,11 +265,11 @@ public class ConditionalProbability {
     }
 
     public static List<DiscreteBehavior> randomBackgroundEventsWithIter(Iterator<Integer> randomInts,
-	    KeyBehaviorMapping kbm, int numEvents) {
+	    KeyBehaviorMapping kbm, List<BehaviorEvent> consequenceEvents, int numEvents) {
 	Set<Integer> startTimes = new HashSet<>();
 	for (int i = 0; i < numEvents; i++) {
 	    Integer next = randomInts.next();
-	    while (startTimes.contains(next)) {
+	    while (startTimes.contains(next) || hasOverlappingEvents(consequenceEvents, next)) {
 		next = randomInts.next();
 	    }
 	    startTimes.add(next);
@@ -277,8 +282,19 @@ public class ConditionalProbability {
 	return result;
     }
 
-    public static List<DiscreteBehavior> randomBackgroundEvents(KeyBehaviorMapping target, int duration,
-	    int numEvents) {
+    public static List<DiscreteBehavior> randomBackgroundEvents(KeyBehaviorMapping target,
+	    List<BehaviorEvent> consequenceEvents, int duration, int numEvents)
+	    throws TooManyBackgroundEventsException {
+
+	int totalConsequencesMillis = 0;
+	for (BehaviorEvent ce : consequenceEvents) {
+	    totalConsequencesMillis += ce.endTime() - ce.startTime + 1;
+	}
+	int allowedMillis = (duration + 1) - totalConsequencesMillis;
+	if (numEvents > allowedMillis) {
+	    throw new TooManyBackgroundEventsException();
+	}
+
 	Random random = new Random();
 	Iterator<Integer> randomInts = new Iterator<Integer>() {
 	    @Override
@@ -291,6 +307,6 @@ public class ConditionalProbability {
 		return random.nextInt(duration + 1);
 	    }
 	};
-	return randomBackgroundEventsWithIter(randomInts, target, numEvents);
+	return randomBackgroundEventsWithIter(randomInts, target, consequenceEvents, numEvents);
     }
 }

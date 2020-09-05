@@ -6,8 +6,10 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
@@ -17,8 +19,12 @@ import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.Continu
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
 import com.threebird.recorder.utils.ConditionalProbability;
 import com.threebird.recorder.utils.ConditionalProbability.Results;
+import com.threebird.recorder.utils.ConditionalProbability.TooManyBackgroundEventsException;
 
 public class ConditionalProbabilityTest {
+
+    // Filtering Event Streams
+
     @Test
     public void getTargets() {
 	List<DiscreteEvent> discreteEvents = new ArrayList<>();
@@ -74,27 +80,58 @@ public class ConditionalProbabilityTest {
 	Assert.assertTrue(targetEvents.get(1).startTime == 1);
     }
 
+    // Generating Background Events
+
     @Test
-    public void createBackgroundEventsWithIter() {
+    public void createNoneEOBackgroundEventsWithIter() {
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
 	int numEvents = 3;
-	Iterator<Integer> iter = Lists.newArrayList(0, 0, 1, 1, 1, 2, 2, 3, 3).iterator();
-	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEventsWithIter(iter, target, numEvents);
-	List<Integer> expectedStartTimes = Lists.newArrayList(0, 1, 2);
+	Iterator<Integer> iter = Lists.newArrayList(0, 0, 1, 1, 2, 2, 3, 3).iterator();
+	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 0));
+	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEventsWithIter(iter, target,
+		consequenceEvents, numEvents);
+	List<Integer> expectedStartTimes = Lists.newArrayList(1, 2, 3);
 	List<Integer> actualStartTimes = Lists.transform(events, (e) -> e.startTime);
 	Assert.assertEquals(expectedStartTimes, actualStartTimes);
 	Assert.assertTrue(events.stream().allMatch((e) -> e.uuid.equals(target.uuid)));
     }
-    
+
     @Test
-    public void createBackgroundEventsTrueRandom() {
+    public void createNonEOBackgroundEventsTrueRandom() throws TooManyBackgroundEventsException {
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
 	int numEvents = 9;
-	int duration = 10;
-	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEvents(target, duration, numEvents);
+	int duration = 9;
+	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 0));
+	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEvents(target, consequenceEvents,
+		duration, numEvents);
 	Assert.assertEquals(9, events.size());
-	Assert.assertEquals(9, events.stream().map((e) -> e.startTime).distinct().count());
+	Assert.assertEquals(9, Sets.newHashSet(events).size());
+	Assert.assertTrue(events.stream().noneMatch((e) -> e.startTime == 0));
     }
+
+    @Test
+    public void createNonEOBackgroundEventsRejectsImpossibleState() throws TooManyBackgroundEventsException {
+	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
+	int numEvents = 3;
+	int duration = 3;
+	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 1));
+
+	ThrowingRunnable r = () -> ConditionalProbability.randomBackgroundEvents(target, consequenceEvents, duration,
+		numEvents);
+	Assert.assertThrows(ConditionalProbability.TooManyBackgroundEventsException.class, r);
+
+	int numEvents2 = 5;
+	int duration2 = 3;
+	List<BehaviorEvent> consequenceEvents2 = Lists.newArrayList();
+	r = () -> ConditionalProbability.randomBackgroundEvents(target, consequenceEvents2, duration2,
+		numEvents2);
+	Assert.assertThrows(ConditionalProbability.TooManyBackgroundEventsException.class, r);
+    }
+
+    // Calculating Conditional Probabilities
 
     @Test
     public void binaryNonEO() {
