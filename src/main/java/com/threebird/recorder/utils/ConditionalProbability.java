@@ -308,4 +308,28 @@ public class ConditionalProbability {
 	};
 	return randomBackgroundEventsWithIter(randomInts, target, consequenceEvents, numEvents);
     }
+
+    public static List<DiscreteBehavior> completeBackgroundEvents(KeyBehaviorMapping target,
+	    List<BehaviorEvent> consequenceEvents, int duration) {
+	int totalConsequencesMillis = 0;
+	for (BehaviorEvent ce : consequenceEvents) {
+	    totalConsequencesMillis += ce.endTime() - ce.startTime + 1;
+	}
+	int allowedMillis = (duration + 1) - totalConsequencesMillis;
+
+	Iterator<Integer> sequentialInts = new Iterator<Integer>() {
+	    private int c = 0;
+
+	    @Override
+	    public boolean hasNext() {
+		return true;
+	    }
+
+	    @Override
+	    public Integer next() {
+		return this.c++;
+	    }
+	};
+	return randomBackgroundEventsWithIter(sequentialInts, target, consequenceEvents, allowedMillis);
+    }
 }

@@ -25,6 +25,25 @@
 		</HBox>
 		<Label fx:id="fileNotFoundLbl" text="That file does not exist"
 			textFill="RED" visible="false" />
+		<Label text="Background Options:" />
+		<HBox spacing="5.0">
+			<children>
+				<TextField fx:id="windowField" prefWidth="50.0" />
+				<Label fx:id="windowRequiredLbl" text="Window is required."
+					textFill="RED" visible="false" />
+			</children>
+		</HBox>
+		<HBox spacing="5.0">
+			<children>
+				<Label text="Window (seconds):" />
+				<TextField fx:id="windowField" prefWidth="50.0" />
+				<Label fx:id="windowRequiredLbl" text="Window is required."
+					textFill="RED" visible="false" />
+			</children>
+		</HBox>
+		<Label>Target Behavior:</Label>
+		<VBox spacing="3.0" fx:id="behaviorSelection">
+		</VBox>
 		<Label text="Save Options:" />
 		<HBox spacing="10.0">
 			<children>
@@ -47,17 +66,6 @@
 				</VBox>
 			</children>
 		</HBox>
-		<HBox spacing="5.0">
-			<children>
-				<Label text="Range (seconds):" />
-				<TextField fx:id="rangeField" prefWidth="50.0" />
-				<Label fx:id="rangeRequiredLbl" text="Range is required."
-					textFill="RED" visible="false" />
-			</children>
-		</HBox>
-		<Label>Target Behavior:</Label>
-		<VBox spacing="3.0" fx:id="behaviorSelection">
-		</VBox>
 		<Label fx:id="unselectedTargetLbl"
 			text="You must select a target behavior." textFill="RED"
 			visible="false" />

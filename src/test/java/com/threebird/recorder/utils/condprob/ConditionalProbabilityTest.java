@@ -130,6 +130,16 @@ public class ConditionalProbabilityTest {
 		numEvents2);
 	Assert.assertThrows(ConditionalProbability.TooManyBackgroundEventsException.class, r);
     }
+    
+    @Test
+    public void createCompleteBackgroundEvents() {
+	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
+	int duration = 3;
+	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 1));
+	List<DiscreteBehavior> events = ConditionalProbability.completeBackgroundEvents(target, consequenceEvents, duration);
+	Assert.assertEquals(2, Sets.newHashSet(events).size());
+    }
 
     // Calculating Conditional Probabilities
 

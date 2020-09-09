@@ -67,9 +67,9 @@ public class ConditionalProbabilityController {
     @FXML
     Label saveStatusLbl;
     @FXML
-    TextField rangeField;
+    TextField windowField;
     @FXML
-    Label rangeRequiredLbl;
+    Label windowRequiredLbl;
 
     private KeyBehaviorMapping selectedBehavior;
     private SessionBean1_1 dataStream;
@@ -83,7 +83,7 @@ public class ConditionalProbabilityController {
     private void initialize() {
 	initFileField();
 	initSaveOptions();
-	initRangeField();
+	initWindowField();
     }
 
     @FXML
@@ -140,11 +140,11 @@ public class ConditionalProbabilityController {
 		.addListener((o, old, newV) -> ConditionalProbabilityManager.appendFileProperty().set(newV));
     }
 
-    private void initRangeField() {
+    private void initWindowField() {
 	char[] digits = "0123456789".toCharArray();
-	this.rangeField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, 3));
-	this.rangeField.setText(Integer.toString(ConditionalProbabilityManager.rangeProperty().get()));
-	this.rangeField.textProperty().addListener((o, old, newV) -> {
+	this.windowField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, 3));
+	this.windowField.setText(Integer.toString(ConditionalProbabilityManager.rangeProperty().get()));
+	this.windowField.textProperty().addListener((o, old, newV) -> {
 	    int n = Strings.isNullOrEmpty(newV) ? 1 : Integer.valueOf(newV);
 	    ConditionalProbabilityManager.rangeProperty().set(n);
 	});
@@ -213,13 +213,13 @@ public class ConditionalProbabilityController {
 	    appendFileNotFoundLbl.setVisible(false);
 	}
 
-	if (this.rangeField.getText().isEmpty()) {
-	    this.rangeField.setStyle(cssRed);
-	    this.rangeRequiredLbl.setVisible(true);
+	if (this.windowField.getText().isEmpty()) {
+	    this.windowField.setStyle(cssRed);
+	    this.windowRequiredLbl.setVisible(true);
 	    valid = false;
 	} else {
-	    this.rangeField.setStyle("");
-	    this.rangeRequiredLbl.setVisible(false);
+	    this.windowField.setStyle("");
+	    this.windowRequiredLbl.setVisible(false);
 	}
 
 	if (this.selectedBehavior == null) {
