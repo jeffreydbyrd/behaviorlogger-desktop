@@ -263,7 +263,7 @@ public class ConditionalProbability {
 	return consequenceEvents;
     }
 
-    public static List<DiscreteBehavior> randomBackgroundEventsWithIter(Iterator<Integer> randomInts,
+    public static List<BehaviorEvent> randomBackgroundEventsWithIter(Iterator<Integer> randomInts,
 	    KeyBehaviorMapping kbm, List<BehaviorEvent> consequenceEvents, int numEvents) {
 	Set<Integer> startTimes = new HashSet<>();
 	for (int i = 0; i < numEvents; i++) {
@@ -273,7 +273,7 @@ public class ConditionalProbability {
 	    }
 	    startTimes.add(next);
 	}
-	List<DiscreteBehavior> result = Lists.newArrayList();
+	List<BehaviorEvent> result = Lists.newArrayList();
 	for (Integer startTime : startTimes) {
 	    DiscreteBehavior evt = new DiscreteBehavior(kbm.uuid, kbm.key, kbm.description, startTime);
 	    result.add(evt);
@@ -281,7 +281,7 @@ public class ConditionalProbability {
 	return result;
     }
 
-    public static List<DiscreteBehavior> randomBackgroundEvents(KeyBehaviorMapping target,
+    public static List<BehaviorEvent> randomBackgroundEvents(KeyBehaviorMapping target,
 	    List<BehaviorEvent> consequenceEvents, int duration, int numEvents)
 	    throws TooManyBackgroundEventsException {
 
@@ -309,7 +309,7 @@ public class ConditionalProbability {
 	return randomBackgroundEventsWithIter(randomInts, target, consequenceEvents, numEvents);
     }
 
-    public static List<DiscreteBehavior> completeBackgroundEvents(KeyBehaviorMapping target,
+    public static List<BehaviorEvent> completeBackgroundEvents(KeyBehaviorMapping target,
 	    List<BehaviorEvent> consequenceEvents, int duration) {
 	int totalConsequencesMillis = 0;
 	for (BehaviorEvent ce : consequenceEvents) {

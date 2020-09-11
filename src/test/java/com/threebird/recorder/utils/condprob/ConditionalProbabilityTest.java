@@ -89,7 +89,7 @@ public class ConditionalProbabilityTest {
 	Iterator<Integer> iter = Lists.newArrayList(0, 0, 1, 1, 2, 2, 3, 3).iterator();
 	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
 	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 0));
-	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEventsWithIter(iter, target,
+	List<BehaviorEvent> events = ConditionalProbability.randomBackgroundEventsWithIter(iter, target,
 		consequenceEvents, numEvents);
 	List<Integer> expectedStartTimes = Lists.newArrayList(1, 2, 3);
 	List<Integer> actualStartTimes = Lists.transform(events, (e) -> e.startTime);
@@ -104,8 +104,8 @@ public class ConditionalProbabilityTest {
 	int duration = 9;
 	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
 	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 0));
-	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEvents(target, consequenceEvents,
-		duration, numEvents);
+	List<BehaviorEvent> events = ConditionalProbability.randomBackgroundEvents(target, consequenceEvents, duration,
+		numEvents);
 	Assert.assertEquals(9, events.size());
 	Assert.assertEquals(9, Sets.newHashSet(events).size());
 	Assert.assertTrue(events.stream().noneMatch((e) -> e.startTime == 0));
@@ -136,7 +136,7 @@ public class ConditionalProbabilityTest {
 	int duration = 3;
 	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
 	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 1));
-	List<DiscreteBehavior> events = ConditionalProbability.completeBackgroundEvents(target, consequenceEvents,
+	List<BehaviorEvent> events = ConditionalProbability.completeBackgroundEvents(target, consequenceEvents,
 		duration);
 	Assert.assertEquals(2, Sets.newHashSet(events).size());
 	List<Integer> startTimes = Lists.transform(events, (e) -> e.startTime);

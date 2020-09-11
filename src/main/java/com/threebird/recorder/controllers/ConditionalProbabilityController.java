@@ -31,6 +31,7 @@ import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.Session
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.utils.ConditionalProbability;
 import com.threebird.recorder.utils.ConditionalProbability.AllResults;
+import com.threebird.recorder.utils.ConditionalProbability.TooManyBackgroundEventsException;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -270,22 +271,45 @@ public class ConditionalProbabilityController {
 			    e.time);
 		}).collect(Collectors.toList());
 
-	Map<KeyBehaviorMapping, AllResults> resultsMap = Maps.newHashMap();
+	Map<KeyBehaviorMapping, AllResults> actualResultsMap = Maps.newHashMap();
+	Map<KeyBehaviorMapping, AllResults> backgroundResultsMap = Maps.newHashMap();
+
 	for (KeyBehaviorMapping kbm : this.dataStream.schema.behaviors) {
 	    if (kbm.uuid.equals(targetBehavior.uuid)) {
 		continue;
 	    }
 	    List<BehaviorEvent> consequenceEvents = ConditionalProbability.getConsequenceEvents(kbm,
 		    this.dataStream.discreteEvents, this.dataStream.continuousEvents);
-	    int rangeMillis = ConditionalProbabilityManager.windowProperty().get() * 1000;
-	    AllResults results = ConditionalProbability.all(targetEvents, consequenceEvents, rangeMillis);
-	    resultsMap.put(kbm, results);
+	    int windowMillis = ConditionalProbabilityManager.windowProperty().get() * 1000;
+	    AllResults actualResults = ConditionalProbability.all(targetEvents, consequenceEvents, windowMillis);
+	    actualResultsMap.put(kbm, actualResults);
+
+	    List<BehaviorEvent> backgroundEvents;
+	    if (ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().get()) {
+		int numEvents = actualResults.binaryEO.sampled;
+		try {
+		    backgroundEvents = ConditionalProbability.randomBackgroundEvents(targetBehavior, consequenceEvents,
+			    (int) this.dataStream.duration, numEvents);
+		} catch (TooManyBackgroundEventsException e1) {
+		    // TODO Auto-generated catch block
+		    e1.printStackTrace();
+		    backgroundEvents = Lists.newArrayList();
+		}
+	    } else {
+		backgroundEvents = ConditionalProbability.completeBackgroundEvents(targetBehavior, consequenceEvents,
+			(int) this.dataStream.duration);
+	    }
+
+	    AllResults backgroundResults = ConditionalProbability.all(backgroundEvents, consequenceEvents,
+		    windowMillis);
+	    backgroundResultsMap.put(kbm, backgroundResults);
 	}
 
-	writeToFile(resultsMap);
+	writeToFile(actualResultsMap, backgroundResultsMap);
     }
 
-    private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap)
+    private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap,
+	    Map<KeyBehaviorMapping, AllResults> backgroundResultsMap)
 	    throws IOException, EncryptedDocumentException, InvalidFormatException {
 	File outputFile;
 	boolean appendToFile = ConditionalProbabilityManager.appendSelectedProperty().get();
@@ -361,22 +385,24 @@ public class ConditionalProbabilityController {
 	entries.sort((e1, e2) -> -1 * ConditionalProbability.AllResults.compare.compare(e1.getValue(), e2.getValue()));
 	for (Entry<KeyBehaviorMapping, AllResults> entry : entries) {
 	    KeyBehaviorMapping key = entry.getKey();
-	    AllResults results = entry.getValue();
+	    AllResults actualResults = entry.getValue();
+	    AllResults backgroundResults = backgroundResultsMap.get(key);
+
 	    row = s.createRow(r++);
 	    int c = 0;
 	    row.createCell(c++).setCellValue(String.format("%s (%s)", key.description, key.key.c));
-	    row.createCell(c++).setCellValue(results.binaryEO.sampled);
-	    row.createCell(c++).setCellValue(results.binaryEO.probability);
-	    row.createCell(c++).setCellValue("0.0");
-	    row.createCell(c++).setCellValue(results.binaryNonEO.sampled);
-	    row.createCell(c++).setCellValue(results.binaryNonEO.probability);
-	    row.createCell(c++).setCellValue("0.0");
-	    row.createCell(c++).setCellValue(results.proportionEO.sampled);
-	    row.createCell(c++).setCellValue(results.proportionEO.probability);
-	    row.createCell(c++).setCellValue("0.0");
-	    row.createCell(c++).setCellValue(results.proportionNonEO.sampled);
-	    row.createCell(c++).setCellValue(results.proportionNonEO.probability);
-	    row.createCell(c++).setCellValue("0.0");
+	    row.createCell(c++).setCellValue(actualResults.binaryEO.sampled);
+	    row.createCell(c++).setCellValue(actualResults.binaryEO.probability);
+	    row.createCell(c++).setCellValue(backgroundResults.binaryEO.probability);
+	    row.createCell(c++).setCellValue(actualResults.binaryNonEO.sampled);
+	    row.createCell(c++).setCellValue(actualResults.binaryNonEO.probability);
+	    row.createCell(c++).setCellValue(backgroundResults.binaryNonEO.probability);
+	    row.createCell(c++).setCellValue(actualResults.proportionEO.sampled);
+	    row.createCell(c++).setCellValue(actualResults.proportionEO.probability);
+	    row.createCell(c++).setCellValue(backgroundResults.proportionEO.probability);
+	    row.createCell(c++).setCellValue(actualResults.proportionNonEO.sampled);
+	    row.createCell(c++).setCellValue(actualResults.proportionNonEO.probability);
+	    row.createCell(c++).setCellValue(backgroundResults.proportionNonEO.probability);
 	}
 
 	FileOutputStream out = new FileOutputStream(outputFile);
