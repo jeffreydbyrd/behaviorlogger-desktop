@@ -70,6 +70,12 @@ public class ConditionalProbabilityController {
     TextField windowField;
     @FXML
     Label windowRequiredLbl;
+    @FXML
+    RadioButton backgroundRandomSamplingRadio;
+    @FXML
+    RadioButton backgroundCompleteSamplingRadio;
+    @FXML
+    TextField backgroundRandomSamplingNumEventsField;
 
     private KeyBehaviorMapping selectedBehavior;
     private SessionBean1_1 dataStream;
@@ -82,8 +88,9 @@ public class ConditionalProbabilityController {
     @FXML
     private void initialize() {
 	initFileField();
-	initSaveOptions();
 	initWindowField();
+	initBackgroundFields();
+	initSaveOptions();
     }
 
     @FXML
@@ -143,10 +150,32 @@ public class ConditionalProbabilityController {
     private void initWindowField() {
 	char[] digits = "0123456789".toCharArray();
 	this.windowField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, 3));
-	this.windowField.setText(Integer.toString(ConditionalProbabilityManager.rangeProperty().get()));
+	this.windowField.setText(Integer.toString(ConditionalProbabilityManager.windowProperty().get()));
 	this.windowField.textProperty().addListener((o, old, newV) -> {
 	    int n = Strings.isNullOrEmpty(newV) ? 1 : Integer.valueOf(newV);
-	    ConditionalProbabilityManager.rangeProperty().set(n);
+	    ConditionalProbabilityManager.windowProperty().set(n);
+	});
+    }
+
+    private void initBackgroundFields() {
+	ToggleGroup group = new ToggleGroup();
+	this.backgroundRandomSamplingRadio.setToggleGroup(group);
+	this.backgroundCompleteSamplingRadio.setToggleGroup(group);
+
+	boolean backgroundRandomSamplingSelected = ConditionalProbabilityManager
+		.backgroundRandomSamplingSelectedProperty().getValue();
+	this.backgroundCompleteSamplingRadio.setSelected(!backgroundRandomSamplingSelected);
+	this.backgroundRandomSamplingRadio.setSelected(backgroundRandomSamplingSelected);
+	backgroundRandomSamplingRadio.selectedProperty().addListener((observable, oldValue, selected) -> {
+	    ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().setValue(selected);
+	});
+
+	char[] digits = "0123456789".toCharArray();
+	this.backgroundRandomSamplingNumEventsField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, -1));
+	this.backgroundRandomSamplingNumEventsField
+		.setText(ConditionalProbabilityManager.backgroundNumEventsProperty().get());
+	this.backgroundRandomSamplingNumEventsField.textProperty().addListener((o, old, newV) -> {
+	    ConditionalProbabilityManager.backgroundNumEventsProperty().set(newV);
 	});
     }
 
@@ -237,7 +266,8 @@ public class ConditionalProbabilityController {
 	List<BehaviorEvent> targetEvents = this.dataStream.discreteEvents.stream() //
 		.filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
 		.map((e) -> {
-		    return new DiscreteBehavior(targetBehavior.uuid, targetBehavior.key, targetBehavior.description, e.time);
+		    return new DiscreteBehavior(targetBehavior.uuid, targetBehavior.key, targetBehavior.description,
+			    e.time);
 		}).collect(Collectors.toList());
 
 	Map<KeyBehaviorMapping, AllResults> resultsMap = Maps.newHashMap();
@@ -245,8 +275,9 @@ public class ConditionalProbabilityController {
 	    if (kbm.uuid.equals(targetBehavior.uuid)) {
 		continue;
 	    }
-	    List<BehaviorEvent> consequenceEvents = ConditionalProbability.getConsequenceEvents(kbm, this.dataStream.discreteEvents, this.dataStream.continuousEvents);
-	    int rangeMillis = ConditionalProbabilityManager.rangeProperty().get() * 1000;
+	    List<BehaviorEvent> consequenceEvents = ConditionalProbability.getConsequenceEvents(kbm,
+		    this.dataStream.discreteEvents, this.dataStream.continuousEvents);
+	    int rangeMillis = ConditionalProbabilityManager.windowProperty().get() * 1000;
 	    AllResults results = ConditionalProbability.all(targetEvents, consequenceEvents, rangeMillis);
 	    resultsMap.put(kbm, results);
 	}
@@ -297,7 +328,7 @@ public class ConditionalProbabilityController {
 	row.createCell(1).setCellValue(targetDescription);
 	row = s.createRow(r++);
 	row.createCell(0).setCellValue("Window Size (seconds)");
-	row.createCell(1).setCellValue(ConditionalProbabilityManager.rangeProperty().get());
+	row.createCell(1).setCellValue(ConditionalProbabilityManager.windowProperty().get());
 
 	// __Headers__
 	r++; // skip row

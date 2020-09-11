@@ -18,13 +18,17 @@ public class ConditionalProbabilityManager {
 	String file;
 	boolean appendSelected;
 	String appendFile;
-	int range;
+	int window;
+	boolean backgroundRandomSamplingSelected;
+	String backgroundNumEvents;
     }
 
     private static SimpleStringProperty fileProperty;
     private static SimpleBooleanProperty appendSelectedProperty;
     private static SimpleStringProperty appendFileProperty;
-    private static SimpleIntegerProperty rangeProperty;
+    private static SimpleIntegerProperty windowProperty;
+    private static SimpleBooleanProperty backgroundRandomSamplingSelectedProperty;
+    private static SimpleStringProperty backgroundNumEventsProperty;
 
     private static File file = ResourceUtils.getConditionalProbabilityDetails();
 
@@ -42,7 +46,9 @@ public class ConditionalProbabilityManager {
 	model.file = fileProperty().get();
 	model.appendSelected = appendSelectedProperty().get();
 	model.appendFile = appendFileProperty().get();
-	model.range = rangeProperty().get();
+	model.window = windowProperty().get();
+	model.backgroundRandomSamplingSelected = backgroundRandomSamplingSelectedProperty().get();
+	model.backgroundNumEvents = backgroundNumEventsProperty().get();
 
 	try {
 	    GsonUtils.save(file, model);
@@ -80,11 +86,28 @@ public class ConditionalProbabilityManager {
 	return Optional.ofNullable(appendFileProperty().getValue());
     }
 
-    public static SimpleIntegerProperty rangeProperty() {
-	if (rangeProperty == null) {
-	    rangeProperty = new SimpleIntegerProperty(defaultModel.get().range);
-	    rangeProperty.addListener((o, old, newV) -> persist());
+    public static SimpleIntegerProperty windowProperty() {
+	if (windowProperty == null) {
+	    windowProperty = new SimpleIntegerProperty(defaultModel.get().window);
+	    windowProperty.addListener((o, old, newV) -> persist());
 	}
-	return rangeProperty;
+	return windowProperty;
+    }
+
+    public static SimpleBooleanProperty backgroundRandomSamplingSelectedProperty() {
+	if (backgroundRandomSamplingSelectedProperty == null) {
+	    backgroundRandomSamplingSelectedProperty = new SimpleBooleanProperty(
+		    defaultModel.get().backgroundRandomSamplingSelected);
+	    backgroundRandomSamplingSelectedProperty.addListener((o, old, newV) -> persist());
+	}
+	return backgroundRandomSamplingSelectedProperty;
+    }
+
+    public static SimpleStringProperty backgroundNumEventsProperty() {
+	if (backgroundNumEventsProperty == null) {
+	    backgroundNumEventsProperty = new SimpleStringProperty(defaultModel.get().backgroundNumEvents);
+	    backgroundNumEventsProperty.addListener((o, old, newV) -> persist());
+	}
+	return backgroundNumEventsProperty;
     }
 }

@@ -13,6 +13,8 @@
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="com.threebird.recorder.controllers.ConditionalProbabilityController">
 	<children>
+
+		<!-- Data File Selection -->
 		<Text strokeType="OUTSIDE" strokeWidth="0.0"
 			text="Select a .raw output from a session recording:" />
 		<Label text="File" />
@@ -25,14 +27,8 @@
 		</HBox>
 		<Label fx:id="fileNotFoundLbl" text="That file does not exist"
 			textFill="RED" visible="false" />
-		<Label text="Background Options:" />
-		<HBox spacing="5.0">
-			<children>
-				<TextField fx:id="windowField" prefWidth="50.0" />
-				<Label fx:id="windowRequiredLbl" text="Window is required."
-					textFill="RED" visible="false" />
-			</children>
-		</HBox>
+
+		<!-- Window Selection -->
 		<HBox spacing="5.0">
 			<children>
 				<Label text="Window (seconds):" />
@@ -41,9 +37,32 @@
 					textFill="RED" visible="false" />
 			</children>
 		</HBox>
+
+		<!-- Background Probability Options -->
+		<Label text="Background Probability Options:" />
+		<VBox spacing="5.0">
+			<children>
+				<RadioButton fx:id="backgroundCompleteSamplingRadio"
+					mnemonicParsing="false" text="Complete" />
+				<HBox spacing="5.0">
+					<children>
+						<RadioButton fx:id="backgroundRandomSamplingRadio"
+							mnemonicParsing="false" text="Randomly Sampled Events:" />
+						<TextField
+							fx:id="backgroundRandomSamplingNumEventsField" maxWidth="50.0" />
+					</children>
+				</HBox>
+				<Label style="-fx-padding: 5 0 0 50;"
+					text="(leave empty to equal number of targets)" />
+			</children>
+		</VBox>
+
+		<!-- Target Behavior Selection -->
 		<Label>Target Behavior:</Label>
 		<VBox spacing="3.0" fx:id="behaviorSelection">
 		</VBox>
+
+		<!-- Save Options Selection -->
 		<Label text="Save Options:" />
 		<HBox spacing="10.0">
 			<children>
@@ -66,10 +85,14 @@
 				</VBox>
 			</children>
 		</HBox>
+
+		<!-- Hidden Error Labels -->
 		<Label fx:id="unselectedTargetLbl"
 			text="You must select a target behavior." textFill="RED"
 			visible="false" />
 		<Label fx:id="saveStatusLbl" wrapText="false" />
+
+		<!-- User Actions -->
 		<Separator prefWidth="200.0" />
 		<HBox spacing="10.0">
 			<children>
