@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -338,32 +342,80 @@ public class ConditionalProbabilityController {
 	}
 
 	Sheet s = wb.createSheet();
-	Row row;
 	int r = 0;
 
-	// __Summary__
+	r = writeExcelSummary(outputFile, wb, s, r);
+	r = writeExcelHeaders(wb, s, r);
+
+	// __Details__
+	writeExcelDetails(resultsMap, backgroundResultsMap, wb, s, r);
+
+	FileOutputStream out = new FileOutputStream(outputFile);
+	wb.write(out);
+	out.flush();
+	wb.close();
+	out.close();
+
+	if (appendToFile) {
+	    this.saveStatusLbl.setText("Conditional Probabilities appended to: " + outputFile.getAbsolutePath());
+	} else {
+	    this.saveStatusLbl.setText("Conditional Probabilities saved to new file: " + outputFile.getAbsolutePath());
+	}
+    }
+
+    private int writeExcelSummary(File outputFile, Workbook wb, Sheet s, int r) {
+	Row row;
+	Cell cell;
+
+	CellStyle boldstyle = wb.createCellStyle();
+	Font font = wb.createFont();
+	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+	boldstyle.setFont(font);
+
 	row = s.createRow(r++);
-	row.createCell(0).setCellValue("File");
+	cell = row.createCell(0);
+	cell.setCellValue("File");
+	cell.setCellStyle(boldstyle);
 	row.createCell(1).setCellValue(outputFile.getName());
+
 	row = s.createRow(r++);
-	row.createCell(0).setCellValue("Target");
+	cell = row.createCell(0);
+	cell.setCellValue("Target");
+	cell.setCellStyle(boldstyle);
 	String targetDescription = String.format("%s (%s)", this.selectedBehavior.description,
 		this.selectedBehavior.key.c);
 	row.createCell(1).setCellValue(targetDescription);
+
 	row = s.createRow(r++);
-	row.createCell(0).setCellValue("Window Size (seconds)");
+	cell = row.createCell(0);
+	cell.setCellValue("Window Size (seconds)");
+	cell.setCellStyle(boldstyle);
 	row.createCell(1).setCellValue(ConditionalProbabilityManager.windowProperty().get());
 
-	// __Headers__
+	return r;
+    }
+
+    private int writeExcelHeaders(Workbook wb, Sheet s, int r) {
+	Row row;
+
+	CellStyle boldstyle = wb.createCellStyle();
+	Font font = wb.createFont();
+	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+	boldstyle.setFont(font);
+
 	r++; // skip row
 	row = s.createRow(r++); // main headers
 	row.createCell(1).setCellValue("Binary");
 	row.createCell(7).setCellValue("Proportion");
+	row.cellIterator().forEachRemaining((c) -> c.setCellStyle(boldstyle));
+
 	row = s.createRow(r++); // eo/non-eo headers
 	row.createCell(1).setCellValue("EO");
 	row.createCell(4).setCellValue("Non-EO");
 	row.createCell(7).setCellValue("EO");
 	row.createCell(10).setCellValue("Non-EO");
+	row.cellIterator().forEachRemaining((c) -> c.setCellStyle(boldstyle));
+
 	row = s.createRow(r++); // behavior/sample/condition/background
 	row.createCell(0).setCellValue("Behavior");
 	row.createCell(1).setCellValue("Sample");
@@ -378,8 +430,22 @@ public class ConditionalProbabilityController {
 	row.createCell(10).setCellValue("Sample");
 	row.createCell(11).setCellValue("Condition");
 	row.createCell(12).setCellValue("Background");
+	row.cellIterator().forEachRemaining((c) -> c.setCellStyle(boldstyle));
 
-	// __Details__
+	return r;
+    }
+
+    private void writeExcelDetails(Map<KeyBehaviorMapping, AllResults> resultsMap,
+	    Map<KeyBehaviorMapping, AllResults> backgroundResultsMap, Workbook wb, Sheet s, int r) {
+	CellStyle boldstyle = wb.createCellStyle();
+	Font font = wb.createFont();
+	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+	boldstyle.setFont(font);
+
+	CellStyle decimalstyle = wb.createCellStyle();
+	DataFormat dataformat = wb.createDataFormat();
+	decimalstyle.setDataFormat(dataformat.getFormat("0.000"));
+
 	Set<Entry<KeyBehaviorMapping, AllResults>> entrySet = resultsMap.entrySet();
 	ArrayList<Entry<KeyBehaviorMapping, AllResults>> entries = Lists.newArrayList(entrySet);
 	entries.sort((e1, e2) -> -1 * ConditionalProbability.AllResults.compare.compare(e1.getValue(), e2.getValue()));
@@ -388,33 +454,36 @@ public class ConditionalProbabilityController {
 	    AllResults actualResults = entry.getValue();
 	    AllResults backgroundResults = backgroundResultsMap.get(key);
 
-	    row = s.createRow(r++);
+	    Row row = s.createRow(r++);
+	    Cell cell;
 	    int c = 0;
-	    row.createCell(c++).setCellValue(String.format("%s (%s)", key.description, key.key.c));
+	    cell = row.createCell(c++);
+	    cell.setCellValue(String.format("%s (%s)", key.description, key.key.c));
+	    cell.setCellStyle(boldstyle);
+
 	    row.createCell(c++).setCellValue(actualResults.binaryEO.sampled);
 	    row.createCell(c++).setCellValue(actualResults.binaryEO.probability);
 	    row.createCell(c++).setCellValue(backgroundResults.binaryEO.probability);
+	    row.getCell(c - 2).setCellStyle(decimalstyle);
+	    row.getCell(c - 1).setCellStyle(decimalstyle);
+
 	    row.createCell(c++).setCellValue(actualResults.binaryNonEO.sampled);
 	    row.createCell(c++).setCellValue(actualResults.binaryNonEO.probability);
 	    row.createCell(c++).setCellValue(backgroundResults.binaryNonEO.probability);
+	    row.getCell(c - 2).setCellStyle(decimalstyle);
+	    row.getCell(c - 1).setCellStyle(decimalstyle);
+
 	    row.createCell(c++).setCellValue(actualResults.proportionEO.sampled);
 	    row.createCell(c++).setCellValue(actualResults.proportionEO.probability);
 	    row.createCell(c++).setCellValue(backgroundResults.proportionEO.probability);
+	    row.getCell(c - 2).setCellStyle(decimalstyle);
+	    row.getCell(c - 1).setCellStyle(decimalstyle);
+
 	    row.createCell(c++).setCellValue(actualResults.proportionNonEO.sampled);
 	    row.createCell(c++).setCellValue(actualResults.proportionNonEO.probability);
 	    row.createCell(c++).setCellValue(backgroundResults.proportionNonEO.probability);
-	}
-
-	FileOutputStream out = new FileOutputStream(outputFile);
-	wb.write(out);
-	out.flush();
-	wb.close();
-	out.close();
-
-	if (appendToFile) {
-	    this.saveStatusLbl.setText("Conditional Probabilities appended to: " + outputFile.getAbsolutePath());
-	} else {
-	    this.saveStatusLbl.setText("Conditional Probabilities saved to new file: " + outputFile.getAbsolutePath());
+	    row.getCell(c - 2).setCellStyle(decimalstyle);
+	    row.getCell(c - 1).setCellStyle(decimalstyle);
 	}
     }
 }

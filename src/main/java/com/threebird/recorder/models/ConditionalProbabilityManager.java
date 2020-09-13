@@ -88,7 +88,11 @@ public class ConditionalProbabilityManager {
 
     public static SimpleIntegerProperty windowProperty() {
 	if (windowProperty == null) {
-	    windowProperty = new SimpleIntegerProperty(defaultModel.get().window);
+	    int window = defaultModel.get().window;
+	    if (window <= 0) {
+		window = 10;
+	    }
+	    windowProperty = new SimpleIntegerProperty(window);
 	    windowProperty.addListener((o, old, newV) -> persist());
 	}
 	return windowProperty;

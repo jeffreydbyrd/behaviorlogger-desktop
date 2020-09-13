@@ -67,6 +67,11 @@ public class ConditionalProbability {
 		return false;
 	    return true;
 	}
+
+	@Override
+	public String toString() {
+	    return "Results [probability=" + probability + ", sampled=" + sampled + ", total=" + total + "]";
+	}
     }
 
     public static class AllResults {
@@ -86,6 +91,12 @@ public class ConditionalProbability {
 	    this.proportionNonEO = proportionNonEO;
 	    this.avg = (binaryEO.probability + binaryNonEO.probability + proportionEO.probability
 		    + proportionNonEO.probability) / 4;
+	}
+
+	@Override
+	public String toString() {
+	    return "AllResults [binaryEO=" + binaryEO + ", binaryNonEO=" + binaryNonEO + ", proportionEO="
+		    + proportionEO + ", proportionNonEO=" + proportionNonEO + ", avg=" + avg + "]";
 	}
     }
 
