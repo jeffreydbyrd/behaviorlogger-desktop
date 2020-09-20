@@ -21,6 +21,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -346,8 +347,6 @@ public class ConditionalProbabilityController {
 
 	r = writeExcelSummary(outputFile, wb, s, r);
 	r = writeExcelHeaders(wb, s, r);
-
-	// __Details__
 	writeExcelDetails(resultsMap, backgroundResultsMap, wb, s, r);
 
 	FileOutputStream out = new FileOutputStream(outputFile);
@@ -402,19 +401,28 @@ public class ConditionalProbabilityController {
 	Font font = wb.createFont();
 	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 	boldstyle.setFont(font);
+	boldstyle.setAlignment(CellStyle.ALIGN_CENTER);
 
 	r++; // skip row
-	row = s.createRow(r++); // main headers
+	row = s.createRow(r); // main headers
 	row.createCell(1).setCellValue("Binary");
 	row.createCell(7).setCellValue("Proportion");
 	row.cellIterator().forEachRemaining((c) -> c.setCellStyle(boldstyle));
+	s.addMergedRegion(new CellRangeAddress(r, r, 1, 6));
+	s.addMergedRegion(new CellRangeAddress(r, r, 7, 12));
+	r++;
 
-	row = s.createRow(r++); // eo/non-eo headers
+	row = s.createRow(r); // eo/non-eo headers
 	row.createCell(1).setCellValue("EO");
 	row.createCell(4).setCellValue("Non-EO");
 	row.createCell(7).setCellValue("EO");
 	row.createCell(10).setCellValue("Non-EO");
 	row.cellIterator().forEachRemaining((c) -> c.setCellStyle(boldstyle));
+	s.addMergedRegion(new CellRangeAddress(r, r, 1, 3));
+	s.addMergedRegion(new CellRangeAddress(r, r, 4, 6));
+	s.addMergedRegion(new CellRangeAddress(r, r, 7, 9));
+	s.addMergedRegion(new CellRangeAddress(r, r, 10, 12));
+	r++;
 
 	row = s.createRow(r++); // behavior/sample/condition/background
 	row.createCell(0).setCellValue("Behavior");
