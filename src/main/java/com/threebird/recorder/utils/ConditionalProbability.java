@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import com.threebird.recorder.models.MappableChar;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
 import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
@@ -126,8 +127,7 @@ public class ConditionalProbability {
 	if (numTargets == 0) {
 	    return new Results(-1.0, numTargets, numTargets);
 	}
-	return new Results(numPotentiallyReinforcedTargets / numTargets, //
-		numTargets, numTargets);
+	return new Results(numPotentiallyReinforcedTargets / numTargets, numTargets, numTargets);
     }
 
     private static boolean hasOverlappingEvents(List<BehaviorEvent> candidates, int targetTime) {
@@ -342,5 +342,21 @@ public class ConditionalProbability {
 	    }
 	};
 	return randomBackgroundEventsWithIter(sequentialInts, target, consequenceEvents, allowedMillis);
+    }
+
+    public static List<BehaviorEvent> convertToDiscrete(List<BehaviorEvent> events) {
+	List<BehaviorEvent> result = Lists.newArrayList();
+	for (BehaviorEvent event : events) {
+	    if (!event.isContinuous()) {
+		result.add(event);
+		continue;
+	    }
+	    for (int t = event.startTime; t <= event.endTime(); t += 1000) {
+		result.add(new DiscreteBehavior( //
+			event.uuid + "-" + t, //
+			MappableChar.C, event.name, t));
+	    }
+	}
+	return result;
     }
 }

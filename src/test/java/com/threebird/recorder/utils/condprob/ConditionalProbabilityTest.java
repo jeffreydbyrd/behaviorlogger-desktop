@@ -143,6 +143,30 @@ public class ConditionalProbabilityTest {
 	Assert.assertEquals(Lists.newArrayList(2, 3), startTimes);
     }
 
+    // Convert Continuous to Discrete Events
+
+    @Test
+    public void convertContinuousToDiscrete() {
+	List<BehaviorEvent> continuousEvents = Lists.newArrayList();
+	continuousEvents.add(new ContinuousBehavior("", MappableChar.C, "", 1000, 2000));
+	List<BehaviorEvent> events = ConditionalProbability.convertToDiscrete(continuousEvents);
+	Assert.assertEquals(3, events.size());
+	int t = 1000;
+	for (BehaviorEvent behaviorEvent : events) {
+	    Assert.assertEquals(t, behaviorEvent.startTime);
+	    t += 1000;
+	}
+    }
+
+    @Test
+    public void convertDiscreteToDiscrete() {
+	List<BehaviorEvent> discreteEvents = Lists.newArrayList();
+	discreteEvents.add(new DiscreteBehavior("", MappableChar.C, "", 1000));
+	List<BehaviorEvent> events = ConditionalProbability.convertToDiscrete(discreteEvents);
+	Assert.assertEquals(1, events.size());
+	Assert.assertEquals(discreteEvents, events);
+    }
+
     // Calculating Conditional Probabilities
 
     @Test

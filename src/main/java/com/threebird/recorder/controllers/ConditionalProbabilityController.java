@@ -205,9 +205,6 @@ public class ConditionalProbabilityController {
 	}
 	ToggleGroup group = new ToggleGroup();
 	for (KeyBehaviorMapping kbm : this.dataStream.schema.behaviors) {
-	    if (kbm.isContinuous) {
-		continue;
-	    }
 	    RadioButton radio = new RadioButton(kbm.key.c + " - " + kbm.description);
 	    radio.setToggleGroup(group);
 	    this.behaviorSelection.getChildren().add(radio);
