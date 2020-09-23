@@ -29,10 +29,12 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.threebird.recorder.models.ConditionalProbabilityManager;
 import com.threebird.recorder.models.behaviors.BehaviorEvent;
+import com.threebird.recorder.models.behaviors.ContinuousBehavior;
 import com.threebird.recorder.models.behaviors.DiscreteBehavior;
 import com.threebird.recorder.models.schemas.KeyBehaviorMapping;
 import com.threebird.recorder.persistence.GsonUtils;
 import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
+import com.threebird.recorder.utils.Alerts;
 import com.threebird.recorder.utils.BehaviorLoggerUtil;
 import com.threebird.recorder.utils.ConditionalProbability;
 import com.threebird.recorder.utils.ConditionalProbability.AllResults;
@@ -266,12 +268,7 @@ public class ConditionalProbabilityController {
 
     private void generateResults() throws IOException, EncryptedDocumentException, InvalidFormatException {
 	KeyBehaviorMapping targetBehavior = this.selectedBehavior;
-	List<BehaviorEvent> targetEvents = this.dataStream.discreteEvents.stream() //
-		.filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
-		.map((e) -> {
-		    return new DiscreteBehavior(targetBehavior.uuid, targetBehavior.key, targetBehavior.description,
-			    e.time);
-		}).collect(Collectors.toList());
+	List<BehaviorEvent> targetEvents = getTargetEvents(targetBehavior);
 
 	Map<KeyBehaviorMapping, AllResults> actualResultsMap = Maps.newHashMap();
 	Map<KeyBehaviorMapping, AllResults> backgroundResultsMap = Maps.newHashMap();
@@ -293,7 +290,9 @@ public class ConditionalProbabilityController {
 		    backgroundEvents = ConditionalProbability.randomBackgroundEvents(targetBehavior, consequenceEvents,
 			    (int) this.dataStream.duration, numEvents);
 		} catch (TooManyBackgroundEventsException e1) {
-		    // TODO Auto-generated catch block
+		    Alerts.error("Error Generating Background Events",
+			    "The data stream is too small to generate the required background events. Consider using the Complete option or reducing the number of desired background events.",
+			    e1);
 		    e1.printStackTrace();
 		    backgroundEvents = Lists.newArrayList();
 		}
@@ -308,6 +307,25 @@ public class ConditionalProbabilityController {
 	}
 
 	writeToFile(actualResultsMap, backgroundResultsMap);
+    }
+
+    private List<BehaviorEvent> getTargetEvents(KeyBehaviorMapping targetBehavior) {
+	List<BehaviorEvent> targetEvents;
+	if (targetBehavior.isContinuous) {
+	    targetEvents = this.dataStream.continuousEvents.stream() //
+		    .filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
+		    .map((e) -> new ContinuousBehavior(targetBehavior.uuid, targetBehavior.key,
+			    targetBehavior.description, e.startTime, e.endTime - e.startTime)) //
+		    .collect(Collectors.toList());
+	} else {
+	    targetEvents = this.dataStream.discreteEvents.stream() //
+		    .filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
+		    .map((e) -> {
+			return new DiscreteBehavior(targetBehavior.uuid, targetBehavior.key, targetBehavior.description,
+				e.time);
+		    }).collect(Collectors.toList());
+	}
+	return ConditionalProbability.convertToDiscrete(targetEvents);
     }
 
     private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap,

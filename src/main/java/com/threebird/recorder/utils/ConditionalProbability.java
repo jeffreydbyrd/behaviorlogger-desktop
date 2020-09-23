@@ -19,7 +19,7 @@ import com.threebird.recorder.persistence.recordings.RecordingRawJson1_1.Discret
 
 public class ConditionalProbability {
 
-    public static class TooManyBackgroundEventsException extends Throwable {
+    public static class TooManyBackgroundEventsException extends Exception {
 	private static final long serialVersionUID = 1L;
     }
 
