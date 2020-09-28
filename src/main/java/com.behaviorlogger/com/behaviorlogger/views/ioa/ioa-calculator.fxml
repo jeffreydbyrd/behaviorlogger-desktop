@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.behaviorlogger.controllers.IoaCalculatorController">
+   <children>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select .raw outputs from a session recording:" />
+      <HBox spacing="20.0">
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="File 1" />
+                  <HBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <TextField fx:id="file1Field" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="browse1Btn" mnemonicParsing="false" onAction="#browse1BtnPressed" text="Browse" HBox.hgrow="NEVER" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="file1NotFoundLbl" text="That file does not exist" textFill="RED" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" />
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="File 2" />
+                  <HBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <TextField fx:id="file2Field" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="browse2Btn" mnemonicParsing="false" onAction="#browse2BtnPressed" text="Browse" HBox.hgrow="NEVER" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="file2NotFoundLbl" text="That file does not exist" textFill="RED" visible="false" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox spacing="20.0">
+         <children>
+            <HBox spacing="5.0">
+               <children>
+                  <Label text="Method:">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ChoiceBox fx:id="methodChoiceBox" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox spacing="5.0">
+               <children>
+                  <Label text="Block Size:">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="thresholdField" prefWidth="50.0" />
+                  <Label text="seconds">
+                     <HBox.margin>
+                        <Insets top="7.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <Label text="Save Options:" />
+      <HBox spacing="10.0">
+         <children>
+            <RadioButton fx:id="newFileRadio" mnemonicParsing="false" text="New File" />
+            <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="Append to Existing:" />
+            <VBox fx:id="appendBox" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <TextField fx:id="appendField" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="appendBrowseBtn" mnemonicParsing="false" onAction="#appendBtnPressed" text="Browse" HBox.hgrow="NEVER" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="appendFileNotFoundLbl" text="That file does not exist" textFill="RED" visible="false" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <Label text="IOA Summary:" />
+      <ScrollPane fx:id="summaryBox" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+      <Label fx:id="saveStatusLbl" wrapText="true" />
+      <Separator prefWidth="200.0" />
+      <HBox spacing="10.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onCloseBtnPressed" text="Close" />
+            <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generateBtnPressed" text="Generate IOA" />
+            <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </Pane>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

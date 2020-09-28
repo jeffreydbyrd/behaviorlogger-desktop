@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="478.0" prefWidth="622.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.behaviorlogger.controllers.EditSchemaController">
+   <children>
+      <HBox spacing="10.0" VBox.vgrow="NEVER" />
+      <HBox spacing="5.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox maxWidth="230.0" minWidth="230.0" spacing="10.0" GridPane.columnIndex="1" HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField fx:id="clientField" prefColumnCount="0" promptText="Client" />
+                  <TextField fx:id="projectField" prefColumnCount="0" promptText="Project" />
+                  <VBox>
+                     <children>
+                        <HBox spacing="5.0">
+                           <children>
+                              <TextField fx:id="directoryField" prefColumnCount="0" promptText="Session Data Directory" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="browseButton" mnemonicParsing="false" onAction="#onBrowseButtonPressed" text="Browse" HBox.hgrow="NEVER" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Session Duration:" />
+                        <RadioButton fx:id="infiniteRadioBtn" mnemonicParsing="false" text="infinite" />
+                        <RadioButton fx:id="timedRadioBtn" mnemonicParsing="false" text="timed" />
+                        <VBox fx:id="durationBox" spacing="10.0">
+                           <children>
+                              <HBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                 <children>
+                                    <TextField fx:id="hoursField" prefHeight="26.0" prefWidth="40.0" promptText="hh" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                                    <TextField fx:id="minutesField" prefHeight="26.0" prefWidth="40.0" promptText="mm" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                                    <TextField fx:id="secondsField" prefHeight="26.0" prefWidth="40.0" promptText="ss" />
+                                 </children>
+                              </HBox>
+                              <Label text="When timer finishes:" />
+                              <CheckBox fx:id="colorCheckBox" mnemonicParsing="false" text="Color in the timer" />
+                              <CheckBox fx:id="pauseCheckBox" mnemonicParsing="false" text="Pause the session" />
+                              <CheckBox fx:id="beepCheckBox" mnemonicParsing="false" text="Emit beep" />
+                           </children>
+                           <padding>
+                              <Insets left="30.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <VBox spacing="10.0" GridPane.rowIndex="1" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                     <children>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="Discrete" />
+                              <Separator prefWidth="200.0" />
+                              <VBox fx:id="discreteBoxes" />
+                           </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="Continuous" />
+                              <Separator prefWidth="200.0" />
+                              <VBox fx:id="continuousBoxes" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <VBox>
+                     <children>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label text="Cont." />
+                              <CheckBox fx:id="contCheckbox" mnemonicParsing="false" />
+                              <TextField fx:id="keyField" prefHeight="27.0" prefWidth="44.0" promptText="Key" />
+                              <TextField fx:id="descriptionField" prefHeight="27.0" prefWidth="118.0" promptText="Behavior" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddClicked" text="Add" />
+                           </children>
+                        </HBox>
+                        <Text fx:id="mappingErrorText" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <Separator prefWidth="200.0" />
+      <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1" HBox.hgrow="ALWAYS">
+         <children>
+            <VBox fx:id="errorMsgBox" />
+            <VBox spacing="10.0">
+               <children>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onSaveSchemaClicked" text="Save Schema" />
+                        <Button mnemonicParsing="false" onAction="#onCancelClicked" text="Cancel" />
+                        <Button fx:id="deleteSchemaButton" mnemonicParsing="false" onAction="#onDeleteSchemaClicked" style="-fx-background-color: linear-gradient(#ff4400, #be1d00); -fx-background-radius: 5; -fx-text-fill: white;" text="Delete Schema" />
+                        <Pane nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

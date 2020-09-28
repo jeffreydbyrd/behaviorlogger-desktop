@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="493.0" prefWidth="716.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.behaviorlogger.controllers.StartMenuController">
+   <children>
+      <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox prefHeight="414.0" prefWidth="275.0" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <TableView fx:id="schemaTable" prefHeight="378.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="clientCol" prefWidth="119.76555061340332" text="Client" />
+                      <TableColumn fx:id="projectCol" minWidth="0.0" prefWidth="153.23446655273438" text="Project" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                           <children>
+                              <Button fx:id="createSchemaButton" mnemonicParsing="false" onAction="#onCreateSchemaClicked" prefWidth="80.0" text="Create" textAlignment="CENTER" />
+                              <Button fx:id="editSchemaBtn" mnemonicParsing="false" onAction="#onEditSchemaClicked" prefWidth="80.0" text="Edit" />
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                           <children>
+                              <Button fx:id="exportSchemaButton" mnemonicParsing="false" onAction="#onExportBtnPressed" prefWidth="80.0" text="Export" />
+                              <Button fx:id="importSchemaButton" mnemonicParsing="false" onAction="#onImportSchemaPressed" prefWidth="80.0" text="Import" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox fx:id="rightSide" prefHeight="414.0" prefWidth="350.0" spacing="5.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <ScrollPane fitToWidth="true" layoutY="16.0" prefHeight="148.0" prefWidth="411.0" AnchorPane.rightAnchor="0.0">
+                     <content>
+                        <VBox fx:id="mappingsBox" layoutY="0.431640625" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <HBox layoutY="-0.431640625" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                 <children>
+                                    <Label minWidth="45.0" text="(cont.)" />
+                                    <Label minWidth="15.0" text="m" />
+                                    <Label text=":" />
+                                    <Label text="behavior with a really long description one two three four five" wrapText="true" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="0.0" />
+                                 </children>
+                              </HBox>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <Label minWidth="45.0" text="(cont.)" />
+                                    <Label minWidth="15.0" text="e" />
+                                    <Label text=":" />
+                                    <Label text="small description" wrapText="true" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="0.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <Label text="New Session Properties:">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <VBox spacing="5.0" VBox.vgrow="NEVER">
+                     <children>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Duration:" />
+                              <Label fx:id="timeBox" text="00 : 00 : 00" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Observer:" HBox.hgrow="NEVER">
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
+                              </Label>
+                              <TextField fx:id="observerField" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Therapist:" HBox.hgrow="NEVER">
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
+                              </Label>
+                              <TextField fx:id="therapistField" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Condition:" HBox.hgrow="NEVER">
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
+                              </Label>
+                              <TextField fx:id="conditionField" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Location:" HBox.hgrow="NEVER">
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
+                              </Label>
+                              <TextField fx:id="locationField" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Session #:" HBox.hgrow="NEVER">
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
+                              </Label>
+                              <TextField fx:id="sessionField" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefWidth="70.0" text="Data File:" HBox.hgrow="NEVER" />
+                              <Label fx:id="filenameLbl" HBox.hgrow="ALWAYS" />
+                              <ImageView fx:id="warningImg" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+                                 <image>
+                                    <Image url="@warning-small.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <VBox fx:id="errMsgBox" spacing="4.0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </VBox>
+                  <HBox layoutX="313.0" layoutY="464.0" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <Button fx:id="startButton" layoutY="377.0" mnemonicParsing="false" onAction="#onStartClicked" text="Start New Session" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <Separator prefWidth="200.0">
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin></Separator>
+      <HBox>
+         <children>
+            <HBox spacing="10.0" VBox.vgrow="NEVER">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onPrefsClicked" text="Preferences" />
+                  <Button mnemonicParsing="false" onAction="#onIoaBtnPressed" text="IOA Calculator" />
+                  <Button mnemonicParsing="false" onAction="#onBinBtnPressed" text="Bin Calculator" />
+                  <Button mnemonicParsing="false" onAction="#onProbBtnPressed" text="Conditional Probability" />
+               </children>
+            </HBox>
+            <HBox alignment="BOTTOM_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" />
+                  <Hyperlink fx:id="hyperlink" text="behaviorlogger.com" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

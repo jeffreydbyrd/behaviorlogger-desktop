@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="514.0" prefWidth="608.0" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.behaviorlogger.controllers.PreferencesController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" maxWidth="165.0" minWidth="-Infinity" prefWidth="165.0" />
+    <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="413.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints vgrow="NEVER" />
+      <RowConstraints vgrow="NEVER" />
+      <RowConstraints maxHeight="387.0" minHeight="27.0" prefHeight="200.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="370.0" minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints maxHeight="370.0" minHeight="1.0" prefHeight="1.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="370.0" minHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
+  </rowConstraints>
+   <children>
+      <Label text="Default Save Location:" GridPane.halignment="RIGHT" />
+      <Label text="Default Session Duration:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+      <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+         <children>
+            <TextField fx:id="directoryField" GridPane.columnIndex="1" GridPane.rowIndex="1" HBox.hgrow="ALWAYS" />
+            <Button fx:id="browseButton" mnemonicParsing="false" onAction="#onBrowseButtonPressed" text="Browse" HBox.hgrow="NEVER" />
+         </children>
+      </HBox>
+      <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <RadioButton fx:id="infiniteRadioBtn" mnemonicParsing="false" text="infinite" />
+            <RadioButton fx:id="timedRadioBtn" mnemonicParsing="false" text="timed" />
+            <VBox fx:id="durationBox" spacing="10.0">
+               <children>
+                  <HBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
+                     <children>
+                        <TextField fx:id="hoursField" prefHeight="26.0" prefWidth="40.0" promptText="hh" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                        <TextField fx:id="minutesField" prefHeight="26.0" prefWidth="40.0" promptText="mm" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                        <TextField fx:id="secondsField" prefHeight="26.0" prefWidth="40.0" promptText="ss" />
+                     </children>
+                  </HBox>
+                  <Label text="When timer finishes:" />
+                  <CheckBox fx:id="colorCheckBox" mnemonicParsing="false" text="Color in the timer" />
+                  <CheckBox fx:id="pauseCheckBox" mnemonicParsing="false" text="Pause the session" />
+                  <CheckBox fx:id="beepCheckBox" mnemonicParsing="false" text="Emit beep" />
+               </children>
+               <padding>
+                  <Insets left="30.0" />
+               </padding>
+            </VBox>
+         </children>
+      </VBox>
+      <HBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" GridPane.rowIndex="5">
+         <children>
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelPressed" text="Cancel" />
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSavePressed" text="Save" />
+         </children>
+      </HBox>
+      <Label text="Filename Format:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+      <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <children>
+            <Label fx:id="exampleLbl" text="example-filename.xls" />
+            <Separator prefWidth="200.0" />
+            <VBox fx:id="componentsBox" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Separator prefWidth="200.0" />
+         </children>
+      </VBox>
+      <VBox fx:id="errMsgBox" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpBtnPressed" scaleX="0.9" scaleY="0.9" snapToPixel="false" style="-fx-background-radius: 5em;" text="?" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+      <Label text="Check for new versions:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+      <CheckBox fx:id="checkVersion" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</GridPane>
