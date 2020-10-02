@@ -15,8 +15,6 @@ import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.SessionBean
 import com.behaviorlogger.utils.ioa.IntervalCalculations;
 import com.behaviorlogger.utils.ioa.KeyToInterval;
 import com.behaviorlogger.utils.ioa.TimeWindowCalculations;
-import com.behaviorlogger.utils.ioa.version1_1.IoaCalculations;
-import com.behaviorlogger.utils.ioa.version1_1.IoaUtils1_1;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 

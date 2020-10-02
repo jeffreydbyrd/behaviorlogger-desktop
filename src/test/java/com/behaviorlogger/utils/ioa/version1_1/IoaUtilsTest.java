@@ -16,7 +16,6 @@ import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.ContinuousE
 import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
 import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
 import com.behaviorlogger.utils.ioa.KeyToInterval;
-import com.behaviorlogger.utils.ioa.version1_1.IoaUtils1_1;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

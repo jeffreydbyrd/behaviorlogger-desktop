@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>behaviorlogger</groupId>
 	<artifactId>behaviorlogger</artifactId>
@@ -10,21 +12,19 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>src/main/java/com.behaviorlogger</directory>
+				<directory>src/main/java</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/test/java</directory>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
 			</resource>
 		</resources>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -39,9 +39,9 @@
 				<version>0.0.3</version>
 				<configuration>
 					<release>11</release>
-					<jlinkImageName>com.behaviorlogger</jlinkImageName>
+					<jlinkImageName>behaviorlogger</jlinkImageName>
 					<launcher>launcher</launcher>
-					<mainClass>com.behaviorlogger.BehaviorLoggerApp</mainClass>
+					<mainClass>behaviorlogger/com.behaviorlogger.BehaviorLoggerApp</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
