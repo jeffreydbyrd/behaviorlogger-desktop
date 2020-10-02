@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.behaviorlogger.models.MappableChar;
-import com.behaviorlogger.models.behaviors.ContinuousBehavior;
 import com.google.common.collect.Lists;
 
 public class ContinuousBehaviorTest {
