@@ -9,6 +9,12 @@
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<mainClass>behaviorlogger/com.behaviorlogger.BehaviorLoggerApp</mainClass>
+		<moduleName>behaviorlogger</moduleName>
+	</properties>
+
 	<build>
 		<resources>
 			<resource>
@@ -43,6 +49,25 @@
 					<launcher>launcher</launcher>
 					<mainClass>behaviorlogger/com.behaviorlogger.BehaviorLoggerApp</mainClass>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

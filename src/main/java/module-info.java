@@ -11,13 +11,25 @@ module behaviorlogger {
     requires poi;
     requires sqlite.jdbc;
 
-    opens com.behaviorlogger to javafx.fxml;
-    opens com.behaviorlogger.controllers to javafx.fxml;
+    opens com.behaviorlogger;
+    opens com.behaviorlogger.controllers;
+    opens com.behaviorlogger.models;
+    opens com.behaviorlogger.models.preferences;
+    opens com.behaviorlogger.models.behaviors;
+    opens com.behaviorlogger.models.ioa;
+    opens com.behaviorlogger.models.schemas;
+    opens com.behaviorlogger.models.sessions;
+    opens com.behaviorlogger.persistence;
+    opens com.behaviorlogger.persistence.recordings;
 
     exports com.behaviorlogger;
     exports com.behaviorlogger.controllers;
     exports com.behaviorlogger.models;
+    exports com.behaviorlogger.models.preferences;
     exports com.behaviorlogger.models.schemas;
+    exports com.behaviorlogger.models.ioa;
     exports com.behaviorlogger.models.sessions;
     exports com.behaviorlogger.models.behaviors;
+    exports com.behaviorlogger.persistence;
+    exports com.behaviorlogger.persistence.recordings;
 }
