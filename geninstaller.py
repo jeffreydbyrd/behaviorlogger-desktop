@@ -176,7 +176,7 @@ deps = [
 
 
 def main():
-    bash(f"rm -r {dir_modinfo}")
+    bash(f"mvn clean prepare-package")
 
     modular_deps = []
 
@@ -230,6 +230,11 @@ def main():
     jlink_cmd = f"jlink --module-path ./target/classes/:{module_path} --add-modules behaviorlogger --output target/behaviorlogger --compress 2 --launcher launcher=behaviorlogger/com.behaviorlogger.BehaviorLoggerApp"
     if bash(jlink_cmd) != 0:
         print("jlink failed")
+        return
+
+    jpackage_cmd = "jpackage --runtime-image target/behaviorlogger -n blocs -d target"
+    if bash(jpackage_cmd) != 0:
+        print("jpackage failed")
 
 
 def bash(cmd):
