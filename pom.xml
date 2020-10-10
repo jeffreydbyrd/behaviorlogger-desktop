@@ -44,9 +44,7 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.3</version>
 				<configuration>
-					<release>11</release>
-					<jlinkImageName>behaviorlogger</jlinkImageName>
-					<launcher>launcher</launcher>
+					<release>15</release>
 					<mainClass>behaviorlogger/com.behaviorlogger.BehaviorLoggerApp</mainClass>
 				</configuration>
 			</plugin>
