@@ -1,9 +1,6 @@
 <link rel="stylesheet" href="markdown3.css">
 
 - [Introduction](#introduction)
-- [Installation](#installation)
-  - [Windows](#windows)
-  - [Mac](#mac)
 - [Start Menu](#start-menu)
 - [Edit Schema](#edit-schema)
 - [Preferences](#preferences)
@@ -15,10 +12,12 @@
   - [Session Output](#session-output)
   - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [IOA Calculator](#ioa-calculator)
-- [IOA Methods](#ioa-methods)
-  - [Exact Agreement](#exact-agreement)
-  - [Partial Agreement](#partial-agreement)
-  - [Time Window](#time-window)
+  - [IOA Methods](#ioa-methods)
+    - [Exact Agreement](#exact-agreement)
+    - [Partial Agreement](#partial-agreement)
+    - [Time Window](#time-window)
+- [Bin Calculator](#bin-calculator)
+- [Conditional Probability](#cond-prob)
 - [References](#references)
 
 <a name="introduction"></a>
@@ -27,25 +26,6 @@
 The 3Bird Behavior Logger is a data collection tool for applied behavior analysis.
 The interface was designed for practitioners conducting treatment while one or more
 data-collectors record behaviors.
-
----
-
-<a name="installation"></a>
-# Installation
-
-<a name="windows"></a>
-## Windows
-
-After downloading the installer (3Bird Behavior Logger.exe), double-click the file.
-![win](win.png)
-Click "install". When finished, you should be able to open the application from Start Menu > All Programs.
-
-<a name="mac"></a>
-## Mac
-
-After downloading the installer (3Bird Behavior Logger.dmg), double-click the file.
-![mac](mac.png)
-Drag the icon over the Applications folder.
 
 ---
 
@@ -61,16 +41,18 @@ Drag the icon over the Applications folder.
 5. **Import** - Allows the user to import a new schema by selecting a ".schema" file.
 6. **Preferences** - Opens the [Preferences](#preferences) menu for setting default schema values.
 7. **IOA Calculator** - Opens the [IOA Calculator](#ioa-calculator).
-8. **Key-Behavior Mappings** - A summary of the selected schema's key-behavior mappings.
-9. **New Session Summary** - The details to be applied to the upcoming session.
-  - *Duration* - The duration of the session (set by the schema).
-  - *Observer* - The name of the observer collecting data.
-  - *Therapist* - The name of the therapist performing the treatment.
-  - *Condition* - The type of treatment being applied.
-  - *Location* - The location where the session is taking place.
-  - *Session #* - The number of the next session. This number will increment automatically between sessions.
-  - *Data File* - The name of the data-file the next session will generate. Users can configure this in [Preferences](#preferences). The app will warn the user if this file will overwrite an existing one of the same name.
-10. **Start New Session** - Starts a new session in the [Recording](#recording) menu.
+8. **Bin Calculator** - Opens the [Bin Calculator](#bin-calculator).
+9. **Conditional Probability** - Opens the [Conditional Probability Calculator](#cond-prob).
+10. **Key-Behavior Mappings** - A summary of the selected schema's key-behavior mappings.
+11. **New Session Summary** - The details to be applied to the upcoming session.
+    - *Duration* - The duration of the session (set by the schema).
+    - *Observer* - The name of the observer collecting data.
+    - *Therapist* - The name of the therapist performing the treatment.
+    - *Condition* - The type of treatment being applied.
+    - *Location* - The location where the session is taking place.
+    - *Session #* - The number of the next session. This number will increment automatically between sessions.
+    - *Data File* - The name of the data-file the next session will generate. Users can configure this in [Preferences](#preferences). The app will warn the user if this file will overwrite an existing one of the same name.
+12. **Start New Session** - Starts a new session in the [Recording](#recording) menu.
 
 ---
 
@@ -191,25 +173,23 @@ The names of these files can be configured in [Preferences](#preferences).
 5. **IOA Summary** - After generating IOA results, this box displays the summary of IOA for each key.
 6. **Generate IOA File** - Calculates IOA between File 1 and File 2 and, if *New File* is selected, prompts the user to save the result in an Excel file.
 
----
-
 <a name="ioa-methods"></a>
-# IOA Methods
+## IOA Methods
 
-Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from two papers (see [References](#references)).
+Each method below details how to calculate a percent agreement for each behavior logged by two observers during a session. These methods were derived from [MacLean et al. (1985) and Mudford et al. (2009)](#references).
 
 <a name="exact-agreement"></a>
-## Exact Agreement
+### Exact Agreement
 
 *Exact agreement* outputs a single percent agreement for a behavior between both observers. The data-logs from File 1 and File 2 get partitioned into intervals of a size specified by `block-size`. For each interval, the observers are considered in agreement if they both recorded the same number of occurrences within the interval. A behavior's percent agreement is equal to the number of agreements divided by the total number of intervals and multiplied by 100%.
 
 <a name="partial-agreement"></a>
-## Partial Agreement
+### Partial Agreement
 
 Similar to *exact agreement*, the data-logs from File 1 and File 2 get partitioned according to `block-size`. A score between 0 and 1 is calcuated per interval by dividing the smaller of the two behavior counts by the larger. If both counts are zero, the score equals 1. A behavior's percent agreement is equal to the sum of all scores divided by the number of intervals, multiplied by 100%.
 
 <a name="time-window"></a>
-## Time Window
+### Time Window
 
 *Time window* varies from the other two in that it generates two percent agreements for each discrete behavior (one for each observer) and one percent agreement for continuous behaviors.
 
@@ -219,9 +199,48 @@ For **continuous behaviors**, the `threshold` does not matter. The data-log is p
 
 ---
 
+<a name="bin-calculator"></a>
+# Bin Calculator
+
+![bin](bin.png)
+
+The "Bin Calculator" is useful for looking at within-session patterns in the data by looking at the number or duration of responses that occur within different “bin” sizes (e.g., 1 minute, 2 minutes, 5 minutes). Like IOA Calculator, you simply pick a raw data file, a bin size, and a save option.
+
+---
+
+<a name="cond-prob"></a>
+# Conditional Probability
+
+![cond-prob](cond-prob.png)
+
+1. **File** - Path to the *.raw* data-file you wish to analyze.
+2. **Window** - Number of seconds after the target behavior to sample consequences.
+3. **Background Probability Options**
+    - *Complete* - The background probability is calculated by sampling every second.
+    - *Randomly Sampled Events* - The sampling is either set to an exact number or, if empty, matched to the number of instances of the target behavior.
+4. **Target Behavior** - The behavior you wish to analyze.
+5. **Save Options** - See IOA Calculator save options.
+
+The Conditional Probability Calculator is used to determine the likelihood of a consequence (or potentially reinforcing event) occuring within a certain time window after a target event. You can compare this calculation to the background probability (or the response-independent probability) of the consequence to determine if a target and consequence events may be correlated.
+
+The output includes four calculations using two factors:
+
+1. **Binary / Proportional**
+    - *Binary* - The consequence event is scored as either occurring (yes=1) or not (no=0).
+    - *Proportional* - The consequence event is scored as the proportion of the time window (between 0 and 1).
+2. **Establishing Opertaions (EO) / Non-Establishing Operations (non-EO)**
+    - *EO* - The calculation includes only instances of target behavior that occurred during establishing operation (while the “consequent” event of interest isn’t already happening when the response occurs).
+    - *Non-EO* - The calculation includes all instances of target behavior.
+
+The algorithms for this calculator were derived from [Vollmer et al. (2001)](#references).
+
+---
+
 <a name="references"></a>
 # References
 
 MacLean, W.E., Tapp, J.T., Johnson, W.L. (1985). Alternate Methods and Software for Calculating Interobserver Agreement for Continuous Observation Data. *Journal of Psychopathology and Behavioral Assessment, 8*.
 
-Mudford, O.C., Taylor, S.A., & Martin, N.T. (2009). Continuous Recording and Interobserver Agreement Algorithms Reported in the Journal of Applied Behavior Analysis (1995-2005). *Journal of Applied Behavior Analysis, 42*, 165-169.*
+Mudford, O.C., Taylor, S.A., & Martin, N.T. (2009). Continuous Recording and Interobserver Agreement Algorithms Reported in the Journal of Applied Behavior Analysis (1995-2005). *Journal of Applied Behavior Analysis, 42, 165-169.*
+
+Vollmer, T.R., Borrero, J.C., Wright, C.S. (2001). Identifying Possible Contingencies During Descriptive Analysis of Severe Behavior Disorders. *Journal of Applied Behavior Analysis, 276-277*

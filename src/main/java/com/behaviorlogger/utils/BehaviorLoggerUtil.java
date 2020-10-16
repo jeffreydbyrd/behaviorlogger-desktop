@@ -220,6 +220,9 @@ public class BehaviorLoggerUtil {
     }
 
     public static void openManual(String section) {
+	if (!Desktop.isDesktopSupported()) {
+	    return;
+	}
 	String filepath = ResourceUtils.getManual().getAbsolutePath();
 	if (System.getProperty("os.name").contains("Win")) {
 	    filepath = "/" + filepath.replaceAll("\\\\", "/");
