@@ -23,7 +23,7 @@
 <a name="introduction"></a>
 # Introduction
 
-The 3Bird Behavior Logger is a data collection tool for applied behavior analysis.
+Behavior Logger is a data collection tool for applied behavior analysis.
 The interface was designed for practitioners conducting treatment while one or more
 data-collectors record behaviors.
 

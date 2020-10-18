@@ -176,7 +176,9 @@ deps = [
 
 
 def main():
-    bash(f"mvn clean prepare-package")
+    if bash(f"mvn clean prepare-package") != 0:
+        print("mvn clean prepare-package failed")
+        return
 
     modular_deps = []
 
