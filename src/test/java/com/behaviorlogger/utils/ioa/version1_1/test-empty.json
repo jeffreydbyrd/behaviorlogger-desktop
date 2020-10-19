@@ -1,0 +1,38 @@
+{
+  "uuid": "bec7236a-7b24-43ba-be1a-46b49b62ab39",
+  "blVersion":1,
+  "schema": {
+    "uuid": "5640ec5b-1293-4c05-b096-381c80c1c19c",
+    "client": "JB",
+    "project": "Functional Analysis",
+    "behaviors": [
+      {
+      	"uuid":"d",
+        "key": "d",
+        "name": "discrete",
+        "isContinuous": false,
+        "archived":false
+      },
+      {
+      	"uuid":"c",
+        "key": "c",
+        "name": "continuous",
+        "isContinuous": true,
+        "archived":false
+      }
+    ],
+    "duration": 30000,
+    "pause": false,
+    "color": true,
+    "sound": false,
+    "archived":false
+  },
+  "observer": "SP",
+  "therapist": "CSP",
+  "condition": "Escape",
+  "sessionNumber": 0,
+  "duration": 6000,
+  "notes": "",
+  "discreteEvents": [],
+  "continuousEvents": []
+}

@@ -3,7 +3,7 @@ target/
 build/
 *.class
 *.db
-*.json
+.vscode
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
