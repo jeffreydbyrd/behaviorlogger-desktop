@@ -184,6 +184,10 @@ def main():
     for dep in deps:
         dep["jar"] = dep["jar"].format(platform=platform)
 
+    classpath_sep = ":"
+    if platform == "win":
+        classpath_sep = ";"
+
     if bash(f"mvn clean prepare-package") != 0:
         print("mvn clean prepare-package failed")
         return
@@ -197,7 +201,7 @@ def main():
             modular_deps.append(dep)
             continue
 
-        module_path = ":".join(
+        module_path = classpath_sep.join(
             [f'{dir_lib}/{dep["jar"]}' for dep in modular_deps])
         modules = ",".join([dep["modname"] for dep in modular_deps])
         module_info_dir = f"{dir_modinfo}/{dep['modname']}"
@@ -234,9 +238,9 @@ def main():
 
         modular_deps.append(dep)
 
-    module_path = ":".join([f'{dir_lib}/{dep["jar"]}' for dep in modular_deps])
+    module_path = classpath_sep.join([f'{dir_lib}/{dep["jar"]}' for dep in modular_deps])
     modules = ",".join([dep["modname"] for dep in modular_deps])
-    jlink_cmd = f"jlink --module-path ./target/classes/:{module_path} --add-modules behaviorlogger --output target/behaviorlogger --compress 2 --launcher launcher=behaviorlogger/com.behaviorlogger.BehaviorLoggerApp"
+    jlink_cmd = f"jlink --module-path ./target/classes/{classpath_sep}{module_path} --add-modules behaviorlogger --output target/behaviorlogger --compress 2 --launcher launcher=behaviorlogger/com.behaviorlogger.BehaviorLoggerApp"
     if bash(jlink_cmd) != 0:
         print("jlink failed")
         return
