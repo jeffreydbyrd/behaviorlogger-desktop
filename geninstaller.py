@@ -1,4 +1,5 @@
 import os
+import sys
 
 poi_module_info = """
 module poi {
@@ -88,24 +89,24 @@ dir_modinfo = dir_target + "/modinfo"
 
 deps = [
     # Java FX
-    {"jar": "javafx-base-14-linux.jar",
+    {"jar": "javafx-base-14-{platform}.jar",
      "modname": "javafx.base",
      "modular?": True, },
     {"jar": "javafx-base-14.jar",
      "modname": "javafx.baseEmpty"},
-    {"jar": "javafx-graphics-14-linux.jar",
+    {"jar": "javafx-graphics-14-{platform}.jar",
      "modname": "javafx.graphics",
      "modular?": True, },
     {"jar": "javafx-graphics-14.jar",
      "modname": "javafx.graphicsEmpty"},
-    {"jar": "javafx-controls-14-linux.jar",
+    {"jar": "javafx-controls-14-{platform}.jar",
      "modname": "javafx.controls",
      "modular?": True, },
     {"jar": "javafx-controls-14.jar",
      "modname": "javafx.controlsEmpty"},
 
     # FXML
-    {"jar": "javafx-fxml-14-linux.jar",
+    {"jar": "javafx-fxml-14-{platform}.jar",
      "modname": "javafx.fxml",
      "modular?": True, },
     {"jar": "javafx-fxml-14.jar",
@@ -176,6 +177,13 @@ deps = [
 
 
 def main():
+    platform = "linux"
+    if len(sys.argv) > 1:
+        platform = sys.argv[1]
+
+    for dep in deps:
+        dep["jar"] = dep["jar"].format(platform=platform)
+
     if bash(f"mvn clean prepare-package") != 0:
         print("mvn clean prepare-package failed")
         return
@@ -183,13 +191,12 @@ def main():
     modular_deps = []
 
     for dep in deps:
-        path_to_jar = "%s/%s" % (dir_lib, dep["jar"])
+        jarpath = f"{dir_lib}/{dep['jar']}"
         if dep.get("modular?"):
             print("[DEBUG] skipping modular jar")
             modular_deps.append(dep)
             continue
 
-        jarpath = f"{dir_lib}/{dep['jar']}"
         module_path = ":".join(
             [f'{dir_lib}/{dep["jar"]}' for dep in modular_deps])
         modules = ",".join([dep["modname"] for dep in modular_deps])
