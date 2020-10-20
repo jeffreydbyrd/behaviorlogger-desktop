@@ -240,14 +240,11 @@ def main():
 
     module_path = classpath_sep.join([f'{dir_lib}/{dep["jar"]}' for dep in modular_deps])
     modules = ",".join([dep["modname"] for dep in modular_deps])
-    jlink_cmd = f"jlink --module-path ./target/classes/{classpath_sep}{module_path} --add-modules behaviorlogger --output target/behaviorlogger --compress 2 --launcher launcher=behaviorlogger/com.behaviorlogger.BehaviorLoggerApp"
-    if bash(jlink_cmd) != 0:
-        print("jlink failed")
-        return
 
-    jpackage_cmd = "jpackage --runtime-image target/behaviorlogger -n blocs -d target"
+    jpackage_cmd = f"jpackage --module-path ./target/classes/{classpath_sep}{module_path} --add-modules behaviorlogger --module behaviorlogger/com.behaviorlogger.BehaviorLoggerApp -n blocs -d target"
     if bash(jpackage_cmd) != 0:
         print("jpackage failed")
+        return
 
 
 def bash(cmd):
