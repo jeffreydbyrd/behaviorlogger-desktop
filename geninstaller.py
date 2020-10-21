@@ -186,7 +186,7 @@ platform_options = {
     "win": {
         "name": "win",
         "classpath_sep": ";",
-        "jpackage_flags": "--type exe --win-menu --win-menu-group Blocs --win-shortcut",
+        "jpackage_flags": "--type exe --win-menu --win-menu-group BLOCS --win-shortcut",
     },
 }
 
