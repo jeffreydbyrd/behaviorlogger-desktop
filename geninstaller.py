@@ -1,6 +1,8 @@
 import os
 import sys
 
+app_version = "1.1.3"
+
 poi_module_info = """
 module poi {
     requires commons.math3;
@@ -175,18 +177,27 @@ deps = [
      "modname": "sqlite.jdbc"},
 ]
 
+platform_options = {
+    "linux": {
+        "name": "linux",
+        "classpath_sep": ":",
+        "jpackage_flags": "--type app-image",
+    },
+    "win": {
+        "name": "win",
+        "classpath_sep": ";",
+        "jpackage_flags": "--type exe --win-menu --win-menu-group Blocs --win-shortcut",
+    },
+}
+
 
 def main():
-    platform = "linux"
+    platform = platform_options["linux"]
     if len(sys.argv) > 1:
-        platform = sys.argv[1]
+        platform = platform_options[sys.argv[1]]
 
     for dep in deps:
-        dep["jar"] = dep["jar"].format(platform=platform)
-
-    classpath_sep = ":"
-    if platform == "win":
-        classpath_sep = ";"
+        dep["jar"] = dep["jar"].format(platform=platform["name"])
 
     if bash(f"mvn clean prepare-package") != 0:
         print("mvn clean prepare-package failed")
@@ -201,7 +212,7 @@ def main():
             modular_deps.append(dep)
             continue
 
-        module_path = classpath_sep.join(
+        module_path = platform["classpath_sep"].join(
             [f'{dir_lib}/{dep["jar"]}' for dep in modular_deps])
         modules = ",".join([dep["modname"] for dep in modular_deps])
         module_info_dir = f"{dir_modinfo}/{dep['modname']}"
@@ -238,10 +249,15 @@ def main():
 
         modular_deps.append(dep)
 
-    module_path = classpath_sep.join([f'{dir_lib}/{dep["jar"]}' for dep in modular_deps])
+    module_path = platform["classpath_sep"].join([f'{dir_lib}/{dep["jar"]}' for dep in modular_deps])
     modules = ",".join([dep["modname"] for dep in modular_deps])
 
-    jpackage_cmd = f"jpackage --module-path ./target/classes/{classpath_sep}{module_path} --add-modules behaviorlogger --module behaviorlogger/com.behaviorlogger.BehaviorLoggerApp -n blocs -d target"
+    jpackage_cmd = f"""jpackage \
+        --module-path ./target/classes/{platform["classpath_sep"]}{module_path} \
+        --add-modules behaviorlogger \
+        --module behaviorlogger/com.behaviorlogger.BehaviorLoggerApp \
+        -n blocs -d target \
+        --app-version {app_version} {platform["jpackage_flags"]}"""
     if bash(jpackage_cmd) != 0:
         print("jpackage failed")
         return
