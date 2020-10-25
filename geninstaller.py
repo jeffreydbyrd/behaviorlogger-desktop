@@ -188,6 +188,11 @@ platform_options = {
         "classpath_sep": ";",
         "jpackage_flags": "--type exe --win-menu --win-menu-group BLOCS --win-shortcut",
     },
+    "mac": {
+        "name": "mac",
+        "classpath_sep": ":",
+        "jpackage_flags": "--type dmg",
+    }
 }
 
 
