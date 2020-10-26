@@ -472,8 +472,8 @@ public class StartMenuController
   private void checkVersion()
   {
     NewVersionManager.checked.set( true );
-    String version = BehaviorLoggerApp.version;
 
+    String version = BehaviorLoggerApp.version;
     new Thread( () -> {
       try {
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -493,7 +493,7 @@ public class StartMenuController
 
           String v = Strings.nullToEmpty( httpclient.execute( httpget, responseHandler ) ).trim();
 
-          boolean newVersionAvailable = !version.equals( v );
+          boolean newVersionAvailable = version.compareTo(v) < 0;
 
           Platform.runLater( () -> {
             String text = newVersionAvailable ? "New Version Available!" : "behaviorlogger.com";
