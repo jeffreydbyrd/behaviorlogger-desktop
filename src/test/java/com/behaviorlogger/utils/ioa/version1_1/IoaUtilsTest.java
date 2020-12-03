@@ -96,7 +96,7 @@ public class IoaUtilsTest
 
   @Test public void deserialize_standard() throws Exception
   {
-    URL url = IoaUtilsTest.class.getResource( "./test-0.json" );
+    URL url = IoaUtilsTest.class.getResource( "test-0.json" );
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
@@ -107,7 +107,7 @@ public class IoaUtilsTest
 
   @Test public void deserialize_empty() throws Exception
   {
-    URL url = IoaUtilsTest.class.getResource( "./test-empty.json" );
+    URL url = IoaUtilsTest.class.getResource( "test-empty.json" );
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 
@@ -118,7 +118,7 @@ public class IoaUtilsTest
 
   @Test public void deserialize_multi() throws Exception
   {
-    URL url = IoaUtilsTest.class.getResource( "./test-1.json" );
+    URL url = IoaUtilsTest.class.getResource( "test-1.json" );
     File f = new File( url.toURI() );
     SessionBean1_1 bean = GsonUtils.get( f, new SessionBean1_1() );
 

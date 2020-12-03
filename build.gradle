@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+	id 'org.beryx.jlink' version '2.22.3'
+	id 'eclipse'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    implementation 'junit:junit:4.13'
+    implementation 'com.google.guava:guava:28.0-jre'
+    implementation 'org.xerial:sqlite-jdbc:3.32.3.2'
+    implementation 'joda-time:joda-time:2.10.6'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.apache.commons:commons-csv:1.8'
+    implementation 'org.apache.poi:poi:4.1.2'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.12'
+    implementation 'org.openjfx:javafx-controls:14'
+    implementation 'org.openjfx:javafx-fxml:14'
+}
+
+modularity.disableEffectiveArgumentsAdjustment()
+group = 'behaviorlogger'
+version = '0.0.1-SNAPSHOT'
+description = 'behaviorlogger'
+java.sourceCompatibility = JavaVersion.VERSION_15
+mainClassName = 'behaviorlogger/com.behaviorlogger.BehaviorLoggerApp'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/java', 'src/test/java']
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+javafx {
+    version = '15.0.1'
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+jlink {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher{
+        name = 'blocs'
+    }
+}

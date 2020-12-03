@@ -1,4 +1,4 @@
-package com.behaviorlogger.utils.condprob;
+package com.behaviorlogger.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

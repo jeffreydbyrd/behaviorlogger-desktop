@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="${project}/build">
-  <deploy packagingFormat="none">
-    <application name="test" mainclass="com.behaviorlogger.BehaviorLoggerApp" version="1.1.3"/>
-    <info title="Behavior Logger" vendor=""/>
-  </deploy>
-  <signjar/>
-</anttasks:AntTask>

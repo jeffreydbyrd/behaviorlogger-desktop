@@ -32,4 +32,8 @@ module behaviorlogger {
     exports com.behaviorlogger.models.behaviors;
     exports com.behaviorlogger.persistence;
     exports com.behaviorlogger.persistence.recordings;
+    
+    // for tests
+    exports com.behaviorlogger.utils;
+    exports com.behaviorlogger.utils.ioa.version1_1;
 }
