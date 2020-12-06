@@ -29,7 +29,7 @@ dependencies {
 
 modularity.disableEffectiveArgumentsAdjustment()
 group = 'behaviorlogger'
-version = '0.0.1-SNAPSHOT'
+version = '1.1.3'
 description = 'behaviorlogger'
 java.sourceCompatibility = JavaVersion.VERSION_15
 mainClassName = 'com.behaviorlogger.BehaviorLoggerApp'
@@ -74,6 +74,13 @@ if (os.isWindows()) {
         }
     }
 }
+if (os.isLinux()) {
+    jlink {
+        jpackage {
+            skipInstaller = true
+        }
+    }
+}
 if (os.isMacOsX()) {
     jlink {
         mergedModule {
@@ -81,7 +88,6 @@ if (os.isMacOsX()) {
             requires 'jdk.charsets'
         }
         jpackage {
-            appVersion = '1.1.3'
             skipInstaller = true
         }
     }
