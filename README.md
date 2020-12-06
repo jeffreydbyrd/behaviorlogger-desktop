@@ -11,7 +11,7 @@ Prebuilt installers can be downloaded from https://behaviorlogger.com/desktop
 
 # Development
 ## Requirements
-- maven
+- gradle
 - java 14 or later
     - jdeps
     - javac
@@ -20,7 +20,17 @@ Prebuilt installers can be downloaded from https://behaviorlogger.com/desktop
     - jpackage
 - python3
 
-## Building
+## Test
 ```bash
-python3 geninstaller.py
+./gradlew test
+```
+
+## Run
+```bash
+./gradlew run
+```
+
+## Build
+```bash
+./gradlew jpackageImage
 ```
