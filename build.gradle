@@ -32,7 +32,7 @@ group = 'behaviorlogger'
 version = '0.0.1-SNAPSHOT'
 description = 'behaviorlogger'
 java.sourceCompatibility = JavaVersion.VERSION_15
-mainClassName = 'behaviorlogger/com.behaviorlogger.BehaviorLoggerApp'
+mainClassName = 'com.behaviorlogger.BehaviorLoggerApp'
 
 publishing {
     publications {
@@ -65,3 +65,15 @@ jlink {
         name = 'blocs'
     }
 }
+
+OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem;
+if (os.isWindows()) {
+    jpackageImage {
+        imageOptions = ['--win-menu', '--win-menu-group', 'BLOCS', '--win-shortcut']
+    }
+}
+// if (os.isMacOsX) {
+//     jpackageImage {
+//         imageOptions = []
+//     }
+// }
