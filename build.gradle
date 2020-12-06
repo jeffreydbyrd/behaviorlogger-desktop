@@ -72,8 +72,8 @@ if (os.isWindows()) {
         imageOptions = ['--win-menu', '--win-menu-group', 'BLOCS', '--win-shortcut']
     }
 }
-// if (os.isMacOsX) {
-//     jpackageImage {
-//         imageOptions = []
-//     }
-// }
+if (os.isMacOsX()) {
+    jpackageImage {
+        // imageOptions = ['--mac-sign', '--mac-signing-key-user-name', '"Jeffrey Byrd"']
+    }
+}
