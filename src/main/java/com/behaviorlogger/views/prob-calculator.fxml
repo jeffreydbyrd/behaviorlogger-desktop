@@ -59,8 +59,12 @@
 
 		<!-- Target Behavior Selection -->
 		<Label>Target Behavior:</Label>
-		<VBox spacing="3.0" fx:id="behaviorSelection">
-		</VBox>
+		<ScrollPane fitToWidth="true">
+			<content>
+				<VBox spacing="3.0" fx:id="behaviorSelection">
+				</VBox>
+			</content>
+		</ScrollPane>
 
 		<!-- Save Options Selection -->
 		<Label text="Save Options:" />
