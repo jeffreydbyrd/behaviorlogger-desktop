@@ -59,7 +59,7 @@
 
 		<!-- Target Behavior Selection -->
 		<Label>Target Behavior:</Label>
-		<ScrollPane fitToWidth="true">
+		<ScrollPane fitToWidth="true" minHeight="140.0">
 			<content>
 				<VBox spacing="3.0" fx:id="behaviorSelection">
 				</VBox>
