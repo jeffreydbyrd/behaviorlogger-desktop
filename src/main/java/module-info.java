@@ -21,6 +21,7 @@ module behaviorlogger {
     opens com.behaviorlogger.models.sessions;
     opens com.behaviorlogger.persistence;
     opens com.behaviorlogger.persistence.recordings;
+    opens com.behaviorlogger.utils.ioa;
 
     exports com.behaviorlogger;
     exports com.behaviorlogger.controllers;
@@ -32,7 +33,8 @@ module behaviorlogger {
     exports com.behaviorlogger.models.behaviors;
     exports com.behaviorlogger.persistence;
     exports com.behaviorlogger.persistence.recordings;
-    
+    exports com.behaviorlogger.utils.ioa;
+
     // for tests
     exports com.behaviorlogger.utils;
     exports com.behaviorlogger.utils.ioa.version1_1;

@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 public class ProcessIoa
 {
 
-  private static class Versioned
+  public static class Versioned
   {
     String version; // bl version for 1.0
     String blVersion; // bl version for 1.1
