@@ -197,7 +197,7 @@ public class BinCalculatorController
     boolean appendToFile = BinManager.appendSelectedProperty().get();
     int binsize = BinManager.binsizeProperty().get() < 1 ? 1 : BinManager.binsizeProperty().get();
     SessionBean1_1 dataStream = GsonUtils.get( rawFile, new SessionBean1_1() );
-    HashMap< String, ArrayList< Integer > > map1 = IoaUtils1_1.createIoaMap( dataStream );
+    HashMap< String, ArrayList< Integer > > map1 = IoaUtils1_1.mapIdToSeconds( dataStream );
     KeyToInterval partitioned = IoaUtils1_1.partition( map1, dataStream.duration, binsize );
     WriteBinIntervals.write( partitioned, appendToFile, result );
   }

@@ -18,7 +18,7 @@ import com.google.common.base.Preconditions;
 
 public class Recordings
 {
-  static class SaveDetails
+  public static class SaveDetails
   {
     public File f;
     public CompletableFuture< Long > fResult;
@@ -28,8 +28,8 @@ public class Recordings
     public String therapist;
     public String condition;
     public String location;
-    public Integer sessionNumber;
-    public Integer totalTimeMillis;
+    public int sessionNumber;
+    public long totalTimeMillis;
     public String notes;
     public String sessionUuid;
     public long startTime;
@@ -88,7 +88,7 @@ public class Recordings
   private static SaveDetails createSaveDetails( File f,
                                                 String uuid,
                                                 List< BehaviorEvent > behaviors,
-                                                int totalTime,
+                                                long totalTime,
                                                 String notes,
                                                 long startTime,
                                                 long stopTime )
@@ -119,7 +119,7 @@ public class Recordings
   public static CompletableFuture< Long > saveJson( File f,
                                                     String uuid,
                                                     List< BehaviorEvent > behaviors,
-                                                    int count,
+                                                    long count,
                                                     String notes,
                                                     long startTime,
                                                     long stopTime )
@@ -132,7 +132,7 @@ public class Recordings
   public static CompletableFuture< Long > saveXls( File f,
                                                    String uuid,
                                                    List< BehaviorEvent > behaviors,
-                                                   int count,
+                                                   long count,
                                                    String notes,
                                                    long startTime,
                                                    long stopTime )

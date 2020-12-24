@@ -121,7 +121,7 @@ public class NotesController
     // Ctrl/cmd+T inserts the current session timestamp
     if (evt.isShortcutDown() && code == KeyCode.T) {
       int index = textArea.getCaretPosition();
-      int count = manager.count();
+      long count = manager.count();
       String timestamp = BehaviorLoggerUtil.millisToTimestamp( count );
       String msg = String.format( "[%s] ", timestamp );
       textArea.insertText( index, msg );

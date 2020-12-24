@@ -8,7 +8,7 @@ import com.behaviorlogger.utils.BehaviorLoggerUtil;
 import com.google.common.collect.Lists;
 
 public class ContinuousBehavior extends BehaviorEvent {
-    private Integer duration;
+    private int duration;
 
     /**
      * @param uuid
@@ -17,7 +17,7 @@ public class ContinuousBehavior extends BehaviorEvent {
      * @param start       - start-time in millis
      * @param duration    - duration of the behavior in millis
      */
-    public ContinuousBehavior(String uuid, MappableChar key, String description, Integer start, Integer duration) {
+    public ContinuousBehavior(String uuid, MappableChar key, String description, long start, int duration) {
 	super(uuid, key, description, start);
 	this.duration = duration;
     }
@@ -45,19 +45,19 @@ public class ContinuousBehavior extends BehaviorEvent {
     public String type() {
 	return "continuous";
     }
-    
+
     @Override
     public List<Integer> intervals(int sizeMillis) {
 	ArrayList<Integer> result = Lists.newArrayList();
-	int end = this.startTime + this.duration + sizeMillis;
-	for (int n = this.startTime; n < end; n+=sizeMillis) {
-	    result.add(n / sizeMillis);
+	long end = this.startTime + this.duration + sizeMillis;
+	for (long n = this.startTime; n < end; n += sizeMillis) {
+	    result.add((int) (n / sizeMillis));
 	}
-        return result;
+	return result;
     }
-    
+
     @Override
-    public int endTime() {
-        return this.startTime + this.duration;
+    public long endTime() {
+	return this.startTime + this.duration;
     }
 }

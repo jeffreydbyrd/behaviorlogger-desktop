@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -25,8 +24,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.behaviorlogger.models.ConditionalProbabilityManager;
 import com.behaviorlogger.models.behaviors.BehaviorEvent;
-import com.behaviorlogger.models.behaviors.ContinuousBehavior;
-import com.behaviorlogger.models.behaviors.DiscreteBehavior;
 import com.behaviorlogger.models.schemas.KeyBehaviorMapping;
 import com.behaviorlogger.persistence.GsonUtils;
 import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
@@ -285,10 +282,10 @@ public class ConditionalProbabilityController {
 
 	    List<BehaviorEvent> backgroundEvents;
 	    if (ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().get()) {
-		int numEvents = actualResults.binaryEO.sampled;
+		long numEvents = actualResults.binaryEO.sampled;
 		try {
 		    backgroundEvents = ConditionalProbability.randomBackgroundEvents(targetBehavior, consequenceEvents,
-			    (int) this.dataStream.duration, numEvents);
+			    this.dataStream.duration, numEvents);
 		} catch (TooManyBackgroundEventsException e1) {
 		    Alerts.error("Error Generating Background Events",
 			    "The data stream is too small to generate the required background events. Consider using the Complete option or reducing the number of desired background events.",
@@ -298,7 +295,7 @@ public class ConditionalProbabilityController {
 		}
 	    } else {
 		backgroundEvents = ConditionalProbability.completeBackgroundEvents(targetBehavior, consequenceEvents,
-			(int) this.dataStream.duration);
+			this.dataStream.duration);
 	    }
 
 	    AllResults backgroundResults = ConditionalProbability.all(backgroundEvents, consequenceEvents,
@@ -310,27 +307,12 @@ public class ConditionalProbabilityController {
     }
 
     private List<BehaviorEvent> getTargetEvents(KeyBehaviorMapping targetBehavior) {
-	List<BehaviorEvent> targetEvents;
-	if (targetBehavior.isContinuous) {
-	    targetEvents = this.dataStream.continuousEvents.stream() //
-		    .filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
-		    .map((e) -> new ContinuousBehavior(targetBehavior.uuid, targetBehavior.key,
-			    targetBehavior.description, e.startTime, e.endTime - e.startTime)) //
-		    .collect(Collectors.toList());
-	} else {
-	    targetEvents = this.dataStream.discreteEvents.stream() //
-		    .filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
-		    .map((e) -> {
-			return new DiscreteBehavior(targetBehavior.uuid, targetBehavior.key, targetBehavior.description,
-				e.time);
-		    }).collect(Collectors.toList());
-	}
-	return ConditionalProbability.convertToDiscrete(targetEvents);
+	return ConditionalProbability.getTargetEvents(targetBehavior, this.dataStream.discreteEvents,
+		this.dataStream.continuousEvents);
     }
 
     private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap,
-	    Map<KeyBehaviorMapping, AllResults> backgroundResultsMap)
-	    throws IOException, EncryptedDocumentException {
+	    Map<KeyBehaviorMapping, AllResults> backgroundResultsMap) throws IOException, EncryptedDocumentException {
 	File outputFile;
 	boolean appendToFile = ConditionalProbabilityManager.appendSelectedProperty().get();
 	if (appendToFile) {

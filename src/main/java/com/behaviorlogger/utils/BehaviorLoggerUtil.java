@@ -200,22 +200,22 @@ public class BehaviorLoggerUtil {
 	return ((hours * 60 * 60) + (mins * 60) + secs) * 1000;
     }
 
-    public static String millisToTimestampNoSpaces(int totalMillis) {
+    public static String millisToTimestampNoSpaces(long totalMillis) {
 	String withSpaces = millisToTimestamp(totalMillis);
 	return withSpaces.replaceAll(" *", "");
     }
 
-    public static String millisToTimestamp(int totalMillis) {
-	int totalSeconds = (totalMillis / 1000);
-	int remaining = totalSeconds % (60 * 60);
-	int hours = totalSeconds / (60 * 60);
-	int minutes = remaining / 60;
-	int seconds = remaining % 60;
+    public static String millisToTimestamp(long totalMillis) {
+	long totalSeconds = (totalMillis / 1000);
+	long remaining = totalSeconds % (60 * 60);
+	long hours = totalSeconds / (60 * 60);
+	long minutes = remaining / 60;
+	long seconds = remaining % 60;
 
 	return String.format("%02d : %02d : %02d", hours, minutes, seconds);
     }
 
-    public static double millisToMinutes(int millis) {
+    public static double millisToMinutes(long millis) {
 	return ((double) millis) / (1000 * 60.0);
     }
 

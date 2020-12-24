@@ -40,23 +40,23 @@ public class ConvertTo1_1
 
     // Copy over discrete events
     bean1.discreteEvents = Lists.newArrayList();
-    for (Entry< Character, ArrayList< Integer > > entry : bean0.discretes.entrySet()) {
+    for (Entry< Character, ArrayList< Long > > entry : bean0.discretes.entrySet()) {
       Character key = entry.getKey();
       String behUuid = behaviors.get( key ).uuid;
-      ArrayList< Integer > timesSeconds = entry.getValue();
-      for (Integer t : timesSeconds) {
+      ArrayList< Long > timesSeconds = entry.getValue();
+      for (long t : timesSeconds) {
         bean1.discreteEvents.add( new DiscreteEvent( behUuid, t * 1000 ) );
       }
     }
 
     // Copy over continuous events
     bean1.continuousEvents = Lists.newArrayList();
-    for (Entry< Character, ArrayList< Integer > > entry : bean0.continuous.entrySet()) {
+    for (Entry< Character, ArrayList< Long > > entry : bean0.continuous.entrySet()) {
       Character key = entry.getKey();
       String behUuid = behaviors.get( key ).uuid;
-      ArrayList< Integer > timesSeconds = entry.getValue();
+      ArrayList< Long > timesSeconds = entry.getValue();
 
-      for (Integer t : timesSeconds) {
+      for (long t : timesSeconds) {
         bean1.continuousEvents.add( new ContinuousEvent( behUuid, t * 1000, t * 1000 + 1 ) );
       }
     }

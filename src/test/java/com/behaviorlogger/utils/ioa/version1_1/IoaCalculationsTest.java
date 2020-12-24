@@ -75,8 +75,8 @@ public class IoaCalculationsTest
   {
     int blockSize = 1;
 
-    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
-    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.mapIdToSeconds( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.mapIdToSeconds( input2 );
     KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
     KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
@@ -102,8 +102,8 @@ public class IoaCalculationsTest
   {
     int blockSize = 2;
 
-    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
-    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.mapIdToSeconds( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.mapIdToSeconds( input2 );
     KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
     KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
@@ -130,8 +130,8 @@ public class IoaCalculationsTest
   {
     int blockSize = 3;
 
-    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
-    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.mapIdToSeconds( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.mapIdToSeconds( input2 );
     KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
     KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
@@ -158,8 +158,8 @@ public class IoaCalculationsTest
   {
     int blockSize = 2;
 
-    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
-    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( empty );
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.mapIdToSeconds( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.mapIdToSeconds( empty );
     KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
     KeyToInterval data2 = IoaUtils1_1.partition( stream2, empty.duration, blockSize );
 
@@ -186,8 +186,8 @@ public class IoaCalculationsTest
   {
     int blockSize = 1;
 
-    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
-    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.mapIdToSeconds( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.mapIdToSeconds( input2 );
     KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
     KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
@@ -214,8 +214,8 @@ public class IoaCalculationsTest
   {
     int blockSize = 2;
 
-    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
-    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.mapIdToSeconds( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.mapIdToSeconds( input2 );
     KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
     KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 
@@ -242,8 +242,8 @@ public class IoaCalculationsTest
   {
     int blockSize = 2;
 
-    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
-    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( empty );
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.mapIdToSeconds( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.mapIdToSeconds( empty );
     KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
     KeyToInterval data2 = IoaUtils1_1.partition( stream2, empty.duration, blockSize );
 
@@ -364,8 +364,8 @@ public class IoaCalculationsTest
 
     int blockSize = 1;
 
-    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.createIoaMap( input1 );
-    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.createIoaMap( input2 );
+    HashMap< String, ArrayList< Integer > > stream1 = IoaUtils1_1.mapIdToSeconds( input1 );
+    HashMap< String, ArrayList< Integer > > stream2 = IoaUtils1_1.mapIdToSeconds( input2 );
     KeyToInterval data1 = IoaUtils1_1.partition( stream1, input1.duration, blockSize );
     KeyToInterval data2 = IoaUtils1_1.partition( stream2, input2.duration, blockSize );
 

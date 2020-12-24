@@ -27,6 +27,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -34,148 +35,121 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.util.Duration;
 
-public class RecordingManager
-{
-  public final Timeline timer;
-  public final SimpleBooleanProperty saveSuccessfulProperty = new SimpleBooleanProperty();
-  public final SimpleBooleanProperty playingProperty = new SimpleBooleanProperty( false );
-  public final SimpleIntegerProperty counter = new SimpleIntegerProperty( 0 );
-  public final SimpleStringProperty notes = new SimpleStringProperty();
-  public final ObservableList< DiscreteBehavior > discrete = FXCollections.observableArrayList();
-  public final ObservableList< ContinuousBehavior > continuous = FXCollections.observableArrayList();
-  public final ObservableMap< MappableChar, KeyBehaviorMapping > unknowns = FXCollections.observableHashMap();
+public class RecordingManager {
+    public final Timeline timer;
+    public final SimpleBooleanProperty saveSuccessfulProperty = new SimpleBooleanProperty();
+    public final SimpleBooleanProperty playingProperty = new SimpleBooleanProperty(false);
+    public final SimpleLongProperty counter = new SimpleLongProperty(0);
+    public final SimpleStringProperty notes = new SimpleStringProperty();
+    public final ObservableList<DiscreteBehavior> discrete = FXCollections.observableArrayList();
+    public final ObservableList<ContinuousBehavior> continuous = FXCollections.observableArrayList();
+    public final ObservableMap<MappableChar, KeyBehaviorMapping> unknowns = FXCollections.observableHashMap();
 
-  public final ObservableMap< MappableChar, ContinuousBehavior > midContinuous =
-      FXCollections.observableHashMap();
-  public final ObservableMap< MappableChar, SimpleIntegerProperty > discreteCounts =
-      FXCollections.observableHashMap();
-  public final ObservableMap< MappableChar, ContinuousCounter > continuousCounts =
-      FXCollections.observableHashMap();
+    public final ObservableMap<MappableChar, ContinuousBehavior> midContinuous = FXCollections.observableHashMap();
+    public final ObservableMap<MappableChar, SimpleIntegerProperty> discreteCounts = FXCollections.observableHashMap();
+    public final ObservableMap<MappableChar, ContinuousCounter> continuousCounts = FXCollections.observableHashMap();
 
-  private final String streamUuid;
-  private long startTime = 0;
+    private final String streamUuid;
+    private long startTime = 0;
 
-  public RecordingManager()
-  {
-    streamUuid = UUID.randomUUID().toString();
+    public RecordingManager() {
+	streamUuid = UUID.randomUUID().toString();
 
-    timer = new Timeline();
-    timer.setCycleCount( Animation.INDEFINITE );
-    KeyFrame kf = new KeyFrame( Duration.millis( 1 ), evt -> {
-      counter.set( counter.get() + 1 );
-    } );
-    timer.getKeyFrames().add( kf );
+	timer = new Timeline();
+	timer.setCycleCount(Animation.INDEFINITE);
+	KeyFrame kf = new KeyFrame(Duration.millis(1), evt -> {
+	    counter.set(counter.get() + 1);
+	});
+	timer.getKeyFrames().add(kf);
 
-    discrete.addListener( (ListChangeListener< DiscreteBehavior >) c -> persist() );
-    continuous.addListener( (ListChangeListener< ContinuousBehavior >) c -> persist() );
-    playingProperty.addListener( ( o, oldV, playing ) -> {
-      if (!playing) {
-        persist();
-      }
-    } );
+	discrete.addListener((ListChangeListener<DiscreteBehavior>) c -> persist());
+	continuous.addListener((ListChangeListener<ContinuousBehavior>) c -> persist());
+	playingProperty.addListener((o, oldV, playing) -> {
+	    if (!playing) {
+		persist();
+	    }
+	});
 
-    AtomicBoolean started = new AtomicBoolean( false );
-    playingProperty.addListener( ( o, oldV, playing ) -> {
-      if (playing && !started.get()) {
-        this.startTime = System.currentTimeMillis();
-        started.set( true );
-      }
-    } );
+	AtomicBoolean started = new AtomicBoolean(false);
+	playingProperty.addListener((o, oldV, playing) -> {
+	    if (playing && !started.get()) {
+		this.startTime = System.currentTimeMillis();
+		started.set(true);
+	    }
+	});
 
-    notes.addListener( ( obs, old, newV ) -> {
-      persist();
-    } );
+	notes.addListener((obs, old, newV) -> {
+	    persist();
+	});
 
-  }
-
-  private void persist()
-  {
-    String fullFileName = getFullFileName();
-    List< BehaviorEvent > behaviors = allBehaviors();
-    String _notes = Optional.ofNullable( notes.get() ).orElse( "" );
-
-    long stopTime = System.currentTimeMillis();
-
-    CompletableFuture< Long > fCsv =
-        Recordings.saveJson( new File( fullFileName + ".raw" ),
-                             streamUuid,
-                             behaviors,
-                             count(),
-                             _notes,
-                             startTime,
-                             stopTime );
-    CompletableFuture< Long > fXls =
-        Recordings.saveXls( new File( fullFileName + ".xls" ),
-                            streamUuid,
-                            behaviors,
-                            count(),
-                            _notes,
-                            startTime,
-                            stopTime );
-
-    CompletableFuture.allOf( fCsv, fXls ).handleAsync( ( v, t ) -> {
-      boolean saveSuccessful = t == null;
-      Platform.runLater( () -> saveSuccessfulProperty.set( saveSuccessful ) );
-      if (t != null) {
-        t.printStackTrace();
-      }
-      return null;
-    } );
-  }
-
-  private List< BehaviorEvent > allBehaviors()
-  {
-    ArrayList< BehaviorEvent > behaviors = Lists.newArrayList();
-    behaviors.addAll( discrete );
-    behaviors.addAll( continuous );
-    Collections.sort( behaviors, BehaviorEvent.comparator );
-    return behaviors;
-  }
-
-  public static String getFileName()
-  {
-    if (SchemasManager.getSelected() == null) {
-      return null;
     }
 
-    return PreferencesManager.filenameComponents().stream()
-                             .filter( comp -> comp.enabled )
-                             .map( comp -> comp.getComponent() )
-                             .collect( Collectors.joining( "-" ) );
-  }
+    private void persist() {
+	String fullFileName = getFullFileName();
+	List<BehaviorEvent> behaviors = allBehaviors();
+	String _notes = Optional.ofNullable(notes.get()).orElse("");
 
-  public static String getFullFileName()
-  {
-    if (SchemasManager.getSelected() == null) {
-      return null;
+	long stopTime = System.currentTimeMillis();
+
+	CompletableFuture<Long> fCsv = Recordings.saveJson(new File(fullFileName + ".raw"), streamUuid, behaviors,
+		count(), _notes, startTime, stopTime);
+	CompletableFuture<Long> fXls = Recordings.saveXls(new File(fullFileName + ".xls"), streamUuid, behaviors,
+		count(), _notes, startTime, stopTime);
+
+	CompletableFuture.allOf(fCsv, fXls).handleAsync((v, t) -> {
+	    boolean saveSuccessful = t == null;
+	    Platform.runLater(() -> saveSuccessfulProperty.set(saveSuccessful));
+	    if (t != null) {
+		t.printStackTrace();
+	    }
+	    return null;
+	});
     }
 
-    String uuid = SchemasManager.getSelected().uuid;
-    String directory = SessionDirectories.getForSchemaIdOrDefault( uuid ).getPath();
-    String filename = getFileName();
-    return String.format( "%s%s%s", directory, File.separator, filename );
-  }
+    private List<BehaviorEvent> allBehaviors() {
+	ArrayList<BehaviorEvent> behaviors = Lists.newArrayList();
+	behaviors.addAll(discrete);
+	behaviors.addAll(continuous);
+	Collections.sort(behaviors, BehaviorEvent.comparator);
+	return behaviors;
+    }
 
-  public void togglePlayingProperty()
-  {
-    playingProperty.set( !playingProperty.get() );
-  }
+    public static String getFileName() {
+	if (SchemasManager.getSelected() == null) {
+	    return null;
+	}
 
-  /**
-   * @return the current count of the timer, in milliseconds
-   */
-  public int count()
-  {
-    return counter.get();
-  }
+	return PreferencesManager.filenameComponents().stream().filter(comp -> comp.enabled)
+		.map(comp -> comp.getComponent()).collect(Collectors.joining("-"));
+    }
 
-  public void log( DiscreteBehavior db )
-  {
-    discrete.add( db );
-  }
+    public static String getFullFileName() {
+	if (SchemasManager.getSelected() == null) {
+	    return null;
+	}
 
-  public void log( ContinuousBehavior cb )
-  {
-    continuous.add( cb );
-  }
+	String uuid = SchemasManager.getSelected().uuid;
+	String directory = SessionDirectories.getForSchemaIdOrDefault(uuid).getPath();
+	String filename = getFileName();
+	return String.format("%s%s%s", directory, File.separator, filename);
+    }
+
+    public void togglePlayingProperty() {
+	playingProperty.set(!playingProperty.get());
+    }
+
+    /**
+     * @return the current count of the timer, in milliseconds
+     */
+    public long count() {
+	return counter.get();
+    }
+
+    public void log(DiscreteBehavior db) {
+	discrete.add(db);
+    }
+
+    public void log(ContinuousBehavior cb) {
+	continuous.add(cb);
+    }
 }

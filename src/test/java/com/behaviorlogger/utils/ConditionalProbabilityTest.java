@@ -3,6 +3,7 @@ package com.behaviorlogger.utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,7 +16,6 @@ import com.behaviorlogger.models.behaviors.DiscreteBehavior;
 import com.behaviorlogger.models.schemas.KeyBehaviorMapping;
 import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
 import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
-import com.behaviorlogger.utils.ConditionalProbability;
 import com.behaviorlogger.utils.ConditionalProbability.Results;
 import com.behaviorlogger.utils.ConditionalProbability.TooManyBackgroundEventsException;
 import com.google.common.collect.Lists;
@@ -26,13 +26,14 @@ public class ConditionalProbabilityTest {
     // Filtering Event Streams
 
     @Test
-    public void getTargets() {
+    public void getTargetsDiscrete() {
 	List<DiscreteEvent> discreteEvents = new ArrayList<>();
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
 	discreteEvents.add(new DiscreteEvent("b1", 0));
 	discreteEvents.add(new DiscreteEvent("b2", 0));
 	discreteEvents.add(new DiscreteEvent("b1", 1));
-	List<BehaviorEvent> targetEvents = ConditionalProbability.getTargetEvents(target, discreteEvents);
+	List<BehaviorEvent> targetEvents = ConditionalProbability.getTargetEvents(target, discreteEvents,
+		Lists.newArrayList());
 	List<BehaviorEvent> expected = new ArrayList<>();
 	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 0));
 	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 1));
@@ -41,6 +42,33 @@ public class ConditionalProbabilityTest {
 	Assert.assertTrue(targetEvents.get(0).startTime == 0);
 	Assert.assertTrue(targetEvents.get(1).uuid.equals("b1"));
 	Assert.assertTrue(targetEvents.get(1).startTime == 1);
+    }
+
+    @Test
+    public void getTargetsContinuous() {
+	List<ContinuousEvent> continuousEvents = new ArrayList<>();
+	KeyBehaviorMapping target = new KeyBehaviorMapping("c1", MappableChar.C, "", true, false);
+	continuousEvents.add(new ContinuousEvent("c1", 100, 5001));
+	continuousEvents.add(new ContinuousEvent("c2", 3000, 5000));
+	continuousEvents.add(new ContinuousEvent("c1", 6000, 10_000));
+	List<BehaviorEvent> targetEvents = ConditionalProbability.getTargetEvents(target, Lists.newArrayList(),
+		continuousEvents);
+	targetEvents.sort(BehaviorEvent.comparator);
+	List<BehaviorEvent> expected = new ArrayList<>();
+	expected.add(new DiscreteBehavior("c1-100", MappableChar.C, "", 100));
+	expected.add(new DiscreteBehavior("c1-1100", MappableChar.C, "", 1100));
+	expected.add(new DiscreteBehavior("c1-2100", MappableChar.C, "", 2100));
+	expected.add(new DiscreteBehavior("c1-3100", MappableChar.C, "", 3100));
+	expected.add(new DiscreteBehavior("c1-4100", MappableChar.C, "", 4100));
+	expected.add(new DiscreteBehavior("c1-6000", MappableChar.C, "", 6000));
+	expected.add(new DiscreteBehavior("c1-7000", MappableChar.C, "", 7000));
+	expected.add(new DiscreteBehavior("c1-8000", MappableChar.C, "", 8000));
+	expected.add(new DiscreteBehavior("c1-9000", MappableChar.C, "", 9000));
+	expected.add(new DiscreteBehavior("c1-10000", MappableChar.C, "", 10_000));
+	Assert.assertTrue(targetEvents.size() == expected.size());
+	List<String> targetUuids = targetEvents.stream().map(db -> db.uuid).collect(Collectors.toList());
+	List<String> expectedUuids = expected.stream().map(db -> db.uuid).collect(Collectors.toList());
+	Assert.assertEquals(expectedUuids, targetUuids);
     }
 
     @Test
@@ -86,13 +114,13 @@ public class ConditionalProbabilityTest {
     public void createNoneEOBackgroundEventsWithIter() {
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
 	int numEvents = 3;
-	Iterator<Integer> iter = Lists.newArrayList(0, 0, 1, 1, 2, 2, 3, 3).iterator();
+	Iterator<Long> iter = Lists.newArrayList(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L).iterator();
 	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
 	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 0));
 	List<BehaviorEvent> events = ConditionalProbability.randomBackgroundEventsWithIter(iter, target,
 		consequenceEvents, numEvents);
-	List<Integer> expectedStartTimes = Lists.newArrayList(1, 2, 3);
-	List<Integer> actualStartTimes = Lists.transform(events, (e) -> e.startTime);
+	List<Long> expectedStartTimes = Lists.newArrayList(1L, 2L, 3L);
+	List<Long> actualStartTimes = Lists.transform(events, (e) -> e.startTime);
 	Assert.assertEquals(expectedStartTimes, actualStartTimes);
 	Assert.assertTrue(events.stream().allMatch((e) -> e.uuid.equals(target.uuid)));
     }
@@ -139,8 +167,8 @@ public class ConditionalProbabilityTest {
 	List<BehaviorEvent> events = ConditionalProbability.completeBackgroundEvents(target, consequenceEvents,
 		duration);
 	Assert.assertEquals(2, Sets.newHashSet(events).size());
-	List<Integer> startTimes = Lists.transform(events, (e) -> e.startTime);
-	Assert.assertEquals(Lists.newArrayList(2, 3), startTimes);
+	List<Long> startTimes = Lists.transform(events, (e) -> e.startTime);
+	Assert.assertEquals(Lists.newArrayList(2L, 3L), startTimes);
     }
 
     // Convert to Discrete Events
@@ -181,12 +209,12 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
 	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
+		ConditionalProbability.WINDOW_5);
 	Results expected = new Results(1.0 / 2, 2, 2);
 	Assert.assertEquals(expected, result);
 
 	expected = new Results(1.0, 2, 2);
-	result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
+	result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_10);
 	Assert.assertEquals(expected, result);
     }
 
@@ -200,11 +228,11 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
 	Results result = ConditionalProbability.binaryEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
+		ConditionalProbability.WINDOW_5);
 	Results expected = new Results(0.0 / 2, 1, 2);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
+	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_10);
 	expected = new Results(1.0 / 1, 1, 2);
 	Assert.assertEquals(expected, result);
     }
@@ -220,17 +248,17 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
 	Results result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
+		ConditionalProbability.WINDOW_5);
 	Results expected = new Results(1.0 / 10, 2, 2);
 	Assert.assertEquals(expected, result);
 
 	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_10);
+		ConditionalProbability.WINDOW_10);
 	expected = new Results(2.0 / 20, 2, 2);
 	Assert.assertEquals(expected, result);
 
 	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_20);
+		ConditionalProbability.WINDOW_20);
 	expected = new Results(3.0 / 40, 2, 2);
 	Assert.assertEquals(expected, result);
     }
@@ -246,17 +274,39 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
 	Results result = ConditionalProbability.proportionEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
+		ConditionalProbability.WINDOW_5);
 	Results expected = new Results(0.0 / 5, 1, 2);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_10);
 	expected = new Results(1.0 / 10, 1, 2);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_20);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_20);
 	expected = new Results(1.0 / 20, 1, 2);
 	Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void bug_negativeResults() throws Exception {
+	List<BehaviorEvent> targetEvents = Lists.newArrayList();
+	for (int i = 0; i < 300000; i++) {
+	    targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", i));
+	}
+	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 8000, 2000));
+	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 2000));
+	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 80000, 2000));
+	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 90000, 2000));
+	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 100000, 2000));
+	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 120000, 2000));
+	Results result = ConditionalProbability.proportionEO(targetEvents, consequentEvents,
+		ConditionalProbability.WINDOW_10);
+	Assert.assertTrue(result.probability > 0);
+
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
+		ConditionalProbability.WINDOW_10);
+	Assert.assertTrue(result.probability > 0);
     }
 
     @Test
@@ -292,18 +342,19 @@ public class ConditionalProbabilityTest {
 
 	// non-EO
 	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
+		ConditionalProbability.WINDOW_5);
 	Results expected = new Results(10.0 / 10, 10, 10);
 	Assert.assertEquals(expected, result);
-	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
+		ConditionalProbability.WINDOW_5);
 	expected = new Results(19.0 / 50, 10, 10);
 	Assert.assertEquals(expected, result);
 
 	// EO
-	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_5);
 	expected = new Results(9.0 / 9, 9, 10);
 	Assert.assertEquals(expected, result);
-	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_5);
 	expected = new Results(17.0 / 45, 9, 10);
 	Assert.assertEquals(expected, result);
     }
@@ -327,25 +378,26 @@ public class ConditionalProbabilityTest {
 
 	// non-EO
 	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
+		ConditionalProbability.WINDOW_5);
 	Results expected = new Results(1.0 / 10, 10, 10);
 	Assert.assertEquals(expected, result);
-	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
+		ConditionalProbability.WINDOW_5);
 	expected = new Results(4.0 / 50, 10, 10);
 	Assert.assertEquals(expected, result);
 	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_10);
+		ConditionalProbability.WINDOW_10);
 	expected = new Results(6.0 / 100, 10, 10);
 	Assert.assertEquals(expected, result);
 
 	// EO
-	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_5);
 	expected = new Results(0.0 / 9, 9, 10);
 	Assert.assertEquals(expected, result);
-	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_5);
 	expected = new Results(0.0 / 45, 9, 10);
 	Assert.assertEquals(expected, result);
-	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_10);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_10);
 	expected = new Results(2.0 / 90, 9, 10);
 	Assert.assertEquals(expected, result);
     }
@@ -358,19 +410,20 @@ public class ConditionalProbabilityTest {
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
 	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
+		ConditionalProbability.WINDOW_5);
 	Results expected = new Results(-1, 0, 0);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_5);
 	expected = new Results(-1, 0, 0);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
+		ConditionalProbability.WINDOW_5);
 	expected = new Results(-1, 0, 0);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_5);
 	expected = new Results(-1, 0, 0);
 	Assert.assertEquals(expected, result);
     }
@@ -384,19 +437,20 @@ public class ConditionalProbabilityTest {
 	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
 
 	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
-		ConditionalProbability.RANGE_5);
+		ConditionalProbability.WINDOW_5);
 	Results expected = new Results(0, 2, 2);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.binaryEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_5);
 	expected = new Results(0, 2, 2);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.proportionNonEO(targetEvents, consequentEvents,
+		ConditionalProbability.WINDOW_5);
 	expected = new Results(0, 2, 2);
 	Assert.assertEquals(expected, result);
 
-	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.RANGE_5);
+	result = ConditionalProbability.proportionEO(targetEvents, consequentEvents, ConditionalProbability.WINDOW_5);
 	expected = new Results(0, 2, 2);
 	Assert.assertEquals(expected, result);
     }

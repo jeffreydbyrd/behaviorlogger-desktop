@@ -18,19 +18,18 @@ Prebuilt installers can be downloaded from https://behaviorlogger.com/desktop
     - jar
     - jlink
     - jpackage
-- python3
 
 ## Test
 ```bash
-./gradlew test
+gradle test
 ```
 
 ## Run
 ```bash
-./gradlew run
+gradle run
 ```
 
 ## Build
 ```bash
-./gradlew jpackageImage
+gradle clean jpackage
 ```

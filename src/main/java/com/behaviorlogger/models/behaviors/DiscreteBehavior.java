@@ -7,7 +7,7 @@ import com.behaviorlogger.utils.BehaviorLoggerUtil;
 import com.google.common.collect.Lists;
 
 public class DiscreteBehavior extends BehaviorEvent {
-    public DiscreteBehavior(String uuid, MappableChar key, String description, Integer time) {
+    public DiscreteBehavior(String uuid, MappableChar key, String description, long time) {
 	super(uuid, key, description, time);
     }
 
@@ -28,11 +28,11 @@ public class DiscreteBehavior extends BehaviorEvent {
 
     @Override
     public List<Integer> intervals(int sizeMillis) {
-	return Lists.newArrayList(this.startTime / sizeMillis);
+	return Lists.newArrayList((int) (this.startTime / sizeMillis));
     }
-    
+
     @Override
-    public int endTime() {
-        return this.startTime;
+    public long endTime() {
+	return this.startTime;
     }
 }

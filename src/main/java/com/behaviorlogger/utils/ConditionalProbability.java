@@ -4,8 +4,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import com.behaviorlogger.models.MappableChar;
@@ -23,17 +23,17 @@ public class ConditionalProbability {
 	private static final long serialVersionUID = 1L;
     }
 
-    public static Integer RANGE_5 = 5000;
-    public static Integer RANGE_10 = 10000;
-    public static Integer RANGE_15 = 15000;
-    public static Integer RANGE_20 = 20000;
+    public static int WINDOW_5 = 5000;
+    public static int WINDOW_10 = 10000;
+    public static int WINDOW_15 = 15000;
+    public static int WINDOW_20 = 20000;
 
     public static class Results {
 	public double probability;
-	public int sampled;
-	public int total;
+	public long sampled;
+	public long total;
 
-	public Results(double probability, int sampled, int total) {
+	public Results(double probability, long sampled, long total) {
 	    this.probability = probability;
 	    this.sampled = sampled;
 	    this.total = total;
@@ -46,8 +46,8 @@ public class ConditionalProbability {
 	    long temp;
 	    temp = Double.doubleToLongBits(probability);
 	    result = prime * result + (int) (temp ^ (temp >>> 32));
-	    result = prime * result + sampled;
-	    result = prime * result + total;
+	    result = prime * result + (int) (sampled ^ (sampled >>> 32));
+	    result = prime * result + (int) (total ^ (total >>> 32));
 	    return result;
 	}
 
@@ -103,22 +103,22 @@ public class ConditionalProbability {
 
     public static AllResults all(List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
-	    int range) {
+	    int windowMillis) {
 	return new AllResults(//
-		binaryEO(targetEvents, consequentEvents, range), //
-		binaryNonEO(targetEvents, consequentEvents, range), //
-		proportionEO(targetEvents, consequentEvents, range), //
-		proportionNonEO(targetEvents, consequentEvents, range));
+		binaryEO(targetEvents, consequentEvents, windowMillis), //
+		binaryNonEO(targetEvents, consequentEvents, windowMillis), //
+		proportionEO(targetEvents, consequentEvents, windowMillis), //
+		proportionNonEO(targetEvents, consequentEvents, windowMillis));
     }
 
     public static Results binaryNonEO( //
 	    List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
-	    int range) {
+	    int windowMillis) {
 	int numTargets = targetEvents.size();
 	double numPotentiallyReinforcedTargets = 0f;
 	for (BehaviorEvent te : targetEvents) {
-	    boolean hasConsequentEvents = hasConsequentEvents(consequentEvents, te, range);
+	    boolean hasConsequentEvents = hasConsequentEvents(consequentEvents, te, windowMillis);
 	    boolean hasOverlappingEvents = hasOverlappingEvents(consequentEvents, te.startTime);
 	    if (hasConsequentEvents || hasOverlappingEvents) {
 		numPotentiallyReinforcedTargets++;
@@ -130,7 +130,7 @@ public class ConditionalProbability {
 	return new Results(numPotentiallyReinforcedTargets / numTargets, numTargets, numTargets);
     }
 
-    private static boolean hasOverlappingEvents(List<BehaviorEvent> candidates, int targetTime) {
+    private static boolean hasOverlappingEvents(List<BehaviorEvent> candidates, long targetTime) {
 	for (BehaviorEvent ce : candidates) {
 	    if (ce.startTime <= targetTime && ce.endTime() >= targetTime) {
 		return true;
@@ -139,8 +139,9 @@ public class ConditionalProbability {
 	return false;
     }
 
-    private static boolean hasConsequentEvents(List<BehaviorEvent> candidates, BehaviorEvent target, int range) {
-	int end = target.startTime + range;
+    private static boolean hasConsequentEvents(List<BehaviorEvent> candidates, BehaviorEvent target,
+	    long windowMillis) {
+	long end = target.startTime + windowMillis;
 	for (BehaviorEvent ce : candidates) {
 	    if (ce.startTime > target.startTime && ce.startTime < end) {
 		return true;
@@ -152,7 +153,7 @@ public class ConditionalProbability {
     public static Results binaryEO( //
 	    List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
-	    int range) {
+	    int windowMillis) {
 	int numTargets = 0;
 	double numPotentiallyReinforcedTargets = 0.0;
 	for (BehaviorEvent te : targetEvents) {
@@ -161,7 +162,7 @@ public class ConditionalProbability {
 		continue;
 	    }
 	    numTargets++;
-	    boolean hasConsequentEvents = hasConsequentEvents(consequentEvents, te, range);
+	    boolean hasConsequentEvents = hasConsequentEvents(consequentEvents, te, windowMillis);
 	    if (hasConsequentEvents) {
 		numPotentiallyReinforcedTargets++;
 	    }
@@ -175,23 +176,23 @@ public class ConditionalProbability {
     public static Results proportionNonEO(//
 	    List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
-	    int range) {
+	    int windowMillis) {
 	double totalDurationOfReinforcingConsequences = 0.0;
 	for (BehaviorEvent te : targetEvents) {
-	    int rangeEnd = te.startTime + range;
-	    List<BehaviorEvent> matchingEvents = findConsequentEvents(consequentEvents, te, range);
+	    long windowEnd = te.startTime + windowMillis;
+	    List<BehaviorEvent> matchingEvents = findConsequentEvents(consequentEvents, te, windowMillis);
 	    matchingEvents.addAll(findOverlappingEvents(consequentEvents, te));
 	    for (BehaviorEvent ce : matchingEvents) {
-		int consequentEnd = ce.endTime();
-		if (consequentEnd > rangeEnd) {
-		    consequentEnd = rangeEnd;
+		long consequentEnd = ce.endTime();
+		if (consequentEnd > windowEnd) {
+		    consequentEnd = windowEnd;
 		}
-		int startTime = Math.max(ce.startTime, te.startTime);
-		int duration = consequentEnd - startTime;
+		long startTime = Math.max(ce.startTime, te.startTime);
+		long duration = consequentEnd - startTime;
 		totalDurationOfReinforcingConsequences += duration;
 	    }
 	}
-	int totalMillis = range * targetEvents.size();
+	long totalMillis = windowMillis * (long) targetEvents.size();
 	if (totalMillis == 0) {
 	    return new Results(-1.0, targetEvents.size(), targetEvents.size());
 	}
@@ -206,18 +207,18 @@ public class ConditionalProbability {
     }
 
     private static List<BehaviorEvent> findConsequentEvents(List<BehaviorEvent> candidates, BehaviorEvent target,
-	    int range) {
-	int end = target.startTime + range;
+	    long windowMillis) {
+	double windowEnd = target.startTime + windowMillis;
 	return candidates.stream() //
-		.filter((ce) -> ce.startTime > target.startTime && ce.startTime < end) //
+		.filter((ce) -> ce.startTime > target.startTime && ce.startTime < windowEnd) //
 		.collect(Collectors.toList());
     }
 
-    public static Results proportionEO(//
+    public static Results proportionEO( //
 	    List<BehaviorEvent> targetEvents, //
 	    List<BehaviorEvent> consequentEvents, //
-	    int range) {
-	int numTargets = 0;
+	    int windowMillis) {
+	long numTargets = 0;
 	double totalDurationOfReinforcingConsequences = 0.0;
 	for (BehaviorEvent te : targetEvents) {
 	    boolean hasOverlappingEvents = hasOverlappingEvents(consequentEvents, te.startTime);
@@ -225,30 +226,45 @@ public class ConditionalProbability {
 		continue;
 	    }
 	    numTargets++;
-	    int rangeEnd = te.startTime + range;
-	    List<BehaviorEvent> matchingEvents = findConsequentEvents(consequentEvents, te, range);
-	    for (BehaviorEvent ce : matchingEvents) {
-		int consequentEnd = ce.endTime();
-		if (consequentEnd > rangeEnd) {
-		    consequentEnd = rangeEnd;
+	    long windowEnd = te.startTime + windowMillis;
+	    List<BehaviorEvent> matchingConsequentEvents = findConsequentEvents(consequentEvents, te, windowMillis);
+	    for (BehaviorEvent ce : matchingConsequentEvents) {
+		long endTime = ce.endTime();
+		if (endTime > windowEnd) {
+		    endTime = windowEnd;
 		}
-		int startTime = Math.max(ce.startTime, te.startTime);
-		int duration = consequentEnd - startTime;
+		long duration = endTime - ce.startTime;
 		totalDurationOfReinforcingConsequences += duration;
 	    }
 	}
-	int totalMillis = range * numTargets;
+	long totalMillis = windowMillis * numTargets;
 	if (totalMillis == 0) {
 	    return new Results(-1.0, numTargets, targetEvents.size());
 	}
-	return new Results(totalDurationOfReinforcingConsequences / totalMillis, numTargets, targetEvents.size());
+	double proportion = totalDurationOfReinforcingConsequences / totalMillis;
+	return new Results(proportion, numTargets, targetEvents.size());
     }
 
-    public static List<BehaviorEvent> getTargetEvents(KeyBehaviorMapping target, List<DiscreteEvent> discreteEvents) {
-	return discreteEvents.stream().filter((e) -> e.behaviorUuid.equals(target.uuid)) //
-		.map((e) -> {
-		    return new DiscreteBehavior(target.uuid, target.key, target.description, e.time);
-		}).collect(Collectors.toList());
+    public static List<BehaviorEvent> getTargetEvents( //
+	    KeyBehaviorMapping targetBehavior, //
+	    List<DiscreteEvent> discreteEvents, //
+	    List<ContinuousEvent> continuousEvents) {
+	List<BehaviorEvent> targetEvents;
+	if (targetBehavior.isContinuous) {
+	    targetEvents = continuousEvents.stream() //
+		    .filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
+		    .map((e) -> new ContinuousBehavior(targetBehavior.uuid, targetBehavior.key,
+			    targetBehavior.description, e.startTime, (int) (e.endTime - e.startTime))) //
+		    .collect(Collectors.toList());
+	} else {
+	    targetEvents = discreteEvents.stream() //
+		    .filter((e) -> e.behaviorUuid.equals(targetBehavior.uuid)) //
+		    .map((e) -> {
+			return new DiscreteBehavior(targetBehavior.uuid, targetBehavior.key, targetBehavior.description,
+				e.time);
+		    }).collect(Collectors.toList());
+	}
+	return convertToDiscrete(targetEvents);
     }
 
     public static List<BehaviorEvent> getConsequenceEvents(KeyBehaviorMapping kbm, List<DiscreteEvent> discreteEvents,
@@ -265,27 +281,27 @@ public class ConditionalProbability {
 	}
 	for (ContinuousEvent evt : continuousEvents) {
 	    if (evt.behaviorUuid.equals(kbm.uuid)) {
-		int duration = evt.endTime - evt.startTime;
+		long duration = evt.endTime - evt.startTime;
 		BehaviorEvent continuousBehavior = new ContinuousBehavior(kbm.uuid, kbm.key, kbm.description,
-			evt.startTime, duration);
+			evt.startTime, (int) duration);
 		consequenceEvents.add(continuousBehavior);
 	    }
 	}
 	return consequenceEvents;
     }
 
-    public static List<BehaviorEvent> randomBackgroundEventsWithIter(Iterator<Integer> randomInts,
-	    KeyBehaviorMapping kbm, List<BehaviorEvent> consequenceEvents, int numEvents) {
-	Set<Integer> startTimes = new HashSet<>();
+    public static List<BehaviorEvent> randomBackgroundEventsWithIter(Iterator<Long> randomInts, KeyBehaviorMapping kbm,
+	    List<BehaviorEvent> consequenceEvents, long numEvents) {
+	Set<Long> startTimes = new HashSet<>();
 	for (int i = 0; i < numEvents; i++) {
-	    Integer next = randomInts.next();
+	    Long next = randomInts.next();
 	    while (startTimes.contains(next) || hasOverlappingEvents(consequenceEvents, next)) {
 		next = randomInts.next();
 	    }
 	    startTimes.add(next);
 	}
 	List<BehaviorEvent> result = Lists.newArrayList();
-	for (Integer startTime : startTimes) {
+	for (Long startTime : startTimes) {
 	    DiscreteBehavior evt = new DiscreteBehavior(kbm.uuid, kbm.key, kbm.description, startTime);
 	    result.add(evt);
 	}
@@ -293,43 +309,48 @@ public class ConditionalProbability {
     }
 
     public static List<BehaviorEvent> randomBackgroundEvents(KeyBehaviorMapping target,
-	    List<BehaviorEvent> consequenceEvents, int duration, int numEvents)
+	    List<BehaviorEvent> consequenceEvents, long duration, long numEvents)
 	    throws TooManyBackgroundEventsException {
 
-	int totalConsequencesMillis = 0;
+	long totalConsequencesMillis = 0;
 	for (BehaviorEvent ce : consequenceEvents) {
 	    totalConsequencesMillis += ce.endTime() - ce.startTime + 1;
 	}
-	int allowedMillis = (duration + 1) - totalConsequencesMillis;
+	long allowedMillis = (duration + 1) - totalConsequencesMillis;
 	if (numEvents > allowedMillis) {
 	    throw new TooManyBackgroundEventsException();
 	}
 
-	Random random = new Random();
-	Iterator<Integer> randomInts = new Iterator<Integer>() {
+	Iterator<Long> randomInts = new Iterator<Long>() {
 	    @Override
 	    public boolean hasNext() {
 		return true;
 	    }
 
 	    @Override
-	    public Integer next() {
-		return random.nextInt(duration + 1);
+	    public Long next() {
+		return ThreadLocalRandom.current().nextLong(duration + 1);
 	    }
 	};
 	return randomBackgroundEventsWithIter(randomInts, target, consequenceEvents, numEvents);
     }
 
+    /**
+     * @param target
+     * @param consequenceEvents
+     * @param duration
+     * @return
+     */
     public static List<BehaviorEvent> completeBackgroundEvents(KeyBehaviorMapping target,
-	    List<BehaviorEvent> consequenceEvents, int duration) {
-	int totalConsequencesMillis = 0;
+	    List<BehaviorEvent> consequenceEvents, long duration) {
+	long totalConsequencesMillis = 0;
 	for (BehaviorEvent ce : consequenceEvents) {
 	    totalConsequencesMillis += ce.endTime() - ce.startTime + 1;
 	}
-	int allowedMillis = (duration + 1) - totalConsequencesMillis;
+	long allowedMillis = (duration + 1) - totalConsequencesMillis;
 
-	Iterator<Integer> sequentialInts = new Iterator<Integer>() {
-	    private int c = 0;
+	Iterator<Long> sequentialInts = new Iterator<Long>() {
+	    private long c = 0;
 
 	    @Override
 	    public boolean hasNext() {
@@ -337,7 +358,7 @@ public class ConditionalProbability {
 	    }
 
 	    @Override
-	    public Integer next() {
+	    public Long next() {
 		return this.c++;
 	    }
 	};
@@ -351,7 +372,7 @@ public class ConditionalProbability {
 		result.add(event);
 		continue;
 	    }
-	    for (int t = event.startTime; t <= event.endTime(); t += 1000) {
+	    for (long t = event.startTime; t <= event.endTime(); t += 1000) {
 		result.add(new DiscreteBehavior( //
 			event.uuid + "-" + t, //
 			MappableChar.C, event.name, t));

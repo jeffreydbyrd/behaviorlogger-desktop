@@ -10,10 +10,19 @@ import com.behaviorlogger.models.MappableChar;
  * session
  */
 public abstract class BehaviorEvent {
-    public static final Comparator<BehaviorEvent> comparator = (BehaviorEvent o1, BehaviorEvent o2) -> o1.startTime
-	    - o2.startTime;
+    public static final Comparator<BehaviorEvent> comparator = //
+	    (BehaviorEvent o1, BehaviorEvent o2) -> {
+		long diff = o1.startTime - o2.startTime;
+		if (diff > 0) {
+		    return 1;
+		}
+		if (diff < 0) {
+		    return -1;
+		}
+		return 0;
+	    };
 
-    public final int startTime;
+    public final long startTime;
     public final String uuid;
     public final MappableChar key;
     public final String name;
@@ -23,7 +32,7 @@ public abstract class BehaviorEvent {
      * @param description
      * @param startTime   - start-time in millis
      */
-    BehaviorEvent(String uuid, MappableChar key, String description, int startTime) {
+    BehaviorEvent(String uuid, MappableChar key, String description, long startTime) {
 	this.uuid = uuid;
 	this.key = key;
 	this.name = description;
@@ -36,7 +45,10 @@ public abstract class BehaviorEvent {
 
     public abstract String type();
 
+    /**
+     * Given an interval size, this returns the intervals that this behavior spans
+     */
     public abstract List<Integer> intervals(int sizeMillis);
-    
-    public abstract int endTime();
+
+    public abstract long endTime();
 }
