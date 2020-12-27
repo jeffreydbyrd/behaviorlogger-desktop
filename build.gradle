@@ -61,7 +61,8 @@ OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePl
 if (os.isWindows()) {
     jlink {
         jpackage {
-            imageOptions = ['--win-menu', '--win-menu-group', 'BLOCS', '--win-shortcut']
+            installerOptions = ['--type', 'exe', '--win-menu', '--win-menu-group', 'BLOCS', '--win-shortcut']
+            installerType = 'exe'
         }
     }
 }
