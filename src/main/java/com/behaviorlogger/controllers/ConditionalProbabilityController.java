@@ -280,27 +280,26 @@ public class ConditionalProbabilityController {
 	    AllResults actualResults = ConditionalProbability.all(targetEvents, consequenceEvents, windowMillis);
 	    actualResultsMap.put(kbm, actualResults);
 
-	    List<BehaviorEvent> backgroundEvents;
-	    if (ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().get()) {
-		long numEvents = actualResults.binaryEO.sampled;
-		try {
-		    backgroundEvents = ConditionalProbability.randomBackgroundEvents(targetBehavior, consequenceEvents,
-			    this.dataStream.duration, numEvents);
-		} catch (TooManyBackgroundEventsException e1) {
-		    Alerts.error("Error Generating Background Events",
-			    "The data stream is too small to generate the required background events. Consider using the Complete option or reducing the number of desired background events.",
-			    e1);
-		    e1.printStackTrace();
-		    backgroundEvents = Lists.newArrayList();
-		}
-	    } else {
-		backgroundEvents = ConditionalProbability.completeBackgroundEvents(targetBehavior, consequenceEvents,
-			this.dataStream.duration);
+	    // generate background probabilities
+	    try {
+		List<BehaviorEvent> backgroundEventsForEO = getBackgroundEvents(actualResults, targetBehavior,
+			consequenceEvents);
+		List<BehaviorEvent> backgroundEventsForNonEO = getBackgroundEvents(actualResults, targetBehavior,
+			Lists.newArrayList());
+		AllResults backgroundResults = new AllResults(
+			ConditionalProbability.binaryEO(backgroundEventsForEO, consequenceEvents, windowMillis), //
+			ConditionalProbability.binaryNonEO(backgroundEventsForNonEO, consequenceEvents, windowMillis), //
+			ConditionalProbability.proportionEO(backgroundEventsForEO, consequenceEvents, windowMillis), //
+			ConditionalProbability.proportionNonEO(backgroundEventsForNonEO, consequenceEvents,
+				windowMillis));
+		backgroundResultsMap.put(kbm, backgroundResults);
+	    } catch (TooManyBackgroundEventsException e) {
+		Alerts.error("Error Generating Background Events",
+			"The data stream is too small to generate the required background events. Consider using the Complete option or reducing the number of desired background events.",
+			e);
+		e.printStackTrace();
+		return;
 	    }
-
-	    AllResults backgroundResults = ConditionalProbability.all(backgroundEvents, consequenceEvents,
-		    windowMillis);
-	    backgroundResultsMap.put(kbm, backgroundResults);
 	}
 
 	writeToFile(actualResultsMap, backgroundResultsMap);
@@ -309,6 +308,17 @@ public class ConditionalProbabilityController {
     private List<BehaviorEvent> getTargetEvents(KeyBehaviorMapping targetBehavior) {
 	return ConditionalProbability.getTargetEvents(targetBehavior, this.dataStream.discreteEvents,
 		this.dataStream.continuousEvents);
+    }
+
+    private List<BehaviorEvent> getBackgroundEvents(AllResults actualResults, KeyBehaviorMapping targetBehavior,
+	    List<BehaviorEvent> consequenceEvents) throws TooManyBackgroundEventsException {
+	if (ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().get()) {
+	    long numEvents = actualResults.binaryEO.sampled;
+	    return ConditionalProbability.randomBackgroundEvents(targetBehavior, consequenceEvents,
+		    this.dataStream.duration, numEvents);
+	}
+	return ConditionalProbability.completeBackgroundEvents(targetBehavior, consequenceEvents,
+		this.dataStream.duration);
     }
 
     private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap,

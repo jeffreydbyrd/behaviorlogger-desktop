@@ -267,6 +267,10 @@ public class ConditionalProbability {
 	return convertToDiscrete(targetEvents);
     }
 
+    /**
+     * Finds the events that match the {@link KeyBehaviorMapping}, converts them to
+     * {@link BehaviorEvent}.
+     */
     public static List<BehaviorEvent> getConsequenceEvents(KeyBehaviorMapping kbm, List<DiscreteEvent> discreteEvents,
 	    List<ContinuousEvent> continuousEvents) {
 	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
@@ -308,12 +312,17 @@ public class ConditionalProbability {
 	return result;
     }
 
+    /**
+     * Generates a number of target events (equal to numEvents) at random times in
+     * which avoidedConsequenceEvents are not active. If numEvents is higher than
+     * the number of possible times, TooManyBackgroundEventsException is thrown.
+     */
     public static List<BehaviorEvent> randomBackgroundEvents(KeyBehaviorMapping target,
-	    List<BehaviorEvent> consequenceEvents, long duration, long numEvents)
+	    List<BehaviorEvent> avoidedConsequenceEvents, long duration, long numEvents)
 	    throws TooManyBackgroundEventsException {
 
 	long totalConsequencesMillis = 0;
-	for (BehaviorEvent ce : consequenceEvents) {
+	for (BehaviorEvent ce : avoidedConsequenceEvents) {
 	    totalConsequencesMillis += ce.endTime() - ce.startTime + 1;
 	}
 	long allowedMillis = (duration + 1) - totalConsequencesMillis;
@@ -332,19 +341,17 @@ public class ConditionalProbability {
 		return ThreadLocalRandom.current().nextLong(duration + 1);
 	    }
 	};
-	return randomBackgroundEventsWithIter(randomInts, target, consequenceEvents, numEvents);
+	return randomBackgroundEventsWithIter(randomInts, target, avoidedConsequenceEvents, numEvents);
     }
 
     /**
-     * @param target
-     * @param consequenceEvents
-     * @param duration
-     * @return
+     * Generates a target event for each millisecond in which the
+     * avoidedConsequenceEvents are not active
      */
     public static List<BehaviorEvent> completeBackgroundEvents(KeyBehaviorMapping target,
-	    List<BehaviorEvent> consequenceEvents, long duration) {
+	    List<BehaviorEvent> avoidedConsequenceEvents, long duration) {
 	long totalConsequencesMillis = 0;
-	for (BehaviorEvent ce : consequenceEvents) {
+	for (BehaviorEvent ce : avoidedConsequenceEvents) {
 	    totalConsequencesMillis += ce.endTime() - ce.startTime + 1;
 	}
 	long allowedMillis = (duration + 1) - totalConsequencesMillis;
@@ -362,7 +369,7 @@ public class ConditionalProbability {
 		return this.c++;
 	    }
 	};
-	return randomBackgroundEventsWithIter(sequentialInts, target, consequenceEvents, allowedMillis);
+	return randomBackgroundEventsWithIter(sequentialInts, target, avoidedConsequenceEvents, allowedMillis);
     }
 
     public static List<BehaviorEvent> convertToDiscrete(List<BehaviorEvent> events) {
