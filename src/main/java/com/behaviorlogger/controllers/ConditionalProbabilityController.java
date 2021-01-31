@@ -23,7 +23,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.behaviorlogger.models.ConditionalProbabilityManager;
-import com.behaviorlogger.models.behaviors.BehaviorEvent;
+import com.behaviorlogger.models.behaviors.ContinuousBehavior;
+import com.behaviorlogger.models.behaviors.DiscreteBehavior;
 import com.behaviorlogger.models.schemas.KeyBehaviorMapping;
 import com.behaviorlogger.persistence.GsonUtils;
 import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.SessionBean1_1;
@@ -265,34 +266,34 @@ public class ConditionalProbabilityController {
 
     private void generateResults() throws IOException, EncryptedDocumentException {
 	KeyBehaviorMapping targetBehavior = this.selectedBehavior;
-	List<BehaviorEvent> targetEvents = getTargetEvents(targetBehavior);
+	List<DiscreteBehavior> targetEvents = getTargetEvents(targetBehavior);
+	int windowMillis = ConditionalProbabilityManager.windowProperty().get() * 1000;
 
 	Map<KeyBehaviorMapping, AllResults> actualResultsMap = Maps.newHashMap();
 	Map<KeyBehaviorMapping, AllResults> backgroundResultsMap = Maps.newHashMap();
 
-	for (KeyBehaviorMapping kbm : this.dataStream.schema.behaviors) {
-	    if (kbm.uuid.equals(targetBehavior.uuid)) {
+	for (KeyBehaviorMapping consequenceBehavior : this.dataStream.schema.behaviors) {
+	    if (consequenceBehavior.uuid.equals(targetBehavior.uuid)) {
 		continue;
 	    }
-	    List<BehaviorEvent> consequenceEvents = ConditionalProbability.getConsequenceEvents(kbm,
-		    this.dataStream.discreteEvents, this.dataStream.continuousEvents);
-	    int windowMillis = ConditionalProbabilityManager.windowProperty().get() * 1000;
+	    List<ContinuousBehavior> consequenceEvents = ConditionalProbability.getConsequenceEvents(
+		    consequenceBehavior, this.dataStream.discreteEvents, this.dataStream.continuousEvents);
 	    AllResults actualResults = ConditionalProbability.all(targetEvents, consequenceEvents, windowMillis);
-	    actualResultsMap.put(kbm, actualResults);
+	    actualResultsMap.put(consequenceBehavior, actualResults);
 
 	    // generate background probabilities
 	    try {
-		List<BehaviorEvent> backgroundEventsForEO = getBackgroundEvents(actualResults, targetBehavior,
+		List<DiscreteBehavior> backgroundEventsForEO = getBackgroundEvents(actualResults, targetBehavior,
 			consequenceEvents);
-		List<BehaviorEvent> backgroundEventsForNonEO = getBackgroundEvents(actualResults, targetBehavior,
+		List<DiscreteBehavior> backgroundEventsForNonEO = getBackgroundEvents(actualResults, targetBehavior,
 			Lists.newArrayList());
 		AllResults backgroundResults = new AllResults(
 			ConditionalProbability.binaryEO(backgroundEventsForEO, consequenceEvents, windowMillis), //
 			ConditionalProbability.binaryNonEO(backgroundEventsForNonEO, consequenceEvents, windowMillis), //
-			ConditionalProbability.proportionEO(backgroundEventsForEO, consequenceEvents, windowMillis), //
+			ConditionalProbability.proportionEO(backgroundEventsForEO, consequenceEvents, windowMillis),
 			ConditionalProbability.proportionNonEO(backgroundEventsForNonEO, consequenceEvents,
 				windowMillis));
-		backgroundResultsMap.put(kbm, backgroundResults);
+		backgroundResultsMap.put(consequenceBehavior, backgroundResults);
 	    } catch (TooManyBackgroundEventsException e) {
 		Alerts.error("Error Generating Background Events",
 			"The data stream is too small to generate the required background events. Consider using the Complete option or reducing the number of desired background events.",
@@ -305,13 +306,13 @@ public class ConditionalProbabilityController {
 	writeToFile(actualResultsMap, backgroundResultsMap);
     }
 
-    private List<BehaviorEvent> getTargetEvents(KeyBehaviorMapping targetBehavior) {
+    private List<DiscreteBehavior> getTargetEvents(KeyBehaviorMapping targetBehavior) {
 	return ConditionalProbability.getTargetEvents(targetBehavior, this.dataStream.discreteEvents,
 		this.dataStream.continuousEvents);
     }
 
-    private List<BehaviorEvent> getBackgroundEvents(AllResults actualResults, KeyBehaviorMapping targetBehavior,
-	    List<BehaviorEvent> consequenceEvents) throws TooManyBackgroundEventsException {
+    private List<DiscreteBehavior> getBackgroundEvents(AllResults actualResults, KeyBehaviorMapping targetBehavior,
+	    List<ContinuousBehavior> consequenceEvents) throws TooManyBackgroundEventsException {
 	if (ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().get()) {
 	    long numEvents = actualResults.binaryEO.sampled;
 	    return ConditionalProbability.randomBackgroundEvents(targetBehavior, consequenceEvents,

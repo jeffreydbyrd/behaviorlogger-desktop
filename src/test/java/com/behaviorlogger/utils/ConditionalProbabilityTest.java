@@ -16,6 +16,7 @@ import com.behaviorlogger.models.behaviors.DiscreteBehavior;
 import com.behaviorlogger.models.schemas.KeyBehaviorMapping;
 import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.ContinuousEvent;
 import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.DiscreteEvent;
+import com.behaviorlogger.utils.ConditionalProbability.AllResults;
 import com.behaviorlogger.utils.ConditionalProbability.Results;
 import com.behaviorlogger.utils.ConditionalProbability.TooManyBackgroundEventsException;
 import com.google.common.collect.Lists;
@@ -32,7 +33,7 @@ public class ConditionalProbabilityTest {
 	discreteEvents.add(new DiscreteEvent("b1", 0));
 	discreteEvents.add(new DiscreteEvent("b2", 0));
 	discreteEvents.add(new DiscreteEvent("b1", 1));
-	List<BehaviorEvent> targetEvents = ConditionalProbability.getTargetEvents(target, discreteEvents,
+	List<DiscreteBehavior> targetEvents = ConditionalProbability.getTargetEvents(target, discreteEvents,
 		Lists.newArrayList());
 	List<BehaviorEvent> expected = new ArrayList<>();
 	expected.add(new DiscreteBehavior("b1", MappableChar.B, "", 0));
@@ -51,7 +52,7 @@ public class ConditionalProbabilityTest {
 	continuousEvents.add(new ContinuousEvent("c1", 100, 5001));
 	continuousEvents.add(new ContinuousEvent("c2", 3000, 5000));
 	continuousEvents.add(new ContinuousEvent("c1", 6000, 10_000));
-	List<BehaviorEvent> targetEvents = ConditionalProbability.getTargetEvents(target, Lists.newArrayList(),
+	List<DiscreteBehavior> targetEvents = ConditionalProbability.getTargetEvents(target, Lists.newArrayList(),
 		continuousEvents);
 	targetEvents.sort(BehaviorEvent.comparator);
 	List<BehaviorEvent> expected = new ArrayList<>();
@@ -83,7 +84,7 @@ public class ConditionalProbabilityTest {
 	continuousEvents.add(new ContinuousEvent("b3", 1, 2));
 
 	KeyBehaviorMapping consequence = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
-	List<BehaviorEvent> targetEvents = ConditionalProbability.getConsequenceEvents(consequence, discreteEvents,
+	List<ContinuousBehavior> targetEvents = ConditionalProbability.getConsequenceEvents(consequence, discreteEvents,
 		continuousEvents);
 
 	List<BehaviorEvent> expected = new ArrayList<>();
@@ -115,9 +116,9 @@ public class ConditionalProbabilityTest {
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
 	int numEvents = 3;
 	Iterator<Long> iter = Lists.newArrayList(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L).iterator();
-	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequenceEvents = Lists.newArrayList();
 	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 0));
-	List<BehaviorEvent> events = ConditionalProbability.randomBackgroundEventsWithIter(iter, target,
+	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEventsWithIter(iter, target,
 		consequenceEvents, numEvents);
 	List<Long> expectedStartTimes = Lists.newArrayList(1L, 2L, 3L);
 	List<Long> actualStartTimes = Lists.transform(events, (e) -> e.startTime);
@@ -130,10 +131,10 @@ public class ConditionalProbabilityTest {
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
 	int numEvents = 9;
 	int duration = 9;
-	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequenceEvents = Lists.newArrayList();
 	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 0));
-	List<BehaviorEvent> events = ConditionalProbability.randomBackgroundEvents(target, consequenceEvents, duration,
-		numEvents);
+	List<DiscreteBehavior> events = ConditionalProbability.randomBackgroundEvents(target, consequenceEvents,
+		duration, numEvents);
 	Assert.assertEquals(9, events.size());
 	Assert.assertEquals(9, Sets.newHashSet(events).size());
 	Assert.assertTrue(events.stream().noneMatch((e) -> e.startTime == 0));
@@ -144,7 +145,7 @@ public class ConditionalProbabilityTest {
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
 	int numEvents = 3;
 	int duration = 3;
-	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequenceEvents = Lists.newArrayList();
 	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 1));
 
 	ThrowingRunnable r = () -> ConditionalProbability.randomBackgroundEvents(target, consequenceEvents, duration,
@@ -153,7 +154,7 @@ public class ConditionalProbabilityTest {
 
 	int numEvents2 = 5;
 	int duration2 = 3;
-	List<BehaviorEvent> consequenceEvents2 = Lists.newArrayList();
+	List<ContinuousBehavior> consequenceEvents2 = Lists.newArrayList();
 	r = () -> ConditionalProbability.randomBackgroundEvents(target, consequenceEvents2, duration2, numEvents2);
 	Assert.assertThrows(ConditionalProbability.TooManyBackgroundEventsException.class, r);
     }
@@ -162,9 +163,9 @@ public class ConditionalProbabilityTest {
     public void createCompleteBackgroundEvents() {
 	KeyBehaviorMapping target = new KeyBehaviorMapping("b1", MappableChar.B, "", false, false);
 	int duration = 3;
-	List<BehaviorEvent> consequenceEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequenceEvents = Lists.newArrayList();
 	consequenceEvents.add(new ContinuousBehavior("c1", MappableChar.C, "", 0, 1));
-	List<BehaviorEvent> events = ConditionalProbability.completeBackgroundEvents(target, consequenceEvents,
+	List<DiscreteBehavior> events = ConditionalProbability.completeBackgroundEvents(target, consequenceEvents,
 		duration);
 	Assert.assertEquals(2, Sets.newHashSet(events).size());
 	List<Long> startTimes = Lists.transform(events, (e) -> e.startTime);
@@ -177,10 +178,10 @@ public class ConditionalProbabilityTest {
     public void convertContinuousToDiscrete() {
 	List<BehaviorEvent> continuousEvents = Lists.newArrayList();
 	continuousEvents.add(new ContinuousBehavior("", MappableChar.C, "", 1000, 2000));
-	List<BehaviorEvent> events = ConditionalProbability.convertToDiscrete(continuousEvents);
+	List<DiscreteBehavior> events = ConditionalProbability.convertToDiscrete(continuousEvents);
 	Assert.assertEquals(3, events.size());
 	int t = 1000;
-	for (BehaviorEvent behaviorEvent : events) {
+	for (DiscreteBehavior behaviorEvent : events) {
 	    Assert.assertEquals(t, behaviorEvent.startTime);
 	    t += 1000;
 	}
@@ -191,7 +192,7 @@ public class ConditionalProbabilityTest {
 	List<BehaviorEvent> discreteEvents = Lists.newArrayList();
 	discreteEvents.add(new DiscreteBehavior("", MappableChar.C, "", 1000));
 	discreteEvents.add(new DiscreteBehavior("", MappableChar.C, "", 2000));
-	List<BehaviorEvent> events = ConditionalProbability.convertToDiscrete(discreteEvents);
+	List<DiscreteBehavior> events = ConditionalProbability.convertToDiscrete(discreteEvents);
 	Assert.assertEquals(2, events.size());
 	Assert.assertEquals(discreteEvents, events);
     }
@@ -200,11 +201,11 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void binaryNonEO() {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 4000));
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 10000));
 
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
@@ -220,10 +221,10 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void binaryEO() throws Exception {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 4000));
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 10000));
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
@@ -239,11 +240,11 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void proportionNonEO() throws Exception {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 4000));
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 10000));
 
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
@@ -265,11 +266,11 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void proportionEO() throws Exception {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 4000));
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 10000));
 
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
@@ -289,11 +290,11 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void bug_negativeResults() throws Exception {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
 	for (int i = 0; i < 300000; i++) {
 	    targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", i));
 	}
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 8000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 80000, 2000));
@@ -311,8 +312,8 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void stPeterExample_Attention() {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 10000)); // 1000 - 1000
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 24000)); // 3000 - 4000
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 25000)); // 3000 - 7000
@@ -361,8 +362,8 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void stPeterExample_Tangible() {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 10000));
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 24000));
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 25000));
@@ -404,8 +405,8 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void emptyTargets() {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 3000, 2000));
 	consequentEvents.add(new ContinuousBehavior("consequence", MappableChar.C, "consequence", 17000, 1000));
 
@@ -430,11 +431,11 @@ public class ConditionalProbabilityTest {
 
     @Test
     public void emptyConsequences() {
-	List<BehaviorEvent> targetEvents = Lists.newArrayList();
+	List<DiscreteBehavior> targetEvents = Lists.newArrayList();
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 4000));
 	targetEvents.add(new DiscreteBehavior("target", MappableChar.T, "target", 10000));
 
-	List<BehaviorEvent> consequentEvents = Lists.newArrayList();
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
 
 	Results result = ConditionalProbability.binaryNonEO(targetEvents, consequentEvents,
 		ConditionalProbability.WINDOW_5);
@@ -455,4 +456,37 @@ public class ConditionalProbabilityTest {
 	Assert.assertEquals(expected, result);
     }
 
+    // -- Tests from the wild --
+
+    @Test
+    public void testStPeterTantrumExample() {
+	ContinuousBehavior continuousTargetEvent = new ContinuousBehavior("tantrum", MappableChar.T, "tantrum",
+		(35 * 60000) + 2800, 5353);
+//	ContinuousBehavior continuousTargetEvent = new ContinuousBehavior("tantrum", MappableChar.T, "tantrum", (35 * 60000) + 2800, 6353);
+	List<DiscreteBehavior> targetEvents = ConditionalProbability
+		.convertToDiscrete(Lists.newArrayList(continuousTargetEvent));
+	// T 35:02.800 (reinforced)
+	// T 35:03.800 (reinforced)
+	// P 35:04.000 <--- praise
+	// T 35:04.800 (not sampled in EO; .2 reinforced in NonEO)
+	// T 35:05.800
+	// T 35:06.800
+	// T 35:07.800
+	// T -35:08.354- (convertToDiscrete dropped this part)
+
+	List<ContinuousBehavior> consequentEvents = Lists.newArrayList();
+	consequentEvents.add(new ContinuousBehavior("praise", MappableChar.P, "praise", (34 * 60000) + 50000, 1000));
+	consequentEvents.add(new ContinuousBehavior("praise", MappableChar.P, "praise", (35 * 60000) + 4000, 1000));
+	consequentEvents.add(new ContinuousBehavior("praise", MappableChar.P, "praise", (35 * 60000) + 29000, 1000));
+	consequentEvents.add(new ContinuousBehavior("praise", MappableChar.P, "praise", (35 * 60000) + 30000, 1000));
+
+	AllResults results = ConditionalProbability.all(targetEvents, consequentEvents, 10000);
+
+	Assert.assertEquals(new Results(2 / 5.0, 5, 6), results.binaryEO);
+	Assert.assertEquals(new Results(3 / 6.0, 6, 6), results.binaryNonEO);
+	Assert.assertEquals(new Results(2.0 / 50.0, 5, 6), results.proportionEO);
+	Assert.assertEquals(new Results(2.2 / 60.0, 6, 6), results.proportionNonEO);
+
+	System.out.println(results.proportionEO);
+    }
 }
