@@ -232,7 +232,10 @@ The output includes four calculations using two factors:
     - *EO* - The calculation includes only instances of target behavior that occurred during establishing operation (while the “consequent” event of interest isn’t already happening when the response occurs).
     - *Non-EO* - The calculation includes all instances of target behavior.
 
-The algorithms for this calculator were derived from [Vollmer et al. (2001)](#references).
+The algorithms for this calculator were derived from [Vollmer et al. (2001)](#references). To perform the calculation, events are transformed according to the following rules:
+
+1. **Targets** - All events are treated as *discrete* for the purposes of creating time windows. *Discrete* events aren't modified while *continuous* events are split into one *discrete* event per second. For example a Continuous event may be active between seconds 2.8 and 8.3 (5.5 s). BLOCs splits this into discrete events at seconds 2.8, 3.8. 4.8, 5.8, 6.8, and 7.8 (creating 6 windows where a consequence could be counted).
+2. **Consequences** - All events are treated as *continuous* for the purposes of calculating proportional probability. *Continuous* events aren't modified while *Discrete* events are treated as 1-second continuous events. For example, if a discrete behavior occurs at seconds 2.1 and 2.9, BLOCS creates two continuouse events - one between seconds 2.1 and 3.1 and another between 2.9 and 3.9. This conversion has no affect on Binary calculations.
 
 ---
 
