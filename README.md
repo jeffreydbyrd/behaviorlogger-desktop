@@ -33,10 +33,16 @@ gradle run
 ```bash
 gradle clean jpackage
 ```
+
+## Deploy
+The archives/installers are stored in `s3://behaviorlogger.com/desktop-app/downloads/`.
+
 ### Linux
 ```bash
-mv build/jpackage/blocs/ build/blocs-1.1.3
-tar -C build -czvf build/blocs-1.1.3.tar.gz blocs-1.1.3
+VERSION=1.1.3
+mv build/jpackage/blocs/ build/blocs-${VERSION}
+tar -C build -czvf build/blocs-${VERSION}.tar.gz blocs-${VERSION}
+aws s3 cp build/blocs-${VERSION}.tar.gz s3://behaviorlogger.com/desktop-app/downloads/
 ```
 
 ### Mac
