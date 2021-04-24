@@ -33,3 +33,14 @@ gradle run
 ```bash
 gradle clean jpackage
 ```
+### Linux
+```bash
+mv build/jpackage/blocs/ build/blocs-1.1.3
+tar -C build -czvf build/blocs-1.1.3.tar.gz blocs-1.1.3
+```
+
+### Mac
+TODO
+
+### Windows
+TODO
