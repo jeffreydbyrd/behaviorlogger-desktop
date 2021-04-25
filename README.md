@@ -49,4 +49,4 @@ aws s3 cp build/blocs-${VERSION}.tar.gz s3://behaviorlogger.com/desktop-app/down
 TODO
 
 ### Windows
-TODO
+Manually upload the build step's `.exe` file to `s3://behaviorlogger.com/desktop-app/downloads/`
