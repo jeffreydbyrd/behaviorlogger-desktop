@@ -33,20 +33,3 @@ gradle run
 ```bash
 gradle clean jpackage
 ```
-
-## Deploy
-The archives/installers are stored in `s3://behaviorlogger.com/desktop-app/downloads/`.
-
-### Linux
-```bash
-VERSION=1.1.3
-mv build/jpackage/blocs/ build/blocs-${VERSION}
-tar -C build -czvf build/blocs-${VERSION}.tar.gz blocs-${VERSION}
-aws s3 cp build/blocs-${VERSION}.tar.gz s3://behaviorlogger.com/desktop-app/downloads/
-```
-
-### Mac
-TODO
-
-### Windows
-Manually upload the build step's `.exe` file to `s3://behaviorlogger.com/desktop-app/downloads/`
