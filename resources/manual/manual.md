@@ -221,7 +221,7 @@ The "Bin Calculator" is useful for looking at within-session patterns in the dat
 4. **Target Behavior** - The behavior you wish to analyze.
 5. **Save Options** - See IOA Calculator save options.
 
-The Conditional Probability Calculator is used to determine the likelihood of a consequence (or potentially reinforcing event) occuring within a certain time window after a target event. You can compare this calculation to the background probability (or the response-independent probability) of the consequence to determine if a target and consequence events may be correlated.
+The Conditional Probability Calculator is used to determine the likelihood of a consequence (or potentially reinforcing event) occurring within a certain time window after a target event. You can compare this calculation to the background probability (or the response-independent probability) of the consequence to determine if a target and consequence events may be correlated.
 
 The output includes four calculations using two factors:
 
@@ -235,7 +235,7 @@ The output includes four calculations using two factors:
 The algorithms for this calculator were derived from [Vollmer et al. (2001)](#references). To perform the calculation, events are transformed according to the following rules:
 
 1. **Targets** - All events are treated as *discrete* for the purposes of creating time windows. *Discrete* events aren't modified while *continuous* events are split into one *discrete* event per second. For example a Continuous event may be active between seconds 2.8 and 8.3 (5.5 s). BLOCs splits this into discrete events at seconds 2.8, 3.8. 4.8, 5.8, 6.8, and 7.8 (creating 6 windows where a consequence could be counted).
-2. **Consequences** - All events are treated as *continuous* for the purposes of calculating proportional probability. *Continuous* events aren't modified while *Discrete* events are treated as 1-second continuous events. For example, if a discrete behavior occurs at seconds 2.1 and 2.9, BLOCS creates two continuouse events - one between seconds 2.1 and 3.1 and another between 2.9 and 3.9. This conversion has no affect on Binary calculations.
+2. **Consequences** - All events are treated as *continuous* for the purposes of calculating proportional probability. *Continuous* events aren't modified while *Discrete* events are treated as 1-second continuous events. For example, if a discrete behavior occurs at seconds 2.1 and 2.9, BLOCS creates two continuous events - one between seconds 2.1 and 3.1 and another between 2.9 and 3.9. This conversion has no affect on Binary calculations.
 
 ---
 

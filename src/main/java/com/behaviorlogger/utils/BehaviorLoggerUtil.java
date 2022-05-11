@@ -4,6 +4,13 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.function.Consumer;
+
+import com.behaviorlogger.BehaviorLoggerApp;
+import com.behaviorlogger.utils.resources.ResourceUtils;
+import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -13,16 +20,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.FileChooser.ExtensionFilter;
-
-import com.behaviorlogger.BehaviorLoggerApp;
-import com.behaviorlogger.utils.resources.ResourceUtils;
-import com.google.common.base.Strings;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 
 /**
  * A collection of helpful functions used throughout the app
@@ -161,6 +162,20 @@ public class BehaviorLoggerUtil {
 		}
 	    }
 	};
+    }
+
+    public static void addIntegerListener(TextField textField, Consumer<Integer> callback) {
+	textField.textProperty().addListener((o, old, newV) -> {
+	    if (newV.isEmpty()) {
+		callback.accept(0);
+		return;
+	    }
+	    if (!newV.matches("\\d*")) {
+		textField.setText(old);
+		return;
+	    }
+	    callback.accept(Integer.parseInt(newV));
+	});
     }
 
     public static int strToInt(String s) {

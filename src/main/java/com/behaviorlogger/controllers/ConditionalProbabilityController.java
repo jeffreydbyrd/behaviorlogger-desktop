@@ -40,6 +40,7 @@ import com.google.common.io.Files;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -78,6 +79,8 @@ public class ConditionalProbabilityController {
     Label windowRequiredLbl;
     @FXML
     RadioButton backgroundRandomSamplingRadio;
+    @FXML
+    CheckBox debugBackgroundRandomSamplingCheckBox;
     @FXML
     RadioButton backgroundCompleteSamplingRadio;
     @FXML
@@ -157,9 +160,11 @@ public class ConditionalProbabilityController {
 	char[] digits = "0123456789".toCharArray();
 	this.windowField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, 3));
 	this.windowField.setText(Integer.toString(ConditionalProbabilityManager.windowProperty().get()));
-	this.windowField.textProperty().addListener((o, old, newV) -> {
-	    int n = Strings.isNullOrEmpty(newV) ? 1 : Integer.valueOf(newV);
-	    ConditionalProbabilityManager.windowProperty().set(n);
+	BehaviorLoggerUtil.addIntegerListener(this.windowField, i -> {
+	    if (i <= 0) {
+		i = 1;
+	    }
+	    ConditionalProbabilityManager.windowProperty().set(i);
 	});
     }
 
@@ -176,12 +181,21 @@ public class ConditionalProbabilityController {
 	    ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().setValue(selected);
 	});
 
+	boolean debugBackgroundRandomSamplingSelected = ConditionalProbabilityManager
+		.debugBackgroundRandomSamplingSelectedProperty().getValue();
+	this.debugBackgroundRandomSamplingCheckBox.setSelected(debugBackgroundRandomSamplingSelected);
+	this.debugBackgroundRandomSamplingCheckBox.selectedProperty().addListener((o, old, selected) -> {
+	    ConditionalProbabilityManager.debugBackgroundRandomSamplingSelectedProperty().setValue(selected);
+	});
+
 	char[] digits = "0123456789".toCharArray();
 	this.backgroundRandomSamplingNumEventsField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, -1));
-	this.backgroundRandomSamplingNumEventsField
-		.setText(ConditionalProbabilityManager.backgroundNumEventsProperty().get());
-	this.backgroundRandomSamplingNumEventsField.textProperty().addListener((o, old, newV) -> {
-	    ConditionalProbabilityManager.backgroundNumEventsProperty().set(newV);
+	if (ConditionalProbabilityManager.backgroundNumEventsProperty().get() > 0) {
+	    this.backgroundRandomSamplingNumEventsField
+		    .setText(Integer.toString(ConditionalProbabilityManager.backgroundNumEventsProperty().get()));
+	}
+	BehaviorLoggerUtil.addIntegerListener(this.backgroundRandomSamplingNumEventsField, i -> {
+	    ConditionalProbabilityManager.backgroundNumEventsProperty().set(i);
 	});
     }
 
@@ -294,6 +308,11 @@ public class ConditionalProbabilityController {
 			ConditionalProbability.proportionNonEO(backgroundEventsForNonEO, consequenceEvents,
 				windowMillis));
 		backgroundResultsMap.put(consequenceBehavior, backgroundResults);
+		System.out.println(String.format("Background Events for EO (%c, %s)", consequenceBehavior.key.c,
+			consequenceBehavior.description));
+		for (DiscreteBehavior event : backgroundEventsForEO) {
+		    System.out.println(String.format("%c, %s, %d", event.key.c, event.name, event.startTime));
+		}
 	    } catch (TooManyBackgroundEventsException e) {
 		Alerts.error("Error Generating Background Events",
 			"The data stream is too small to generate the required background events. Consider using the Complete option or reducing the number of desired background events.",
@@ -315,6 +334,9 @@ public class ConditionalProbabilityController {
 	    List<ContinuousBehavior> consequenceEvents) throws TooManyBackgroundEventsException {
 	if (ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().get()) {
 	    long numEvents = actualResults.binaryEO.sampled;
+	    if (ConditionalProbabilityManager.backgroundNumEventsProperty().get() > 0) {
+		numEvents = ConditionalProbabilityManager.backgroundNumEventsProperty().get();
+	    }
 	    return ConditionalProbability.randomBackgroundEvents(targetBehavior, consequenceEvents,
 		    this.dataStream.duration, numEvents);
 	}

@@ -50,10 +50,12 @@
 							mnemonicParsing="false" text="Randomly Sampled Events:" />
 						<TextField
 							fx:id="backgroundRandomSamplingNumEventsField" maxWidth="50.0" />
+						<Label text="(leave empty to equal number of targets)" />
 					</children>
 				</HBox>
-				<Label style="-fx-padding: 5 0 0 50;"
-					text="(leave empty to equal number of targets)" />
+				<CheckBox fx:id="debugBackgroundRandomSamplingCheckBox"
+					style="-fx-padding: 5 0 0 50;"
+					text="Output sampled events to file." />
 			</children>
 		</VBox>
 
