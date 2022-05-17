@@ -163,6 +163,49 @@ public class BehaviorLoggerUtil {
 	    }
 	};
     }
+    
+    /**
+     * Adds a Listener to the TextField that will prevent its text from containing any
+     * characters not in "acceptable" and from exceeding the character limit.
+     *
+     * @param textField   the textField to add the listener to
+     * @param acceptable  a list of characters that the user is allowed to input
+     * @param limit       the max length of the field; if limit <= 0 then it's
+     *                    treated as unlimited
+     * @param callback    a callback that gets called with *valid* values entered into textField
+     */
+    public static void addLimitingListener(TextField textField, String acceptable, int limit, Consumer<String> callback) {
+	textField.textProperty().addListener((o, old, newV) -> {
+	    boolean hasAcceptableValues = newV.chars().allMatch(c -> acceptable.indexOf(c) >= 0);
+	    if (!hasAcceptableValues) {
+		textField.setText(old);
+		return;
+	    }
+	    if (limit < 0) {
+		callback.accept(newV);
+		return;
+	    }
+	    if (newV.length() > limit) {
+		textField.setText(old);
+		return;
+	    }
+	    callback.accept(newV);
+	});
+    }
+
+    public static void addLengthListener(TextField textField, int len, Consumer<String> callback) {
+	textField.textProperty().addListener((o, old, newV) -> {
+	    if (len < 0) {
+		callback.accept(newV);
+		return;
+	    }
+	    if (newV.length() > len) {
+		textField.setText(old);
+		return;
+	    }
+	    callback.accept(newV);
+	});
+    }
 
     public static void addIntegerListener(TextField textField, Consumer<Integer> callback) {
 	textField.textProperty().addListener((o, old, newV) -> {
