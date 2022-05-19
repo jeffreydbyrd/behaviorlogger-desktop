@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -282,9 +284,10 @@ public class ConditionalProbabilityController {
 	KeyBehaviorMapping targetBehavior = this.selectedBehavior;
 	List<DiscreteBehavior> targetEvents = getTargetEvents(targetBehavior);
 	int windowMillis = ConditionalProbabilityManager.windowProperty().get() * 1000;
-
 	Map<KeyBehaviorMapping, AllResults> actualResultsMap = Maps.newHashMap();
 	Map<KeyBehaviorMapping, AllResults> backgroundResultsMap = Maps.newHashMap();
+	StringBuilder debugBackgroundRandomSamplingOutput = new StringBuilder();
+	debugBackgroundRandomSamplingOutput.append("Randomly selected background events:\n\n");
 
 	for (KeyBehaviorMapping consequenceBehavior : this.dataStream.schema.behaviors) {
 	    if (consequenceBehavior.uuid.equals(targetBehavior.uuid)) {
@@ -301,6 +304,10 @@ public class ConditionalProbabilityController {
 			consequenceEvents);
 		List<DiscreteBehavior> backgroundEventsForNonEO = getBackgroundEvents(actualResults, targetBehavior,
 			Lists.newArrayList());
+		
+		backgroundEventsForEO.sort(Comparator.comparingLong(e-> e.startTime));
+		backgroundEventsForNonEO.sort(Comparator.comparingLong(e-> e.startTime));
+		
 		AllResults backgroundResults = new AllResults(
 			ConditionalProbability.binaryEO(backgroundEventsForEO, consequenceEvents, windowMillis), //
 			ConditionalProbability.binaryNonEO(backgroundEventsForNonEO, consequenceEvents, windowMillis), //
@@ -308,11 +315,22 @@ public class ConditionalProbabilityController {
 			ConditionalProbability.proportionNonEO(backgroundEventsForNonEO, consequenceEvents,
 				windowMillis));
 		backgroundResultsMap.put(consequenceBehavior, backgroundResults);
-		System.out.println(String.format("Background Events for EO (%c, %s)", consequenceBehavior.key.c,
-			consequenceBehavior.description));
+
+		List<String> backgroundEventsForEOTimes = Lists.newArrayList();
+		List<String> backgroundEventsForNonEOTimes = Lists.newArrayList();
 		for (DiscreteBehavior event : backgroundEventsForEO) {
-		    System.out.println(String.format("%c, %s, %d", event.key.c, event.name, event.startTime));
+		    backgroundEventsForEOTimes.add(Double.toString((double)event.startTime / 1000));
 		}
+		for (DiscreteBehavior event : backgroundEventsForNonEO) {
+		    backgroundEventsForNonEOTimes.add(Double.toString((double)event.startTime / 1000));
+		}
+		debugBackgroundRandomSamplingOutput.append("-------------------------------------------\n");
+		debugBackgroundRandomSamplingOutput
+			.append(String.format("EO (%c, %s):\n    %s\n", consequenceBehavior.key.c,
+				consequenceBehavior.description, String.join(", ", backgroundEventsForEOTimes)));
+		debugBackgroundRandomSamplingOutput
+			.append(String.format("Non-EO (%c, %s):\n    %s\n", consequenceBehavior.key.c,
+				consequenceBehavior.description, String.join(", ", backgroundEventsForNonEOTimes)));
 	    } catch (TooManyBackgroundEventsException e) {
 		Alerts.error("Error Generating Background Events",
 			"The data stream is too small to generate the required background events. Consider using the Complete option or reducing the number of desired background events.",
@@ -322,7 +340,7 @@ public class ConditionalProbabilityController {
 	    }
 	}
 
-	writeToFile(actualResultsMap, backgroundResultsMap);
+	writeToFile(actualResultsMap, backgroundResultsMap, debugBackgroundRandomSamplingOutput);
     }
 
     private List<DiscreteBehavior> getTargetEvents(KeyBehaviorMapping targetBehavior) {
@@ -345,7 +363,8 @@ public class ConditionalProbabilityController {
     }
 
     private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap,
-	    Map<KeyBehaviorMapping, AllResults> backgroundResultsMap) throws IOException, EncryptedDocumentException {
+	    Map<KeyBehaviorMapping, AllResults> backgroundResultsMap, StringBuilder debugBackgroundRandomSamplingOutput)
+	    throws IOException, EncryptedDocumentException {
 	File outputFile;
 	boolean appendToFile = ConditionalProbabilityManager.appendSelectedProperty().get();
 	if (appendToFile) {
@@ -389,6 +408,12 @@ public class ConditionalProbabilityController {
 	    this.saveStatusLbl.setText("Conditional Probabilities appended to: " + outputFile.getAbsolutePath());
 	} else {
 	    this.saveStatusLbl.setText("Conditional Probabilities saved to new file: " + outputFile.getAbsolutePath());
+	}
+	
+	if (ConditionalProbabilityManager.debugBackgroundRandomSamplingSelectedProperty().get()) {
+	    outputFile.getParentFile().
+	    outputFile.getName();
+	    System.out.println(debugBackgroundRandomSamplingOutput);
 	}
     }
 
