@@ -201,13 +201,13 @@ public class BehaviorLoggerUtil {
     public static void addLimitingListener(TextField textField, String acceptable, int limit, Consumer<String> callback) {
 	Predicate<String> p = newV -> {
 	    boolean hasAcceptableValues = newV.chars().allMatch(c -> acceptable.indexOf(c) >= 0);
-	    return hasAcceptableValues && (limit < 0 || newV.length() < limit);
+	    return hasAcceptableValues && (limit < 0 || newV.length() <= limit);
 	};
 	addLimitingListener(textField, p, callback);
     }
 
     public static void addLengthListener(TextField textField, int len, Consumer<String> callback) {
-	Predicate<String> p = newV -> len < 0 || newV.length() < len;
+	Predicate<String> p = newV -> len < 0 || newV.length() <= len;
 	addLimitingListener(textField, p, callback);
     }
 
