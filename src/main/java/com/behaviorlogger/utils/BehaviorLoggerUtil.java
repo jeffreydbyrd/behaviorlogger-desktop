@@ -126,30 +126,9 @@ public class BehaviorLoggerUtil {
     /**
      * @deprecated use addLimitingListener instead
      * 
-     * Creates an EventHandler that will prevent a field's text from exceeding the
-     * character limit
-     * 
-     * @param limit - the max length of the field
-     * @return an EventHandler that consumes a KeyEvent if the length of 'field' is
-     *         longer than 'limit'
-     */
-    public static EventHandler<? super KeyEvent> createFieldLimiter(int limit) {
-	return evt -> {
-	    Object source = evt.getSource();
-	    if (source instanceof TextField) {
-		String text = Strings.nullToEmpty(((TextField) source).getText());
-		if (text.length() >= limit) {
-		    evt.consume();
-		}
-	    }
-	};
-    }
-
-    /**
-     * @deprecated use addLimitingListener instead
-     * 
-     * Creates an EventHandler that will prevent a field's text from containing any
-     * characters not in "acceptableKeys" and from exceeding the character limit
+     *             Creates an EventHandler that will prevent a field's text from
+     *             containing any characters not in "acceptableKeys" and from
+     *             exceeding the character limit
      * 
      * @param acceptableKeys a list of characters that the user is allowed to input
      * @param limit          the max length of the field; if limit <= 0 then it's
@@ -168,14 +147,16 @@ public class BehaviorLoggerUtil {
 	    }
 	};
     }
-    
-    
+
     /**
-     * Adds a Listener to the TextField that will revert its text if the new text violates the predicate.
+     * Adds a Listener to the TextField that will revert its text if the new text
+     * violates the predicate.
      *
-     * @param textField   the textField to add the listener to
-     * @param predicate   a function that returns true if the new text is okay, and false otherwise
-     * @param callback    a callback that gets called with *valid* values entered into textField
+     * @param textField the textField to add the listener to
+     * @param predicate a function that returns true if the new text is okay, and
+     *                  false otherwise
+     * @param callback  a callback that gets called with *valid* values entered into
+     *                  textField
      */
     public static void addLimitingListener(TextField textField, Predicate<String> p, Consumer<String> callback) {
 	textField.textProperty().addListener((o, old, newV) -> {
@@ -186,19 +167,20 @@ public class BehaviorLoggerUtil {
 	    callback.accept(newV);
 	});
     }
-    
-    
+
     /**
-     * Adds a Listener to the TextField that will prevent its text from containing any
-     * characters not in "acceptable" and from exceeding the character limit.
+     * Adds a Listener to the TextField that will prevent its text from containing
+     * any characters not in "acceptable" and from exceeding the character limit.
      *
-     * @param textField   the textField to add the listener to
-     * @param acceptable  a list of characters that the user is allowed to input
-     * @param limit       the max length of the field; if limit <= 0 then it's
-     *                    treated as unlimited
-     * @param callback    a callback that gets called with *valid* values entered into textField
+     * @param textField  the textField to add the listener to
+     * @param acceptable a list of characters that the user is allowed to input
+     * @param limit      the max length of the field; if limit <= 0 then it's
+     *                   treated as unlimited
+     * @param callback   a callback that gets called with *valid* values entered
+     *                   into textField
      */
-    public static void addLimitingListener(TextField textField, String acceptable, int limit, Consumer<String> callback) {
+    public static void addLimitingListener(TextField textField, String acceptable, int limit,
+	    Consumer<String> callback) {
 	Predicate<String> p = newV -> {
 	    boolean hasAcceptableValues = newV.chars().allMatch(c -> acceptable.indexOf(c) >= 0);
 	    return hasAcceptableValues && (limit < 0 || newV.length() <= limit);
@@ -212,9 +194,20 @@ public class BehaviorLoggerUtil {
     }
 
     public static void addIntegerListener(TextField textField, Consumer<Integer> callback) {
-	Predicate<String> p = newV -> newV.isEmpty() || newV.matches("\\d*");
+	Predicate<String> p = newV -> {
+	    if (newV.isBlank()) {
+		return true;
+	    }
+	    try {
+		Integer.parseInt(newV);
+		return true;
+	    } catch (NumberFormatException e) {
+		return false;
+	    }
+	};
 	addLimitingListener(textField, p, text -> {
-	    callback.accept(Integer.parseInt(text));
+	    int val = text.isBlank() ? 0 : Integer.parseInt(text);
+	    callback.accept(val);
 	});
     }
 

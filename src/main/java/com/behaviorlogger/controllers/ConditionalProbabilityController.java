@@ -190,8 +190,6 @@ public class ConditionalProbabilityController {
 	    ConditionalProbabilityManager.debugBackgroundRandomSamplingSelectedProperty().setValue(selected);
 	});
 
-	char[] digits = "0123456789".toCharArray();
-	this.backgroundRandomSamplingNumEventsField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, -1));
 	if (ConditionalProbabilityManager.backgroundNumEventsProperty().get() > 0) {
 	    this.backgroundRandomSamplingNumEventsField
 		    .setText(Integer.toString(ConditionalProbabilityManager.backgroundNumEventsProperty().get()));

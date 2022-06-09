@@ -54,8 +54,6 @@ public class IoaCalculatorController
     file1Field.setText( IoaManager.file1Property().get() );
     file2Field.setText( IoaManager.file2Property().get() );
     thresholdField.setText( IoaManager.thresholdProperty().get() + "" );
-    char[] digits = "0123456789".toCharArray();
-    thresholdField.setOnKeyTyped( BehaviorLoggerUtil.createFieldLimiter( digits, 5 ) );
 
     methodChoiceBox.setItems( FXCollections.observableArrayList( IoaMethod.values() ) );
     methodChoiceBox.getSelectionModel().select( IoaManager.getSelectedMethod() );
@@ -67,6 +65,11 @@ public class IoaCalculatorController
                    .addListener( ( observable, oldValue, newValue ) -> {
                      IoaManager.methodProperty().set( newValue.name() );
                    } );
+
+    BehaviorLoggerUtil.addIntegerListener(thresholdField, n -> {
+	int val = n < 1 ? 1 : n;
+	IoaManager.thresholdProperty().set(val);
+    });
     thresholdField.textProperty().addListener( ( o, old, newV ) -> {
       int n = Strings.isNullOrEmpty( newV ) ? 1 : Integer.valueOf( newV );
       IoaManager.thresholdProperty().set( n );
@@ -75,7 +78,7 @@ public class IoaCalculatorController
       if (!focused) {
         String text = thresholdField.getText();
         if (Strings.isNullOrEmpty( text )) {
-          thresholdField.setText( "0" );
+          thresholdField.setText( "1" );
         }
       }
     } );

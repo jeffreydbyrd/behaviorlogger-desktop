@@ -62,12 +62,12 @@ public class BinCalculatorController {
     private void initialize() {
 	fileField.setText(BinManager.fileProperty().get());
 	binsizeField.setText(BinManager.binsizeProperty().get() + "");
-	char[] digits = "0123456789".toCharArray();
-	binsizeField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, 5));
 	fileField.textProperty().addListener((o, old, newV) -> BinManager.fileProperty().set(newV));
 
-	binsizeField.textProperty().addListener((o, old, newV) -> {
-	    int n = Strings.isNullOrEmpty(newV) ? 1 : Integer.valueOf(newV);
+	BehaviorLoggerUtil.addIntegerListener(binsizeField, n -> {
+	    if (n < 1) {
+		n = 1;
+	    }
 	    BinManager.binsizeProperty().set(n);
 	});
 

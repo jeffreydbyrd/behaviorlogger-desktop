@@ -201,17 +201,10 @@ public class StartMenuController
 
     // Put in some idiot-proof logic for the session # (limit to just digits,
     // prevent exceeding max_value)
-    EventHandler< ? super KeyEvent > limitSessionField =
-        BehaviorLoggerUtil.createFieldLimiter( "0123456789".toCharArray(), 9 );
-    sessionField.setOnKeyTyped( limitSessionField );
-    sessionField.textProperty().addListener( ( o, old, newV ) -> {
-      String text = sessionField.getText().trim();
-      if (Strings.isNullOrEmpty( text )) {
-        SessionManager.setSessionNumber( 0 );
-      } else {
-        SessionManager.setSessionNumber( Integer.valueOf( text.trim() ) );
-      }
-    } );
+//    EventHandler< ? super KeyEvent > limitSessionField =
+//        BehaviorLoggerUtil.createFieldLimiter( "0123456789".toCharArray(), 9 );
+//    sessionField.setOnKeyTyped( limitSessionField );
+    BehaviorLoggerUtil.addIntegerListener(sessionField, SessionManager::setSessionNumber);
 
     SessionManager.observerProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
     SessionManager.therapistProperty().addListener( ( o, old, newV ) -> updateFilenameLabel() );
