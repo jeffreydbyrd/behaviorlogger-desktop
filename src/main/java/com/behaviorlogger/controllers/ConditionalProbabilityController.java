@@ -426,7 +426,7 @@ public class ConditionalProbabilityController {
 	cell = row.createCell(0);
 	cell.setCellValue("File");
 	cell.setCellStyle(boldstyle);
-	row.createCell(1).setCellValue(outputFile.getName());
+	row.createCell(1).setCellValue(ConditionalProbabilityManager.fileProperty().get());
 
 	row = s.createRow(r++);
 	cell = row.createCell(0);
