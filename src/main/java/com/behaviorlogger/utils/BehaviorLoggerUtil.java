@@ -124,31 +124,6 @@ public class BehaviorLoggerUtil {
     }
 
     /**
-     * @deprecated use addLimitingListener instead
-     * 
-     *             Creates an EventHandler that will prevent a field's text from
-     *             containing any characters not in "acceptableKeys" and from
-     *             exceeding the character limit
-     * 
-     * @param acceptableKeys a list of characters that the user is allowed to input
-     * @param limit          the max length of the field; if limit <= 0 then it's
-     *                       treated as unlimited
-     * @return an EventHandler that consumes a KeyEvent if the typed Char is outside
-     *         'acceptableKeys' or if the length of 'field' is longer than 'limit'
-     */
-    public static EventHandler<? super KeyEvent> createFieldLimiter(char[] acceptableKeys, int limit) {
-	return evt -> {
-	    Object source = evt.getSource();
-	    if (source instanceof TextField) {
-		if ((limit > 0 && ((TextField) source).getText().length() >= limit)
-			|| !String.valueOf(acceptableKeys).contains(evt.getCharacter())) {
-		    evt.consume();
-		}
-	    }
-	};
-    }
-
-    /**
      * Adds a Listener to the TextField that will revert its text if the new text
      * violates the predicate.
      *
@@ -204,6 +179,25 @@ public class BehaviorLoggerUtil {
 	    } catch (NumberFormatException e) {
 		return false;
 	    }
+	};
+	addLimitingListener(textField, p, text -> {
+	    int val = text.isBlank() ? 0 : Integer.parseInt(text);
+	    callback.accept(val);
+	});
+    }
+
+    public static void addIntegerListener(TextField textField, int max, Consumer<Integer> callback) {
+	Predicate<String> p = newV -> {
+	    if (newV.isBlank()) {
+		return true;
+	    }
+	    int val;
+	    try {
+		val = Integer.parseInt(newV);
+	    } catch (NumberFormatException e) {
+		return false;
+	    }
+	    return val <= max;
 	};
 	addLimitingListener(textField, p, text -> {
 	    int val = text.isBlank() ? 0 : Integer.parseInt(text);

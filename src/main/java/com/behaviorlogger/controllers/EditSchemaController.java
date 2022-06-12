@@ -174,10 +174,9 @@ public class EditSchemaController {
 	minutesField.setText(BehaviorLoggerUtil.intToStr(mins));
 	secondsField.setText(BehaviorLoggerUtil.intToStr(secs));
 
-	EventHandler<? super KeyEvent> limit2Digits = BehaviorLoggerUtil.createFieldLimiter(DIGITS, 2);
-	hoursField.setOnKeyTyped(limit2Digits);
-	minutesField.setOnKeyTyped(limit2Digits);
-	secondsField.setOnKeyTyped(limit2Digits);
+	BehaviorLoggerUtil.addIntegerListener(hoursField, 99, i -> {});
+	BehaviorLoggerUtil.addIntegerListener(minutesField, 99, i -> {});
+	BehaviorLoggerUtil.addIntegerListener(secondsField, 99, i -> {});
 
 	boolean color = model.color == null ? PreferencesManager.getColorOnEnd() : model.color;
 	boolean pause = model.pause == null ? PreferencesManager.getPauseOnEnd() : model.pause;

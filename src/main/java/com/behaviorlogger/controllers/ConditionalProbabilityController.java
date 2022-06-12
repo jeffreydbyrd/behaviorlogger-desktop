@@ -159,10 +159,8 @@ public class ConditionalProbabilityController {
     }
 
     private void initWindowField() {
-	char[] digits = "0123456789".toCharArray();
-	this.windowField.setOnKeyTyped(BehaviorLoggerUtil.createFieldLimiter(digits, 3));
 	this.windowField.setText(Integer.toString(ConditionalProbabilityManager.windowProperty().get()));
-	BehaviorLoggerUtil.addIntegerListener(this.windowField, i -> {
+	BehaviorLoggerUtil.addIntegerListener(this.windowField, 3, i -> {
 	    if (i <= 0) {
 		i = 1;
 	    }
