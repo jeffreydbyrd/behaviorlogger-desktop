@@ -160,7 +160,7 @@ public class ConditionalProbabilityController {
 
     private void initWindowField() {
 	this.windowField.setText(Integer.toString(ConditionalProbabilityManager.windowProperty().get()));
-	BehaviorLoggerUtil.addIntegerListener(this.windowField, 3, i -> {
+	BehaviorLoggerUtil.addIntegerListener(this.windowField, 999, i -> {
 	    if (i <= 0) {
 		i = 1;
 	    }
