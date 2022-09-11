@@ -11,13 +11,15 @@
   - [Adding Notes to a Session](#adding-notes-to-a-session)
   - [Session Output](#session-output)
   - [Keyboard Shortcuts](#keyboard-shortcuts)
+    - [Recording Menu](#recording-menu)
+    - [Session Notes](#session-notes)
 - [IOA Calculator](#ioa-calculator)
   - [IOA Methods](#ioa-methods)
     - [Exact Agreement](#exact-agreement)
     - [Partial Agreement](#partial-agreement)
     - [Time Window](#time-window)
 - [Bin Calculator](#bin-calculator)
-- [Conditional Probability](#cond-prob)
+- [Conditional Probability](#conditional-probability)
 - [References](#references)
 
 <a name="introduction"></a>
@@ -144,12 +146,14 @@ The names of these files can be configured in [Preferences](#preferences).
 <a name="keyboard-shortcuts"></a>
 ## Keyboard Shortcuts
 
+<a name="recording-menu"></a>
 ### Recording Menu
 - `spacebar` - start/stop the session
 - `ctrl`+`z` / `cmd`+`z` - undo
 - *any unmapped key* - log an unknown discrete behavior
 - `shift`+*any unmapped key* - log an unknown continuous behavior
 
+<a name="session-notes"></a>
 ### Session Notes
 - `ctrl`+`n` / `cmd`+`n` - open Notes
 - `esc` - close Notes (if open)
@@ -208,7 +212,7 @@ The "Bin Calculator" is useful for looking at within-session patterns in the dat
 
 ---
 
-<a name="cond-prob"></a>
+<a name="conditional-probability"></a>
 # Conditional Probability
 
 ![cond-prob](cond-prob.png)

@@ -17,7 +17,7 @@
 		<!-- Data File Selection -->
 		<Text strokeType="OUTSIDE" strokeWidth="0.0"
 			text="Select a .raw output from a session recording:" />
-		<Label text="File" />
+		<Label style="-fx-font-weight: bold;" text="File" />
 		<HBox spacing="5.0" HBox.hgrow="ALWAYS">
 			<children>
 				<TextField fx:id="fileField" HBox.hgrow="ALWAYS" />
@@ -31,15 +31,35 @@
 		<!-- Window Selection -->
 		<HBox spacing="5.0">
 			<children>
-				<Label text="Window (seconds):" />
+				<Label style="-fx-font-weight: bold;" text="Window (seconds):" />
 				<TextField fx:id="windowField" prefWidth="50.0" />
 				<Label fx:id="windowRequiredLbl" text="Window is required."
 					textFill="RED" visible="false" />
 			</children>
 		</HBox>
 
+		<!-- Calculation Options -->
+		<HBox>
+			<children>
+				<Label style="-fx-font-weight: bold;" text="Calculation:" />
+				<RadioButton fx:id="calculationBinaryRadio"
+					mnemonicParsing="false" text="Binary" />
+				<RadioButton fx:id="calculationProportionalRadio"
+					mnemonicParsing="false" text="Proportional" />
+			</children>
+		</HBox>
+		<HBox>
+			<children>
+				<Label style="-fx-font-weight: bold;" text="Operation:" />
+				<RadioButton fx:id="operationEstablishingRadio"
+					mnemonicParsing="false" text="Establishing" />
+				<RadioButton fx:id="operationNonEstablishingRadio"
+					mnemonicParsing="false" text="Non-Establishing" />
+			</children>
+		</HBox>
+
 		<!-- Background Probability Options -->
-		<Label text="Background Probability Options:" />
+		<Label style="-fx-font-weight: bold;" text="Background Probability Options:" />
 		<VBox spacing="5.0">
 			<children>
 				<RadioButton fx:id="backgroundCompleteSamplingRadio"
@@ -57,10 +77,10 @@
 					style="-fx-padding: 5 0 0 50;"
 					text="Output sampled events to file." />
 			</children>
-		</VBox>
+		</VBox>		
 
 		<!-- Target Behavior Selection -->
-		<Label>Target Behavior:</Label>
+		<Label style="-fx-font-weight: bold;">Target Behavior:</Label>
 		<ScrollPane fitToWidth="true" minHeight="140.0">
 			<content>
 				<VBox spacing="3.0" fx:id="behaviorSelection">

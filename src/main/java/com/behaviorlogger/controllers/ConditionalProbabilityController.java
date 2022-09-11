@@ -1,6 +1,5 @@
 package com.behaviorlogger.controllers;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,7 +32,7 @@ import com.behaviorlogger.persistence.recordings.RecordingRawJson1_1.SessionBean
 import com.behaviorlogger.utils.Alerts;
 import com.behaviorlogger.utils.BehaviorLoggerUtil;
 import com.behaviorlogger.utils.ConditionalProbability;
-import com.behaviorlogger.utils.ConditionalProbability.AllResults;
+import com.behaviorlogger.utils.ConditionalProbability.Results;
 import com.behaviorlogger.utils.ConditionalProbability.TooManyBackgroundEventsException;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -80,6 +79,14 @@ public class ConditionalProbabilityController {
     @FXML
     Label windowRequiredLbl;
     @FXML
+    RadioButton calculationBinaryRadio;
+    @FXML
+    RadioButton calculationProportionalRadio;
+    @FXML
+    RadioButton operationEstablishingRadio;
+    @FXML
+    RadioButton operationNonEstablishingRadio;
+    @FXML
     RadioButton backgroundRandomSamplingRadio;
     @FXML
     CheckBox debugBackgroundRandomSamplingCheckBox;
@@ -100,6 +107,8 @@ public class ConditionalProbabilityController {
     private void initialize() {
 	initFileField();
 	initWindowField();
+	initCalculationFields();
+	initOperationFields();
 	initBackgroundFields();
 	initSaveOptions();
     }
@@ -165,6 +174,54 @@ public class ConditionalProbabilityController {
 		i = 1;
 	    }
 	    ConditionalProbabilityManager.windowProperty().set(i);
+	});
+    }
+
+    private void initCalculationFields() {
+	ToggleGroup group = new ToggleGroup();
+	this.calculationBinaryRadio.setToggleGroup(group);
+	this.calculationProportionalRadio.setToggleGroup(group);
+
+	String calculationType = ConditionalProbabilityManager.calculationTypeProperty().getValueSafe();
+	this.calculationBinaryRadio.setSelected(
+		calculationType.isEmpty() || calculationType.equals(ConditionalProbabilityManager.CALCULATION_BINARY));
+	this.calculationProportionalRadio
+		.setSelected(calculationType.equals(ConditionalProbabilityManager.CALCULATION_PROPORTIONAL));
+	this.calculationBinaryRadio.selectedProperty().addListener((o, ov, selected) -> {
+	    if (selected) {
+		ConditionalProbabilityManager.calculationTypeProperty()
+			.setValue(ConditionalProbabilityManager.CALCULATION_BINARY);
+	    }
+	});
+	this.calculationProportionalRadio.selectedProperty().addListener((o, ov, selected) -> {
+	    if (selected) {
+		ConditionalProbabilityManager.calculationTypeProperty()
+			.setValue(ConditionalProbabilityManager.CALCULATION_PROPORTIONAL);
+	    }
+	});
+    }
+
+    private void initOperationFields() {
+	ToggleGroup group = new ToggleGroup();
+	this.operationEstablishingRadio.setToggleGroup(group);
+	this.operationNonEstablishingRadio.setToggleGroup(group);
+
+	String operationType = ConditionalProbabilityManager.operationTypeProperty().getValueSafe();
+	this.operationEstablishingRadio.setSelected(
+		operationType.isEmpty() || operationType.equals(ConditionalProbabilityManager.OPERATION_ESTABLISHING));
+	this.operationNonEstablishingRadio
+		.setSelected(operationType.equals(ConditionalProbabilityManager.OPERATION_NON_ESTABLISHING));
+	this.operationEstablishingRadio.selectedProperty().addListener((o, ov, selected) -> {
+	    if (selected) {
+		ConditionalProbabilityManager.operationTypeProperty()
+			.setValue(ConditionalProbabilityManager.OPERATION_ESTABLISHING);
+	    }
+	});
+	this.operationNonEstablishingRadio.selectedProperty().addListener((o, ov, selected) -> {
+	    if (selected) {
+		ConditionalProbabilityManager.operationTypeProperty()
+			.setValue(ConditionalProbabilityManager.OPERATION_NON_ESTABLISHING);
+	    }
 	});
     }
 
@@ -280,8 +337,8 @@ public class ConditionalProbabilityController {
 	KeyBehaviorMapping targetBehavior = this.selectedBehavior;
 	List<DiscreteBehavior> targetEvents = getTargetEvents(targetBehavior);
 	int windowMillis = ConditionalProbabilityManager.windowProperty().get() * 1000;
-	Map<KeyBehaviorMapping, AllResults> actualResultsMap = Maps.newHashMap();
-	Map<KeyBehaviorMapping, AllResults> backgroundResultsMap = Maps.newHashMap();
+	Map<KeyBehaviorMapping, Results> actualResultsMap = Maps.newHashMap();
+	Map<KeyBehaviorMapping, Results> backgroundResultsMap = Maps.newHashMap();
 	StringBuilder debugBackgroundRandomSamplingOutput = new StringBuilder();
 	debugBackgroundRandomSamplingOutput.append("Randomly selected background events (seconds):\n\n");
 
@@ -291,42 +348,19 @@ public class ConditionalProbabilityController {
 	    }
 	    List<ContinuousBehavior> consequenceEvents = ConditionalProbability.getConsequenceEvents(
 		    consequenceBehavior, this.dataStream.discreteEvents, this.dataStream.continuousEvents);
-	    AllResults actualResults = ConditionalProbability.all(targetEvents, consequenceEvents, windowMillis);
+	    
+	    Results actualResults = calculate(targetEvents, consequenceEvents, windowMillis);
 	    actualResultsMap.put(consequenceBehavior, actualResults);
 
 	    // generate background probabilities
+	    List<DiscreteBehavior> backgroundEvents;
 	    try {
-		List<DiscreteBehavior> backgroundEventsForEO = getBackgroundEvents(actualResults, targetBehavior,
-			consequenceEvents);
-		List<DiscreteBehavior> backgroundEventsForNonEO = getBackgroundEvents(actualResults, targetBehavior,
-			Lists.newArrayList());
-
-		backgroundEventsForEO.sort(Comparator.comparingLong(e -> e.startTime));
-		backgroundEventsForNonEO.sort(Comparator.comparingLong(e -> e.startTime));
-
-		AllResults backgroundResults = new AllResults(
-			ConditionalProbability.binaryEO(backgroundEventsForEO, consequenceEvents, windowMillis), //
-			ConditionalProbability.binaryNonEO(backgroundEventsForNonEO, consequenceEvents, windowMillis), //
-			ConditionalProbability.proportionEO(backgroundEventsForEO, consequenceEvents, windowMillis),
-			ConditionalProbability.proportionNonEO(backgroundEventsForNonEO, consequenceEvents,
-				windowMillis));
-		backgroundResultsMap.put(consequenceBehavior, backgroundResults);
-
-		List<String> backgroundEventsForEOTimes = Lists.newArrayList();
-		List<String> backgroundEventsForNonEOTimes = Lists.newArrayList();
-		for (DiscreteBehavior event : backgroundEventsForEO) {
-		    backgroundEventsForEOTimes.add(Double.toString((double) event.startTime / 1000));
+		if (ConditionalProbabilityManager.operationTypeProperty().getValueSafe()
+			.equals(ConditionalProbabilityManager.OPERATION_ESTABLISHING)) {
+		    backgroundEvents = getBackgroundEvents(actualResults, targetBehavior, consequenceEvents);
+		} else {
+		    backgroundEvents = getBackgroundEvents(actualResults, targetBehavior, Lists.newArrayList());
 		}
-		for (DiscreteBehavior event : backgroundEventsForNonEO) {
-		    backgroundEventsForNonEOTimes.add(Double.toString((double) event.startTime / 1000));
-		}
-		debugBackgroundRandomSamplingOutput.append("-------------------------------------------\n");
-		debugBackgroundRandomSamplingOutput
-			.append(String.format("EO (%c, %s):\n    %s\n", consequenceBehavior.key.c,
-				consequenceBehavior.description, String.join(", ", backgroundEventsForEOTimes)));
-		debugBackgroundRandomSamplingOutput
-			.append(String.format("Non-EO (%c, %s):\n    %s\n", consequenceBehavior.key.c,
-				consequenceBehavior.description, String.join(", ", backgroundEventsForNonEOTimes)));
 	    } catch (TooManyBackgroundEventsException e) {
 		Alerts.error("Error Generating Background Events",
 			"The data stream is too small to generate the required background events. Consider using the Complete option or reducing the number of desired background events.",
@@ -334,9 +368,40 @@ public class ConditionalProbabilityController {
 		e.printStackTrace();
 		return;
 	    }
+	    backgroundEvents.sort(Comparator.comparingLong(e -> e.startTime));
+	    Results backgroundResults = calculate(backgroundEvents, consequenceEvents, windowMillis);
+	    backgroundResultsMap.put(consequenceBehavior, backgroundResults);
+
+	    List<String> backgroundEventTimes = Lists.newArrayList();
+	    for (DiscreteBehavior event : backgroundEvents) {
+		backgroundEventTimes.add(Double.toString((double) event.startTime / 1000));
+	    }
+	    debugBackgroundRandomSamplingOutput.append("-------------------------------------------\n");
+	    debugBackgroundRandomSamplingOutput.append(String.format("%c, %s:\n    %s\n", consequenceBehavior.key.c,
+		    consequenceBehavior.description, String.join(", ", backgroundEventTimes)));
 	}
 
 	writeToFile(actualResultsMap, backgroundResultsMap, debugBackgroundRandomSamplingOutput);
+    }
+
+    private Results calculate(List<DiscreteBehavior> targetEvents, List<ContinuousBehavior> consequentEvents,
+	    int windowMillis) {
+	String operation = ConditionalProbabilityManager.operationTypeProperty().get();
+	String calculation = ConditionalProbabilityManager.calculationTypeProperty().get();
+
+	if (operation.equals(ConditionalProbabilityManager.OPERATION_ESTABLISHING)
+		&& calculation.equals(ConditionalProbabilityManager.CALCULATION_BINARY)) {
+	    return ConditionalProbability.binaryEO(targetEvents, consequentEvents, windowMillis);
+	}
+	if (operation.equals(ConditionalProbabilityManager.OPERATION_NON_ESTABLISHING)
+		&& calculation.equals(ConditionalProbabilityManager.CALCULATION_BINARY)) {
+	    return ConditionalProbability.binaryNonEO(targetEvents, consequentEvents, windowMillis);
+	}
+	if (operation.equals(ConditionalProbabilityManager.OPERATION_ESTABLISHING)
+		&& calculation.equals(ConditionalProbabilityManager.CALCULATION_PROPORTIONAL)) {
+	    return ConditionalProbability.proportionEO(targetEvents, consequentEvents, windowMillis);
+	}
+	return ConditionalProbability.proportionNonEO(targetEvents, consequentEvents, windowMillis);
     }
 
     private List<DiscreteBehavior> getTargetEvents(KeyBehaviorMapping targetBehavior) {
@@ -344,10 +409,10 @@ public class ConditionalProbabilityController {
 		this.dataStream.continuousEvents);
     }
 
-    private List<DiscreteBehavior> getBackgroundEvents(AllResults actualResults, KeyBehaviorMapping targetBehavior,
+    private List<DiscreteBehavior> getBackgroundEvents(Results actualResults, KeyBehaviorMapping targetBehavior,
 	    List<ContinuousBehavior> consequenceEvents) throws TooManyBackgroundEventsException {
 	if (ConditionalProbabilityManager.backgroundRandomSamplingSelectedProperty().get()) {
-	    long numEvents = actualResults.binaryEO.sampled;
+	    long numEvents = actualResults.sampled; // TODO get correct number of events
 	    if (ConditionalProbabilityManager.backgroundNumEventsProperty().get() > 0) {
 		numEvents = ConditionalProbabilityManager.backgroundNumEventsProperty().get();
 	    }
@@ -358,8 +423,8 @@ public class ConditionalProbabilityController {
 		this.dataStream.duration);
     }
 
-    private void writeToFile(Map<KeyBehaviorMapping, AllResults> resultsMap,
-	    Map<KeyBehaviorMapping, AllResults> backgroundResultsMap, StringBuilder debugBackgroundRandomSamplingOutput)
+    private void writeToFile(Map<KeyBehaviorMapping, Results> resultsMap,
+	    Map<KeyBehaviorMapping, Results> backgroundResultsMap, StringBuilder debugBackgroundRandomSamplingOutput)
 	    throws IOException, EncryptedDocumentException {
 	File outputFile;
 	boolean appendToFile = ConditionalProbabilityManager.appendSelectedProperty().get();
@@ -442,6 +507,18 @@ public class ConditionalProbabilityController {
 	cell.setCellStyle(boldstyle);
 	row.createCell(1).setCellValue(ConditionalProbabilityManager.windowProperty().get());
 
+	row = s.createRow(r++);
+	cell = row.createCell(0);
+	cell.setCellValue("Calculation Type");
+	cell.setCellStyle(boldstyle);
+	row.createCell(1).setCellValue(ConditionalProbabilityManager.calculationTypeProperty().get());
+
+	row = s.createRow(r++);
+	cell = row.createCell(0);
+	cell.setCellValue("Operation Type");
+	cell.setCellStyle(boldstyle);
+	row.createCell(1).setCellValue(ConditionalProbabilityManager.operationTypeProperty().get());
+
 	return r;
     }
 
@@ -455,47 +532,19 @@ public class ConditionalProbabilityController {
 	boldstyle.setAlignment(HorizontalAlignment.CENTER);
 
 	r++; // skip row
-	row = s.createRow(r); // main headers
-	row.createCell(1).setCellValue("Binary");
-	row.createCell(7).setCellValue("Proportion");
-	row.cellIterator().forEachRemaining((c) -> c.setCellStyle(boldstyle));
-	s.addMergedRegion(new CellRangeAddress(r, r, 1, 6));
-	s.addMergedRegion(new CellRangeAddress(r, r, 7, 12));
-	r++;
-
-	row = s.createRow(r); // eo/non-eo headers
-	row.createCell(1).setCellValue("EO");
-	row.createCell(4).setCellValue("Non-EO");
-	row.createCell(7).setCellValue("EO");
-	row.createCell(10).setCellValue("Non-EO");
-	row.cellIterator().forEachRemaining((c) -> c.setCellStyle(boldstyle));
-	s.addMergedRegion(new CellRangeAddress(r, r, 1, 3));
-	s.addMergedRegion(new CellRangeAddress(r, r, 4, 6));
-	s.addMergedRegion(new CellRangeAddress(r, r, 7, 9));
-	s.addMergedRegion(new CellRangeAddress(r, r, 10, 12));
-	r++;
 
 	row = s.createRow(r++); // behavior/sample/condition/background
 	row.createCell(0).setCellValue("Behavior");
 	row.createCell(1).setCellValue("Sample");
 	row.createCell(2).setCellValue("Condition");
 	row.createCell(3).setCellValue("Background");
-	row.createCell(4).setCellValue("Sample");
-	row.createCell(5).setCellValue("Condition");
-	row.createCell(6).setCellValue("Background");
-	row.createCell(7).setCellValue("Sample");
-	row.createCell(8).setCellValue("Condition");
-	row.createCell(9).setCellValue("Background");
-	row.createCell(10).setCellValue("Sample");
-	row.createCell(11).setCellValue("Condition");
-	row.createCell(12).setCellValue("Background");
 	row.cellIterator().forEachRemaining((c) -> c.setCellStyle(boldstyle));
 
 	return r;
     }
 
-    private void writeExcelDetails(Map<KeyBehaviorMapping, AllResults> resultsMap,
-	    Map<KeyBehaviorMapping, AllResults> backgroundResultsMap, Workbook wb, Sheet s, int r) {
+    private void writeExcelDetails(Map<KeyBehaviorMapping, Results> resultsMap,
+	    Map<KeyBehaviorMapping, Results> backgroundResultsMap, Workbook wb, Sheet s, int r) {
 	CellStyle boldstyle = wb.createCellStyle();
 	Font font = wb.createFont();
 	font.setBold(true);
@@ -505,13 +554,13 @@ public class ConditionalProbabilityController {
 	DataFormat dataformat = wb.createDataFormat();
 	decimalstyle.setDataFormat(dataformat.getFormat("0.000"));
 
-	Set<Entry<KeyBehaviorMapping, AllResults>> entrySet = resultsMap.entrySet();
-	ArrayList<Entry<KeyBehaviorMapping, AllResults>> entries = Lists.newArrayList(entrySet);
-	entries.sort((e1, e2) -> -1 * ConditionalProbability.AllResults.compare.compare(e1.getValue(), e2.getValue()));
-	for (Entry<KeyBehaviorMapping, AllResults> entry : entries) {
+	Set<Entry<KeyBehaviorMapping, Results>> entrySet = resultsMap.entrySet();
+	ArrayList<Entry<KeyBehaviorMapping, Results>> entries = Lists.newArrayList(entrySet);
+	entries.sort((e1, e2) -> -1 * ConditionalProbability.Results.compare.compare(e1.getValue(), e2.getValue()));
+	for (Entry<KeyBehaviorMapping, Results> entry : entries) {
 	    KeyBehaviorMapping key = entry.getKey();
-	    AllResults actualResults = entry.getValue();
-	    AllResults backgroundResults = backgroundResultsMap.get(key);
+	    Results actualResults = entry.getValue();
+	    Results backgroundResults = backgroundResultsMap.get(key);
 
 	    Row row = s.createRow(r++);
 	    Cell cell;
@@ -520,27 +569,9 @@ public class ConditionalProbabilityController {
 	    cell.setCellValue(String.format("%s (%s)", key.description, key.key.c));
 	    cell.setCellStyle(boldstyle);
 
-	    row.createCell(c++).setCellValue(actualResults.binaryEO.sampled);
-	    row.createCell(c++).setCellValue(actualResults.binaryEO.probability);
-	    row.createCell(c++).setCellValue(backgroundResults.binaryEO.probability);
-	    row.getCell(c - 2).setCellStyle(decimalstyle);
-	    row.getCell(c - 1).setCellStyle(decimalstyle);
-
-	    row.createCell(c++).setCellValue(actualResults.binaryNonEO.sampled);
-	    row.createCell(c++).setCellValue(actualResults.binaryNonEO.probability);
-	    row.createCell(c++).setCellValue(backgroundResults.binaryNonEO.probability);
-	    row.getCell(c - 2).setCellStyle(decimalstyle);
-	    row.getCell(c - 1).setCellStyle(decimalstyle);
-
-	    row.createCell(c++).setCellValue(actualResults.proportionEO.sampled);
-	    row.createCell(c++).setCellValue(actualResults.proportionEO.probability);
-	    row.createCell(c++).setCellValue(backgroundResults.proportionEO.probability);
-	    row.getCell(c - 2).setCellStyle(decimalstyle);
-	    row.getCell(c - 1).setCellStyle(decimalstyle);
-
-	    row.createCell(c++).setCellValue(actualResults.proportionNonEO.sampled);
-	    row.createCell(c++).setCellValue(actualResults.proportionNonEO.probability);
-	    row.createCell(c++).setCellValue(backgroundResults.proportionNonEO.probability);
+	    row.createCell(c++).setCellValue(actualResults.sampled);
+	    row.createCell(c++).setCellValue(actualResults.probability);
+	    row.createCell(c++).setCellValue(backgroundResults.probability);
 	    row.getCell(c - 2).setCellStyle(decimalstyle);
 	    row.getCell(c - 1).setCellStyle(decimalstyle);
 	}

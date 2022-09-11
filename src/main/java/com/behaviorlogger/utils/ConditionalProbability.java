@@ -33,6 +33,9 @@ public class ConditionalProbability {
 	public long sampled;
 	public long total;
 
+	public static Comparator<Results> compare = //
+		(r1, r2) -> (int) (Math.floor(r1.probability * 1000) - Math.floor(r2.probability * 1000));
+
 	public Results(double probability, long sampled, long total) {
 	    this.probability = probability;
 	    this.sampled = sampled;
@@ -75,45 +78,13 @@ public class ConditionalProbability {
 	}
     }
 
-    public static class AllResults {
-	public static Comparator<AllResults> compare = //
-		(r1, r2) -> (int) (Math.floor(r1.avg * 1000) - Math.floor(r2.avg * 1000));
-
-	public final Results binaryEO;
-	public final Results binaryNonEO;
-	public final Results proportionEO;
-	public final Results proportionNonEO;
-	public final Double avg;
-
-	public AllResults(Results binaryEO, Results binaryNonEO, Results proportionEO, Results proportionNonEO) {
-	    this.binaryEO = binaryEO;
-	    this.binaryNonEO = binaryNonEO;
-	    this.proportionEO = proportionEO;
-	    this.proportionNonEO = proportionNonEO;
-	    this.avg = (binaryEO.probability + binaryNonEO.probability + proportionEO.probability
-		    + proportionNonEO.probability) / 4;
-	}
-
-	@Override
-	public String toString() {
-	    return "AllResults [binaryEO=" + binaryEO + ", binaryNonEO=" + binaryNonEO + ", proportionEO="
-		    + proportionEO + ", proportionNonEO=" + proportionNonEO + ", avg=" + avg + "]";
-	}
-    }
-
-    public static AllResults all(List<DiscreteBehavior> targetEvents, //
-	    List<ContinuousBehavior> consequentEvents, //
-	    int windowMillis) {
-	return new AllResults(//
-		binaryEO(targetEvents, consequentEvents, windowMillis), //
-		binaryNonEO(targetEvents, consequentEvents, windowMillis), //
-		proportionEO(targetEvents, consequentEvents, windowMillis), //
-		proportionNonEO(targetEvents, consequentEvents, windowMillis));
-    }
-
-    public static Results binaryNonEO( //
-	    List<DiscreteBehavior> targetEvents, //
-	    List<ContinuousBehavior> consequentEvents, //
+    /**
+     * Perform Binary Non-EO calculation. The result is a proportion of number of
+     * potentially reinforced targets over the total number of targets. Targets are
+     * considered reinforced if a consequence occurred at any point during the
+     * window following a target.
+     */
+    public static Results binaryNonEO(List<DiscreteBehavior> targetEvents, List<ContinuousBehavior> consequentEvents,
 	    int windowMillis) {
 	int numTargets = targetEvents.size();
 	double numPotentiallyReinforcedTargets = 0f;
@@ -154,6 +125,13 @@ public class ConditionalProbability {
 	return false;
     }
 
+    /**
+     * Perform Binary EO calculation. The result is a proportion of number of
+     * potentially reinforced targets over the total number of targets that did not
+     * occur while a consequence was active. Targets are considered reinforced if a
+     * consequence occurred at any point during the window following a target and no
+     * consequences were overlapping with the target.
+     */
     public static Results binaryEO( //
 	    List<DiscreteBehavior> targetEvents, //
 	    List<ContinuousBehavior> consequentEvents, //
@@ -177,6 +155,10 @@ public class ConditionalProbability {
 	return new Results(numPotentiallyReinforcedTargets / numTargets, numTargets, targetEvents.size());
     }
 
+    /**
+     * Same as binaryNonEO except the proportion is equal to the total duration of
+     * reinforcing consequences over the total aggregate of time windows.
+     */
     public static Results proportionNonEO(//
 	    List<DiscreteBehavior> targetEvents, //
 	    List<ContinuousBehavior> consequentEvents, //
@@ -219,6 +201,10 @@ public class ConditionalProbability {
 		.collect(Collectors.toList());
     }
 
+    /**
+     * Same as proportionEO except targets with overlapping consequences are
+     * discounted.
+     */
     public static Results proportionEO( //
 	    List<DiscreteBehavior> targetEvents, //
 	    List<ContinuousBehavior> consequentEvents, //
